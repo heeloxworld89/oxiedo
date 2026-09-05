@@ -45,6 +45,36 @@
 }
 
 /* ============================================================
+   BentoGrid / BentoCell — design/12 §Bento Grid System, ui_ux/00 §2
+   ============================================================ */
+
+.bento-grid {
+	max-width: 1280px;
+	margin-inline: auto;
+}
+
+.bento-cell {
+	grid-column: span var(--col-span, 12);
+	grid-row: span var(--row-span, 1);
+	background: var(--bg-surface);
+	border: 1px solid var(--border-subtle);
+	border-radius: 2px;
+	padding: var(--space-lg);
+	transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.bento-cell:hover {
+	border-color: var(--border-strong);
+}
+
+@media (max-width: 1023px) {
+	.bento-cell {
+		grid-column: span 12;
+		grid-row: span 1;
+	}
+}
+
+/* ============================================================
    StatusBadge — design/12 §Status Badge
    ============================================================ */
 

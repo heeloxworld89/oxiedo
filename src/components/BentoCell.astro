@@ -1,0 +1,14 @@
+---
+// design/12 §Bento Grid System, ui_ux/00 §2. Cell size communicates importance — the calling
+// page chooses colSpan/rowSpan; this component never sizes itself to fill a gap.
+export interface Props {
+	colSpan?: number;
+	rowSpan?: number;
+}
+
+const { colSpan = 12, rowSpan = 1 } = Astro.props;
+---
+
+<div class="bento-cell" style={`--col-span: ${colSpan}; --row-span: ${rowSpan};`}>
+	<slot />
+</div>
