@@ -45,7 +45,7 @@ BLOCK 4 — INTERACTION
           → ./check.sh  ·  git tag block-4-complete
 
 BLOCK 5 — LAUNCH
-  ☐ 5.1 a11y         ☐ 5.2 perf        ☐ 5.3 no-JS  ★ blocks launch
+  ☑ 5.1 a11y         ☑ 5.2 perf        ☐ 5.3 no-JS  ★ blocks launch
   ☐ 5.4 copy audit   ☐ 5.5 pre-launch  ☐ 5.6 deploy
 ```
 
@@ -55,7 +55,8 @@ BLOCK 5 — LAUNCH
 
 | Task | Surprises / task-file corrections needed |
 |---|---|
-| | |
+| 5.1 | Skip link never existed (expected). Also found and fixed three real gaps that predate this block: /paper (6 sections) and 2 of /index's sections used an Eyebrow `<span>` as their only section title — invisible to heading nav (Block 2/3). Nav.astro's link list had no `<nav>` landmark (Block 1). `--border-strong` (#333333, 1.59:1 on #080808) fails WCAG 1.4.11 for the secondary button and the default contact-form input underline — both depend on it alone for a visible boundary (Block 0 token / Block 1 usage). Corrected to `#606060` (3.18:1) in design/12 first, then tokens.css. |
+| 5.2 | Site CSS (Page.CqoKQXYQ.css, all 12 non-paper routes) = 39.1 KB — under the 40 KB budget but only by ~0.9 KB; the next component added anywhere sitewide will need a look at what it costs. JS = 5.6 KB for all 5 scripts combined (budget 15 KB). Site fonts = 152.9 KB / 6 files (budget 200 KB), 2 preloaded, confirmed self-hosted. KaTeX (scoped to /paper only): 29.1 KB CSS + up to 250.2 KB of woff2 (19 files; ~1.05 MB on disk once woff/ttf fallbacks are counted, but a modern browser only ever fetches woff2, and only the specific families the one equation's glyphs actually touch — not verified exactly which subset without a real browser's network tab). Recommendation: pre-render the equation to static SVG at build time and drop KaTeX — a single static equation does not need a 250 KB–1 MB font dependency, and every other budget on this site is disciplined to the byte. Not acted on this session per instruction. |
 
 **When a report says SURPRISES, amend the instruction file before the next session.**
 The code wins; the plan gets corrected.
