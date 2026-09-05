@@ -1,0 +1,57 @@
+/* @font-face declarations. Six self-hosted files, all in public/fonts/ — see
+   instructions/02_DESIGN_CONTRACT.md §Typography binding and design/12 §Typography Pairing.
+   Element bindings (which selector uses which face, plus its fallback stack) are Block 0.4. */
+
+@font-face {
+	font-family: 'Fraunces';
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url('/fonts/Fraunces-Variable.woff2') format('woff2');
+	/* fallback stack when bound: 'Fraunces', Georgia, 'Times New Roman', serif */
+}
+
+@font-face {
+	font-family: 'Plus Jakarta Sans';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/PlusJakartaSans-Regular.woff2') format('woff2');
+	/* fallback stack when bound: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif */
+}
+
+@font-face {
+	font-family: 'Plus Jakarta Sans';
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url('/fonts/PlusJakartaSans-SemiBold.woff2') format('woff2');
+	/* fallback stack when bound: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif */
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+	/* fallback stack when bound: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace */
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/JetBrainsMono-Bold.woff2') format('woff2');
+	/* fallback stack when bound: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace */
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/JetBrainsMono-Italic.woff2') format('woff2');
+	/* fallback stack when bound: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace */
+}
