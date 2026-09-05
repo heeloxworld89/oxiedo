@@ -79,7 +79,7 @@
    ============================================================ */
 
 .telemetry-block {
-	background: #060606; /* design/12 §Code / Telemetry Block — no matching token */
+	background: var(--bg-void);
 	border: 1px solid var(--border-subtle);
 	border-radius: 2px;
 	padding: 20px var(--space-lg); /* 20px — no matching --space-* token; 24px = --space-lg */
@@ -224,7 +224,7 @@
 
 .btn--primary {
 	background: var(--amber-bright);
-	color: #000000; /* design/12 §CTA Buttons — no matching token for dark-on-amber text */
+	color: var(--text-on-amber);
 	border: 1px solid var(--amber-bright);
 }
 
@@ -585,7 +585,7 @@
 
 .nav-cta-primary {
 	background: var(--amber-bright);
-	color: #000000; /* design/12 §CTA Buttons — no matching token for dark-on-amber text */
+	color: var(--text-on-amber);
 	border: 1px solid var(--amber-bright);
 }
 

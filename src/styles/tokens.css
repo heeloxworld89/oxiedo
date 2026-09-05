@@ -7,6 +7,7 @@
 	--bg-surface: #0F0F0F;
 	--bg-raised: #161616;
 	--bg-overlay: rgba(8,8,8,0.92);
+	--bg-void: #060606;
 
 	/* Borders and dividers */
 	--border-subtle: #1A1A1A;
@@ -24,6 +25,7 @@
 	--amber-mid: #D4890A;
 	--amber-muted: #7A4D06;
 	--amber-ghost: rgba(245,166,35,0.08);
+	--text-on-amber: #000000;
 
 	/* Status colours (solution status only) */
 	--status-available: #F5A623;
