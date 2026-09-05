@@ -1924,3 +1924,41 @@ main {
 	color: var(--text-secondary);
 	margin-top: var(--space-md);
 }
+
+/* ============================================================
+   Data page — design/14_DATA.md
+   ============================================================ */
+
+.data-updated {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	margin-top: var(--space-md);
+}
+
+.data-prose {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.data-subheading {
+	margin-top: var(--space-lg);
+}
+
+.data-list,
+.data-never-list {
+	max-width: 65ch;
+	margin-top: var(--space-sm);
+	padding-left: var(--space-lg);
+	color: var(--text-primary);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.data-cta {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	color: var(--amber-bright);
+	margin-top: var(--space-md);
+}
