@@ -1,0 +1,181 @@
+---
+// design/04_LICENSING.md, ui_ux/04_LICENSING_UI.md.
+//
+// HARD RULES PANEL, a real source conflict, resolved not silently: ui_ux/04 §2 gives five
+// specific bracketed rule lines for this panel, one of which ("No delivery-date commitments")
+// does not appear in design/04 §Section 4 at all — design/04's own fifth item there is
+// "On-premise only." Both are real, sourced commitments ("No delivery-date commitments" is
+// design/13's own Never-Permitted rule). Read this as two different things rather than a
+// contradiction: ui_ux/04's five lines are the literal content for this specific terse panel
+// component (which design/04 doesn't itself describe as a panel), while design/04's own five
+// numbered items are reproduced below as the fuller prose section, headers and all. Nothing
+// from either source is dropped.
+//
+// HOVER: the dim-others-on-hover interaction is pure CSS (:hover + sibling selector) — it
+// needs no JavaScript, so it is built now rather than deferred to Block 4.
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+
+const layers = [
+	{
+		id: 'l0',
+		name: 'L0 · THE PRIMITIVE',
+		status: 'MIT, forever. Free.',
+		body: 'Contains: the core ORMAS engine, telemetry channels, the submitted paper, and 383 experimental runs. For: researchers, academics, independent evaluators. Purpose: credibility, peer review, and standard-setting. Revenue: zero.',
+	},
+	{
+		id: 'l1',
+		name: 'L1 · THE ARTIFACT LAYER',
+		status: 'Source-available, non-compete, date-certain conversion to permissive.',
+		body: 'Free for academic/non-commercial research. Paid for regulated commercial deployment. Contains: the report generator, the diff engine, and artifact signing mechanisms. Purpose: the format play — wide reading, controlled commercial use.',
+	},
+	{
+		id: 'l2',
+		name: 'L2 · THE DEPLOYMENT LICENCE',
+		status: 'Commercial, annual, on-premise per-institution.',
+		body: 'All revenue lives here. Contains: integration bindings, the calibrated bound for the customer\'s specific domain, version-pinned reproducible builds, support, and indemnity. Purpose: enterprise execution and liability transfer.',
+	},
+	{
+		id: 'l3',
+		name: 'L3 · THE ASSURANCE SERVICE',
+		status: 'Engagement-priced.',
+		body: 'Contains: bound calibration for novel domains, change-control plan drafting, expert testimony. Purpose: custom regulatory alignment and validation defense. It makes L2 renew.',
+	},
+];
+
+const hardRules = [
+	'No per-seat pricing',
+	'No usage metering that phones home',
+	'No free tier that touches regulated data',
+	'No open-core bait-and-switch on L0',
+	'No delivery-date commitments',
+];
+---
+
+<Page title="LICENSING">
+	<section class="section container">
+		<Eyebrow>LICENSING</Eyebrow>
+		<h1>The engine is MIT-licensed. The record it generates belongs to you.</h1>
+		<p class="licensing-sub">
+			The commercial structure of ORMAS separates the public mechanism of validation from
+			the private execution of compliance. The commercial value is the record.
+		</p>
+	</section>
+
+	<section class="section container">
+		<h2>Four layers. All revenue from one.</h2>
+		<div class="licensing-stack">
+			{
+				layers.slice().reverse().map((layer) => (
+					<div class={`licensing-band licensing-band--${layer.id}`}>
+						<p class="licensing-band-name">{layer.name}</p>
+						<p class="licensing-band-status">{layer.status}</p>
+						<p class="licensing-band-body">{layer.body}</p>
+					</div>
+				))
+			}
+		</div>
+	</section>
+
+	<section class="section container">
+		<h2>The engine is free. The record is yours.</h2>
+		<p class="licensing-prose">
+			The open-source engine creates the market, but the compliance record it generates for
+			your infrastructure is the solution. When you run ORMAS on your training run, the
+			flight recorder that results belongs to you. Your infrastructure. Your audit trail.
+			Your compliance evidence. That record cannot be replicated without running ORMAS. The
+			code is free. The record is yours.
+		</p>
+		<div class="licensing-clause">
+			<p class="licensing-clause-label">Artifact Survival Clause</p>
+			<p class="licensing-prose">
+				On termination of the contract, the customer retains the perpetual, irrevocable
+				right to read, retain, and reproduce every artifact generated during the term,
+				alongside a frozen reader binary. Your regulatory obligations outlive our
+				relationship; your access to your audit trail must do the same.
+			</p>
+		</div>
+		<div class="licensing-clause">
+			<p class="licensing-clause-label">Bound Immutability Clause</p>
+			<p class="licensing-prose">
+				The declared bound and modification set are fixed at execution. They may only be
+				altered through a documented, mutually signed amendment that generates its own
+				permanent artifact. The bound cannot be silently changed. If we can silently change
+				the bound, the bound is worthless.
+			</p>
+		</div>
+		<div class="licensing-clause">
+			<p class="licensing-clause-label">Reproducible Build Attestation</p>
+			<p class="licensing-prose">
+				The customer receives hash-pinned builds. You possess the cryptographic means to
+				verify that the binary operating in your environment is the exact artifact that
+				was validated and insured.
+			</p>
+		</div>
+	</section>
+
+	<section class="section container">
+		<h2>Pre-booking vs. post-launch availability</h2>
+		<p class="licensing-prose">
+			Prior to General Availability, terms are negotiable. This is the only window.
+			Institutions that commit during this engineering validation phase become Charter
+			Partners. Charter Partners lock in flat-rate, enterprise-wide pricing for 5 years. They
+			experience no consumption metering and gain direct access to the engineering team.
+		</p>
+		<p class="licensing-prose">
+			Following General Availability, pricing is published and fixed. There is no individual
+			negotiation, and there are no exceptions. The pricing model shifts strictly to
+			per-model consumption rates.
+		</p>
+		<p class="licensing-prose">
+			Institutional buyers require budget predictability over multi-year horizons; we
+			require strict engineering capacity commitments. Flexible pricing post-launch creates
+			an unbounded negotiation overhead that a capacity-constrained infrastructure team
+			cannot absorb.
+		</p>
+		<Button variant="primary" href="/contact">Discuss pre-booking terms</Button>
+	</section>
+
+	<section class="section container">
+		<h2>The on-premise requirement</h2>
+		<p class="licensing-prose">
+			Every ORMAS commercial deployment is on-premise. We do not offer a managed cloud
+			service. Regulated environments — including hospital enclaves governed by HIPAA,
+			European entities subject to GDPR Article 5, and classified defense networks — require
+			absolute data sovereignty. Sending neural network telemetry or internal model weights
+			to an external SaaS provider is a disqualifying security risk.
+		</p>
+		<p class="licensing-prose">
+			Integration occurs entirely within the customer's secure environment. The ORMAS binary
+			operates where your data lives. We do not see your data.
+		</p>
+	</section>
+
+	<section class="section container">
+		<h2>The L0 commitment</h2>
+		<p class="licensing-prose">
+			The core ORMAS engine is released under the MIT licence. This is a permanent
+			commitment, not a temporary default. Reproducibility is the foundational sales asset.
+			In markets that purchase based on auditability, a closed reimplementation of a
+			published method is strictly less credible than the published mechanism itself.
+		</p>
+		<p class="licensing-prose licensing-moat">
+			The moat is not the engine. Any competent engineering team can fork the repository.
+			The moat is what you produce by running it. The compliance record your infrastructure
+			generates belongs to you, and it cannot be replicated without running ORMAS.
+		</p>
+	</section>
+
+	<section class="section container">
+		<div class="licensing-hard-rules">
+			{
+				hardRules.map((rule) => (
+					<p class="licensing-hard-rule">
+						<span class="licensing-hard-rule-mark">[ ✗ ]</span> {rule}
+					</p>
+				))
+			}
+		</div>
+	</section>
+</Page>

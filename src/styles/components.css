@@ -1400,3 +1400,111 @@ main {
 .sector-gate strong {
 	color: var(--text-primary);
 }
+
+/* ============================================================
+   Licensing page — design/04_LICENSING.md, ui_ux/04_LICENSING_UI.md
+   ============================================================ */
+
+.licensing-sub {
+	max-width: 65ch;
+	color: var(--text-secondary);
+	margin-top: var(--space-md);
+}
+
+.licensing-stack {
+	display: flex;
+	flex-direction: column;
+	margin-top: var(--space-xl);
+}
+
+.licensing-band {
+	background: var(--bg-surface);
+	border: 1px solid var(--border-subtle);
+	border-left-width: 1px;
+	padding: var(--space-lg);
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.licensing-band + .licensing-band {
+	border-top: none;
+}
+
+.licensing-stack:hover .licensing-band:not(:hover) {
+	opacity: 0.5;
+}
+
+.licensing-band--l1 {
+	border-left: 2px solid var(--amber-mid);
+}
+
+.licensing-band--l2 {
+	border-left: 3px solid var(--amber-bright);
+}
+
+.licensing-band--l3 {
+	border-left: 4px solid var(--amber-bright);
+}
+
+.licensing-band-name {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.licensing-band-status {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--amber-mid);
+	margin-top: var(--space-xs);
+}
+
+.licensing-band-body {
+	max-width: 65ch;
+	color: var(--text-secondary);
+	font-size: var(--text-small);
+	margin-top: var(--space-sm);
+}
+
+.licensing-prose {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.licensing-clause {
+	margin-top: var(--space-lg);
+	border-top: 1px solid var(--border-subtle);
+	padding-top: var(--space-lg);
+}
+
+.licensing-clause-label {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+}
+
+.licensing-moat {
+	font-weight: 600;
+}
+
+.licensing-hard-rules {
+	background: var(--bg-base);
+	border: 2px solid var(--amber-mid);
+	border-radius: 2px;
+	padding: var(--space-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+.licensing-hard-rule {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-h3);
+	color: var(--text-primary);
+}
+
+.licensing-hard-rule-mark {
+	color: var(--amber-mid);
+}
