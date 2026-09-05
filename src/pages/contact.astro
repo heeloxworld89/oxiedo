@@ -51,6 +51,11 @@ import Button from '../components/Button.astro';
 			<FormField id="book-frequency" label="Estimated training run frequency" required />
 			<FormField id="book-cost" label="Estimated compute cost per run" required />
 			<FormField id="book-stack" label="Current monitoring stack" required />
+			<input type="hidden" name="intent" value="book" />
+			<div class="contact-form-honeypot" aria-hidden="true">
+				<label for="book-website">Website</label>
+				<input type="text" id="book-website" name="website" tabindex="-1" autocomplete="off" />
+			</div>
 			<Button variant="primary" type="submit">Book a session</Button>
 		</form>
 	</section>
@@ -79,6 +84,11 @@ import Button from '../components/Button.astro';
 			<FormField id="prebook-approach" label="What is your current approach to this problem?" required />
 			<FormField id="prebook-timeline" label="What is your timeline?" required />
 			<FormField id="prebook-org" label="Organisation and contact" required />
+			<input type="hidden" name="intent" value="pre-book" />
+			<div class="contact-form-honeypot" aria-hidden="true">
+				<label for="prebook-website">Website</label>
+				<input type="text" id="prebook-website" name="website" tabindex="-1" autocomplete="off" />
+			</div>
 			<Button variant="primary" type="submit">Apply for Partnership</Button>
 		</form>
 	</section>
@@ -108,6 +118,11 @@ import Button from '../components/Button.astro';
 				id="invest-thesis"
 				label="What do you invest in? (stage, sector, check size — anything that helps us understand the fit)"
 			/>
+			<input type="hidden" name="intent" value="invest" />
+			<div class="contact-form-honeypot" aria-hidden="true">
+				<label for="invest-website">Website</label>
+				<input type="text" id="invest-website" name="website" tabindex="-1" autocomplete="off" />
+			</div>
 			<Button variant="primary" type="submit">Request the brief</Button>
 		</form>
 	</section>
@@ -119,6 +134,11 @@ import Button from '../components/Button.astro';
 			<FormField id="other-name" label="Name" required />
 			<FormField id="other-email" label="Email" type="email" required />
 			<FormField id="other-message" label="Message" required />
+			<input type="hidden" name="intent" value="other" />
+			<div class="contact-form-honeypot" aria-hidden="true">
+				<label for="other-website">Website</label>
+				<input type="text" id="other-website" name="website" tabindex="-1" autocomplete="off" />
+			</div>
 			<Button variant="primary" type="submit">Send</Button>
 		</form>
 	</section>

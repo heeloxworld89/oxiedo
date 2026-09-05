@@ -2199,3 +2199,17 @@ main {
 .contact-form-status:empty {
 	display: none;
 }
+
+/* ============================================================
+   Contact form honeypot — functions/contact.ts §4.6. Off-screen, not display:none,
+   so a bot checking computed display still encounters and fills it.
+   ============================================================ */
+
+.contact-form-honeypot {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+}
