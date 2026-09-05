@@ -1,6 +1,8 @@
 ---
 // design/01 §Navigation Design, design/12 §Navigation. Scroll background and the mobile menu
 // toggle are Block 4 (nav.ts) — this component provides markup and states only.
+import Button from './Button.astro';
+
 const links = [
 	{ href: '/solutions', label: 'Solutions' },
 	{ href: '/sectors', label: 'Sectors' },
@@ -22,8 +24,8 @@ const links = [
 		</ul>
 
 		<div class="nav-cta">
-			<a href="/invest" class="nav-cta-ghost">Invest</a>
-			<a href="/contact" class="nav-cta-primary">Book Now</a>
+			<Button variant="secondary" size="small" href="/invest">Invest</Button>
+			<Button variant="primary" size="small" href="/contact">Book Now</Button>
 		</div>
 
 		<button
@@ -47,8 +49,8 @@ const links = [
 			))}
 		</ul>
 		<div class="nav-mobile-cta">
-			<a href="/contact" class="nav-cta-primary nav-cta-primary--full">Book Now</a>
-			<a href="/invest" class="nav-cta-ghost nav-cta-ghost--full">Invest</a>
+			<Button variant="primary" fullWidth href="/contact">Book Now</Button>
+			<Button variant="secondary" fullWidth href="/invest">Invest</Button>
 		</div>
 	</div>
 </header>

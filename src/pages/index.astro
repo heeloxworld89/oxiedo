@@ -1,11 +1,255 @@
 ---
+// design/01_HOME.md, ui_ux/01_HOME_UI.md. Eight sections per ui_ux/01 §1-8.
+//
+// CONTENT-SCOPE NOTE, flagged not silently applied: design/01 also contains "THE FOUNDING STORY"
+// (its Section 5), "THE INVESTMENT HOOK" (Section 6), "THE WINDOW" (§X) and "IS ORMAS RIGHT FOR
+// YOUR TEAM?" (§X). ui_ux/01 — the authoritative layout blueprint — enumerates exactly eight
+// sections and does not include any of the four. Built to ui_ux/01's eight, on the reading that
+// its layout pass deliberately narrowed a fuller draft for density (its own stated objective:
+// "within two scrolls"). Confirm before treating this as final — those four sections' copy is
+// sitting unused in design/01 if they were meant to ship.
+//
+// HERO SUBHEAD, cut per ui_ux/01 §1 ("TWO LINES. Not four"): design/01's subhead is two
+// paragraphs — a long mechanism sentence, then "Not a post-hoc tool. Not an external probe. The
+// way the model is built." Kept the second, complete, unedited; dropped the first outright (no
+// mid-sentence truncation, no new punctuation) because its content is redundant with Section 3's
+// own explanation of the mechanism. This is an editorial choice, not a mechanical one — flagging
+// it rather than asserting it's certainly what was meant.
+//
+// PAPER STRIP: design/01 §7 names "Submitted AAAI 2027". Task 2.3 requires omitting the venue
+// site-wide until the AAAI anonymity check clears (design/12 §Pre-Launch Checklist) — applied
+// here too for consistency, not just on /paper, since the same unresolved risk applies to any
+// page that names it.
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import BentoGrid from '../components/BentoGrid.astro';
+import BentoCell from '../components/BentoCell.astro';
+import PullStat from '../components/PullStat.astro';
+import TelemetryBlock from '../components/TelemetryBlock.astro';
+import LadderSchematic from '../components/LadderSchematic.astro';
+import Button from '../components/Button.astro';
+
+const flightRecorderLines = [
+	'epoch 101 · CATASTROPHIC SHOCK',
+	'  pre-shock       85.1%',
+	'  post-shock      10.0%     ← chance',
+	'  Node 1          dead      magnitude 0.00',
+	'  Node 2          dead      magnitude 0.00',
+	'  Node 0          oscillating  magnitude 0.12',
+	'epoch 195 · RECOVERED  80.3%   · 85 corrections, each attributed',
+];
+
+const operations = [
+	{ name: 'PROTECT', description: 'Gate a failing node before it corrupts what follows.', status: 'Built' },
+	{ name: 'REPAIR', description: 'Apply a bounded, logged correction to a diagnosed node.', status: 'Built' },
+	{ name: 'ACCOUNT', description: 'Five layers of causal telemetry, native to training.', status: 'Built' },
+	{ name: 'DETECT', description: 'Name which samples are damaging which component.', status: 'V2' },
+	{ name: 'ISOLATE · SUPPRESS', description: 'Allocate, absorb, and discard the corruption.', status: 'V2' },
+];
+
+const sectors = [
+	{
+		name: 'AI TRAINING',
+		readiness: 'ENTERING FIRST',
+		hook: [
+			'Your run died at step 40,000.',
+			'You rolled back 20,000 steps.',
+			'Here is a solution that would have told you at 40,200.',
+		],
+		stat: 'Frontier runs: $200M–$500M. 419 interruptions in one 54-day run.',
+	},
+	{
+		name: 'REGULATED FINANCE',
+		readiness: 'ENTERING FIRST',
+		hook: [
+			'The model forgets the 2021 regime while learning 2024.',
+			'Then 2021 returns. This is not a tuning problem.',
+			'It is a known architectural defect with a measured fix.',
+		],
+		stat: '94.6% regime-shift retention. Baseline: 47.3%.',
+	},
+	{
+		name: 'MEDICAL AI',
+		readiness: 'UPCOMING — VIA CONSORTIA',
+		hook: [
+			'The deployed model cannot learn from your institution.',
+			'It cannot, because teaching it something about your patients',
+			'would make it forget something about everybody else’s.',
+			'There is now a way to declare exactly what it may change.',
+		],
+		stat: 'The largest prize. Entered last. Needs real biological data first.',
+	},
+	{
+		name: 'DATA OBLIGATION',
+		readiness: 'UPCOMING',
+		hook: [
+			'You trained on their data. They terminated the contract.',
+			'The only compliant alternative is retrain from scratch.',
+			'A six-figure avoided cost, per deletion event, recurring.',
+		],
+		stat: 'The compliance industry named the category before supply existed.',
+	},
+	{
+		name: 'DEFENSE & SAFETY-CRITICAL',
+		readiness: 'NAMED — NOT PURSUING YET',
+		hook: [
+			'A frozen model in a degrading environment.',
+			'Graceful degradation from 85% to 80% instead of 10%.',
+			'Every self-modification logged and bounded.',
+		],
+		stat: 'Longest cycle. Highest ceiling. Test-time evidence gap must close first.',
+	},
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-	</head>
-	<body>
-	</body>
-</html>
+<Page title="ORMAS · STRUCTURAL INTELLIGENCE FOR NEURAL NETWORKS">
+	<!-- 1. HERO -->
+	<section class="section container hero">
+		<div class="hero-left">
+			<Eyebrow>ORMAS · STRUCTURAL INTELLIGENCE FOR NEURAL NETWORKS</Eyebrow>
+			<h1 class="hero-headline">
+				Your model knows what is happening inside itself.<br />
+				No prior architecture made this possible at training time.
+			</h1>
+			<p class="hero-subhead">
+				Not a post-hoc tool. Not an external probe. The way the model is built.
+			</p>
+			<div class="hero-cta-row">
+				<Button variant="primary" href="/contact">Book a Warning Light session</Button>
+				<Button variant="secondary" href="/paper">Read the paper</Button>
+			</div>
+		</div>
+		<div class="hero-right">
+			<TelemetryBlock label="Flight recorder">
+				{flightRecorderLines.join('\n')}
+			</TelemetryBlock>
+		</div>
+	</section>
+
+	<!-- 2. EVIDENCE BENTO -->
+	<section class="section container">
+		<Eyebrow>WHAT THE EVIDENCE SHOWS</Eyebrow>
+		<BentoGrid>
+			<BentoCell colSpan={6} rowSpan={2}>
+				<PullStat figure="+70.3 pp" caption="Recovery advantage over standard networks" />
+				<p class="bento-context">80.3% vs 10.0% — dead-layer collapse condition</p>
+				<p class="bento-qualifier">CIFAR-10/100</p>
+			</BentoCell>
+			<BentoCell colSpan={3} rowSpan={1}>
+				<PullStat figure="383" caption="Validation experiments" />
+				<p class="bento-context">Across 4 architecture families</p>
+				<p class="bento-qualifier">CIFAR-10/100</p>
+			</BentoCell>
+			<BentoCell colSpan={3} rowSpan={1}>
+				<PullStat figure="22,014" caption="Structural corrections logged in a single run" />
+				<p class="bento-context">Every one attributed. Every one bounded.</p>
+				<p class="bento-qualifier">CIFAR-10/100</p>
+			</BentoCell>
+			<BentoCell colSpan={6} rowSpan={1}>
+				<PullStat figure="−1.0 pp" caption="Known failure" variant="warning" />
+				<p class="bento-context">Adversarial weight injection (retained as a trust signal)</p>
+				<p class="bento-qualifier">CIFAR-10/100</p>
+			</BentoCell>
+		</BentoGrid>
+	</section>
+
+	<!-- 3. THE PRIMITIVE -->
+	<section class="section container">
+		<Eyebrow>ONE PRIMITIVE · EVERYTHING FOLLOWS</Eyebrow>
+		<h2>Every other network is a black box because it has to be. This one is not.</h2>
+		<div class="primitive-columns">
+			<p class="primitive-column">
+				When a neural network trains, every error signal flows through every parameter
+				simultaneously. That diffusion is what makes networks powerful — and what makes
+				structural accountability impossible. When something breaks, the loss falls. That's
+				all you know. Which part, when, why: these questions have no answer in the standard
+				architecture.
+			</p>
+			<p class="primitive-column">
+				ORMAS bounds each node's local gradient chain to exactly four operations. That
+				constraint — small enough to be traceable, large enough to carry a signal — means
+				per-node attribution is a physical property of the backward pass, not a
+				reconstruction.
+			</p>
+		</div>
+		<p class="primitive-closer">The network knows what it is doing. It always did. Now it keeps a record.</p>
+
+		<BentoGrid>
+			{operations.map((op) => (
+				<BentoCell colSpan={4} rowSpan={1}>
+					<p class="operation-name">{op.name}</p>
+					<p class="operation-description">{op.description}</p>
+					<p class={`operation-status operation-status--${op.status.toLowerCase()}`}>{op.status}</p>
+				</BentoCell>
+			))}
+		</BentoGrid>
+	</section>
+
+	<!-- 4. STATUS LADDER -->
+	<section class="section container">
+		<Eyebrow>CURRENT STATUS · HONEST</Eyebrow>
+		<h2>One solution is available now. Six are on the way.</h2>
+		<LadderSchematic />
+		<div class="status-columns">
+			<div>
+				<p>
+					The Warning Light runs today. Send a training run — we return which component
+					failed and when. One solution, bookable now. The Proofreader and The Diary are in
+					active build.
+				</p>
+				<Button variant="tertiary" href="/contact">Book a Warning Light session</Button>
+			</div>
+			<div>
+				<p>
+					The next four solutions depend on V2 — a version fully specified and in active
+					development. One validation study, currently being scoped, will confirm the
+					central premise that unlocks all four.
+				</p>
+				<p>Pre-register for early access. You will be notified when the study passes.</p>
+				<Button variant="tertiary" href="/contact">Pre-register</Button>
+			</div>
+		</div>
+	</section>
+
+	<!-- 5. SECTORS -->
+	<section class="section container">
+		<Eyebrow>FIVE MARKETS · ONE CODEBASE</Eyebrow>
+		<h2>The primitive is horizontal. The first sale is specific.</h2>
+		<div class="sector-cards">
+			{sectors.map((sector) => (
+				<div class="sector-card">
+					<p class="sector-name">{sector.name}</p>
+					<p class="sector-readiness">{sector.readiness}</p>
+					{sector.hook.map((line) => <p class="sector-hook">{line}</p>)}
+					<p class="sector-stat">{sector.stat}</p>
+				</div>
+			))}
+		</div>
+		<Button variant="tertiary" href="/sectors">See all sectors in depth</Button>
+	</section>
+
+	<!-- 6. CHARTER PARTNERSHIP BAND -->
+	<section class="section container charter-band">
+		<h2>The Charter Partnership Programme</h2>
+		<p>Pre-booking is the only window to negotiate terms.</p>
+		<p><span class="tabular">3</span> Charter Partner slots open per quarter. <span class="tabular">2</span> slots remain.</p>
+		<p>
+			The EU AI Act and SR 11-7 regulatory windows are active. Charter Partners lock in a
+			flat-rate, 5-year lock, direct engineering access, and a first-mover position to define
+			what compliance looks like for everyone else.
+		</p>
+		<Button variant="primary" href="/contact">Apply for a Charter Partnership</Button>
+	</section>
+
+	<!-- 7. PAPER STRIP -->
+	<section class="section container paper-strip">
+		<div>
+			<p>
+				ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction · Rokib
+				Al Dhin Raadh
+			</p>
+			<p>383 experiments · Preprint under review</p>
+		</div>
+		<Button variant="tertiary" href="/paper">Read</Button>
+	</section>
+</Page>

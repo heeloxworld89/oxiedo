@@ -222,6 +222,16 @@
 	padding: 12px var(--space-lg); /* 12px — no matching --space-* token; 24px = --space-lg */
 }
 
+.btn--primary.btn--small,
+.btn--secondary.btn--small {
+	/* design/12 §Navigation — "Invest" / "Book Now" small CTAs, no separate size spec given */
+	padding: var(--space-sm) var(--space-md);
+}
+
+.btn--full {
+	width: 100%;
+}
+
 .btn--primary {
 	background: var(--amber-bright);
 	color: var(--text-on-amber);
@@ -499,6 +509,11 @@
    Nav — design/01 §Navigation Design, design/12 §Navigation
    ============================================================ */
 
+/* Nav is position: fixed (below), so every page's <main> needs this offset to clear it. */
+main {
+	padding-top: 60px; /* design/12 §Navigation — nav bar height, no matching --space-* token */
+}
+
 .nav {
 	position: fixed;
 	top: 0;
@@ -564,49 +579,6 @@
 .nav-cta {
 	display: flex;
 	gap: var(--space-sm);
-}
-
-.nav-cta-primary,
-.nav-cta-ghost {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-	font-weight: 600;
-	font-size: var(--text-small);
-	padding: var(--space-sm) var(--space-md);
-	border-radius: 2px;
-	text-decoration: none;
-	transition:
-		background var(--duration-fast) var(--ease-out),
-		border-color var(--duration-fast) var(--ease-out),
-		color var(--duration-fast) var(--ease-out);
-}
-
-.nav-cta-primary {
-	background: var(--amber-bright);
-	color: var(--text-on-amber);
-	border: 1px solid var(--amber-bright);
-}
-
-.nav-cta-primary:hover {
-	filter: brightness(1.1);
-}
-
-.nav-cta-ghost {
-	background: transparent;
-	color: var(--text-primary);
-	border: 1px solid var(--border-strong);
-}
-
-.nav-cta-ghost:hover {
-	border-color: var(--amber-mid);
-	color: var(--amber-bright);
-}
-
-.nav-cta-primary--full,
-.nav-cta-ghost--full {
-	width: 100%;
 }
 
 .nav-hamburger {
@@ -762,4 +734,245 @@
 	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 	font-size: var(--text-small);
 	color: var(--text-muted);
+}
+
+/* ============================================================
+   Home page sections — design/01_HOME.md, ui_ux/01_HOME_UI.md
+   ============================================================ */
+
+.hero {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+}
+
+.hero-left {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-md);
+}
+
+.hero-headline {
+	max-width: 16ch;
+}
+
+.hero-subhead {
+	max-width: 65ch;
+	color: var(--text-primary);
+}
+
+.hero-cta-row {
+	display: flex;
+	gap: var(--space-md);
+	flex-wrap: wrap;
+}
+
+.hero-right .telemetry-block {
+	max-height: 8.5em; /* ~4 lines at --lh-mono, mobile truncation — ui_ux/01 §1 */
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 4;
+}
+
+@media (min-width: 1024px) {
+	.hero {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.hero-left {
+		flex: 0 0 60%;
+	}
+
+	.hero-right {
+		flex: 0 0 40%;
+	}
+
+	.hero-right .telemetry-block {
+		max-height: none;
+		overflow: visible;
+		display: block;
+		-webkit-line-clamp: unset;
+	}
+}
+
+.bento-context {
+	color: var(--text-secondary);
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: var(--text-small);
+	margin-top: var(--space-sm);
+}
+
+.bento-qualifier {
+	color: var(--text-secondary);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	margin-top: var(--space-xs);
+}
+
+.primitive-columns {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	margin-top: var(--space-lg);
+}
+
+.primitive-column {
+	max-width: 65ch;
+	color: var(--text-primary);
+}
+
+.primitive-closer {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-lg);
+	font-weight: 600;
+}
+
+@media (min-width: 1024px) {
+	.primitive-columns {
+		flex-direction: row;
+	}
+}
+
+.operation-name {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.operation-description {
+	color: var(--text-secondary);
+	font-size: var(--text-small);
+	margin-top: var(--space-xs);
+}
+
+.operation-status {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	text-transform: uppercase;
+	margin-top: var(--space-sm);
+}
+
+.operation-status--built {
+	color: var(--amber-mid);
+}
+
+.operation-status--v2 {
+	color: var(--text-secondary);
+}
+
+.status-columns {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+	margin-top: var(--space-xl);
+}
+
+.status-columns p {
+	max-width: 65ch;
+	color: var(--text-primary);
+}
+
+@media (min-width: 1024px) {
+	.status-columns {
+		flex-direction: row;
+	}
+}
+
+.sector-cards {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--space-lg);
+	margin-top: var(--space-xl);
+}
+
+.sector-card {
+	background: var(--bg-surface);
+	border: 1px solid var(--border-subtle);
+	border-radius: 2px;
+	padding: var(--space-lg);
+}
+
+.sector-name {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.sector-readiness {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.05em;
+	color: var(--text-secondary);
+	margin-top: var(--space-xs);
+}
+
+.sector-hook {
+	color: var(--text-primary);
+	margin-top: var(--space-sm);
+}
+
+.sector-stat {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	margin-top: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+	.sector-cards {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (min-width: 1024px) {
+	.sector-cards {
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+	.sector-card:last-child {
+		grid-column: span 3;
+	}
+}
+
+.charter-band {
+	/* ui_ux/01 §6 asks only for "a single, visually distinct block" — no colour is specified for
+	   this band, so distinctness comes from surface + border, matching the pattern already used
+	   elsewhere (sector-card, paper-strip), not a borrowed or invented colour. */
+	background: var(--bg-surface);
+	border-top: 1px solid var(--border-subtle);
+}
+
+.charter-band p {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-sm);
+}
+
+.paper-strip {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	align-items: flex-start;
+	background: var(--bg-surface);
+	border: 1px solid var(--amber-mid);
+	border-radius: 2px;
+	padding: var(--space-lg);
+}
+
+.paper-strip p {
+	color: var(--text-primary);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+}
+
+@media (min-width: 1024px) {
+	.paper-strip {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
 }

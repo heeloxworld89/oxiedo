@@ -1,23 +1,40 @@
 ---
-// design/12 §CTA Buttons. Primary (amber fill) · secondary (ghost) · tertiary (text + arrow).
-// Disabled state is signalled by opacity and cursor, never colour alone (Law 6). Nav.astro
-// (task 1.1, built before this component existed) has its own equivalent CTA classes rather
-// than this component — a deliberate consequence of the task ordering, not an oversight; see
-// this task's SURPRISES.
+// design/12 §CTA Buttons, §Navigation. Primary (amber fill) · secondary (ghost) · tertiary
+// (text + arrow). Disabled state is signalled by opacity and cursor, never colour alone (Law 6).
+// `size="small"` is the nav bar's CTA treatment (folded onto this component at task 2.1 — Nav
+// carried its own duplicate .nav-cta-* rules until now, an artifact of build order).
 export interface Props {
 	variant?: 'primary' | 'secondary' | 'tertiary';
+	size?: 'default' | 'small';
+	fullWidth?: boolean;
 	href?: string;
 	disabled?: boolean;
 	type?: 'button' | 'submit' | 'reset';
 }
 
-const { variant = 'primary', href, disabled = false, type = 'button' } = Astro.props;
+const {
+	variant = 'primary',
+	size = 'default',
+	fullWidth = false,
+	href,
+	disabled = false,
+	type = 'button',
+} = Astro.props;
+
+const classes = [
+	'btn',
+	`btn--${variant}`,
+	size === 'small' && 'btn--small',
+	fullWidth && 'btn--full',
+]
+	.filter(Boolean)
+	.join(' ');
 ---
 
 {
 	href ? (
 		<a
-			class={`btn btn--${variant}`}
+			class={classes}
 			href={disabled ? undefined : href}
 			aria-disabled={disabled ? 'true' : undefined}
 			tabindex={disabled ? -1 : undefined}
@@ -26,7 +43,7 @@ const { variant = 'primary', href, disabled = false, type = 'button' } = Astro.p
 			{variant === 'tertiary' && <span aria-hidden="true"> →</span>}
 		</a>
 	) : (
-		<button class={`btn btn--${variant}`} type={type} disabled={disabled}>
+		<button class={classes} type={type} disabled={disabled}>
 			<slot />
 			{variant === 'tertiary' && <span aria-hidden="true"> →</span>}
 		</button>
