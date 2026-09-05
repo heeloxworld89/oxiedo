@@ -1,0 +1,42 @@
+/* The reveal system. Defaults to visible — no JS required. See
+   instructions/00_ENGINEERING_LAWS.md §Law 3, ui_ux/00 §5, design/18 §12.
+
+   Only the reveal system and the reduced-motion override are built here. design/18 §12's
+   reduced-motion block also lists selectors for a terminal-typing effect, an infinite badge
+   pulse, and a scroll indicator — features Law 5 forbids outright ("anything on a loop",
+   "typing effects") and that do not exist in this build. Those selectors are omitted rather
+   than copied in dead; see this task's SURPRISES for the finding. */
+
+.reveal {
+	opacity: 1;
+	transform: none;
+}
+
+.js .reveal {
+	opacity: 0;
+	transform: translateY(20px);
+	transition:
+		opacity var(--duration-normal) var(--ease-out),
+		transform var(--duration-normal) var(--ease-out);
+}
+
+.js .reveal.visible {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+
+	.reveal {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+}
