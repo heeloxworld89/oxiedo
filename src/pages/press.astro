@@ -1,0 +1,182 @@
+---
+// design/11_PRESS.md, ui_ux/11_PRESS_UI.md. Hidden from nav (Nav.astro has never included it)
+// and excluded from the sitemap — sitemap generation itself is a Block 5 task; flagging here so
+// whoever wires it in remembers to exclude this route explicitly.
+//
+// VENUE: "AAAI 2027" appears twice in design/11's source (the one-page brief, and PR-001's
+// headline/body). Same site-wide correction as Home/Footer/Paper — omitted until the AAAI
+// anonymity check clears (design/12 §Pre-Launch Checklist).
+//
+// TBD PLACEHOLDERS, not resolved (per this task's own instruction — these are pending
+// decisions, not copy gaps): the location line, and PR-002's partner name/finding summary.
+// Each renders with the visible amber-ghost/amber-mid-border treatment ui_ux/11 §2 specifies,
+// so a missing variable reads as a missing variable, not as finished copy.
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+---
+
+<Page title="PRESS">
+	<section class="section container press-page">
+		<Eyebrow>PRESS</Eyebrow>
+		<h1>Press</h1>
+		<p class="press-prose">
+			Materials for journalists, analysts, and researchers covering Oxiedo. All factual
+			claims on this page are sourced and verifiable. We will respond to press inquiries
+			within a few days — usually less.
+		</p>
+		<p class="press-contact">
+			Press contact: [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]<br />
+			Subject line: "Press inquiry — [outlet name]"
+		</p>
+	</section>
+
+	<section class="section container press-page">
+		<h2>The one-page brief</h2>
+		<p class="press-prose">
+			<strong>What Oxiedo is:</strong> Oxiedo is building on a single architectural
+			discovery: bounding each node of a neural network's local gradient chain to four
+			operations makes that node independently addressable. The company calls this property
+			"addressability." It enables a new class of commercial solutions — the first of which
+			are ready to engage today.
+		</p>
+		<p class="press-prose">
+			<strong>The technology:</strong> The ORMAS architecture (Orchestrated Repair and
+			Monitoring with Architectural Self-correction) emits a five-layer telemetry stack as a
+			physical byproduct of training — not as post-hoc analysis. Results across 383
+			controlled experiments show:
+		</p>
+		<ul class="press-list">
+			<li>
+				80.3% recovery from mid-training structural collapse where a standard network
+				permanently collapsed to 10% (+70.3 pp gap)
+			</li>
+			<li>94.6% task retention after sequential shift, no replay buffer, no task ID (baseline: 47.3%)</li>
+			<li>58.8% zero-shot compositional accuracy on unseen combinations (baseline: 25%)</li>
+			<li>−2.5 pp degradation under 40% label noise (baseline: −7.8 pp)</li>
+		</ul>
+		<p class="press-prose">All results: CIFAR-10 / CIFAR-100. Manuscript under review.</p>
+		<p class="press-prose">
+			<strong>The solutions:</strong> The Warning Light is available for immediate
+			engagement. The Proofreader (label quality analysis) and The Diary (compliance record)
+			are in active build and open for Charter Partnership pre-booking. Four more are in
+			development, pending V2 completion and one validation study.
+		</p>
+		<p class="press-prose">
+			<strong>The company:</strong> Founded by Rokib Al Dhin Raadh, an independent
+			researcher. Engine MIT-licensed. Repository will be public after the review period.
+			Pre-revenue. Not yet venture-backed. Based in <span class="press-tbd">LOCATION TBD — add before press outreach begins</span>.
+		</p>
+	</section>
+
+	<section class="section container press-page">
+		<h2>Press releases (prepared, not released)</h2>
+		<p class="press-prose">These are drafted but on hold. They are stored here for when each event occurs.</p>
+
+		<div class="press-release">
+			<p class="press-release-status tabular">PR-001 · STATUS: READY TO RELEASE when manuscript is formally accepted.</p>
+			<p class="press-release-headline">
+				Oxiedo Publishes Research Architecture That Lets Neural Networks Keep a Record of
+				What They Change
+			</p>
+			<p class="press-prose">
+				383-Experiment Evidence Base Shows +70.3 pp Recovery Advantage Over Standard
+				Networks Under Mid-Training Structural Collapse
+			</p>
+			<p class="press-prose">
+				Oxiedo today released the full research foundation for its training architecture,
+				ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), via
+				a submitted manuscript.
+			</p>
+			<p class="press-prose">
+				The architecture bounds each node's local gradient chain to four operations,
+				producing per-node attribution as a physical property of the backward pass — not
+				as a reconstruction. Across 383 controlled experiments on CIFAR-10 and CIFAR-100,
+				the system demonstrated 80.3% recovery from mid-training structural collapse
+				compared to a permanent 10.0% for parameter-matched standard networks, a gap of
+				+70.3 percentage points.
+			</p>
+			<p class="press-prose-note">(Full boilerplate, quote from founder, and assets to be added at release.)</p>
+		</div>
+
+		<div class="press-release">
+			<p class="press-release-status tabular">
+				PR-002 · STATUS: HOLD — release when first external engagement is complete and
+				partner approves.
+			</p>
+			<p class="press-release-headline">
+				Oxiedo Completes First External Diagnostic: <span class="press-tbd">PARTNER NAME</span>
+				<span class="press-tbd">FINDING SUMMARY</span>
+			</p>
+			<p class="press-prose-note">(Template — fill in specifics.)</p>
+		</div>
+
+		<div class="press-release">
+			<p class="press-release-status tabular">PR-003 · STATUS: HOLD — release if/when separation study passes.</p>
+			<p class="press-release-headline">
+				Oxiedo Confirms Central V2 Premise: Architecture Separates Mislabelled Data from
+				Hard Examples Reliably
+			</p>
+			<p class="press-prose-note">(Template — add exact results.)</p>
+		</div>
+
+		<div class="press-release">
+			<p class="press-release-status tabular">PR-004 · STATUS: HOLD — release if separation study fails.</p>
+			<p class="press-release-headline">Oxiedo Reports Separation Study Result and Updates Solution Roadmap</p>
+			<p class="press-prose">
+				The source-attribution validation study returned <span class="press-tbd">result</span>.
+				Four solutions as previously described are removed from the roadmap. The Warning
+				Light, The Proofreader, and The Diary are unaffected. Updated roadmap available at
+				oxiedo.com/solutions.
+			</p>
+			<p class="press-prose-note">
+				Note: having PR-004 already written is itself a signal. Companies that have a
+				press release ready for their downside case are companies a journalist can trust.
+			</p>
+		</div>
+	</section>
+
+	<section class="section container press-page">
+		<h2>Assets</h2>
+		<ul class="press-list">
+			<li>Logo (SVG) — full colour</li>
+			<li>Logo (SVG) — white on transparent</li>
+			<li>Logo (PNG) — 1200px</li>
+			<li>Founder photo (if available)</li>
+			<li>Solution diagram — the four operations</li>
+			<li>Market map diagram — five sectors</li>
+			<li>Architecture diagram — three signals + telemetry stack</li>
+			<li>Press brief (PDF, one page)</li>
+		</ul>
+	</section>
+
+	<section class="section container press-page">
+		<h2>Boilerplate</h2>
+		<p class="press-prose">
+			Oxiedo is building on the ORMAS architecture (Orchestrated Repair and Monitoring with
+			Architectural Self-correction), a neural network design that makes per-node causal
+			attribution a physical property of training — enabling per-component diagnosis,
+			bounded structural treatment, audit, and deletion of data contributions in trained
+			models. All corrections are logged, bounded, and human-reviewable. The architecture is
+			submitted for peer review, with 383 controlled experiments across four architecture
+			families. The engine is MIT-licensed. The repository will be made public after the
+			review period ends.
+		</p>
+		<p class="press-prose">
+			All experimental results are CIFAR-10 / CIFAR-100. No clinical, biological, financial,
+			or production data has been used. The Warning Light is available for immediate
+			engagement. The Proofreader and The Diary are in active build and open for Charter
+			Partnership pre-booking. Oxiedo is pre-revenue and unfunded as of September 2026.
+		</p>
+	</section>
+
+	<section class="section container press-page">
+		<h2>Corrections policy</h2>
+		<p class="press-prose">If you believe a claim on this site or in a press release is inaccurate:</p>
+		<p class="press-prose">
+			Contact [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH] with "Correction — [specific claim]"
+			in the subject line. Every claim on this site is sourced. We will respond with the
+			source or issue a correction.
+		</p>
+		<p class="press-prose">We do not have a PR agency. You will receive a response from the founder.</p>
+	</section>
+</Page>
