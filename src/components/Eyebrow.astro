@@ -1,5 +1,16 @@
 ---
 // design/12 §Eyebrow Treatment.
+//
+// Block 5, task 5.1: some sections use the eyebrow text as their only title (no h1/h2 follows).
+// Rendered as a <span>, that text was invisible to heading navigation — a real HEADINGS
+// failure. `as="h2"` renders the identical visual treatment as a real heading for those
+// sections; every other call site is unaffected (default stays <span>).
+export interface Props {
+	as?: 'span' | 'h2';
+}
+
+const { as = 'span' } = Astro.props;
+const Tag = as;
 ---
 
-<span class="eyebrow"><slot /></span>
+<Tag class="eyebrow"><slot /></Tag>

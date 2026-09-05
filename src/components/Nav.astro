@@ -17,11 +17,13 @@ const links = [
 	<div class="nav-bar">
 		<a href="/" class="nav-wordmark">OXIEDO</a>
 
-		<ul class="nav-links">
-			{links.map((link) => (
-				<li><a href={link.href} class="nav-link">{link.label}</a></li>
-			))}
-		</ul>
+		<nav class="nav-links-wrap" aria-label="Primary">
+			<ul class="nav-links">
+				{links.map((link) => (
+					<li><a href={link.href} class="nav-link">{link.label}</a></li>
+				))}
+			</ul>
+		</nav>
 
 		<div class="nav-cta">
 			<Button variant="secondary" size="small" href="/invest">Invest</Button>
@@ -43,11 +45,13 @@ const links = [
 
 	<div class="nav-mobile" id="nav-mobile">
 		<button type="button" class="nav-mobile-close" aria-label="Close menu">×</button>
-		<ul class="nav-mobile-links">
-			{links.map((link) => (
-				<li><a href={link.href} class="nav-mobile-link">{link.label}</a></li>
-			))}
-		</ul>
+		<nav aria-label="Primary">
+			<ul class="nav-mobile-links">
+				{links.map((link) => (
+					<li><a href={link.href} class="nav-mobile-link">{link.label}</a></li>
+				))}
+			</ul>
+		</nav>
 		<div class="nav-mobile-cta">
 			<Button variant="primary" fullWidth href="/contact">Book Now</Button>
 			<Button variant="secondary" fullWidth href="/invest">Invest</Button>

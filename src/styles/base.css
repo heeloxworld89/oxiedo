@@ -103,6 +103,26 @@ a {
 	outline-offset: 2px;
 }
 
+/* Law 6 — skip link. No source specifies its visual treatment (a pure a11y utility, not a
+   design element); off-screen until focused, then pinned above everything else, styled from
+   existing tokens only. First focusable element on every route (Page.astro). */
+.skip-link {
+	position: absolute;
+	top: -100%;
+	left: var(--space-md);
+	z-index: 999;
+	background: var(--amber-bright);
+	color: var(--text-on-amber);
+	padding: var(--space-sm) var(--space-md);
+	border-radius: 2px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.skip-link:focus-visible {
+	top: var(--space-md);
+}
+
 /* design/12 §Typography binding — every number a reader might compare to another. */
 .tabular {
 	font-variant-numeric: tabular-nums;

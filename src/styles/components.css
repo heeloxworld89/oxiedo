@@ -336,6 +336,7 @@
 	display: inline-block;
 	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 	font-size: var(--text-eyebrow);
+	font-weight: 400;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
 	color: var(--amber-mid);

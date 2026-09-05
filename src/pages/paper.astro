@@ -148,7 +148,7 @@ const evidenceStats =
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>ABSTRACT</Eyebrow>
+		<Eyebrow as="h2">ABSTRACT</Eyebrow>
 		<blockquote class="paper-abstract">{abstract}</blockquote>
 		<p class="paper-positioning">
 			"ORMAS is not an explainability layer. It is a training architecture that makes
@@ -158,7 +158,7 @@ const evidenceStats =
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>THE SIX RESULTS</Eyebrow>
+		<Eyebrow as="h2">THE SIX RESULTS</Eyebrow>
 		<ol class="results-ladder">
 			{
 				results.map((r) => (
@@ -184,14 +184,14 @@ const evidenceStats =
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>THE MECHANISM IN FIVE STEPS</Eyebrow>
+		<Eyebrow as="h2">THE MECHANISM IN FIVE STEPS</Eyebrow>
 		<TelemetryBlock label="Mechanism">{mechanismLines.join('\n')}</TelemetryBlock>
 		<div class="paper-equation" set:html={gateEquation} />
 		<p class="paper-equation-caption">Health gate — self_correction.py:190-197</p>
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>WHAT WAS NOT TESTED</Eyebrow>
+		<Eyebrow as="h2">WHAT WAS NOT TESTED</Eyebrow>
 		<DisclosurePanel label="Named gaps in the evidence base">
 			<p>
 				Test-time distribution shift (CIFAR-10-C equivalents): not run. Named in the paper
@@ -216,7 +216,7 @@ const evidenceStats =
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>SCOPE STATEMENT AND EVIDENCE BASE</Eyebrow>
+		<Eyebrow as="h2">SCOPE STATEMENT AND EVIDENCE BASE</Eyebrow>
 		<p class="paper-scope">
 			We do not claim that ORMAS achieves state-of-the-art accuracy on clean benchmarks, nor
 			that it replaces specialized noisy-label algorithms. We claim that a single-network
@@ -237,7 +237,7 @@ const evidenceStats =
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>CITATION</Eyebrow>
+		<Eyebrow as="h2">CITATION</Eyebrow>
 		<TelemetryBlock>{citation}</TelemetryBlock>
 	</section>
 </Page>
