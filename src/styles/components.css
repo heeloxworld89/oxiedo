@@ -3,6 +3,48 @@
    see each task's SURPRISES for findings where design/12 itself has no matching token. */
 
 /* ============================================================
+   PullStat — design/12 §Pull Stat, ui_ux/01 §2
+   ============================================================ */
+
+.pull-stat {
+	text-align: center;
+}
+
+.pull-stat-figure {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-weight: 700;
+	font-size: 56px; /* design/12 §Pull Stat — mobile figure, no matching --text-* token */
+	line-height: 1.1;
+	color: var(--amber-bright);
+}
+
+.pull-stat--warning .pull-stat-figure {
+	color: var(--chart-warning);
+}
+
+.pull-stat-caption {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	max-width: 240px; /* design/12 §Pull Stat — no matching --space-* token */
+	margin-inline: auto;
+}
+
+@media (min-width: 1024px) {
+	.pull-stat {
+		text-align: left;
+	}
+
+	.pull-stat-figure {
+		font-size: 80px; /* design/12 §Pull Stat — desktop figure, no matching --text-* token */
+	}
+
+	.pull-stat-caption {
+		margin-inline: 0;
+	}
+}
+
+/* ============================================================
    StatusBadge — design/12 §Status Badge
    ============================================================ */
 
