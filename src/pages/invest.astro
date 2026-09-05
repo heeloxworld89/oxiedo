@@ -1,0 +1,208 @@
+---
+// design/08_INVEST.md, ui_ux/08_INVEST_UI.md.
+// No TAM figure, no projection sparklines, no simulated raise indicators — all explicitly
+// forbidden by ui_ux/08. "What is open" (§4) must outweigh the metric bento visually; it is
+// rendered larger and after the ladder, not squeezed beside the metrics.
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import DisclosurePanel from '../components/DisclosurePanel.astro';
+import LadderSchematic from '../components/LadderSchematic.astro';
+import FormField from '../components/FormField.astro';
+import { solutions } from '../data/solutions';
+
+const metrics = [
+	{ figure: '+70.3 pp', label: 'Recovery advantage over standard networks' },
+	{ figure: '383', label: 'Controlled experiments' },
+	{ figure: '16,316', label: 'Lines of code' },
+	{ figure: '7 / 1', label: 'Solutions specified / available now' },
+];
+
+const ladderRows = solutions.map((s) => ({
+	name: s.name,
+	price: s.pricing.map((p) => `${p.label}: ${p.amount}`).join(' · '),
+	gate: s.gate ? s.gate.name : 'Available now',
+}));
+
+const raiseUses = [
+	{
+		title: 'The two validation studies',
+		body: 'The monitoring lead-time measurement (~8 GPU-hours): does the health signal lead the global loss curve? The separation study (~20 GPU-hours): does inter-node disagreement separate mislabelled data from hard data? Both run on existing hardware. Capital accelerates the timeline.',
+	},
+	{
+		title: 'The first three engagements',
+		body: 'Turning "bookable" into "booked." Taking the first design partners through a full diagnostic, generating the first real non-CIFAR result, and publishing it with the partner.',
+	},
+	{
+		title: 'The legal and regulatory consultations',
+		body: 'Two consultations with months of lead time, both urgently needed: a regulatory consultant who has filed a change-control plan, and a data-protection lawyer who works in AI. Neither has been engaged.',
+	},
+	{
+		title: 'The technical co-founder',
+		body: 'One person is building this. Capital allows that person to be found rather than competed for later. The architecture is done; the company-building is not.',
+	},
+];
+---
+
+<Page title="THE INVESTMENT CASE">
+	<section class="section container">
+		<Eyebrow>THE INVESTMENT CASE</Eyebrow>
+		<h1>
+			ORMAS is a commercial primitive in a market that does not yet have one. The primitive
+			works. The solutions are specified. The evidence is documented.
+		</h1>
+		<p class="invest-subhead">
+			We are not asking anyone to believe the category exists. We are asking whether the
+			evidence justifies a conversation.
+		</p>
+		<Button variant="primary" href="/contact">Request the full brief</Button>
+	</section>
+
+	<section class="section container">
+		<div class="metric-bento">
+			{
+				metrics.map((m) => (
+					<div class="metric-bento-cell">
+						<p class="metric-bento-figure tabular">{m.figure}</p>
+						<p class="metric-bento-label">{m.label}</p>
+					</div>
+				))
+			}
+		</div>
+	</section>
+
+	<section class="section container">
+		<p class="invest-case">
+			ORMAS is an architectural primitive — a constraint on how neural networks train — that
+			gives every node of the network an independently addressable identity. That property
+			does not exist in standard architectures. It cannot be approximated by post-hoc tools.
+			It can only be built in, and it has been.
+		</p>
+		<p class="invest-case">
+			The commercial consequence: a network with addressable nodes can protect regions,
+			repair them, account for their activity, separate them by data source, and delete
+			specific data contributions on request. Those five operations map directly onto five
+			markets with clearly named buyers, documented pain, and published alternatives that are
+			either absent or orders of magnitude more expensive than what this architecture makes
+			possible.
+		</p>
+		<p class="invest-case">
+			The evidence base for the primitive is 383 controlled experiments across four
+			architecture families, adversarially tested by its own author's kill suite, with a
+			preprint under review. That is an unusual artifact for an unfunded company. The
+			question the raise answers is: what does this look like at scale?
+		</p>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>THE SOLUTION LADDER</Eyebrow>
+		<h2>Seven solutions. One available now, two open for pre-booking. One gate separates the tiers.</h2>
+		<LadderSchematic />
+		<div class="invest-ladder-detail">
+			{
+				ladderRows.map((row) => (
+					<div class="invest-ladder-row">
+						<p class="invest-ladder-name">{row.name}</p>
+						<p class="invest-ladder-price tabular">{row.price}</p>
+						<p class="invest-ladder-gate">{row.gate}</p>
+					</div>
+				))
+			}
+		</div>
+		<p class="invest-ladder-note">All prices: designed, not yet tested against real customers.</p>
+		<p class="invest-gate-summary">
+			Four of the seven solutions depend on one validation study: a 20 GPU-hour run that
+			tests whether the architecture's per-node readouts can separate mislabelled data from
+			hard-but-correctly-labelled data. Pass: all seven solutions are reachable. Fail: four
+			solutions close. The first three remain. The downside case is a working company, not
+			zero.
+		</p>
+		<Button variant="tertiary" href="/solutions">See the full solution detail</Button>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>THE FIVE MARKETS</Eyebrow>
+		<h2>Five markets. All reading the same record differently.</h2>
+		<Button variant="tertiary" href="/sectors">Full market analysis</Button>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>THE LICENSING MOAT</Eyebrow>
+		<h2>The engine is MIT. The moat is the record.</h2>
+		<p class="invest-case">
+			What compounds is not the code. The customer's accumulated record. Their calibrated
+			bound. The fact that somebody signed it.
+		</p>
+		<Button variant="tertiary" href="/licensing">Full licensing detail</Button>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>WHAT THE RAISE IS FOR</Eyebrow>
+		<h2>What this becomes with capital.</h2>
+		<ol class="invest-raise-uses">
+			{
+				raiseUses.map((use, i) => (
+					<li class="invest-raise-use">
+						<span class="invest-raise-use-index">{i + 1}</span>
+						<div>
+							<p class="invest-raise-use-title">{use.title}</p>
+							<p class="invest-raise-use-body">{use.body}</p>
+						</div>
+					</li>
+				))
+			}
+		</ol>
+	</section>
+
+	<section class="section container invest-open">
+		<Eyebrow>WHAT IS OPEN</Eyebrow>
+		<h2>What is not known yet.</h2>
+		<DisclosurePanel label="The honest section">
+			<p>Zero customer conversations have happened.</p>
+			<p>
+				Every buyer title, price, and cycle length in the commercial plan is reasoned
+				bottom-up from established spend on alternatives. None of it is tested against a
+				real customer.
+			</p>
+			<p>The separation study has not been run.</p>
+			<p>The monitoring lead time has not been measured.</p>
+			<p>No regulatory consultant has read the specification.</p>
+			<p>No data-protection lawyer has told us what may be certified.</p>
+			<p>
+				These are the four things the raise is for. If any of them produces a negative
+				result, the plan is updated accordingly.
+			</p>
+			<p class="invest-open-closer">
+				The research has been adversarially validated. The commercial thesis has not been
+				tested at all.
+			</p>
+		</DisclosurePanel>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>IF THIS IS THE KIND OF THING YOU INVEST IN</Eyebrow>
+		<p class="invest-case">
+			We are open to conversations with investors who understand deep-tech primitives,
+			long-cycle B2B markets, and the specific risk profile of a pre-revenue company with a
+			validated research result but no customer conversations yet.
+		</p>
+		<p class="invest-case">
+			We are not doing a general raise. If you want to see the full brief — the evidence, the
+			model, the solution ladder, the financial assumptions, and the open questions — request
+			it below. We will respond within a few days.
+		</p>
+
+		<form class="invest-form">
+			<FormField id="invest-name" label="Name" />
+			<FormField id="invest-email" label="Email" type="email" />
+			<FormField id="invest-org" label="Fund / Organisation" />
+			<FormField id="invest-thesis" label="What you invest in" />
+			<Button variant="primary" type="submit">Request the brief</Button>
+		</form>
+
+		<p class="invest-form-note">
+			We are not looking for a fast close. We are looking for the right partner. If that is
+			you, we will spend the time to make it clear.
+		</p>
+	</section>
+</Page>
