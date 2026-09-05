@@ -1,0 +1,134 @@
+---
+// design/10_CONTACT.md, ui_ux/10_CONTACT_UI.md.
+// All four intents stay visible and selectable — none slide away. Each intent's own descriptive
+// copy IS its commitments block, rendered above that intent's fields (ui_ux/10 §4).
+//
+// OTHER intent: ui_ux/10 §1 requires four nodes (BOOK / PRE-BOOK / INVEST / OTHER), but
+// design/10 only writes copy and fields for the first three. OTHER's fields (Name, Email,
+// Message) are minimal, functional field labels — not factual claims — consistent with Law 1's
+// exception for interface strings ("Close", "Menu"). No commitments copy exists for it, so none
+// is invented.
+//
+// Submission is not wired — markup and states only (Block 4.5/4.6 own the actual send).
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import FormField from '../components/FormField.astro';
+import Button from '../components/Button.astro';
+---
+
+<Page title="CONTACT">
+	<section class="section container">
+		<Eyebrow>CONTACT</Eyebrow>
+		<h1>Tell us what you are working on.</h1>
+		<p class="contact-subhead">Three types of contact. All read by a person. Reply within a few days.</p>
+		<p class="contact-note">
+			Pre-booking pricing is negotiable. Once a solution reaches general availability,
+			pricing is published and fixed. This is the only window.
+		</p>
+
+		<nav class="contact-intents" aria-label="Jump to a contact form">
+			<a href="#book">Book</a>
+			<a href="#pre-book">Pre-book</a>
+			<a href="#invest">Invest</a>
+			<a href="#other">Other</a>
+		</nav>
+	</section>
+
+	<section class="section container contact-form-block" id="book">
+		<p class="contact-form-label">AVAILABLE NOW</p>
+		<h2>Book a Warning Light session</h2>
+		<div class="contact-commitments">
+			<p>The Warning Light is the only solution available to book today.</p>
+			<p>
+				You are booking a structured first engagement. You bring a failing run. We bring a
+				diagnostic. After you submit, we will reply within a few days — usually less. Come
+				prepared to describe one specific training failure.
+			</p>
+		</div>
+		<form class="contact-form">
+			<FormField id="book-name" label="Name" required />
+			<FormField id="book-org" label="Organisation" required />
+			<FormField id="book-frequency" label="Estimated training run frequency" required />
+			<FormField id="book-cost" label="Estimated compute cost per run" required />
+			<FormField id="book-stack" label="Current monitoring stack" required />
+			<Button variant="primary" type="submit">Book a session</Button>
+		</form>
+	</section>
+
+	<section class="section container contact-form-block" id="pre-book">
+		<p class="contact-form-label">CHARTER PARTNERSHIP</p>
+		<h2>Apply for a Charter Partnership</h2>
+		<div class="contact-commitments">
+			<p>
+				The Charter Partnership Programme is the pre-booking window for ORMAS solutions.
+				Pre-booking is the only window to negotiate terms before pricing is published at
+				GA. Slots are limited to 3 per quarter.
+			</p>
+		</div>
+		<form class="contact-form">
+			<FormField
+				id="prebook-solution"
+				label="Which solution are you pre-booking? (The Proofreader, The Diary, The Separator, Certified Deletion, The Federated Node, The Update Engine)"
+				required
+			/>
+			<FormField
+				id="prebook-regulation"
+				label="What regulation or audit is driving this? (SR 11-7, EU AI Act, GDPR Art.17, PCCP, other)"
+				required
+			/>
+			<FormField id="prebook-approach" label="What is your current approach to this problem?" required />
+			<FormField id="prebook-timeline" label="What is your timeline?" required />
+			<FormField id="prebook-org" label="Organisation and contact" required />
+			<Button variant="primary" type="submit">Apply for Partnership</Button>
+		</form>
+	</section>
+
+	<section class="section container contact-form-block" id="invest">
+		<p class="contact-form-label">REQUEST THE INVESTMENT BRIEF</p>
+		<h2>Investment conversation</h2>
+		<div class="contact-commitments">
+			<p>The full brief is not on the site. It covers:</p>
+			<ul>
+				<li>The evidence base and the experiment programme</li>
+				<li>The solution model and the financial assumptions</li>
+				<li>The licensing stack and the moat argument</li>
+				<li>The open gates and what each outcome means</li>
+				<li>The raise terms</li>
+			</ul>
+			<p>
+				We do not send it to everyone. Tell us what you invest in and we will tell you
+				whether this is a fit before sending a document.
+			</p>
+		</div>
+		<form class="contact-form">
+			<FormField id="invest-name" label="Name" required />
+			<FormField id="invest-email" label="Email" type="email" required />
+			<FormField id="invest-org" label="Fund / Organisation" required />
+			<FormField
+				id="invest-thesis"
+				label="What do you invest in? (stage, sector, check size — anything that helps us understand the fit)"
+			/>
+			<Button variant="primary" type="submit">Request the brief</Button>
+		</form>
+	</section>
+
+	<section class="section container contact-form-block" id="other">
+		<p class="contact-form-label">OTHER</p>
+		<h2>Something else</h2>
+		<form class="contact-form">
+			<FormField id="other-name" label="Name" required />
+			<FormField id="other-email" label="Email" type="email" required />
+			<FormField id="other-message" label="Message" required />
+			<Button variant="primary" type="submit">Send</Button>
+		</form>
+	</section>
+
+	<section class="section container">
+		<p class="contact-commitment-footer">
+			We reply within a few days. Every message is read by a person. If your message does
+			not fit any category above, we will say so directly rather than sending a non-answer.
+		</p>
+		<p class="contact-direct">Direct contact: [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]</p>
+		<Button variant="tertiary" href="/paper">Read the manuscript (PDF)</Button>
+	</section>
+</Page>

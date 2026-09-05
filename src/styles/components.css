@@ -1842,3 +1842,85 @@ main {
 .faq-group {
 	margin-top: var(--space-lg);
 }
+
+/* ============================================================
+   Contact page — design/10_CONTACT.md, ui_ux/10_CONTACT_UI.md
+   ============================================================ */
+
+.contact-subhead {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.contact-note {
+	max-width: 65ch;
+	color: var(--text-secondary);
+	font-size: var(--text-small);
+	margin-top: var(--space-sm);
+}
+
+.contact-intents {
+	display: flex;
+	gap: var(--space-lg);
+	flex-wrap: wrap;
+	margin-top: var(--space-xl);
+	border-bottom: 1px solid var(--border-subtle);
+	padding-bottom: var(--space-md);
+}
+
+.contact-intents a {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+	text-decoration: none;
+}
+
+.contact-form-block {
+	border-top: 1px solid var(--border-subtle);
+}
+
+.contact-form-label {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	color: var(--amber-mid);
+}
+
+.contact-commitments {
+	max-width: 65ch;
+	margin-top: var(--space-md);
+}
+
+.contact-commitments p {
+	color: var(--text-primary);
+	margin-top: var(--space-sm);
+}
+
+.contact-commitments ul {
+	margin-top: var(--space-sm);
+	padding-left: var(--space-lg);
+	color: var(--text-primary);
+}
+
+.contact-form {
+	max-width: 65ch;
+	margin-top: var(--space-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+}
+
+.contact-commitment-footer {
+	max-width: 65ch;
+	color: var(--text-primary);
+}
+
+.contact-direct {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	margin-top: var(--space-md);
+}
