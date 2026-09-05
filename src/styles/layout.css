@@ -1,0 +1,50 @@
+/* 12-column grid, containers, and section rhythm. design/12 §Bento Grid System, §Spacing,
+   §Responsive Breakpoints; ui_ux/00 §2 for the prose measure.
+
+   Site breakpoints (design/12 §Responsive Breakpoints + §Bento Grid System), for reference:
+     640px   mobile → tablet
+     1024px  tablet → desktop
+     1280px  desktop → wide desktop
+     1536px  wide
+
+   Two figures below have no matching --space-* token (design/12 states them as bare pixel
+   values, not aliased into the 8px scale): the 20px mobile container gutter, and the 56px/80px
+   tablet/desktop section padding. Cited to source at each declaration rather than forced onto a
+   mismatched token — see this task's SURPRISES for the finding. */
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	gap: var(--space-xl);
+}
+
+.container {
+	width: 100%;
+	max-width: 1100px;
+	margin-inline: auto;
+	padding-inline: 20px; /* design/12 §Responsive Breakpoints — mobile side padding */
+}
+
+.container--wide {
+	max-width: 1280px;
+}
+
+.container--prose {
+	max-width: 65ch; /* ui_ux/00 §2 — reading measure, every prose column, every page */
+}
+
+.section {
+	padding-block: var(--space-xl); /* 40px mobile */
+}
+
+@media (min-width: 640px) {
+	.section {
+		padding-block: 56px; /* design/12 §Spacing — tablet section padding */
+	}
+}
+
+@media (min-width: 1024px) {
+	.section {
+		padding-block: 80px; /* design/12 §Spacing — desktop section padding */
+	}
+}
