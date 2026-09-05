@@ -1255,3 +1255,148 @@ main {
 .paper-scope-emphasis {
 	font-weight: 600;
 }
+
+/* ============================================================
+   Sectors page — design/03_SECTORS.md, ui_ux/03_SECTORS_UI.md
+   ============================================================ */
+
+.sectors-intro {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.sectors-axes {
+	margin-top: var(--space-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+}
+
+.sectors-order-note {
+	max-width: 65ch;
+	color: var(--text-secondary);
+	margin-top: var(--space-lg);
+}
+
+.sectors-tabs {
+	display: flex;
+	gap: var(--space-lg);
+	flex-wrap: wrap;
+	margin-top: var(--space-xl);
+	border-bottom: 1px solid var(--border-subtle);
+	padding-bottom: var(--space-md);
+}
+
+.sectors-tabs a {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+	text-decoration: none;
+	padding-bottom: var(--space-sm);
+	border-bottom: 2px solid transparent;
+}
+
+.sectors-tabs a.active {
+	color: var(--text-primary);
+	border-bottom-color: var(--amber-bright);
+}
+
+.sector-detail {
+	border-top: 1px solid var(--border-subtle);
+}
+
+.sector-badge {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.05em;
+	color: var(--text-secondary);
+	margin-top: var(--space-sm);
+}
+
+.sector-cost,
+.sector-changes {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-lg);
+}
+
+.sector-comparison-note {
+	font-size: var(--text-small);
+	color: var(--text-muted);
+	margin-top: var(--space-sm);
+}
+
+.buyer-card {
+	background: var(--bg-surface);
+	border: 1px solid var(--border-subtle);
+	border-radius: 2px;
+	padding: var(--space-lg);
+	margin-top: var(--space-xl);
+}
+
+.buyer-card-title {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+}
+
+.buyer-card-quote {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: var(--text-h3);
+	color: var(--text-primary);
+	margin: var(--space-md) 0 0;
+	max-width: 65ch;
+}
+
+.buyer-card-figure {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	margin-top: var(--space-md);
+}
+
+.sector-figures {
+	list-style: none;
+	padding: 0;
+	margin-top: var(--space-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+}
+
+.sector-figures li {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-primary);
+}
+
+.sector-figure-external {
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.05em;
+	color: var(--text-muted);
+	border: 1px solid var(--border-muted);
+	border-radius: 2px;
+	padding: 2px var(--space-xs); /* 2px — no matching --space-* token */
+}
+
+.sector-entry,
+.sector-gate {
+	max-width: 65ch;
+	color: var(--text-secondary);
+	font-size: var(--text-small);
+	margin-top: var(--space-md);
+}
+
+.sector-entry strong,
+.sector-gate strong {
+	color: var(--text-primary);
+}

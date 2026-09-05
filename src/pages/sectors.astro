@@ -1,0 +1,97 @@
+---
+// design/03_SECTORS.md, ui_ux/03_SECTORS_UI.md.
+// Tabs are real anchors — with JS off, all five sections render stacked and the tabs jump to
+// them (native browser anchor behaviour, no script required). The "active" underline on the
+// first tab is a static default, matching the pattern already used on /solutions — real
+// scroll-tracking is Block 4.
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import ComparisonMatrix from '../components/ComparisonMatrix.astro';
+import { sectors } from '../data/sectors';
+---
+
+<Page title="SECTORS">
+	<section class="section container">
+		<Eyebrow>SECTORS</Eyebrow>
+		<h1>Sectors</h1>
+		<p class="sectors-intro">
+			ORMAS addresses a structural problem that appears across every industry that trains
+			neural networks under real operational constraints. The form the problem takes is
+			different in each sector. The solution is the same.
+		</p>
+
+		<div class="sectors-axes">
+			<p><strong>AXIS 1 · INDUSTRY</strong> — What did the model do to itself? → The Record</p>
+			<p><strong>AXIS 2 · OBLIGATION</strong> — What data is in there, and can I remove it? → The Certificate</p>
+			<p><strong>AXIS 3 · SCALE</strong> — Is this run failing, and where? → The Alarm</p>
+		</div>
+
+		<p class="sectors-order-note">
+			The order below is not ambition order. It is entry-friction order. Markets 1 and 2
+			require no regulator's permission before the first sale. Markets 3–5 cannot be
+			entered credibly without evidence from 1 and 2.
+		</p>
+
+		<nav class="sectors-tabs" aria-label="Jump to a sector">
+			{
+				sectors.map((s, i) => (
+					<a href={`#${s.id}`} class={i === 0 ? 'active' : undefined}>
+						{s.name}
+					</a>
+				))
+			}
+		</nav>
+	</section>
+
+	{
+		sectors.map((sector) => (
+			<section class="section container sector-detail" id={sector.id}>
+				<h2>{sector.name}</h2>
+				<p class="sector-badge">{sector.badge}</p>
+
+				<p class="sector-cost">{sector.cost}</p>
+				<p class="sector-changes">{sector.changes}</p>
+
+				<ComparisonMatrix
+					leftHeader="What standard monitoring tells you"
+					rightHeader="What this adds"
+					rows={[
+						{
+							left: sector.comparisonLeft,
+							right: `<span class="comparison-matrix-amber">${sector.comparisonRight}</span>`,
+						},
+					]}
+				/>
+				<p class="sector-comparison-note">
+					Illustrative — expressed in this sector's own unit: {sector.comparisonNoun}.
+				</p>
+
+				<div class="buyer-card">
+					<p class="buyer-card-title">{sector.buyerTitle}</p>
+					<blockquote class="buyer-card-quote">{sector.buyerQuote}</blockquote>
+					<p class="buyer-card-figure tabular">{sector.budget}</p>
+				</div>
+
+				{
+					sector.figures.length > 0 && (
+						<ul class="sector-figures">
+							{sector.figures.map((f) => (
+								<li>
+									<span class="tabular">{f.label}</span>
+									{f.external && <span class="sector-figure-external">EXTERNAL</span>}
+								</li>
+							))}
+						</ul>
+					)
+				}
+
+				<p class="sector-entry">
+					<strong>Entry solutions:</strong> {sector.entrySolutions}
+				</p>
+				<p class="sector-gate">
+					<strong>Gate:</strong> {sector.gate}
+				</p>
+			</section>
+		))
+	}
+</Page>
