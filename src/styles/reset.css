@@ -1,0 +1,16 @@
+/* Minimal, deliberate reset. Nothing beyond what the build needs. */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+}
+
+img {
+	max-width: 100%;
+}
+
+html {
+	color-scheme: dark;
+}

@@ -55,3 +55,55 @@
 	src: url('/fonts/JetBrainsMono-Italic.woff2') format('woff2');
 	/* fallback stack when bound: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace */
 }
+
+/* Element defaults, binding the type scale from tokens.css. design/12 §Typography Pairing. */
+
+body {
+	background: var(--bg-base);
+	color: var(--text-primary);
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: var(--text-body);
+	line-height: var(--lh-body);
+}
+
+h1 {
+	font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+	font-size: var(--text-display);
+	line-height: var(--lh-display);
+}
+
+h2,
+h3 {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-weight: 600;
+}
+
+h2 {
+	font-size: var(--text-h2);
+}
+
+h3 {
+	font-size: var(--text-h3);
+}
+
+code,
+pre {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	line-height: var(--lh-mono);
+}
+
+a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+/* Law 6 — every interactive element gets a visible focus ring. */
+:focus-visible {
+	outline: 2px solid var(--amber-bright);
+	outline-offset: 2px;
+}
+
+/* design/12 §Typography binding — every number a reader might compare to another. */
+.tabular {
+	font-variant-numeric: tabular-nums;
+}
