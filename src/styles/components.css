@@ -75,6 +75,45 @@
 }
 
 /* ============================================================
+   TelemetryBlock — design/12 §Code / Telemetry Block
+   ============================================================ */
+
+.telemetry-block {
+	background: #060606; /* design/12 §Code / Telemetry Block — no matching token */
+	border: 1px solid var(--border-subtle);
+	border-radius: 2px;
+	padding: 20px var(--space-lg); /* 20px — no matching --space-* token; 24px = --space-lg */
+	overflow-x: auto;
+}
+
+.telemetry-label {
+	text-align: right;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	margin: 0 0 var(--space-sm);
+}
+
+.telemetry-body {
+	margin: 0;
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: 13px; /* design/12 §Code / Telemetry Block — no matching --text-* token */
+	line-height: var(--lh-mono);
+	color: var(--text-primary);
+	white-space: pre;
+}
+
+.telemetry-comment {
+	color: var(--text-muted);
+}
+
+.telemetry-amber {
+	color: var(--amber-bright);
+}
+
+/* ============================================================
    StatusBadge — design/12 §Status Badge
    ============================================================ */
 

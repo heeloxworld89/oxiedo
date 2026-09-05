@@ -1,0 +1,16 @@
+---
+// design/12 §Code / Telemetry Block. No syntax-highlight palette — a second colour system on
+// top of the identity is how palettes drift (ui_ux/02 §2). Comment lines and amber-highlighted
+// terms are marked by the caller with .telemetry-comment / .telemetry-amber spans; this
+// component does not parse the slotted text.
+export interface Props {
+	label?: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div class="telemetry-block">
+	{label && <p class="telemetry-label">{label}</p>}
+	<pre class="telemetry-body"><code><slot /></code></pre>
+</div>
