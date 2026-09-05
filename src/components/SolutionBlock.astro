@@ -1,0 +1,70 @@
+---
+// design/02_SOLUTIONS.md, ui_ux/02_SOLUTIONS_UI.md. One block per solution — maps over
+// data/solutions.ts, nothing hardcoded. Every non-available solution carries a GatePanel with
+// its real values.
+import StatusBadge from './StatusBadge.astro';
+import GatePanel from './GatePanel.astro';
+import Button from './Button.astro';
+import type { Solution } from '../data/solutions';
+
+export interface Props {
+	solution: Solution;
+}
+
+const { solution } = Astro.props;
+---
+
+<article class="solution-block" id={solution.id}>
+	<header class="solution-block-header">
+		<h2>{solution.name}</h2>
+		<StatusBadge status={solution.status} />
+	</header>
+
+	<section>
+		<h3 class="solution-block-label">The problem</h3>
+		<p>{solution.problem}</p>
+	</section>
+
+	<section>
+		<h3 class="solution-block-label">What it delivers</h3>
+		<p>{solution.delivers}</p>
+	</section>
+
+	<section>
+		<h3 class="solution-block-label">Buyer qualification</h3>
+		<p>{solution.buyerQualification}</p>
+	</section>
+
+	<section>
+		<h3 class="solution-block-label">Pricing</h3>
+		<table class="pricing-table">
+			<tbody>
+				{
+					solution.pricing.map((tier) => (
+						<tr>
+							<td>{tier.label}</td>
+							<td class="tabular">{tier.amount}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+		<p class="pricing-note">{solution.pricingNote}</p>
+	</section>
+
+	{
+		solution.gate && (
+			<section>
+				<h3 class="solution-block-label">Gate</h3>
+				<GatePanel
+					gate={solution.gate.name}
+					cost={solution.gate.cost}
+					status={solution.gate.status}
+					ifItFails={solution.gate.ifItFails}
+				/>
+			</section>
+		)
+	}
+
+	<Button variant="primary" href={solution.cta.href}>{solution.cta.label}</Button>
+</article>

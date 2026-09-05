@@ -976,3 +976,130 @@ main {
 		justify-content: space-between;
 	}
 }
+
+/* ============================================================
+   Solutions page — design/02_SOLUTIONS.md, ui_ux/02_SOLUTIONS_UI.md
+   ============================================================ */
+
+.solutions-subhead {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.solutions-layout {
+	display: flex;
+	flex-direction: column;
+}
+
+.solutions-master {
+	position: sticky;
+	top: 60px; /* clears the fixed nav — design/12 §Navigation bar height */
+	z-index: 50;
+	background: var(--bg-base);
+	border-bottom: 1px solid var(--border-subtle);
+	display: flex;
+	gap: var(--space-lg);
+	overflow-x: auto;
+	padding-block: var(--space-md);
+}
+
+.solutions-master a {
+	white-space: nowrap;
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	text-decoration: none;
+	padding-left: var(--space-sm);
+	border-left: 2px solid transparent;
+}
+
+.solutions-master a.active {
+	color: var(--text-primary);
+	border-left-color: var(--amber-bright);
+}
+
+.solutions-detail {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3xl);
+	padding-block: var(--space-xl);
+}
+
+.solution-block-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	flex-wrap: wrap;
+}
+
+.solution-block-label {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+	margin-bottom: var(--space-sm);
+}
+
+.solution-block section {
+	margin-top: var(--space-lg);
+	max-width: 65ch;
+}
+
+.solution-block section p {
+	color: var(--text-primary);
+}
+
+.pricing-table {
+	width: 100%;
+	max-width: 65ch;
+	border-collapse: collapse;
+}
+
+.pricing-table td {
+	padding-block: var(--space-sm);
+	border-bottom: 1px solid var(--border-subtle);
+	color: var(--text-primary);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+}
+
+.pricing-table td:last-child {
+	text-align: right;
+}
+
+.pricing-note {
+	margin-top: var(--space-sm);
+	color: var(--text-secondary);
+	font-size: var(--text-small);
+}
+
+.solution-block .btn {
+	margin-top: var(--space-lg);
+}
+
+@media (min-width: 1024px) {
+	.solutions-layout {
+		flex-direction: row;
+		align-items: flex-start;
+		gap: var(--space-xl);
+	}
+
+	.solutions-master {
+		flex: 0 0 280px;
+		top: 80px; /* nav height + breathing room */
+		flex-direction: column;
+		align-items: flex-start;
+		border-bottom: none;
+		border-right: 1px solid var(--border-subtle);
+		overflow-x: visible;
+		height: fit-content;
+	}
+
+	.solutions-detail {
+		flex: 1 1 auto;
+		max-width: 860px;
+	}
+}

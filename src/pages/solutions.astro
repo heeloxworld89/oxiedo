@@ -1,0 +1,43 @@
+---
+// design/02_SOLUTIONS.md, ui_ux/02_SOLUTIONS_UI.md.
+//
+// BUILD ORDER, deliberate: the anchor list + long scrolling column of SolutionBlocks is the
+// whole page with JS disabled — a real, usable page on its own, not a fallback bolted on
+// afterward. The sticky/chip-row treatment below is a pure-CSS responsive layout on the SAME
+// markup (no duplication) — it changes position and orientation, never visibility, so it holds
+// under Law 3 without needing the `.js` gate. Active-item tracking while scrolling is Block
+// 4.4's job (masterdetail.ts); this page seeds the first item as active, a static default, not
+// scroll-sync logic.
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import SolutionBlock from '../components/SolutionBlock.astro';
+import { solutions } from '../data/solutions';
+---
+
+<Page title="SOLUTIONS">
+	<section class="section container">
+		<Eyebrow>SOLUTIONS</Eyebrow>
+		<h1>Engineered Certainty. Commercial Resilience.</h1>
+		<p class="solutions-subhead">
+			Seven commercial capabilities built on the ORMAS primitive. From real-time training
+			health monitoring to regulator-legible change records and certified source deletion.
+			The Warning Light is available today. The next six are in active build. Review the
+			solutions, check your qualification, and secure your institution's deployment slot.
+		</p>
+	</section>
+
+	<div class="solutions-layout container">
+		<nav class="solutions-master" aria-label="Jump to a solution">
+			{
+				solutions.map((s, i) => (
+					<a href={`#${s.id}`} class={i === 0 ? 'active' : undefined}>
+						{s.name}
+					</a>
+				))
+			}
+		</nav>
+		<div class="solutions-detail">
+			{solutions.map((s) => <SolutionBlock solution={s} />)}
+		</div>
+	</div>
+</Page>
