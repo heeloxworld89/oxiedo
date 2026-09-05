@@ -2116,3 +2116,26 @@ main {
 	color: var(--amber-mid);
 	font-style: normal;
 }
+
+/* ============================================================
+   404 — design/10_CONTACT.md §404
+   ============================================================ */
+
+.not-found {
+	min-height: 60vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.not-found-body {
+	color: var(--text-secondary);
+	margin-top: var(--space-md);
+}
+
+.not-found-ctas {
+	display: flex;
+	gap: var(--space-md);
+	flex-wrap: wrap;
+	margin-top: var(--space-xl);
+}

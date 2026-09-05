@@ -1,0 +1,20 @@
+---
+// design/10_CONTACT.md §404. Copy verbatim. The CTA labelled "Research" in the source links to
+// the page the rest of the site calls "Paper" (design/13's corrected page-name vocabulary) — the
+// button below is labelled to match that established convention rather than introduce a second
+// name for the same route.
+import Page from '../layouts/Page.astro';
+import Button from '../components/Button.astro';
+---
+
+<Page title="404">
+	<section class="section container not-found">
+		<h1>404 — This page does not exist.</h1>
+		<p class="not-found-body">That is not a metaphor. It is simply not here.</p>
+		<div class="not-found-ctas">
+			<Button variant="primary" href="/">← Home</Button>
+			<Button variant="secondary" href="/paper">Paper</Button>
+			<Button variant="secondary" href="/contact">Contact</Button>
+		</div>
+	</section>
+</Page>
