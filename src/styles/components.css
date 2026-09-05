@@ -3,6 +3,40 @@
    see each task's SURPRISES for findings where design/12 itself has no matching token. */
 
 /* ============================================================
+   StatusBadge — design/12 §Status Badge
+   ============================================================ */
+
+.status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-xs);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: 11px; /* design/12 §Status Badge — no matching --text-* token */
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	padding: var(--space-xs) var(--space-sm);
+	border-radius: 2px;
+}
+
+.status-badge--available {
+	background: var(--amber-ghost);
+	border: 1px solid var(--amber-mid);
+	color: var(--amber-bright);
+}
+
+.status-badge--inbuild {
+	background: rgba(107, 159, 232, 0.07); /* design/12 §Status Badge — literal, tied to --status-inbuild's RGB */
+	border: 1px solid rgba(107, 159, 232, 0.3);
+	color: var(--status-inbuild);
+}
+
+.status-badge--upcoming {
+	background: rgba(90, 90, 90, 0.06); /* design/12 §Status Badge — literal, tied to --status-upcoming's RGB */
+	border: 1px solid var(--border-muted);
+	color: var(--text-secondary);
+}
+
+/* ============================================================
    Nav — design/01 §Navigation Design, design/12 §Navigation
    ============================================================ */
 

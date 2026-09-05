@@ -1,0 +1,23 @@
+---
+// design/12 §Status Badge. Three variants only. Always renders its glyph AND its text —
+// never colour or glyph alone (Law 6). --status-live is reserved and intentionally has no
+// variant here.
+export interface Props {
+	status: 'available' | 'inbuild' | 'upcoming';
+}
+
+const { status } = Astro.props;
+
+const config = {
+	available: { glyph: '●', label: 'AVAILABLE NOW' },
+	inbuild: { glyph: '◐', label: 'IN BUILD' },
+	upcoming: { glyph: '○', label: 'UPCOMING' },
+} as const;
+
+const { glyph, label } = config[status];
+---
+
+<span class={`status-badge status-badge--${status}`}>
+	<span aria-hidden="true">{glyph}</span>
+	{label}
+</span>
