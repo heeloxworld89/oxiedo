@@ -1816,3 +1816,29 @@ main {
 	color: var(--text-secondary);
 	margin-top: var(--space-lg);
 }
+
+/* ============================================================
+   FAQ page — design/09_FAQ.md, ui_ux/09_FAQ_UI.md
+   ============================================================ */
+
+.faq-tabs {
+	display: flex;
+	gap: var(--space-lg);
+	flex-wrap: wrap;
+	margin-top: var(--space-xl);
+	border-bottom: 1px solid var(--border-subtle);
+	padding-bottom: var(--space-md);
+}
+
+.faq-tabs a {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+	text-decoration: none;
+}
+
+.faq-group {
+	margin-top: var(--space-lg);
+}

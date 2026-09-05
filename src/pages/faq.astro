@@ -1,0 +1,385 @@
+---
+// design/09_FAQ.md, ui_ux/09_FAQ_UI.md. Every panel renders open by default (Accordion,
+// task 1.10) — Block 4's accordion.ts collapses them once JS confirms it can run. Category
+// "tabs" are real anchors jumping to each group, matching the site's established pattern
+// (Solutions, Sectors) rather than JS-driven filtering.
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Accordion from '../components/Accordion.astro';
+
+const categories = [
+	{ id: 'the-solution', label: 'The Solution' },
+	{ id: 'the-research', label: 'The Research' },
+	{ id: 'licensing', label: 'Licensing' },
+	{ id: 'investing', label: 'Investing' },
+	{ id: 'the-company', label: 'The Company' },
+];
+---
+
+<Page title="FAQ">
+	<section class="section container">
+		<Eyebrow>FAQ</Eyebrow>
+		<h1>Everything people ask. Answered completely.</h1>
+		<nav class="faq-tabs" aria-label="Jump to a category">
+			<a href="#the-solution">All</a>
+			{categories.map((c) => <a href={`#${c.id}`}>{c.label}</a>)}
+		</nav>
+	</section>
+
+	<section class="section container" id="the-solution">
+		<Eyebrow>THE SOLUTION</Eyebrow>
+		<div class="faq-group">
+			<Accordion id="q-charter-partnership" question="What is a Charter Partnership?">
+				<p>
+					The Charter Partnership Programme is the pre-booking window for ORMAS solutions
+					that are in build or in active development. Charter Partners negotiate terms
+					before pricing is published. Once a solution reaches general availability,
+					pricing is fixed. Charter Partners lock in flat-rate enterprise-wide pricing
+					before pricing is standardised at general availability. Three slots are
+					available per quarter.
+				</p>
+			</Accordion>
+			<Accordion id="q-charter-get" question="What does a Charter Partner actually get?">
+				<p>
+					Five things. Your compliance workflow and edge cases become the baseline
+					architecture of the solution — the product is built around your requirements,
+					not a generic spec. Flat-rate enterprise-wide pricing locked for five years,
+					before per-model consumption pricing is published at launch. Direct engineering
+					access — the person who built ORMAS is your integration contact, not an account
+					manager. A guaranteed deployment slot before the regulatory compliance window
+					closes. And the first-mover position: institutions that define the compliance
+					standard before it is imposed do not just comply — they set the benchmark
+					others will follow.
+				</p>
+			</Accordion>
+			<Accordion id="q-prebooking-close" question="When does the pre-booking window close?">
+				<p>
+					When the solution reaches general availability. At that point, pricing is
+					published and fixed. Individual negotiation is not available post-launch. The
+					timeline is tied to engineering milestones, not an arbitrary date. Four of the
+					six pre-bookable solutions depend on a single validation study currently being
+					scoped. The build timeline for the other two (Label Audit, Model Change Record)
+					is weeks to months. Pre-booking now means locking terms before these milestones
+					are met.
+				</p>
+			</Accordion>
+			<Accordion
+				id="q-prebooking-vs-launch"
+				question="What is the difference between pre-booking pricing and launch pricing?"
+			>
+				<p>
+					Pre-booking pricing is negotiated individually between us and the Charter
+					Partner, taking into account the specific integration, data environment,
+					regulatory framework, and deployment scope. Launch pricing will be a published
+					rate card: annual institutional licence, per-solution, non-negotiable. The
+					structure will shift toward per-model consumption pricing at GA. Charter
+					Partners are not on the per-model model — they are on a flat institutional rate.
+				</p>
+			</Accordion>
+			<Accordion id="q-multiple-prebook" question="Can I pre-book more than one solution?">
+				<p>
+					Yes. An enterprise substrate Charter Partnership covers the full portfolio
+					under a single institutional licence ($500k–$1.5M). That conversation happens
+					at /contact and is the highest-priority intake path. If you are deploying ORMAS
+					across a full regulated or third-party-data model portfolio, the substrate tier
+					is the right starting point.
+				</p>
+			</Accordion>
+			<Accordion
+				id="q-warning-light-only"
+				question="Why is The Warning Light the only solution available to book today?"
+			>
+				<p>
+					The Warning Light is the only solution where the core capability —
+					per-component health monitoring during training — already runs in the existing
+					codebase. The other solutions require additional engineering (Label Audit,
+					Model Change Record) or a pending validation study (Source Separator, Certified
+					Deletion, The Federated Node, The Update Engine). We publish the engineering
+					status clearly because the alternative — selling something not yet built as
+					available — is how a company loses a regulated buyer permanently.
+				</p>
+			</Accordion>
+			<Accordion id="q-what-does-ormas-do" question="What does ORMAS do?">
+				<p>
+					ORMAS is a training architecture that gives your model a complete, causally
+					attributed record of every structural event — automatically, during training,
+					as a property of how it is built. Not a monitoring wrapper. Not a post-hoc
+					analysis tool. The way the model trains. From this capability, we have built
+					three solutions: The Proofreader, The Warning Light, and The Diary. Each solves
+					a specific business problem.
+				</p>
+			</Accordion>
+			<Accordion id="q-download-engine" question="Can I just download and run the engine myself?">
+				<p>
+					Once the repository is made public (after the review period), yes — the engine
+					is MIT-licensed. What you will get: the training architecture, the telemetry
+					emitter, the correction mechanism, and the experiment reproduction scripts.
+					What you will not get: the artifact generator, the signed diff, the
+					cryptographic signing and reader binary, the calibrated bound for your domain,
+					or the support and indemnity that make the record usable in a filing. L0 (the
+					engine) will be free and openly available. L2 (the deployment licence) is
+					where the commercial solution lives. See /licensing for the full stack. The
+					repository is not yet public — it is under review.
+				</p>
+			</Accordion>
+			<Accordion
+				id="q-proofreader-frozen"
+				question="Can The Proofreader attach to any model, or only ORMAS-trained ones?"
+			>
+				<p>
+					This is the open question that gates the solution. In full ORMAS training, the
+					per-node readouts are shaped to be informative by design — the local loss
+					drives them to encode independent views of the data. That is the property The
+					Proofreader uses. A frozen model's layers were not shaped that way. Whether
+					they retain enough independence for the readouts to be meaningful is an
+					untested empirical question. One GPU-day answers it. We run that measurement
+					before any engagement using wrapper mode. If it fails, The Proofreader survives
+					as a native-training-mode solution — stronger signal, higher friction for the
+					buyer (they need to retrain). Still a solution. Different description.
+				</p>
+			</Accordion>
+			<Accordion
+				id="q-warning-light-specificity"
+				question="The Warning Light names a failing component. How specific is the attribution?"
+			>
+				<p>
+					We do not yet have a published lead-time number. The paper demonstrates that
+					per-node health is a structural property with diagnostic value; the precise
+					lead time in steps has not been measured. This measurement is the first thing
+					we run before any Warning Light engagement. If the warning is not early, we
+					will tell you, and restate the solution description accordingly. We have not
+					made a claim we cannot back up.
+				</p>
+			</Accordion>
+			<Accordion id="q-data-to-share" question="What data do I have to share to book a session?">
+				<p>
+					For The Proofreader and The Warning Light: a model checkpoint and your labelled
+					data, or access to a training run. We run on-premise if required. No data
+					leaves your environment if that is your preference. For The Diary: a training
+					session run through the ORMAS architecture (or retrained through it). We
+					generate the record from the telemetry. We treat your data under the same
+					principles we apply to our own: we do not retain it beyond the engagement, we
+					do not use it to train anything, and we do not reference it without your
+					explicit permission.
+				</p>
+			</Accordion>
+			<Accordion id="q-diagnostic-report" question="What does a diagnostic report look like?">
+				<p>
+					For The Proofreader: a ranked list of examples sorted by per-node disagreement
+					score, split into likely mislabelled / likely hard-but-correct / clean, with a
+					breakdown by class and by source if your data carries a source column. For The
+					Warning Light: a step-by-step log of health events during the run — which
+					component, what diagnosis, what magnitude, at what step. For The Diary: a
+					signed, diff-able modification record — node ID, diagnosis, step, magnitude,
+					treatment applied, bound respected, correction tensor — formatted for
+					regulatory use.
+				</p>
+			</Accordion>
+			<Accordion id="q-vs-shap" question="How does this compare to SHAP or LIME?">
+				<p>
+					SHAP and LIME explain the predictions of a trained, frozen model. They answer:
+					"which input features mattered most for this output?" ORMAS instruments the
+					training process that produces the model. It answers: "which component is
+					structurally compromised, what kind of compromise, and what was done about it —
+					at every step." They solve different problems at different points in the
+					lifecycle. Use both if your workflow spans both stages.
+				</p>
+			</Accordion>
+			<Accordion id="q-vs-wandb" question="How does this compare to Weights & Biases or MLflow?">
+				<p>
+					W&B and MLflow monitor global training metrics: loss, accuracy, learning rate,
+					GPU utilisation. They are excellent experiment trackers. ORMAS monitors
+					per-node structural health: which node is dead, which is oscillating, which was
+					corrected and why. W&B tells you what happened to your run. ORMAS tells you
+					what happened inside your model. Use both.
+				</p>
+			</Accordion>
+		</div>
+	</section>
+
+	<section class="section container" id="the-research">
+		<Eyebrow>THE RESEARCH</Eyebrow>
+		<div class="faq-group">
+			<Accordion id="q-evidence" question="What is the evidence that this works?">
+				<p>
+					383 controlled experiments across 4 architecture families. 67 archived runs
+					with reproducible seeds. +70.3 pp recovery advantage over standard networks
+					under structural collapse. The full evidence base is on /paper. The known
+					failure case is also there — we publish both.
+				</p>
+			</Accordion>
+			<Accordion
+				id="q-claim-is-transparency"
+				question={'The paper says "the claim is transparency; the accuracy gap is its evidence." What does that mean?'}
+			>
+				<p>
+					ORMAS is not a higher-accuracy architecture. In most standard benchmarks, a
+					standard network trained on the same data with the same architecture will
+					match or exceed it. What ORMAS provides is structural accountability — a
+					record of what happened, bounded and causally attributed. The accuracy gap in
+					the headline experiments is evidence that the mechanism works, not that the
+					architecture should be preferred on accuracy grounds in standard settings. The
+					commercial value is the record, not the accuracy delta.
+				</p>
+			</Accordion>
+			<Accordion
+				id="q-adversarial-weight"
+				question="Adversarial weight injection — ORMAS is 1 pp worse than baseline. Isn't that a problem?"
+			>
+				<p>
+					Yes. It is a known structural blind spot, and it is published rather than
+					buried. Adversarially crafted weight perturbations are designed to maintain
+					nominal activation statistics while degrading decision boundaries — which
+					means they evade exactly what ORMAS monitors. There is currently no mitigation.
+					The 1.0 pp deficit is measured and stated. For the markets this architecture
+					primarily serves — training monitoring, compliance records, data origin —
+					adversarial weight injection is not the primary threat. For defense and
+					safety-critical applications, it is, which is part of why that market is named
+					but not currently pursued.
+				</p>
+			</Accordion>
+			<Accordion id="q-kill-test" question="What is the kill test, and why haven't you re-run it?">
+				<p>
+					In April 2026, a purpose-built destruction suite was written in advance and run
+					against the previous version of the architecture. It failed comprehensively —
+					Signal 3 never triggered, ORMAS lost to a plain CNN on every noise level, and
+					the ablation arms were indistinguishable from the full system. The current
+					architecture has never been re-run through that suite. Re-running it is on the
+					immediate task list — it is a regression run, not a new experiment. It is an
+					open and named item. It is not hidden.
+				</p>
+			</Accordion>
+		</div>
+	</section>
+
+	<section class="section container" id="licensing">
+		<Eyebrow>LICENSING</Eyebrow>
+		<div class="faq-group">
+			<Accordion
+				id="q-fork-competitor"
+				question="The engine is MIT. What prevents a competitor from forking it and building the same solutions?"
+			>
+				<p>
+					Nothing prevents them from forking the engine. This is by design. What they
+					cannot fork: the customer's accumulated record, the calibrated bound for a
+					specific domain, the artifact format and the L1 licence restrictions that
+					protect it commercially, and the fact that somebody signed it and stands behind
+					it. The moat is not the code. It is the record, the calibration, and the
+					indemnity. See /licensing for the full argument.
+				</p>
+			</Accordion>
+			<Accordion
+				id="q-contract-ends"
+				question="If my contract with Oxiedo ends, can I still read my compliance records?"
+			>
+				<p>
+					Yes. This is one of three non-standard clauses that must appear in every L2
+					contract. On termination: perpetual, irrevocable right to read, retain, and
+					reproduce every artifact generated during the term, plus a frozen reader binary
+					you keep forever. Your regulatory obligations outlive our commercial
+					relationship.
+				</p>
+			</Accordion>
+			<Accordion id="q-free-commercial" question="Can I use the engine for free for commercial purposes?">
+				<p>
+					The engine (L0) is MIT. You can use it commercially, for free, with no
+					obligation to us. The artifact layer (L1), the deployment licence (L2), and the
+					assurance service (L3) are not free for regulated commercial deployment. If you
+					want to use L0 to build something, you are free to do so. If you want the
+					record, the indemnity, and the signed artifact, that is L2.
+				</p>
+			</Accordion>
+		</div>
+	</section>
+
+	<section class="section container" id="investing">
+		<Eyebrow>INVESTING</Eyebrow>
+		<div class="faq-group">
+			<Accordion id="q-raising" question="Is Oxiedo currently raising?">
+				<p>
+					Yes. We are looking for investors who understand deep-tech primitives,
+					long-cycle B2B markets, and the distinction between a validated research result
+					and a validated commercial thesis. The research is validated adversarially. The
+					commercial thesis has not yet been tested against a paying customer. The raise
+					funds the two validation studies, the first three engagements, the legal and
+					regulatory consultations, and hiring a technical co-founder. Request the full
+					brief at /contact or /invest.
+				</p>
+			</Accordion>
+			<Accordion id="q-downside-risk" question="What is the downside risk profile?">
+				<p>
+					If the validation study underperforms, four planned solutions will be paused.
+					Three core solutions remain fully viable: The Proofreader, The Warning Light,
+					The Diary. These three require no further research and can be engaged today. A
+					company built on three solutions in two critical markets with a licensing moat
+					on the compliance record remains a fundamentally sound business. This is the
+					stated downside risk. It does not affect the three available solutions.
+				</p>
+			</Accordion>
+			<Accordion
+				id="q-strategic-or-financial"
+				question="Are you looking for strategic investors or financial investors?"
+			>
+				<p>
+					Both, for different reasons. A strategic investor — a firm or institution that
+					operates in one of the five markets — would also be a potential design partner.
+					A financial investor needs to be comfortable with: pre-revenue, long-cycle
+					markets, one person currently, high evidence-to-customer ratio, the specific
+					risk that the validation study fails, and the specific opportunity that it
+					passes. If those are the right parameters for your fund, reach out.
+				</p>
+			</Accordion>
+		</div>
+	</section>
+
+	<section class="section container" id="the-company">
+		<Eyebrow>THE COMPANY</Eyebrow>
+		<div class="faq-group">
+			<Accordion id="q-why-oxiedo" question="Why is this called Oxiedo? What does it mean?">
+				<p>
+					It is the company name. The solution primitive is called ORMAS — the public
+					solution name and the research codename. The naming question — what brand goes
+					on the full solution — is one of the open decisions in the company. A clinical
+					brand forecloses four of five markets. A domain-neutral name is the direction.
+					The specific name has not been decided.
+				</p>
+			</Accordion>
+			<Accordion id="q-one-person" question="One person built all of this?">
+				<p>
+					Yes. 16,316 lines of code. 85 Python files. 383 controlled experiments. 67
+					archived flight recorders. A research manuscript submitted for peer review. A
+					30,000-word V2 specification. A 54-file implementation plan. A 35,000-word
+					commercial plan. The prior architecture failed its own kill suite in April
+					2026. The current one is what came out four months later. That is an unusual
+					artifact for an unfunded, one-person effort. It is also incomplete — no
+					customers, no second person, no real-world data. Both halves of that statement
+					are true and both matter.
+				</p>
+			</Accordion>
+			<Accordion id="q-trust-no-customers" question="Why should I trust a company with no paying engagements?">
+				<p>
+					You should not trust it on faith. We have not asked you to. We have an evidence
+					base, a documented mechanism, a commercial structure, and a manuscript under
+					peer review. If those are sufficient for your purposes, the solutions are
+					available to engage today. If they are not, we would rather you wait than
+					engage on insufficient grounds.
+				</p>
+			</Accordion>
+			<Accordion id="q-certifications" question="What compliance certifications do you have?">
+				<p>
+					None yet. SOC 2 Type II and ISO 27001 will be pursued after the first three
+					engagements generate sufficient revenue to fund the audits. A DPA template is
+					available on /data. We list what we don't have so you don't have to ask.
+				</p>
+			</Accordion>
+			<Accordion id="q-how-to-contact" question="How do I contact you?">
+				<p>
+					/contact — for solution engagement, research collaboration, co-founder
+					interest, and investment inquiries. [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH] —
+					for direct contact. We respond within a few days. Every message is read by a
+					person.
+				</p>
+			</Accordion>
+		</div>
+	</section>
+</Page>
