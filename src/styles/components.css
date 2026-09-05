@@ -1402,6 +1402,14 @@ main {
 	color: var(--text-primary);
 }
 
+/* design/13 §Rules for Numbers — "All prices: designed, not yet tested against real customers."
+   Every sector card quotes a budget figure; one page-level note covers all of them, matching
+   the pattern already used on /invest (.invest-ladder-note) and per-solution on /solutions. */
+.sectors-pricing-note {
+	font-size: var(--text-small);
+	color: var(--text-muted);
+}
+
 /* ============================================================
    Licensing page — design/04_LICENSING.md, ui_ux/04_LICENSING_UI.md
    ============================================================ */
