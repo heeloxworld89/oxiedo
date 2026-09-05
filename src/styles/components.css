@@ -262,6 +262,63 @@
 }
 
 /* ============================================================
+   FormField — ui_ux/10 §2-3, design/18 §6
+   ============================================================ */
+
+.form-field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.form-field-label {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	text-transform: uppercase;
+	color: var(--text-secondary);
+}
+
+.form-field-input {
+	background: none;
+	border: none;
+	border-bottom: 1px solid var(--border-strong);
+	border-radius: 0;
+	padding: var(--space-sm) 0;
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: var(--text-body);
+	color: var(--text-primary);
+	transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.form-field-input:focus {
+	/* The global :focus-visible ring (base.css) is untouched here — it must stack with this
+	   bottom rule, not be replaced by it. */
+	border-bottom: 2px solid var(--amber-bright);
+}
+
+/* Filled is deliberately unchanged from default — ui_ux/10 §3. */
+
+.form-field-input--error {
+	border-bottom: 2px solid var(--chart-warning);
+}
+
+.form-field-input--success {
+	border-bottom: 2px solid var(--chart-recovery);
+}
+
+.form-field-input:disabled {
+	color: var(--text-disabled);
+	cursor: not-allowed;
+}
+
+.form-field-error {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: 13px; /* ui_ux/10 §3 — no matching --text-* token */
+	color: var(--chart-warning);
+	margin: 0;
+}
+
+/* ============================================================
    StatusBadge — design/12 §Status Badge
    ============================================================ */
 

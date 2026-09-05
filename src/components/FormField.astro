@@ -1,0 +1,58 @@
+---
+// ui_ux/10 §2-3, design/18 §6. Six states: default · focus · filled · error · disabled ·
+// success. Label is permanently above the field — never a placeholder (design/12 accessibility
+// rules). Focus relies on the global :focus-visible ring (base.css) plus this component's own
+// amber bottom rule; no custom caret.
+//
+// CONTENT GAP, flagged not invented: no source (ui_ux/10, design/12, or the rewritten design/18)
+// defines a per-field "success" treatment — every source names a whole-FORM success state (the
+// confirmation replacing the form). The success rule below is the minimal, source-consistent
+// completion: it mirrors the already-specified error mechanism (a coloured 2px bottom rule)
+// using --chart-recovery, the token this corpus already uses for positive/recovery outcomes.
+// Confirm this before it ships on /contact.
+export interface Props {
+	id: string;
+	label: string;
+	type?: 'text' | 'email' | 'tel' | 'url' | 'password' | 'number';
+	name?: string;
+	state?: 'default' | 'error' | 'disabled' | 'success';
+	errorMessage?: string;
+	required?: boolean;
+	value?: string;
+}
+
+const {
+	id,
+	label,
+	type = 'text',
+	name,
+	state = 'default',
+	errorMessage,
+	required = false,
+	value,
+} = Astro.props;
+
+const errorId = `${id}-error`;
+---
+
+<div class="form-field">
+	<label for={id} class="form-field-label">{label}{required && ' *'}</label>
+	<input
+		id={id}
+		name={name ?? id}
+		type={type}
+		class={`form-field-input form-field-input--${state}`}
+		disabled={state === 'disabled'}
+		aria-invalid={state === 'error' ? 'true' : undefined}
+		aria-describedby={state === 'error' && errorMessage ? errorId : undefined}
+		value={value}
+		required={required}
+	/>
+	{
+		state === 'error' && errorMessage && (
+			<p id={errorId} class="form-field-error">
+				{errorMessage}
+			</p>
+		)
+	}
+</div>
