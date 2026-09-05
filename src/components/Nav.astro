@@ -1,0 +1,54 @@
+---
+// design/01 §Navigation Design, design/12 §Navigation. Scroll background and the mobile menu
+// toggle are Block 4 (nav.ts) — this component provides markup and states only.
+const links = [
+	{ href: '/solutions', label: 'Solutions' },
+	{ href: '/sectors', label: 'Sectors' },
+	{ href: '/licensing', label: 'Licensing' },
+	{ href: '/paper', label: 'Paper' },
+	{ href: '/insights', label: 'Insights' },
+	{ href: '/about', label: 'About' },
+];
+---
+
+<header class="nav">
+	<div class="nav-bar">
+		<a href="/" class="nav-wordmark">OXIEDO</a>
+
+		<ul class="nav-links">
+			{links.map((link) => (
+				<li><a href={link.href} class="nav-link">{link.label}</a></li>
+			))}
+		</ul>
+
+		<div class="nav-cta">
+			<a href="/invest" class="nav-cta-ghost">Invest</a>
+			<a href="/contact" class="nav-cta-primary">Book Now</a>
+		</div>
+
+		<button
+			type="button"
+			class="nav-hamburger"
+			aria-label="Menu"
+			aria-expanded="false"
+			aria-controls="nav-mobile"
+		>
+			<span></span>
+			<span></span>
+			<span></span>
+		</button>
+	</div>
+
+	<div class="nav-mobile" id="nav-mobile">
+		<button type="button" class="nav-mobile-close" aria-label="Close menu">×</button>
+		<ul class="nav-mobile-links">
+			{links.map((link) => (
+				<li><a href={link.href} class="nav-mobile-link">{link.label}</a></li>
+			))}
+		</ul>
+		<div class="nav-mobile-cta">
+			<a href="/contact" class="nav-cta-primary nav-cta-primary--full">Book Now</a>
+			<a href="/invest" class="nav-cta-ghost nav-cta-ghost--full">Invest</a>
+		</div>
+	</div>
+</header>

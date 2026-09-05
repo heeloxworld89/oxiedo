@@ -1,0 +1,48 @@
+---
+// design/12 §Footer, design/01 §Section 8. The standing disclaimer is sourced verbatim from
+// design/13_COPY_RULES.md §Permitted Copy — design/01 §8's own bullets do not contain it; that
+// citation in the task file was wrong. See this task's report for the correction.
+const routes = [
+	{ href: '/solutions', label: 'Solutions' },
+	{ href: '/sectors', label: 'Sectors' },
+	{ href: '/licensing', label: 'Licensing' },
+	{ href: '/paper', label: 'Paper' },
+	{ href: '/insights', label: 'Insights' },
+	{ href: '/about', label: 'About' },
+	{ href: '/invest', label: 'Invest' },
+	{ href: '/faq', label: 'FAQ' },
+	{ href: '/contact', label: 'Contact' },
+];
+---
+
+<footer class="footer">
+	<p class="footer-thesis">
+		ORMAS makes per-component structural intelligence a property of training — not a layer added
+		after.
+	</p>
+
+	<p class="footer-disclaimer">
+		No clinical, biological, financial, or production data has been used. Every result is
+		CIFAR-10 or CIFAR-100. Preprint under review. Not yet accepted.
+	</p>
+
+	<nav class="footer-routes" aria-label="Footer">
+		<ul>
+			{routes.map((route) => (
+				<li><a href={route.href}>{route.label}</a></li>
+			))}
+			<li><a href="/data">Data</a></li>
+			<li><a href="/press">Press</a></li>
+		</ul>
+	</nav>
+
+	<div class="footer-credential">
+		<p class="footer-entity">Oxiedo Ltd · England and Wales · [Company number TBD]</p>
+		<p class="footer-citation">
+			ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction · Rokib Al
+			Dhin Raadh · Submitted AAAI 2027
+		</p>
+		<p class="footer-repo">Repository: available after review period</p>
+		<p class="footer-contact">[REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]</p>
+	</div>
+</footer>
