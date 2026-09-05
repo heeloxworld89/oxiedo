@@ -1,0 +1,17 @@
+---
+// design/12 §Disclosure Panel. Used for open questions and honest gaps — maximum two per
+// page. No box-shadow: inset — proposed and rejected, it reads as a rendering artifact on a
+// dark ground.
+export interface Props {
+	label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div class="disclosure-panel">
+	<p class="disclosure-label">{label}</p>
+	<div class="disclosure-body">
+		<slot />
+	</div>
+</div>
