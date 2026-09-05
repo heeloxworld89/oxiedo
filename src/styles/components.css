@@ -938,6 +938,47 @@ main {
 	}
 }
 
+.founding-story {
+	/* ui_ux/01 §6 — "no border, no panel, no card — open space, type carries it." */
+	text-align: center;
+}
+
+.founding-story-quote {
+	font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+	font-size: var(--text-h2);
+	max-width: 65ch;
+	margin: var(--space-lg) auto 0;
+	color: var(--text-primary);
+}
+
+.founding-story-stats {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	color: var(--text-secondary);
+	margin-top: var(--space-lg);
+}
+
+.founding-story-divider {
+	margin-inline: var(--space-sm);
+}
+
+.founding-story .btn {
+	margin-top: var(--space-lg);
+}
+
+.investment-hook {
+	background: var(--bg-surface);
+}
+
+.investment-hook p {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.investment-hook .btn {
+	margin-top: var(--space-lg);
+}
+
 .charter-band {
 	/* ui_ux/01 §6 asks only for "a single, visually distinct block" — no colour is specified for
 	   this band, so distinctness comes from surface + border, matching the pattern already used

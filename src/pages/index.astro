@@ -1,13 +1,13 @@
 ---
-// design/01_HOME.md, ui_ux/01_HOME_UI.md. Eight sections per ui_ux/01 §1-8.
+// design/01_HOME.md, ui_ux/01_HOME_UI.md. Ten sections per ui_ux/01 §1-10 (§6 Founding Story and
+// §7 Investment Hook restored at task 3.0 — an earlier compressed version of ui_ux/01 dropped
+// them; the copy in design/01 §5-6 was never wrong).
 //
-// CONTENT-SCOPE NOTE, flagged not silently applied: design/01 also contains "THE FOUNDING STORY"
-// (its Section 5), "THE INVESTMENT HOOK" (Section 6), "THE WINDOW" (§X) and "IS ORMAS RIGHT FOR
-// YOUR TEAM?" (§X). ui_ux/01 — the authoritative layout blueprint — enumerates exactly eight
-// sections and does not include any of the four. Built to ui_ux/01's eight, on the reading that
-// its layout pass deliberately narrowed a fuller draft for density (its own stated objective:
-// "within two scrolls"). Confirm before treating this as final — those four sections' copy is
-// sitting unused in design/01 if they were meant to ship.
+// CONTENT-SCOPE NOTE, still open: design/01 also contains "THE WINDOW" (§X) and "IS ORMAS RIGHT
+// FOR YOUR TEAM?" (§X). ui_ux/01's now-corrected ten-section blueprint still does not include
+// either. Given the founding-story/investment-hook omission turned out to be an error in ui_ux/01
+// rather than a deliberate cut, these two remaining unused sections are worth the same question
+// before treating this page as final.
 //
 // HERO SUBHEAD, cut per ui_ux/01 §1 ("TWO LINES. Not four"): design/01's subhead is two
 // paragraphs — a long mechanism sentence, then "Not a post-hoc tool. Not an external probe. The
@@ -228,7 +228,38 @@ const sectors = [
 		<Button variant="tertiary" href="/sectors">See all sectors in depth</Button>
 	</section>
 
-	<!-- 6. CHARTER PARTNERSHIP BAND -->
+	<!-- 6. FOUNDING STORY TEASER -->
+	<section class="section container founding-story">
+		<Eyebrow>THE ORIGIN</Eyebrow>
+		<blockquote class="founding-story-quote">
+			"In April 2026, an earlier version was destroyed by its own author's test suite. The
+			logs were kept. The system was rebuilt. This is what came out."
+		</blockquote>
+		<p class="founding-story-stats">
+			<span class="tabular">4 months</span> to rebuild
+			<span class="founding-story-divider">·</span>
+			<span class="tabular">383 experiments</span> carried
+		</p>
+		<Button variant="tertiary" href="/about">Read the full story</Button>
+	</section>
+
+	<!-- 7. INVESTMENT HOOK -->
+	<section class="section container investment-hook">
+		<Eyebrow>WORKING WITH INVESTORS</Eyebrow>
+		<h2>One primitive is being built into a new kind of industry.</h2>
+		<p>
+			We are open to conversations with investors who understand deep-tech primitives,
+			long-cycle B2B markets, and the specific risk profile of a pre-revenue company with a
+			validated research result but no customer conversations yet.
+		</p>
+		<p>
+			If you want to see the full case — the evidence, the solution ladder, the licensing
+			model, and the open questions — the investment brief is available on request.
+		</p>
+		<Button variant="secondary" href="/invest">See the investment case</Button>
+	</section>
+
+	<!-- 8. CHARTER PARTNERSHIP BAND -->
 	<section class="section container charter-band">
 		<h2>The Charter Partnership Programme</h2>
 		<p>Pre-booking is the only window to negotiate terms.</p>
@@ -241,7 +272,7 @@ const sectors = [
 		<Button variant="primary" href="/contact">Apply for a Charter Partnership</Button>
 	</section>
 
-	<!-- 7. PAPER STRIP -->
+	<!-- 9. PAPER STRIP -->
 	<section class="section container paper-strip">
 		<div>
 			<p>
