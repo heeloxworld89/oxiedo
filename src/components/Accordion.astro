@@ -1,0 +1,25 @@
+---
+// ui_ux/09 §1-3. Markup and styles only — the open/close behaviour is Block 4 (accordion.ts).
+// Every panel renders open by default and stays open until JS explicitly collapses it at
+// runtime; no CSS rule here keys a hidden state off the .js class, because the accordion's
+// collapse is selective (all but any hash-targeted panel) and can only be computed at runtime,
+// not predetermined by a static stylesheet rule.
+export interface Props {
+	id: string;
+	question: string;
+}
+
+const { id, question } = Astro.props;
+---
+
+<div class="accordion-item">
+	<button type="button" class="accordion-trigger" aria-expanded="true" aria-controls={id}>
+		<span class="accordion-chevron" aria-hidden="true">▸</span>
+		<span class="accordion-question">{question}</span>
+	</button>
+	<div class="accordion-panel" id={id}>
+		<div class="accordion-answer">
+			<slot />
+		</div>
+	</div>
+</div>

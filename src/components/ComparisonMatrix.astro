@@ -1,0 +1,28 @@
+---
+// ui_ux/03 §2, design/12 §Bento/typography. "This matrix carries the entire 'one primitive,
+// five markets' argument more efficiently than prose does." Right-column rows are trusted,
+// internally-authored markup (set:html) so the caller can wrap its one operative term in
+// .comparison-matrix-amber — never plain text alone for the keyword.
+export interface Props {
+	leftHeader: string;
+	rightHeader: string;
+	rows: { left: string; right: string }[];
+}
+
+const { leftHeader, rightHeader, rows } = Astro.props;
+---
+
+<div class="comparison-matrix">
+	<div class="comparison-matrix-row comparison-matrix-row--header">
+		<span class="comparison-matrix-left">{leftHeader}</span>
+		<span class="comparison-matrix-right">{rightHeader}</span>
+	</div>
+	{
+		rows.map((row) => (
+			<div class="comparison-matrix-row">
+				<span class="comparison-matrix-left">{row.left}</span>
+				<span class="comparison-matrix-right" set:html={row.right} />
+			</div>
+		))
+	}
+</div>

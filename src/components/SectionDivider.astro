@@ -1,0 +1,14 @@
+---
+// design/12 §Section Divider with Label.
+export interface Props {
+	label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div class="section-divider">
+	<span class="section-divider-line" aria-hidden="true"></span>
+	<span class="section-divider-label">{label}</span>
+	<span class="section-divider-line" aria-hidden="true"></span>
+</div>

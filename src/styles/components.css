@@ -319,6 +319,149 @@
 }
 
 /* ============================================================
+   Eyebrow — design/12 §Eyebrow Treatment
+   ============================================================ */
+
+.eyebrow {
+	display: inline-block;
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--amber-mid);
+}
+
+/* ============================================================
+   SectionDivider — design/12 §Section Divider with Label
+   ============================================================ */
+
+.section-divider {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	width: 100%;
+}
+
+.section-divider-line {
+	flex: 1;
+	height: 1px;
+	background: var(--border-muted);
+}
+
+.section-divider-label {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+	white-space: nowrap;
+}
+
+/* ============================================================
+   ComparisonMatrix — ui_ux/03 §2
+   ============================================================ */
+
+.comparison-matrix {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+}
+
+.comparison-matrix-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-lg);
+	padding-block: var(--space-sm);
+	border-bottom: 1px solid var(--border-subtle);
+}
+
+.comparison-matrix-row--header .comparison-matrix-left,
+.comparison-matrix-row--header .comparison-matrix-right {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+	opacity: 1;
+}
+
+.comparison-matrix-left {
+	color: var(--text-secondary);
+	opacity: 0.6;
+}
+
+.comparison-matrix-right {
+	color: var(--text-primary);
+}
+
+.comparison-matrix-amber {
+	color: var(--amber-bright);
+}
+
+@media (max-width: 639px) {
+	.comparison-matrix-row {
+		grid-template-columns: 1fr;
+		gap: var(--space-xs);
+	}
+}
+
+/* ============================================================
+   LadderSchematic — design/12 §Diagrams, Type 1
+   ============================================================ */
+
+.ladder-schematic {
+	margin: 0;
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: 13px; /* matches TelemetryBlock — no matching --text-* token */
+	line-height: var(--lh-mono);
+	color: var(--text-primary);
+	overflow-x: auto;
+}
+
+/* ============================================================
+   Accordion — ui_ux/09 §1-3
+   ============================================================ */
+
+.accordion-item {
+	border-bottom: 1px solid var(--border-subtle);
+}
+
+.accordion-trigger {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	width: 100%;
+	background: none;
+	border: none;
+	padding: var(--space-md) 0;
+	text-align: left;
+	cursor: pointer;
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: var(--text-h3);
+	color: var(--text-primary);
+}
+
+.accordion-chevron {
+	color: var(--text-secondary);
+	transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.accordion-trigger[aria-expanded='true'] .accordion-chevron {
+	transform: rotate(90deg);
+}
+
+.accordion-panel {
+	border-left: 2px solid var(--amber-mid);
+	padding-left: var(--space-md);
+}
+
+.accordion-answer {
+	max-width: 65ch;
+	padding-bottom: var(--space-md);
+	color: var(--text-primary);
+}
+
+/* ============================================================
    StatusBadge — design/12 §Status Badge
    ============================================================ */
 
