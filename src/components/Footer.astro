@@ -9,8 +9,12 @@
 // linked only from /contact, and only once the solicitor review in design/14 is done." That
 // review has not happened (design/13's Pre-Launch Blockers, item C1, is unchecked). The /data
 // link is removed from the footer below until that review clears — deliberately, not an
-// oversight. /press stays: design/12 explicitly wants it "present in footer, hidden from nav,"
-// which is a different, already-satisfied condition.
+// oversight.
+//
+// CORRECTION at task 4.0: /press was left linked in the footer at 3.6, reasoning that
+// design/12 §Footer's "present in footer, hidden from main nav" wording authorized it. That
+// reading was wrong — design/11 states /press stays hidden from nav AND sitemap until first
+// outreach, and this session's brief confirms the footer link was also premature. Removed.
 const routes = [
 	{ href: '/solutions', label: 'Solutions' },
 	{ href: '/sectors', label: 'Sectors' },
@@ -40,8 +44,7 @@ const routes = [
 			{routes.map((route) => (
 				<li><a href={route.href}>{route.label}</a></li>
 			))}
-			{/* /data intentionally not linked here — see comment above. */}
-			<li><a href="/press">Press</a></li>
+			{/* /data and /press intentionally not linked here — see comments above. */}
 		</ul>
 	</nav>
 

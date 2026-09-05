@@ -2139,3 +2139,45 @@ main {
 	flex-wrap: wrap;
 	margin-top: var(--space-xl);
 }
+
+/* ============================================================
+   About §6 — What We Are Looking For — design/07_ABOUT.md §Section 6
+   ============================================================ */
+
+.asks-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xl);
+	margin-top: var(--space-xl);
+}
+
+.asks-block {
+	border-top: 1px solid var(--border-subtle);
+	padding-top: var(--space-lg);
+}
+
+.asks-title {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-weight: 600;
+	font-size: var(--text-h3);
+	color: var(--text-primary);
+}
+
+.asks-emphasis {
+	display: block;
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.05em;
+	color: var(--amber-mid);
+	margin-top: var(--space-xs);
+}
+
+.asks-body {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-sm);
+}
+
+.asks-block .btn {
+	margin-top: var(--space-md);
+}

@@ -1,16 +1,15 @@
 ---
 // design/07_ABOUT.md, ui_ux/07_ABOUT_UI.md.
 //
-// CONTENT GAP, not invented: ui_ux/07 §4 describes a "What we are looking for" section — four
-// asks (co-founder, regulatory consultant, data-protection lawyer, datasets), the datasets ask
-// last and longest. No copy for this section exists anywhere in design/07, and a search across
-// website/design/ found no dedicated equivalent block for /about specifically. This section is
-// omitted rather than authored. Confirm the intended copy before treating this page as final —
-// per ui_ux/07 §4, "the datasets block is the most important thing on this page."
+// UPDATE at task 4.0: the "What we are looking for" content gap flagged at task 3.3 is closed.
+// design/07 §Section 6 was restored 2026-09-05 (it existed in an earlier version of the file and
+// was lost in an edit). Built verbatim below, datasets last per ui_ux/07 §4 and per the section's
+// own "★ the most important block on this page" note.
 import Page from '../layouts/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import TelemetryBlock from '../components/TelemetryBlock.astro';
 import DisclosurePanel from '../components/DisclosurePanel.astro';
+import Button from '../components/Button.astro';
 
 const decisions = [
 	{
@@ -48,6 +47,41 @@ const failLines = [
 const failBlockHtml = failLines
 	.map((line) => line.replace('FAIL:', '<span class="telemetry-amber">FAIL:</span>'))
 	.join('\n');
+
+const asks = [
+	{
+		title: 'A co-founder.',
+		body: [
+			"Someone who has stood on the other side of the buying table in one regulated domain — inside a hospital's AI group, a bank's model risk function, a biotech's data team, or coordinating a multi-site research consortium.",
+			'Technically literate enough to survive a CTO\'s questions. Not trying to be the architect. A network that cannot be built from where this is being built from.',
+			'The architecture exists. What is missing is a second person.',
+		],
+	},
+	{
+		title: 'A regulatory consultant.',
+		body: [
+			"Someone who has actually filed a change-control plan for a machine learning system — under the EU AI Act, the FDA's PCCP framework, or an equivalent regime — and who is willing to read a specification and say whether the artifact format matches what a reviewer expects to receive.",
+			'One engagement. Months of lead time. It gates the largest product in the company. Not started.',
+		],
+	},
+	{
+		title: 'A data-protection lawyer.',
+		body: [
+			'Someone working in AI data rights, willing to state what may and may not be certified when data is deleted from a trained model.',
+			'One consultation. No ongoing commitment. It is the gating question for an entire product category, and until it is answered, certified deletion is a strong story rather than a certifiable product.',
+		],
+	},
+	{
+		title: 'Datasets.',
+		emphasis: 'the most important block on this page',
+		body: [
+			'No clinical, biological, financial, or defence data has ever touched this system. Every result is CIFAR-10 or CIFAR-100.',
+			'That is not a gap in the engineering. It is a gap in access, and it is the single binding constraint on everything else here.',
+			'If you have a labelled dataset you suspect is dirty — or a training run that failed and you could not say why — we want to talk.',
+			'A dataset is not a gift. It is a research partnership: we run the diagnostic, you receive the report, and we publish together if you want to.',
+		],
+	},
+];
 ---
 
 <Page title="ROKIB AL DHIN RAADH">
@@ -187,6 +221,24 @@ const failBlockHtml = failLines
 				<p>67 archived flight recorders, reproducible from seed.</p>
 			</li>
 		</ul>
+	</section>
+
+	<section class="section container">
+		<h2>Four things that would move this forward.</h2>
+		<div class="asks-list">
+			{
+				asks.map((ask) => (
+					<div class="asks-block">
+						<p class="asks-title">
+							{ask.title}
+							{ask.emphasis && <span class="asks-emphasis">★ {ask.emphasis}</span>}
+						</p>
+						{ask.body.map((line) => <p class="asks-body">{line}</p>)}
+						<Button variant="tertiary" href="/contact#other">Get in touch</Button>
+					</div>
+				))
+			}
+		</div>
 	</section>
 
 	<section class="section container about-contact">
