@@ -45,7 +45,7 @@ import Button from '../components/Button.astro';
 				prepared to describe one specific training failure.
 			</p>
 		</div>
-		<form class="contact-form">
+		<form class="contact-form" method="POST" action="/contact">
 			<FormField id="book-name" label="Name" required />
 			<FormField id="book-org" label="Organisation" required />
 			<FormField id="book-frequency" label="Estimated training run frequency" required />
@@ -70,7 +70,7 @@ import Button from '../components/Button.astro';
 				GA. Slots are limited to 3 per quarter.
 			</p>
 		</div>
-		<form class="contact-form">
+		<form class="contact-form" method="POST" action="/contact">
 			<FormField
 				id="prebook-solution"
 				label="Which solution are you pre-booking? (The Proofreader, The Diary, The Separator, Certified Deletion, The Federated Node, The Update Engine)"
@@ -110,7 +110,7 @@ import Button from '../components/Button.astro';
 				whether this is a fit before sending a document.
 			</p>
 		</div>
-		<form class="contact-form">
+		<form class="contact-form" method="POST" action="/contact">
 			<FormField id="invest-name" label="Name" required />
 			<FormField id="invest-email" label="Email" type="email" required />
 			<FormField id="invest-org" label="Fund / Organisation" required />
@@ -130,7 +130,7 @@ import Button from '../components/Button.astro';
 	<section class="section container reveal contact-form-block" id="other">
 		<p class="contact-form-label">OTHER</p>
 		<h2>Something else</h2>
-		<form class="contact-form">
+		<form class="contact-form" method="POST" action="/contact">
 			<FormField id="other-name" label="Name" required />
 			<FormField id="other-email" label="Email" type="email" required />
 			<FormField id="other-message" label="Message" required />
