@@ -1508,3 +1508,147 @@ main {
 .licensing-hard-rule-mark {
 	color: var(--amber-mid);
 }
+
+/* ============================================================
+   About page — design/07_ABOUT.md, ui_ux/07_ABOUT_UI.md
+   ============================================================ */
+
+.about-headline {
+	line-height: var(--lh-display);
+}
+
+.about-entity {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	margin-top: var(--space-md);
+}
+
+.about-founder {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+}
+
+.founder-block {
+	border: 1px solid var(--border-strong);
+	border-radius: 2px;
+	padding: var(--space-2xl);
+	text-align: center;
+}
+
+.founder-block-name {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-weight: 700;
+	font-size: var(--text-h3);
+	color: var(--text-primary);
+}
+
+.founder-block-role {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	color: var(--text-secondary);
+	margin-top: var(--space-sm);
+}
+
+.founder-bio p {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.decisions-log {
+	list-style: none;
+	padding: 0;
+	margin: var(--space-xl) 0 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+}
+
+.decisions-log-row {
+	display: flex;
+	gap: var(--space-lg);
+	border-top: 1px solid var(--border-subtle);
+	padding-top: var(--space-lg);
+}
+
+.decisions-log-index {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-h3);
+	color: var(--amber-mid);
+	flex-shrink: 0;
+}
+
+.decisions-log-title {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.decisions-log-body {
+	max-width: 65ch;
+	color: var(--text-secondary);
+	margin-top: var(--space-sm);
+}
+
+@media (min-width: 1024px) {
+	.about-founder {
+		flex-direction: row;
+		align-items: flex-start;
+	}
+
+	.founder-block {
+		flex: 0 0 280px;
+	}
+
+	.founder-bio {
+		flex: 1 1 auto;
+	}
+}
+
+.founding-story-prose p {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.about-links {
+	list-style: none;
+	padding: 0;
+	margin-top: var(--space-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+}
+
+.about-links li {
+	border-top: 1px solid var(--border-subtle);
+	padding-top: var(--space-md);
+}
+
+.about-links a,
+.about-links-static {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-weight: 600;
+	color: var(--amber-bright);
+	text-decoration: none;
+}
+
+.about-links p {
+	color: var(--text-secondary);
+	font-size: var(--text-small);
+	margin-top: var(--space-xs);
+}
+
+.about-contact {
+	border-top: 1px solid var(--border-subtle);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+}
+
+.about-contact p {
+	margin-top: var(--space-xs);
+}

@@ -1,0 +1,197 @@
+---
+// design/07_ABOUT.md, ui_ux/07_ABOUT_UI.md.
+//
+// CONTENT GAP, not invented: ui_ux/07 §4 describes a "What we are looking for" section — four
+// asks (co-founder, regulatory consultant, data-protection lawyer, datasets), the datasets ask
+// last and longest. No copy for this section exists anywhere in design/07, and a search across
+// website/design/ found no dedicated equivalent block for /about specifically. This section is
+// omitted rather than authored. Confirm the intended copy before treating this page as final —
+// per ui_ux/07 §4, "the datasets block is the most important thing on this page."
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import TelemetryBlock from '../components/TelemetryBlock.astro';
+import DisclosurePanel from '../components/DisclosurePanel.astro';
+
+const decisions = [
+	{
+		title: 'The engine is MIT-licensed. Permanently.',
+		body: 'The ORMAS engine is MIT-licensed. The paper is the distribution. Reproducibility is the credibility. The moat is not the engine — it is the compliance record your infrastructure generates by running it.',
+	},
+	{
+		title: 'The architecture leads with monitoring, not correction.',
+		body: 'The Warning Light names the failing component. The operator decides what to do with that information. Trust is earned in this order, not the reverse.',
+	},
+	{
+		title: 'Nothing ships until four known defects close.',
+		body: 'The modification record — the core compliance artifact — currently exists in three incompatible formats in three parts of the codebase, and one silently drops compliance fields. A compliance artifact assembled from three incompatible records is not a compliance artifact. Closing those defects is the first engineering task before any engagement begins.',
+	},
+	{
+		title: 'Validation precedes build.',
+		body: 'The source-attribution study runs at the earliest point it can run. Not at the end of the build — at the first possible moment. Running it at the end costs the same. Running it early preserves the option to change course.',
+	},
+	{
+		title: 'Markets are ordered by friction, not by size.',
+		body: 'Defence is the largest ceiling and the last market. AI training infrastructure is the first. The ordering is not humility. It is correct sequencing: the first two markets produce the evidence that makes the later markets reachable.',
+	},
+	{
+		title: 'The names are mechanism-neutral.',
+		body: 'The Source Separator is not called the "Site Separator" because site is the hospital word. A bank calls it a region. A biotech calls it a batch. An AI lab calls it a corpus. The mechanism is the same. The noun changes with the buyer.',
+	},
+];
+
+const failLines = [
+	'FAIL: Lost to a plain CNN at every noise level tested.',
+	'FAIL: Under weight-perturbation shock, the plain CNN recovered better.',
+	'FAIL: Signal 3 — the correction mechanism — never triggered once across 42 runs.',
+	'FAIL: The ablation arms were indistinguishable from the full system.',
+];
+const failBlockHtml = failLines
+	.map((line) => line.replace('FAIL:', '<span class="telemetry-amber">FAIL:</span>'))
+	.join('\n');
+---
+
+<Page title="ROKIB AL DHIN RAADH">
+	<section class="section container">
+		<Eyebrow>ROKIB AL DHIN RAADH</Eyebrow>
+		<h1 class="about-headline">Builder.<br />Oxiedo.</h1>
+		<p class="about-entity">Oxiedo Ltd · Incorporated in England and Wales · [Company number TBD]</p>
+	</section>
+
+	<section class="section container about-founder">
+		<div class="founder-block">
+			<p class="founder-block-name">ROKIB AL DHIN RAADH</p>
+			<p class="founder-block-role">BUILDER · OXIEDO</p>
+		</div>
+		<div class="founder-bio">
+			<p>
+				Rokib Al Dhin Raadh is the founder of Oxiedo and the architect of ORMAS — a neural
+				network training architecture that generates per-component causal attribution as a
+				physical property of training.
+			</p>
+			<p>
+				He spent two years building, breaking, and rebuilding the architecture before
+				arriving at the current design. The predecessor failed a purpose-built adversarial
+				suite he designed himself. The logs from that failure became the specification for
+				the rebuild.
+			</p>
+			<p>
+				The current architecture has been validated across 383 controlled experiments,
+				four architecture families, and 67 archived training runs with reproducible seeds.
+				The results are documented in a manuscript submitted for peer review.
+			</p>
+			<p>
+				He wrote the commercial plan, the V2 specification, and the 54-file implementation
+				plan. The engine is MIT-licensed.
+			</p>
+
+			<ol class="decisions-log">
+				{
+					decisions.map((d, i) => (
+						<li class="decisions-log-row">
+							<span class="decisions-log-index">{String(i + 1).padStart(2, '0')}</span>
+							<div>
+								<p class="decisions-log-title">{d.title}</p>
+								<p class="decisions-log-body">{d.body}</p>
+							</div>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>METHODOLOGY</Eyebrow>
+		<h2>The evidence base is adversarial, not confirmatory.</h2>
+		<div class="founding-story-prose">
+			<p>
+				In April 2026, an earlier version of the ORMAS architecture was put through a
+				purpose-built destruction suite.
+			</p>
+			<p>
+				42 runs. Two backbone types. An explicit pass/fail list written in advance — by the
+				person who most wanted it to pass.
+			</p>
+		</div>
+		<TelemetryBlock>
+			<Fragment set:html={failBlockHtml} />
+		</TelemetryBlock>
+		<div class="founding-story-prose">
+			<p>The logs were kept.</p>
+			<p>
+				The correct response to a comprehensive failure is not to delete the evidence. It
+				is to understand it.
+			</p>
+			<p>
+				The trainer was rewritten. The architecture was reconstructed. The suite that
+				broke the first version became the standard the second version had to clear.
+			</p>
+			<p>
+				Four months later, the current codebase emerged. 383 experiments. 67 archived
+				flight recorders. Four architecture families. A manuscript submitted for peer
+				review.
+			</p>
+			<p>
+				The benchmarks were not chosen to flatter. They were chosen by the person who had
+				already chosen ones that failed. That is what makes the results worth reading.
+			</p>
+		</div>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>OPEN QUESTIONS</Eyebrow>
+		<h2>What is not yet decided.</h2>
+		<DisclosurePanel label="What is open">
+			<p>
+				<strong>Geography.</strong> Europe first — EU AI Act timeline, England and Wales
+				legal structure. The commercial plan is territory-agnostic beyond that.
+			</p>
+			<p>
+				<strong>Transformer architectures.</strong> ORMAS has not been tested on
+				transformer-based models. The scope of the current manuscript is FC, CNN, and
+				ResNet. Whether the mechanism generalises is an open empirical question — not
+				assumed, not dismissed.
+			</p>
+			<p>
+				<strong>The frontier-lab question.</strong> A collaboration with a large training
+				infrastructure lab would produce the Transformer result and access to real
+				production data. It would also consume significant time at an early stage. This is
+				genuinely open. The answer will be recorded here when it is made.
+			</p>
+			<p>
+				<strong>The source-attribution study.</strong> The central empirical question for
+				V2: whether inter-node disagreement reliably separates mislabelled examples from
+				hard-but-correct ones. Results determine whether four additional solutions
+				proceed. V1 solutions are unaffected either way.
+			</p>
+		</DisclosurePanel>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>WORK</Eyebrow>
+		<ul class="about-links">
+			<li>
+				<a href="/paper">Research</a>
+				<p>Submitted manuscript. 383 experiments, 4 architecture families.</p>
+			</li>
+			<li>
+				<a href="/contact">Commercial plan</a>
+				<p>Available on request. Pricing, market sequencing, V2 specification.</p>
+			</li>
+			<li>
+				<p class="about-links-static">Repository</p>
+				<p>Available after review period. MIT-licensed. Full codebase.</p>
+			</li>
+			<li>
+				<a href="/paper">Evidence</a>
+				<p>67 archived flight recorders, reproducible from seed.</p>
+			</li>
+		</ul>
+	</section>
+
+	<section class="section container about-contact">
+		<p>Direct contact: [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]</p>
+		<p>Subject: [state your context]</p>
+		<p>Response within a few days — usually less.</p>
+	</section>
+</Page>
