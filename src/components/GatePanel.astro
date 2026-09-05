@@ -1,0 +1,33 @@
+---
+// ui_ux/02 §4, Commercial Plan/19. No progress bar, no percentage, no lock icon — a progress
+// indicator on an experiment that has not started would be fabricated telemetry on a site
+// about honest telemetry. The failure branch is stated because nobody else publishes what
+// happens if their thing does not work; omitting it would defeat the component's purpose.
+export interface Props {
+	gate: string;
+	cost: string;
+	status: string;
+	ifItFails: string;
+}
+
+const { gate, cost, status, ifItFails } = Astro.props;
+---
+
+<div class="gate-panel">
+	<p class="gate-label">Gate</p>
+	<p class="gate-name">{gate}</p>
+	<dl class="gate-fields">
+		<div class="gate-field">
+			<dt>Cost</dt>
+			<dd class="tabular">{cost}</dd>
+		</div>
+		<div class="gate-field">
+			<dt>Status</dt>
+			<dd>{status}</dd>
+		</div>
+		<div class="gate-field gate-field--fails">
+			<dt>If it fails</dt>
+			<dd>{ifItFails}</dd>
+		</div>
+	</dl>
+</div>

@@ -140,6 +140,63 @@
 }
 
 /* ============================================================
+   GatePanel — ui_ux/02 §4, Commercial Plan/19
+   ============================================================ */
+
+.gate-panel {
+	background: var(--bg-base);
+	border: 1px solid var(--border-muted);
+	border-radius: 2px;
+	padding: var(--space-lg);
+}
+
+.gate-label {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--amber-mid);
+	margin: 0 0 var(--space-xs);
+}
+
+.gate-name {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin: 0 0 var(--space-md);
+}
+
+.gate-fields {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	margin: 0;
+}
+
+.gate-field {
+	display: flex;
+	gap: var(--space-sm);
+}
+
+.gate-field dt {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	min-width: 90px;
+}
+
+.gate-field dd {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-primary);
+	margin: 0;
+}
+
+.gate-field--fails dd {
+	color: var(--text-secondary);
+}
+
+/* ============================================================
    StatusBadge — design/12 §Status Badge
    ============================================================ */
 
