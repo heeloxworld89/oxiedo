@@ -1,5 +1,22 @@
 ---
-export function getStaticPaths() {
-	return [];
+// design/06_INSIGHTS.md, ui_ux/06_INSIGHTS_UI.md. Renders every real entry in the insights
+// collection. Zero entries at launch means zero routes are generated here — expected, not
+// an error.
+import { getCollection, render } from 'astro:content';
+import Post from '../../layouts/Post.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('insights');
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
 }
+
+const { post } = Astro.props;
+const { Content } = await render(post);
 ---
+
+<Post title={post.data.title} date={post.data.date} readTime={post.data.readTime} category={post.data.category}>
+	<Content />
+</Post>

@@ -1962,3 +1962,91 @@ main {
 	color: var(--amber-bright);
 	margin-top: var(--space-md);
 }
+
+/* ============================================================
+   Insights — design/06_INSIGHTS.md, ui_ux/06_INSIGHTS_UI.md
+   ============================================================ */
+
+.insights-intro {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-md);
+}
+
+.insights-empty {
+	max-width: 65ch;
+	color: var(--text-secondary);
+}
+
+.insights-empty a {
+	color: var(--amber-bright);
+}
+
+.insights-feed {
+	display: flex;
+	flex-direction: column;
+}
+
+.insights-row {
+	display: grid;
+	grid-template-columns: auto 1fr auto auto;
+	align-items: center;
+	gap: var(--space-lg);
+	padding: var(--space-md) var(--space-sm);
+	border-bottom: 1px solid var(--border-subtle);
+	text-decoration: none;
+	transition: background var(--duration-fast) var(--ease-out);
+}
+
+.insights-row:hover {
+	background: var(--bg-surface);
+}
+
+.insights-row-date {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-muted);
+}
+
+.insights-row-title {
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	color: var(--text-primary);
+}
+
+.insights-row-category {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.05em;
+	color: var(--text-secondary);
+	border: 1px solid var(--border-muted);
+	border-radius: 2px;
+	padding: 2px var(--space-xs); /* 2px — no matching --space-* token */
+}
+
+.insights-row-read {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	color: var(--amber-bright);
+	opacity: 0;
+	transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.insights-row:hover .insights-row-read {
+	opacity: 1;
+}
+
+.post-meta {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+}
+
+.post-body {
+	max-width: 65ch;
+	color: var(--text-primary);
+	margin-top: var(--space-lg);
+}
+
+.post-body .telemetry-block {
+	margin-inline: calc(var(--space-lg) * -1);
+}

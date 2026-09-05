@@ -1,0 +1,48 @@
+---
+// design/06_INSIGHTS.md, ui_ux/06_INSIGHTS_UI.md. Data-table feed, no thumbnails. Zero posts at
+// launch is fine — the empty state below is deliberate, not broken (see content.config.ts for
+// why nothing is fabricated to fill it).
+import Page from '../../layouts/Page.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('insights')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Page title="OXIEDO INSIGHTS">
+	<section class="section container">
+		<Eyebrow>OXIEDO INSIGHTS</Eyebrow>
+		<h1>Insights</h1>
+		<p class="insights-intro">
+			We publish what we know, what we do not know, and why it matters to the people who
+			train neural networks at scale. Not marketing. Not opinion. Documented analysis with
+			sourced claims.
+		</p>
+	</section>
+
+	<section class="section container">
+		{
+			posts.length === 0 ? (
+				<p class="insights-empty">
+					Nothing published yet. In the meantime, the evidence base is on{' '}
+					<a href="/paper">/paper</a>.
+				</p>
+			) : (
+				<div class="insights-feed">
+					{posts.map((post) => (
+						<a href={`/insights/${post.id}`} class="insights-row">
+							<span class="insights-row-date tabular">
+								{post.data.date.toISOString().slice(0, 10).replace(/-/g, '.')}
+							</span>
+							<span class="insights-row-title">{post.data.title}</span>
+							<span class="insights-row-category">{post.data.category}</span>
+							<span class="insights-row-read">READ →</span>
+						</a>
+					))}
+				</div>
+			)
+		}
+	</section>
+</Page>
