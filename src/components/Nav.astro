@@ -1,33 +1,112 @@
 ---
-// design/01 §Navigation Design, design/12 §Navigation. Scroll background and the mobile menu
-// toggle are Block 4 (nav.ts) — this component provides markup and states only.
+// design/01 §Navigation Design, design/12 §Navigation.
+//
+// REDESIGN 2026-09-06: plain links on the cream bar, current page pilled.
+//
+// SUBMENUS added 2026-09-06. Product opens onto the seven capability pages; Licensing opens onto
+// the four licence layers on its own page. Built on :hover + :focus-within with no JavaScript,
+// so the menus open for pointer and keyboard alike and still work with JS disabled — the parent
+// item is itself a real link to the section index, so nothing is reachable only via the menu.
 import Button from './Button.astro';
+import Logo from './Logo.astro';
+import { sectors } from '../data/sectors';
 
-const links = [
-	{ href: '/solutions', label: 'Solutions' },
-	{ href: '/sectors', label: 'Sectors' },
+// "INVEST IN US" IS NOT IN THE PRIMARY BAR, removed 2026-09-08. A raise advertised beside the
+// product reads as needing money before it reads as having something to sell, and it puts the
+// weakest fact about the company — that it is unfunded — in the most prominent furniture on every
+// page. /invest is a strong page and the round is real; both are better found than announced. It
+// now sits under Company, alongside About and Careers, and in the footer's Company column. An
+// investor who wants it finds it in one click; everybody else is not asked to think about it.
+//
+// Product now carries the submenu it always should have: it has seven children and is the
+// commercial spine, where Sectors has five and already had one. About becomes a Company menu so
+// /faq and /press stop being reachable only from the footer (/press was reachable from nowhere
+// at all). Top-level item count is unchanged.
+const links: Array<{
+	href: string;
+	label: string;
+	children?: Array<{ href: string; label: string; meta?: string }>;
+}> = [
+	// PRODUCT HAS NO SUBMENU, deliberately. It had one, and it was wrong: a dropdown of seven names
+	// under "Product" presents them as seven destinations to choose between, which is the exact
+	// framing the product page exists to correct. There is one product. The seven applications are
+	// reachable from the page itself and from the footer sitemap, which is where depth belongs.
+	//
+	// Sectors keeps its submenu because five markets genuinely are five different destinations.
+	{ href: '/product', label: 'Product' },
+	{
+		href: '/sectors',
+		label: 'Sectors',
+		children: sectors.map((s) => ({
+			href: `/sectors/${s.id}`,
+			label: s.name,
+			meta: s.axis,
+		})),
+	},
 	{ href: '/licensing', label: 'Licensing' },
-	{ href: '/paper', label: 'Paper' },
-	{ href: '/insights', label: 'Insights' },
-	{ href: '/about', label: 'About' },
+	{ href: '/technology', label: 'Technology' },
+	// Data handling takes the primary slot rather than Insights. In these markets the first
+	// question after "what does it do" is "what happens to our data", and a policy page that is
+	// only reachable from a footer legal bar answers it too late. Insights stays reachable from
+	// the footer until there is something published on it.
+	{ href: '/data', label: 'Data Handling' },
+	// FAQ is top level. It answers the questions that stop a deal, and burying it one level down
+	// meant the readers who most needed it never found it. Careers takes its place in the menu.
+	{ href: '/faq', label: 'FAQ' },
+	{
+		href: '/about',
+		label: 'Company',
+		children: [
+			{ href: '/about', label: 'About' },
+			{ href: '/careers', label: 'Careers' },
+			{ href: '/invest', label: 'Invest' },
+			{ href: '/press', label: 'Press' },
+		],
+	},
 ];
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href + '/');
 ---
 
 <header class="nav">
 	<div class="nav-bar">
-		<a href="/" class="nav-wordmark">OXIEDO</a>
+		<Logo class="nav-logo" />
 
 		<nav class="nav-links-wrap" aria-label="Primary">
 			<ul class="nav-links">
 				{links.map((link) => (
-					<li><a href={link.href} class="nav-link">{link.label}</a></li>
+					<li class={link.children ? 'nav-item nav-item--has-menu' : 'nav-item'}>
+						<a
+							href={link.href}
+							class="nav-link"
+							aria-current={isCurrent(link.href) ? 'page' : undefined}
+						>
+							{link.label}
+							{link.children && <span class="nav-caret" aria-hidden="true">▾</span>}
+						</a>
+
+						{link.children && (
+							<div class="nav-menu">
+								<ul>
+									{link.children.map((child) => (
+										<li>
+											<a href={child.href}>
+												<span class="nav-menu-label">{child.label}</span>
+												{child.meta && <span class="nav-menu-meta">{child.meta}</span>}
+											</a>
+										</li>
+									))}
+								</ul>
+							</div>
+						)}
+					</li>
 				))}
 			</ul>
 		</nav>
 
 		<div class="nav-cta">
-			<Button variant="secondary" size="small" href="/invest">Invest</Button>
-			<Button variant="primary" size="small" href="/contact">Book Now</Button>
+			<Button variant="primary" size="small" href="/contact">Contact Us</Button>
 		</div>
 
 		<button
@@ -43,18 +122,62 @@ const links = [
 		</button>
 	</div>
 
+	{/* WITHOUT JAVASCRIPT the overlay can never be opened, so the menu reverts to a plain inline
+	    list and the hamburger is hidden. This lives in <noscript> rather than keying off a `.js`
+	    class on <html>, because that class is added by a script and Astro's ClientRouter replaces
+	    <html>'s attributes on navigation — which silently wiped it and left the menu stuck open. */}
+	<noscript>
+		<style>
+			@media (max-width: 1159px) {
+				.nav-mobile {
+					position: static;
+					display: block;
+					padding: var(--space-xl) 20px;
+					overflow: visible;
+				}
+				.nav-mobile-sub[hidden] { display: flex; }
+				.nav-mobile-toggle,
+				.nav-mobile-close,
+				.nav-hamburger { display: none; }
+			}
+		</style>
+	</noscript>
+
 	<div class="nav-mobile" id="nav-mobile">
 		<button type="button" class="nav-mobile-close" aria-label="Close menu">×</button>
 		<nav aria-label="Primary">
 			<ul class="nav-mobile-links">
 				{links.map((link) => (
-					<li><a href={link.href} class="nav-mobile-link">{link.label}</a></li>
+					<li>
+						{/* The parent stays a real link to its own index; the caret is a separate control,
+						    so tapping "Sectors" goes to /sectors and tapping the caret reveals the five
+						    markets. One tap target cannot do both jobs. */}
+						<div class="nav-mobile-row">
+							<a href={link.href} class="nav-mobile-link">{link.label}</a>
+							{link.children && (
+								<button
+									type="button"
+									class="nav-mobile-toggle"
+									aria-expanded="false"
+									aria-label={`Show ${link.label} pages`}
+								>
+									<span aria-hidden="true"></span>
+								</button>
+							)}
+						</div>
+						{link.children && (
+							<ul class="nav-mobile-sub" hidden>
+								{link.children.map((child) => (
+									<li><a href={child.href}>{child.label}</a></li>
+								))}
+							</ul>
+						)}
+					</li>
 				))}
 			</ul>
 		</nav>
 		<div class="nav-mobile-cta">
-			<Button variant="primary" fullWidth href="/contact">Book Now</Button>
-			<Button variant="secondary" fullWidth href="/invest">Invest</Button>
+			<Button variant="primary" fullWidth href="/contact">Contact Us</Button>
 		</div>
 	</div>
 </header>

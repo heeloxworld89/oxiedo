@@ -30,6 +30,18 @@ HITS=$(grep -rn "^\s*\.reveal\s*{" src/styles/ 2>/dev/null -A3 | grep "opacity:\
 if [ -n "$HITS" ]; then echo "  .reveal hides without a .js guard:"; echo "$HITS"; FAIL=1; else echo "  clean"; fi
 
 echo
+echo "── 4b · PREMATURELY LINKED ROUTES ───────────────────────────────────"
+if [ -d dist ]; then
+  HITS=$(grep -rn 'href="/data"\|href="/press"' dist/ --include="*.html" || true)
+  if [ -n "$HITS" ]; then
+    echo "  /data or /press is linked. Both must stay unlinked:"
+    echo "    /data  — until the solicitor review in design/14"
+    echo "    /press — until first outreach"
+    echo "$HITS"; FAIL=1
+  else echo "  clean"; fi
+else echo "  no dist/ yet"; fi
+
+echo
 echo "── 5 · UNCOMMITTED WORK ─────────────────────────────────────────────"
 if [ -d .git ]; then
   git status --short | head -20

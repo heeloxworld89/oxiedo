@@ -1,19 +1,29 @@
 ---
-// design/10_CONTACT.md §404. Copy verbatim. The CTA labelled "Research" in the source links to
-// the page the rest of the site calls "Paper" (design/13's corrected page-name vocabulary) — the
-// button below is labelled to match that established convention rather than introduce a second
-// name for the same route.
+// 404. Rewritten 2026-09-07: the third button read "Paper", a page name that no longer exists —
+// /paper became /technology and is called Technology everywhere else. A 404 whose own links use
+// stale vocabulary is a 404 that suggests the rest of the site is stale too.
+//
+// The routes offered are the four a lost reader actually wants, in the order they are usually
+// wanted, rather than a single "go home" that makes them start again.
 import Page from '../layouts/Page.astro';
 import Button from '../components/Button.astro';
 ---
 
-<Page title="404">
+<Page title="Page not found" description={"That URL does not exist. Here is everything worth reading, in the order most people want it."} indexable={false}>
 	<section class="section container not-found">
-		<h1>404 — This page does not exist.</h1>
-		<p class="not-found-body">That is not a metaphor. It is simply not here.</p>
+		<h1>404 — this page does not exist.</h1>
+		<p class="not-found-body">
+			Not a metaphor, and not an accountability failure on the part of a neural network. A URL is
+			simply wrong. Here is everything worth reading, in the order most people want it.
+		</p>
+		<ul class="not-found-routes">
+			<li><a href="/product"><strong>The product</strong><span>What it does, and the seven ways it gets used</span></a></li>
+			<li><a href="/technology"><strong>The technology</strong><span>The architecture, the results, and what is not established</span></a></li>
+			<li><a href="/sectors"><strong>The markets</strong><span>Five industries and the obligation driving each</span></a></li>
+			<li><a href="/faq"><strong>The FAQ</strong><span>Every question an evaluation asks, including the uncomfortable ones</span></a></li>
+		</ul>
 		<div class="not-found-ctas">
-			<Button variant="primary" href="/">← Home</Button>
-			<Button variant="secondary" href="/paper">Paper</Button>
+			<Button variant="primary" href="/">Home</Button>
 			<Button variant="secondary" href="/contact">Contact</Button>
 		</div>
 	</section>

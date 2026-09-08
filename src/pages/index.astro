@@ -1,286 +1,647 @@
 ---
-// design/01_HOME.md, ui_ux/01_HOME_UI.md. Ten sections per ui_ux/01 §1-10 (§6 Founding Story and
-// §7 Investment Hook restored at task 3.0 — an earlier compressed version of ui_ux/01 dropped
-// them; the copy in design/01 §5-6 was never wrong).
+// HOME — rewritten 2026-09-07 for a single audience: the buyer.
 //
-// CONTENT-SCOPE NOTE, still open: design/01 also contains "THE WINDOW" (§X) and "IS ORMAS RIGHT
-// FOR YOUR TEAM?" (§X). ui_ux/01's now-corrected ten-section blueprint still does not include
-// either. Given the founding-story/investment-hook omission turned out to be an error in ui_ux/01
-// rather than a deliberate cut, these two remaining unused sections are worth the same question
-// before treating this page as final.
+// Three decisions from the founder drive this file:
 //
-// HERO SUBHEAD, cut per ui_ux/01 §1 ("TWO LINES. Not four"): design/01's subhead is two
-// paragraphs — a long mechanism sentence, then "Not a post-hoc tool. Not an external probe. The
-// way the model is built." Kept the second, complete, unedited; dropped the first outright (no
-// mid-sentence truncation, no new punctuation) because its content is redundant with Section 3's
-// own explanation of the mechanism. This is an editorial choice, not a mechanical one — flagging
-// it rather than asserting it's certainly what was meant.
+//   1. THE HERO LEADS WITH THE CAPABILITY, not the problem and not the category. "The first
+//      neural network that names its own broken part." NOT "the first" — that was a priority
+//      claim, and a priority claim is the one sentence on a site like this that a technical
+//      reader attacks before reading anything else. It cannot be defended (somebody will always
+//      produce a 2019 paper), it is not needed by the argument, and losing it costs nothing: the
+//      sentence is just as strong describing the property instead of claiming precedence.
+//      The evidence row underneath is then
+//      earning that sentence rather than decorating an abstract one.
+//   2. THE SLOT COUNT IS GONE. The scarcity is real and stays — three Charter slots a quarter is
+//      a capacity policy — but the previous "2 of 3 remain" meter rendered one slot as already
+//      taken, which asserts a customer commitment. Policy, not a countdown.
+//   3. WRITTEN FOR THE BUYER. Investors have /invest and it is in the nav; researchers have
+//      /paper. The old closing grid put an investor card at the same weight as the commercial
+//      one on a page that has ten seconds to qualify an ML lead or a risk owner. It is gone.
 //
-// PAPER STRIP: design/01 §7 names "Submitted AAAI 2027". Task 2.3 requires omitting the venue
-// site-wide until the AAAI anonymity check clears (design/12 §Pre-Launch Checklist) — applied
-// here too for consistency, not just on /paper, since the same unresolved risk applies to any
-// page that names it.
+// SECTION ORDER is a funnel, and the order is the argument:
+//   hero (what it is) -> problem (why you care) -> mechanism (why nobody else has it)
+//   -> features (what you get) -> evidence (proof) -> markets (is this me?)
+//   -> why now (why not next year) -> charter (what to do)
+//
+// TWO SECTIONS ARE NEW. "What it costs you today" and "Why now" did not exist on this page. The
+// first is the agitation step the page never had — it went from a headline straight to a
+// mechanism explanation, which asks a visitor to care about a solution before naming a problem.
+// The second is the only urgency argument here tied to something external and dated rather than
+// to our own release schedule.
+//
+// REMOVED FROM THIS PAGE: the adversarial-weight-injection limitation paragraph. It is a real
+// result and it stays published — it is on the technology page under "What was not tested" and in /faq at
+// full length. The second section of the homepage, before the offer has been made, is the wrong
+// place for it: it was answering an objection no visitor had formed yet.
 import Page from '../layouts/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
-import BentoGrid from '../components/BentoGrid.astro';
-import BentoCell from '../components/BentoCell.astro';
-import PullStat from '../components/PullStat.astro';
-import TelemetryBlock from '../components/TelemetryBlock.astro';
-import LadderSchematic from '../components/LadderSchematic.astro';
+import HeroVisual from '../components/HeroVisual.astro';
+import SectorGraphic from '../components/SectorGraphic.astro';
+import { sectors } from '../data/sectors';
+import { features } from '../data/features';
 import Button from '../components/Button.astro';
 
-const flightRecorderLines = [
-	'epoch 101 · CATASTROPHIC SHOCK',
-	'  pre-shock       85.1%',
-	'  post-shock      10.0%     ← chance',
-	'  Node 1          dead      magnitude 0.00',
-	'  Node 2          dead      magnitude 0.00',
-	'  Node 0          oscillating  magnitude 0.12',
-	'epoch 195 · RECOVERED  80.3%   · 85 corrections, each attributed',
+// Which markets each use case serves, read from data/sectors.ts so the mapping cannot drift from
+// the sector pages. `12 §3` "Where Each Product Lands" is the source: the Proofreader is the only
+// one that enters every market, and saying so is worth more than listing five names.
+const marketsFor = (id: string) => {
+	const served = sectors.filter((s) => s.features.includes(id));
+	if (served.length === sectors.length) return 'Serves all five markets';
+	return served.map((s) => s.name).join(' · ');
+};
+
+
+// THE COST TABLE. Rewritten 2026-09-07. Two prior versions of this section were wrong in
+// instructive ways, and the notes are here so neither gets rebuilt.
+//
+// VERSION 1 was three generic cards with no market specificity.
+//
+// VERSION 2 was a five-market, three-column ledger with four sub-points per market. Two faults:
+//
+//   LENGTH. Roughly 700 words in the second section of a homepage. It was a document, and the
+//   reader it is written for scans this section in about ten seconds.
+//
+//   THE FIGURES DID NOT HOLD. They were four different kinds of number presented as one kind:
+//     · $200M–$500M     what a frontier run costs — not a loss anyone books
+//     · $145.5B         top-20 pharma R&D: a TAM figure, and `12 §2` is explicit that TAM is
+//                       the wrong lens and the right question is what the failure already costs
+//     · 47.3% / 10.0%   our own parameter-matched baselines, presented as the industry's loss.
+//                       Circular, and a technical reader catches it immediately.
+//   Only the retrain-from-scratch figure was a cost an actual buyer actually pays.
+//
+// SO: one row per market, one consequence, one cost — and the cost column says what is true
+// rather than forcing a currency figure into markets that have no published one. Three markets
+// carry a number because a number exists. Two carry the consequence, because inventing a figure
+// there would be the only fabricated thing on the page.
+const ledger = [
+	{
+		id: 'ai-training',
+		market: 'AI Training',
+		breaks: 'A run degrades silently. The loss curve moves only once the damage is thousands of steps old, so recovery means discarding everything since the last checkpoint.',
+		cost: '$16,000–$24,000',
+		costUnit: 'per two-hour recovery',
+	},
+	{
+		id: 'medical-ai',
+		market: 'Medical AI',
+		breaks: 'An audit asks what the training changed. No record of it exists, because no architecture in clinical use produces one — so the model goes back.',
+		cost: '12–36 months',
+		costUnit: 'added to market entry',
+	},
+	{
+		id: 'regulated-finance',
+		market: 'Regulated Finance',
+		breaks: 'A model that cannot be audited component by component cannot be validated under SR 26-2. A model that is not validated is not deployed.',
+		cost: 'The programme',
+		costUnit: 'written off in full',
+	},
+	{
+		id: 'data-obligation',
+		market: 'Data Obligation',
+		breaks: 'A data licence terminates. The clause covers anything trained on it, and retraining from scratch is the only remedy that satisfies the clause.',
+		cost: '$100,000–$500,000',
+		costUnit: 'per deletion request',
+	},
+	{
+		id: 'defense-safety-critical',
+		market: 'Defense & Safety-Critical',
+		breaks: 'A system modifies itself in the field and cannot account for it afterwards. That is not a finding a programme remediates.',
+		cost: 'The deployment',
+		costUnit: 'ended, not remediated',
+	},
 ];
 
-const operations = [
-	{ name: 'PROTECT', description: 'Gate a failing node before it corrupts what follows.', status: 'Built' },
-	{ name: 'REPAIR', description: 'Apply a bounded, logged correction to a diagnosed node.', status: 'Built' },
-	{ name: 'ACCOUNT', description: 'Five layers of causal telemetry, native to training.', status: 'Built' },
-	{ name: 'DETECT', description: 'Name which samples are damaging which component.', status: 'V2' },
-	{ name: 'ISOLATE · SUPPRESS', description: 'Allocate, absorb, and discard the corruption.', status: 'V2' },
+// THE COMPARISON — the section the sale is made in. Third rewrite, and the notes matter because
+// the first two failed in opposite directions.
+//
+// V1 said "No answer exists" five times. A rhetorical device, not an analysis, and an evaluator
+// who knows SHAP and Weights & Biases exist discounts the section the moment it pretends
+// otherwise.
+//
+// V2 fixed that and broke something worse. It ran on the ink at --text-small and opacity 0.62,
+// which computes to roughly 3.1:1 against #16182B — under the 4.5:1 floor for body text. The most
+// important section on the site became the least readable one. It also drifted into the
+// vocabulary of the paper: backward pass, saliency methods, probing classifiers, local gradient
+// chain, correction tensor.
+//
+// THE READER IS NOT AN ML ENGINEER. It is the person who has to answer an auditor, sign off a
+// model, or explain a deletion request to a client. They know their own domain, not ours. So the
+// rule for this copy is: state the concept in their language, give the concrete example, stop.
+// Name a tool where naming it is the evidence — SHAP, MLflow — and go no further into mechanism
+// than the sentence needs.
+const matrix = [
+	{
+		q: 'What failed, and when?',
+		industry: 'A performance chart. It moves only after the damage is done, and it cannot describe anything smaller than the whole run.',
+		ormas: 'The component, the step it happened on, and how severe it was.',
+	},
+	{
+		q: 'Is that a finding, or an opinion?',
+		industry: 'An estimate, produced afterwards by a separate tool that can itself be wrong.',
+		ormas: 'A record, written at the moment of the change, by the system that made it.',
+	},
+	{
+		q: 'Which data caused the damage?',
+		industry: 'Current methods cannot tell bad data apart from genuinely difficult data, so they discard both — and the difficult examples were the valuable half.',
+		ormas: 'The two are told apart, and neither is discarded.',
+	},
+	{
+		q: 'Can one source be removed later?',
+		industry: 'Only by retraining the model from the beginning. Six figures, every time it is asked.',
+		ormas: 'What the model built from that source is a named, removable part. Remove it, and issue a certificate of what was removed.',
+	},
+	{
+		q: 'What does accountability cost to run?',
+		industry: 'A second model, trained and maintained alongside the first.',
+		ormas: 'Nothing. You deploy one model, the same size and speed as the one you would have deployed anyway.',
+	},
+	{
+		q: 'Will an auditor accept it?',
+		industry: 'A written account of what the team intended to do.',
+		ormas: 'Evidence of what the training actually did, signed and unalterable.',
+	},
 ];
 
-const sectors = [
+// Named, and credited with what they are genuinely good at. Naming them is the evidence that this
+// is a category distinction rather than a boast — which is what 13_COPY_RULES requires.
+const alternatives = [
 	{
-		name: 'AI TRAINING',
-		readiness: 'ENTERING FIRST',
-		hook: [
-			'Your run died at step 40,000.',
-			'You rolled back 20,000 steps.',
-			'Here is a solution that would have told you at 40,200.',
-		],
-		stat: 'Frontier runs: $200M–$500M. 419 interruptions in one 54-day run. (External, published.)',
+		name: 'SHAP · LIME · Integrated Gradients',
+		body: 'Explain why a finished model made one particular prediction. A good answer to a different question — they were never built to watch a model being trained, and do not claim to be.',
 	},
 	{
-		name: 'REGULATED FINANCE',
-		readiness: 'ENTERING FIRST',
-		hook: [
-			'The model forgets the 2021 regime while learning 2024.',
-			'Then 2021 returns. This is not a tuning problem.',
-			'It is a known architectural defect with a measured fix.',
-		],
-		stat: '94.6% regime-shift retention. Baseline: 47.3%.',
+		name: 'Weights & Biases · MLflow',
+		body: 'Excellent at recording what happened to a training run. They cannot record what happened inside the model.',
 	},
 	{
-		name: 'MEDICAL AI',
-		readiness: 'UPCOMING — VIA CONSORTIA',
-		hook: [
-			'The deployed model cannot learn from your institution.',
-			'It cannot, because teaching it something about your patients',
-			'would make it forget something about everybody else’s.',
-			'There is now a way to declare exactly what it may change.',
-		],
-		stat: 'The largest prize. Entered last. Needs real biological data first.',
+		name: 'Co-teaching · DivideMix',
+		body: 'Run a second model to get a second opinion, then use it to decide which data to throw away.',
 	},
 	{
-		name: 'DATA OBLIGATION',
-		readiness: 'UPCOMING',
-		hook: [
-			'You trained on their data. They terminated the contract.',
-			'The only compliant alternative is retrain from scratch.',
-			'A six-figure avoided cost, per deletion event, recurring.',
-		],
-		stat: 'The compliance industry named the category before supply existed.',
+		name: 'Retraining from scratch',
+		body: 'The only method that genuinely removes a data source from a model. Six figures, per request, and at scale it is not done at all.',
+	},
+];
+
+
+// Tied to published, dated obligations rather than to our own release schedule — the one urgency
+// argument on this page that does not depend on us.
+const whyNow = [
+	{
+		framework: 'EU AI Act · Article 12',
+		body: 'High-risk AI systems must keep automatic, immutable records of events across the system lifecycle. ORMAS emits that record as a physical property of training rather than as a logging layer bolted alongside it.',
 	},
 	{
-		name: 'DEFENSE & SAFETY-CRITICAL',
-		readiness: 'NAMED — NOT PURSUING YET',
-		hook: [
-			'A frozen model in a degrading environment.',
-			'Graceful degradation from 85% to 80% instead of 10%.',
-			'Every self-modification logged and bounded.',
-		],
-		stat: 'Longest cycle. Highest ceiling. Test-time evidence gap must close first.',
+		framework: 'SR 26-2 · SS1/23',
+		body: 'The interagency guidance that replaced SR 11-7 in April 2026 keeps the disciplines that matter: model inventory, independent validation, and documented change control. A model that cannot be audited component by component cannot be validated, and a model that is not validated is not deployed.',
+	},
+	{
+		framework: 'GDPR · Article 17',
+		body: 'The right to erasure is being enforced against trained models, not only against databases. The compliance industry has already named the category it needs — unlearning-ready architectures — ahead of any supply existing.',
 	},
 ];
 ---
 
-<Page title="ORMAS · STRUCTURAL INTELLIGENCE FOR NEURAL NETWORKS">
-	<!-- 1. HERO -->
-	<section class="section container hero">
-		<div class="hero-left">
-			<Eyebrow>ORMAS · STRUCTURAL INTELLIGENCE FOR NEURAL NETWORKS</Eyebrow>
-			<h1 class="hero-headline">
-				Your model knows what is happening inside itself.<br />
-				No prior architecture made this possible at training time.
-			</h1>
-			<p class="hero-subhead">
-				Not a post-hoc tool. Not an external probe. The way the model is built.
-			</p>
-			<div class="hero-cta-row">
-				<Button variant="primary" href="/contact">Book a Warning Light session</Button>
-				<Button variant="secondary" href="/paper">Read the paper</Button>
+<Page title="The neural network that can name its own broken part" description={"ORMAS makes per-component causal attribution a physical property of training. The account is produced as the model learns, not reconstructed afterwards."}>
+	<!-- 1. HERO. Capability-led: the headline states the thing nothing else can do, and the three
+	     figures beneath it are the evidence for that specific sentence, not general credentials. -->
+	<section class="hero">
+		<div class="hero-inner container">
+			<div class="hero-copy">
+				<Eyebrow>ORMAS · STRUCTURAL INTELLIGENCE FOR NEURAL NETWORKS</Eyebrow>
+				<h1 class="hero-headline">
+					A neural network that names its own broken part.
+				</h1>
 			</div>
-		</div>
-		<div class="hero-right">
-			<TelemetryBlock label="Flight recorder">
-				{flightRecorderLines.join('\n')}
-			</TelemetryBlock>
-		</div>
-	</section>
-
-	<!-- 2. EVIDENCE BENTO -->
-	<section class="section container reveal">
-		<Eyebrow as="h2">WHAT THE EVIDENCE SHOWS</Eyebrow>
-		<BentoGrid>
-			<BentoCell colSpan={6} rowSpan={2}>
-				<PullStat figure="+70.3 pp" caption="Recovery advantage over standard networks" />
-				<p class="bento-context">80.3% vs 10.0% — dead-layer collapse condition</p>
-				<p class="bento-qualifier">CIFAR-10/100</p>
-			</BentoCell>
-			<BentoCell colSpan={3} rowSpan={1}>
-				<PullStat figure="383" caption="Validation experiments" />
-				<p class="bento-context">Across 4 architecture families</p>
-				<p class="bento-qualifier">CIFAR-10/100</p>
-			</BentoCell>
-			<BentoCell colSpan={3} rowSpan={1}>
-				<PullStat figure="22,014" caption="Structural corrections logged in a single run" />
-				<p class="bento-context">Every one attributed. Every one bounded.</p>
-				<p class="bento-qualifier">CIFAR-10/100</p>
-			</BentoCell>
-			<BentoCell colSpan={6} rowSpan={1}>
-				<PullStat figure="−1.0 pp" caption="Known failure" variant="warning" />
-				<p class="bento-context">Adversarial weight injection (retained as a trust signal)</p>
-				<p class="bento-qualifier">CIFAR-10/100</p>
-			</BentoCell>
-		</BentoGrid>
-	</section>
-
-	<!-- 3. THE PRIMITIVE -->
-	<section class="section container reveal">
-		<Eyebrow>ONE PRIMITIVE · EVERYTHING FOLLOWS</Eyebrow>
-		<h2>Every other network is a black box because it has to be. This one is not.</h2>
-		<div class="primitive-columns">
-			<p class="primitive-column">
-				When a neural network trains, every error signal flows through every parameter
-				simultaneously. That diffusion is what makes networks powerful — and what makes
-				structural accountability impossible. When something breaks, the loss falls. That's
-				all you know. Which part, when, why: these questions have no answer in the standard
-				architecture.
-			</p>
-			<p class="primitive-column">
-				ORMAS bounds each node's local gradient chain to exactly four operations. That
-				constraint — small enough to be traceable, large enough to carry a signal — means
-				per-node attribution is a physical property of the backward pass, not a
-				reconstruction.
-			</p>
-		</div>
-		<p class="primitive-closer">The network knows what it is doing. It always did. Now it keeps a record.</p>
-
-		<BentoGrid>
-			{operations.map((op) => (
-				<BentoCell colSpan={4} rowSpan={1}>
-					<p class="operation-name">{op.name}</p>
-					<p class="operation-description">{op.description}</p>
-					<p class={`operation-status operation-status--${op.status.toLowerCase()}`}>{op.status}</p>
-				</BentoCell>
-			))}
-		</BentoGrid>
-	</section>
-
-	<!-- 4. STATUS LADDER -->
-	<section class="section container reveal">
-		<Eyebrow>CURRENT STATUS · HONEST</Eyebrow>
-		<h2>One solution is available now. Six are on the way.</h2>
-		<LadderSchematic />
-		<div class="status-columns">
-			<div>
-				<p>
-					The Warning Light runs today. Send a training run — we return which component
-					failed and when. One solution, bookable now. The Proofreader and The Diary are in
-					active build.
+			<div class="hero-lede">
+				<p class="hero-subhead">
+					A training architecture that records what each component of the model did, while it
+					learns — rather than a monitoring layer bolted on afterwards.
 				</p>
-				<Button variant="tertiary" href="/contact">Book a Warning Light session</Button>
+				<div class="hero-cta-row">
+					<Button variant="primary" href="/contact">Pre-book ORMAS</Button>
+					<Button variant="secondary" href="/technology">Read the paper</Button>
+				</div>
 			</div>
-			<div>
-				<p>
-					The next four solutions depend on V2 — a version fully specified and in active
-					development. One validation study, currently being scoped, will confirm the
-					central premise that unlocks all four.
-				</p>
-				<p>Pre-register for early access. You will be notified when the study passes.</p>
-				<Button variant="tertiary" href="/contact">Pre-register</Button>
+		</div>
+
+		{/* Full width, beneath the copy. It was a 1200x560 strip pinned beside a headline column,
+		    which is why it read small no matter what the copy did — at roughly 45% of the
+		    container there was never room for the labels. */}
+		<div class="hero-art container">
+			<HeroVisual />
+		</div>
+
+		{/* The trust strip. This was three research figures and a "All figures: CIFAR-10 /
+		    CIFAR-100" line — a results table from a paper, in the first viewport of a commercial
+		    site. With no customer logos to show, the five markets do the job a logo bar does:
+		    they say this is a product with buyers rather than a study with results. The evidence
+		    numbers moved down into the evidence section, which is what that section is for. */}
+		<div class="hero-trust">
+			<div class="hero-trust-inner container">
+				<p class="hero-trust-label">Deployed on your own infrastructure, in</p>
+				<ul class="hero-trust-list">
+					{sectors.map((s) => (
+						<li><a href={`/sectors/${s.id}`}>{s.name}</a></li>
+					))}
+				</ul>
 			</div>
 		</div>
 	</section>
 
-	<!-- 5. SECTORS -->
+	<!-- 2. THE PROBLEM. New section. The page previously went from the headline straight into a
+	     mechanism explanation, which asks a visitor to care about an answer before a question has
+	     been put to them. Three failures, each with the cost already being paid for it. -->
 	<section class="section container reveal">
-		<Eyebrow>FIVE MARKETS · ONE CODEBASE</Eyebrow>
-		<h2>The primitive is horizontal. The first sale is specific.</h2>
-		<div class="sector-cards">
-			{sectors.map((sector) => (
-				<div class="sector-card">
-					<p class="sector-name">{sector.name}</p>
-					<p class="sector-readiness">{sector.readiness}</p>
-					{sector.hook.map((line) => <p class="sector-hook">{line}</p>)}
-					<p class="sector-stat">{sector.stat}</p>
+		<div class="scenario">
+			<div class="scenario-col">
+				<p class="scenario-label">A run dies at 60 percent. Today —</p>
+				<p class="scenario-body">
+					The loss curve says the model degraded around step 40,000. It cannot say which component
+					caused it, because nothing computed that. So the run restarts from the last good
+					checkpoint, blind, and the same compute is paid for twice. On a frontier run that is
+					thousands of GPU-hours to arrive back where you already were.
+				</p>
+			</div>
+			<div class="scenario-col scenario-col--after">
+				<p class="scenario-label">The same run, trained under ORMAS —</p>
+				<p class="scenario-body">
+					The network names the component, the step it failed at, the size of the change, and the
+					bound it stayed inside. Not an estimate produced afterwards by a second tool — a
+					quantity the network computed about itself while training, which costs nothing to read
+					back.
+				</p>
+			</div>
+		</div>
+		<p class="scenario-note">
+			The same record answers the auditor asking which data shaped a decision, and the regulator
+			asking what changed between two versions. One mechanism, three questions.
+		</p>
+	</section>
+
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>WHAT IT COSTS YOU TODAY</Eyebrow>
+			<h2 class="section-title">Nobody budgets for this. Everyone pays it.</h2>
+			<p class="section-lede">
+				Every error signal in a neural network touches every parameter at once. That is what makes
+				these systems powerful, and it is why <em>which part did this?</em> has no available
+				answer — not because the answer is buried, but because there is no part to point at.
+				The bill arrives in a different currency in every market.
+			</p>
+
+			<div class="ledger">
+				<div class="ledger-head">
+					<span>Market</span>
+					<span>Where it breaks</span>
+					<span class="ledger-head-cost">What it costs</span>
+				</div>
+				{/* The ROW is not a link, deliberately. It was, and two things were wrong with that:
+				    a whole-row target with no affordance navigates a reader who did not know they
+				    had clicked anything, and it leaks the funnel — this is the second section on
+				    the page, and a click here loses the reader before the product, the evidence
+				    and the offer. The markets section further down is where routing belongs, and
+				    it has real buttons. The market name stays a link, because a word styled as a
+				    link is an affordance nobody has to guess at. */}
+				{ledger.map((row) => (
+					<div class="ledger-row">
+						<a class="ledger-market" href={`/sectors/${row.id}`}>{row.market}</a>
+						<span class="ledger-breaks">{row.breaks}</span>
+						<span class="ledger-cost">
+							<span class="ledger-cost-figure tabular">{row.cost}</span>
+							<span class="ledger-cost-unit">{row.costUnit}</span>
+						</span>
+					</div>
+				))}
+			</div>
+
+			<p class="problem-closer">
+				One property is missing from every architecture on that list, and every figure above is a
+				consequence of its absence. ORMAS is the correction.
+			</p>
+		</div>
+	</section>
+
+	<!-- 3. THE COMPARISON. Back on the light ground: on the ink this ran at roughly 3.1:1 and the
+	     most important section on the site was the least readable one. The six capabilities that
+	     used to close this section have moved to THE PRODUCT, where they belong — this section is
+	     the comparison and nothing else. -->
+	<section class="section container reveal proof">
+		<Eyebrow>THE COMPARISON</Eyebrow>
+		<h2 class="section-title">Everyone else reconstructs what happened. This records it.</h2>
+		<p class="section-lede">
+			When something goes wrong inside a model, every tool available today works the same way: it
+			examines a finished system and produces its best estimate of what must have occurred. The
+			estimate is often good. It cannot be verified, and it cannot be filed.
+		</p>
+		<p class="proof-statement">
+			What follows is not a better estimate. It is a different kind of answer — one written while
+			the work is happening, by the system doing the work.
+		</p>
+
+		<div class="matrix" role="table" aria-label="How the question is answered today, compared with ORMAS">
+			<div class="matrix-head" role="row">
+				<span role="columnheader">The question you have to answer</span>
+				<span role="columnheader">How it is answered today</span>
+				<span role="columnheader" class="matrix-head--lit">With ORMAS</span>
+			</div>
+			{matrix.map((row) => (
+				<div class="matrix-row" role="row">
+					<p class="matrix-q" role="cell">{row.q}</p>
+					<p class="matrix-industry" role="cell">{row.industry}</p>
+					<p class="matrix-ormas" role="cell">{row.ormas}</p>
 				</div>
 			))}
 		</div>
-		<Button variant="tertiary" href="/sectors">See all sectors in depth</Button>
-	</section>
 
-	<!-- 6. FOUNDING STORY TEASER -->
-	<section class="section container reveal founding-story">
-		<Eyebrow as="h2">THE ORIGIN</Eyebrow>
-		<blockquote class="founding-story-quote">
-			"In April 2026, an earlier version was destroyed by its own author's test suite. The
-			logs were kept. The system was rebuilt. This is what came out."
-		</blockquote>
-		<p class="founding-story-stats">
-			<span class="tabular">4 months</span> to rebuild
-			<span class="founding-story-divider">·</span>
-			<span class="tabular">383 experiments</span> carried
-		</p>
-		<Button variant="tertiary" href="/about">Read the full story</Button>
-	</section>
-
-	<!-- 7. INVESTMENT HOOK -->
-	<section class="section container reveal investment-hook">
-		<Eyebrow>WORKING WITH INVESTORS</Eyebrow>
-		<h2>One primitive is being built into a new kind of industry.</h2>
-		<p>
-			We are open to conversations with investors who understand deep-tech primitives,
-			long-cycle B2B markets, and the specific risk profile of a pre-revenue company with a
-			validated research result but no customer conversations yet.
-		</p>
-		<p>
-			If you want to see the full case — the evidence, the solution ladder, the licensing
-			model, and the open questions — the investment brief is available on request.
-		</p>
-		<Button variant="secondary" href="/invest">See the investment case</Button>
-	</section>
-
-	<!-- 8. CHARTER PARTNERSHIP BAND -->
-	<section class="section container reveal charter-band">
-		<h2>The Charter Partnership Programme</h2>
-		<p>Pre-booking is the only window to negotiate terms.</p>
-		<p><span class="tabular">3</span> Charter Partner slots open per quarter. <span class="tabular">2</span> slots remain.</p>
-		<p>
-			The EU AI Act and SR 11-7 regulatory windows are active. Charter Partners lock in a
-			flat-rate, 5-year lock, direct engineering access, and a first-mover position to define
-			what compliance looks like for everyone else.
-		</p>
-		<Button variant="primary" href="/contact">Apply for a Charter Partnership</Button>
-	</section>
-
-	<!-- 9. PAPER STRIP -->
-	<section class="section container reveal paper-strip">
-		<div>
-			<p>
-				ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction · Rokib
-				Al Dhin Raadh
-			</p>
-			<p>383 experiments · Preprint under review</p>
+		<div class="alts">
+			<p class="alts-label">What is being compared</p>
+			<div class="alts-grid">
+				{alternatives.map((a) => (
+					<div class="alts-item">
+						<p class="alts-name">{a.name}</p>
+						<p class="alts-body">{a.body}</p>
+					</div>
+				))}
+			</div>
 		</div>
-		<Button variant="tertiary" href="/paper">Read</Button>
+
+		<p class="proof-closer">
+			None of this is a report produced for you afterwards. It is written by the system as it
+			works — which is the whole difference between something you are asked to believe and
+			something you can check.
+		</p>
+	</section>
+
+	<!-- 4. THE PRODUCT — the introduction to what is being sold, and the informational spine of the
+	     page. It was a catalogue: a name, a question and three capability tags per feature, which
+	     tells a buyer nothing about what they receive or where to begin.
+	
+	     Two things from the corpus it was missing entirely:
+	       · the deliverable is THREE OBJECTS, not a model (`08 §5`) — a buyer who thinks they are
+	         buying a model prices it against a model
+	       · the ladder is ordered BY HOW HARD IT IS TO SAY YES (`04 §1`), which is the single most
+	         useful thing you can tell someone deciding where to start
+	
+	     The six-cell capability grid is gone. Six abstract verbs at full size told an industry
+	     reader nothing; the tags on each row carry the same information where it means something. -->
+	<section class="section container reveal">
+		<Eyebrow>THE PRODUCT</Eyebrow>
+		<h2 class="section-title">ORMAS is a training architecture. What you buy is what it leaves behind.</h2>
+		<p class="section-lede">
+			Nothing about how you train changes: the same data, the same objective, the same model at
+			the end of it. What changes is what exists alongside that model — parts that can be named,
+			and therefore protected, repaired, accounted for, separated by source, and removed on
+			request.
+		</p>
+
+		<div class="deliverables">
+			<p class="block-label">What you receive</p>
+			<div class="deliverables-grid">
+				<div class="deliverable">
+					<p class="deliverable-n tabular">01</p>
+					<h3>The model</h3>
+					<p>
+						Deploys exactly as it would have. Same architecture, same inference cost, nothing
+						about serving it changes.
+					</p>
+				</div>
+				<div class="deliverable">
+					<p class="deliverable-n tabular">02</p>
+					<h3>The named parts</h3>
+					<p>
+						What the model learned from each source, as a separate object you can point at — bound
+						to a record of the data that justified it, and removable.
+					</p>
+				</div>
+				<div class="deliverable">
+					<p class="deliverable-n tabular">03</p>
+					<h3>The record</h3>
+					<p>
+						Every change the training made: which part, when, why, how much, and inside what
+						limit. Signed, and diffable against the version you last approved.
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="ftable">
+			{/* A mono label, not a second headline. This block previously opened with an h3
+			    reading "Seven features. One licence." — a second title competing with the section's
+			    own, saying less than it, and breaking the symmetry with "What you receive" above.
+			    Both blocks are labelled the same way now; the section has one headline. */}
+			<p class="block-label">Where it lands hardest</p>
+			<p class="ftable-note">
+				Those six operations can be combined in many ways. Seven combinations carry almost all of
+				the value, because each one lands on a failure a specific market is already paying for —
+				the same failures priced at the top of this page. They are set out in the order of what
+				each asks of you: the first needs a file and never touches your model; the last needs a
+				limit agreed with your reviewer before you begin. <strong>Other combinations exist. These
+				are the seven worth naming.</strong>
+			</p>
+
+			<div class="ftable-head">
+				<span>The use case</span>
+				<span>What it does</span>
+				<span>What it asks of you</span>
+			</div>
+
+			{features.map((f, i) => (
+				<div class="ftable-row">
+					<div class="ftable-id">
+						<p class="ftable-index tabular">{String(i + 1).padStart(2, '0')}</p>
+						<a class="ftable-name" href={`/product/${f.id}`}>{f.name}</a>
+						<p class="ftable-q">{f.question}</p>
+						<p class="ftable-markets">{marketsFor(f.id)}</p>
+					</div>
+					<div class="ftable-does">
+						<p>{f.summary}</p>
+						<ul class="ftable-caps">
+							{f.capabilities.map((c) => <li>{c}</li>)}
+						</ul>
+					</div>
+					<p class="ftable-asks">{f.requires}</p>
+				</div>
+			))}
+		</div>
+
+		<p class="product-closer">
+			One product, one licence, on your own infrastructure. You turn on what your situation calls
+			for and the licence is scoped to that — one integration, one contract, and nothing priced per
+			use case.
+		</p>
+
+		<Button variant="secondary" href="/product">See the product in full</Button>
+	</section>
+
+	<!-- 5. THE EVIDENCE. It was three prose cards that RE-ARGUED the comparison two sections above
+	     — "failures get a name and a time" is matrix row 1, "every correction is on the record" is
+	     matrix row 6 — followed by a separate strip of three figures. Two blocks, both partly
+	     redundant, neither carrying a measured result the comparison had not already claimed.
+	
+	     It now carries three measured results, each led by its own number, and the separate figure
+	     strip is gone into them. The comparison argues; this proves. -->
+	<section class="section container reveal">
+		<div class="evidence-split">
+			<div class="evidence-split-intro">
+				<Eyebrow>THE EVIDENCE</Eyebrow>
+				<h2 class="section-title">Three results. Every condition stated.</h2>
+				<p class="section-lede">
+					Each figure comes from a controlled experiment against a parameter-matched standard
+					network: same parameter count, same data, same schedule.
+				</p>
+				<Button variant="secondary" href="/technology">Read the full evidence</Button>
+			</div>
+
+			<div class="evidence-rows">
+				<div class="evidence-row">
+					<p class="evidence-row-figure tabular">80.3%</p>
+					<div class="evidence-row-body">
+						<h3>Recovery from total structural collapse</h3>
+						<p>
+							A layer was destroyed mid-training, on a network that had reached 85.1%. The
+							standard network stayed at 10% — chance level — on every seed, permanently.
+							ORMAS diagnosed the failure within one epoch and climbed back to 80.3%.
+						</p>
+					</div>
+				</div>
+				<div class="evidence-row">
+					<p class="evidence-row-figure tabular">94.6%</p>
+					<div class="evidence-row-body">
+						<h3>Retained through a shift in the task</h3>
+						<p>
+							Trained on one task, then another, with no replay buffer and no task identifier —
+							the conditions under which a deployed model is normally retrained. The standard
+							network kept 47.3% of what it knew.
+						</p>
+					</div>
+				</div>
+				<div class="evidence-row">
+					<p class="evidence-row-figure tabular">22,014</p>
+					<div class="evidence-row-body">
+						<h3>Stable where standard training failed outright</h3>
+						<p>
+							A fifty-node network at 30% label noise across 200 epochs. Standard training
+							returned NaN and stopped. ORMAS stayed stable, and every one of those corrections
+							is on the record with its component, magnitude and limit.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<p class="evidence-qualifier">
+			383 controlled experiments across four architecture families. All results on CIFAR-10 and
+			CIFAR-100 — <a href="/technology">the paper</a> carries the full conditions, the error bars, and
+			the one result that went against us.
+		</p>
+	</section>
+
+	<!-- 6. MARKETS. Reads from data/sectors.ts and frames each market by the question it asks and
+	     the feature that answers it. -->
+	<section class="section container reveal">
+		<Eyebrow>FIVE MARKETS · ONE PRODUCT</Eyebrow>
+		<h2 class="section-title">The mechanism is the same. The vocabulary is yours.</h2>
+		<p class="section-lede">
+			A hospital calls it the site. A bank calls it the region. A biotech calls it the batch. An
+			AI lab calls it the corpus. Every market below asks the same question in its own words,
+			and each is answered by one of the seven use cases.
+		</p>
+		<div class="sector-rows">
+			{sectors.map((sector) => {
+				const lead = features.find((f) => f.id === sector.primaryFeature);
+				return (
+					<div class="sector-row">
+						<div class="sector-row-tile">
+							<SectorGraphic id={sector.id} caption={false} />
+						</div>
+						<div class="sector-row-body">
+							<div class="sector-row-heading">
+								<h3>{sector.name}</h3>
+								<span class="sector-row-pill">{sector.axis}</span>
+							</div>
+							<p class="sector-row-question">{sector.question}</p>
+							<p class="sector-row-hook">{sector.changes}</p>
+							<div class="sector-row-footer">
+								<p class="sector-row-stat">
+									Answered by <strong>{lead ? lead.name : ''}</strong> · {sector.features.length} of 7 use cases in scope
+								</p>
+								<Button variant="secondary" size="small" href={`/sectors/${sector.id}`}>Read the market</Button>
+							</div>
+						</div>
+					</div>
+				);
+			})}
+		</div>
+		<Button variant="tertiary" href="/sectors">See all five markets</Button>
+	</section>
+
+	<!-- 7. WHY NOW. New section. Every other urgency argument on this site is about our own
+	     schedule, which is not the buyer's problem. These three are dated, published, and enforced
+	     by somebody else. -->
+	<section class="section container reveal">
+		<Eyebrow>WHY NOW</Eyebrow>
+		<h2 class="section-title">The record is becoming an obligation, not a preference.</h2>
+		<p class="section-lede">
+			Three separate regimes now require of a trained model something standard architectures
+			cannot produce: evidence of what changed inside it, attributable to a part. The
+			institutions that can generate that record are not merely compliant — they are setting the
+			format everyone else will be measured against.
+		</p>
+		<div class="whynow-grid">
+			{whyNow.map((w) => (
+				<article class="whynow-item">
+					<p class="whynow-framework">{w.framework}</p>
+					<p class="whynow-body">{w.body}</p>
+				</article>
+			))}
+		</div>
+	</section>
+
+	<!-- 8. CLOSING. One ask, for one audience. The investor card that used to sit here at equal
+	     weight is gone — /invest is in the nav and in the footer. The citation strip stays: to a
+	     technical buyer a manuscript under review is a credential, not a research detail. -->
+	<section class="band band--dark closing reveal">
+		<div class="section container">
+			<article class="closing-card closing-card--lead closing-card--solo">
+				<Eyebrow>PRE-BOOKING</Eyebrow>
+				<h2>Pre-booking is the window in which the product is still shaped around you.</h2>
+
+				<p>
+					There is no price list. The figure is agreed per institution and written into the
+					contract, and pre-booking fixes those terms ahead of general availability. There is no
+					limit on how many are accepted and no countdown attached to it — the reason to do it
+					early is that the requirements are still open, not that the slots are scarce.
+				</p>
+
+				<p class="closing-card-terms">
+					Early partners get flat-rate, enterprise-wide terms, their own compliance workflow built
+					into the baseline architecture, and direct engineering access rather than an account
+					manager.
+				</p>
+
+				<Button variant="primary" href="/contact?intent=pre-book#pre-book">Pre-book a deployment</Button>
+			</article>
+
+			<div class="closing-citation">
+				<div class="closing-citation-main">
+					<p class="closing-citation-title">
+						ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction
+					</p>
+					<p class="closing-citation-meta">Rokib Al Dhin Raadh</p>
+				</div>
+				<dl class="closing-citation-data">
+					<div>
+						<dt>Experiments</dt>
+						<dd class="tabular">383</dd>
+					</div>
+					<div>
+						<dt>Status</dt>
+						<dd>Preprint under review</dd>
+					</div>
+				</dl>
+				<Button variant="tertiary" href="/technology">Read the paper</Button>
+			</div>
+		</div>
 	</section>
 </Page>

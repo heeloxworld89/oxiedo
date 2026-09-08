@@ -1,0 +1,512 @@
+---
+// THE HERO SYSTEM — rewritten 2026-09-07. Replaces a three-panel strip (network · record ·
+// markets) that diagrammed the SITE'S SECTIONS rather than the product, on a 1200x560 artboard
+// too short to sit beside anything.
+//
+// WHAT IT ARGUES, in one frame:
+//
+//   LEFT      A standard network, ghosted. Same node count, no structure you can address. A "?"
+//             where a name would be. This is the industry today: not opaque, UNNAMEABLE.
+//
+//   RIGHT     ORMAS as concentric rings, built outward from the one architectural decision:
+//               core    the bounded 4-operation chain — the primitive
+//               ring 1  the six capabilities the primitive makes possible
+//               ring 2  the seven use cases, each a combination of those capabilities
+//               ring 3  the five markets, each entering through one lead feature
+//
+// THE CONNECTORS ARE REAL DATA, not decoration. Every chord from a feature to a capability is a
+// row of the capability matrix (Commercial Plan `03 §3`), read straight out of data/features.ts.
+// Every market line runs to that market's own primaryFeature in data/sectors.ts. Add a feature
+// or change a capability in the data and this diagram redraws itself correctly — it cannot go
+// out of step with the pages, because it is drawn from the same source they are.
+//
+// That is also the argument the picture is making: the web in the middle IS the reason seven
+// features are one product. You can see them sharing capabilities.
+//
+// MOTION. One build-outward pass of ~3.2s — core, capabilities, matrix, features, markets — then
+// it rests on a complete, still-legible diagram. Not a loop: ui_ux/00 §3 forbids looping
+// decoration, and once the diagram has explained itself there is nothing left to animate.
+//
+// NO JS, NO EXTERNAL ASSETS. Pure CSS keyframes with staggered delays and fill-mode: forwards,
+// so it renders identically with JavaScript disabled (Law 3). prefers-reduced-motion jumps
+// straight to the final state. Every colour is a token.
+import { features } from '../data/features';
+import { sectors } from '../data/sectors';
+
+const W = 1400;
+const H = 900;
+
+// The radial system sits right of the ghost; these were chosen so the outermost market pills
+// clear the divider on the left and the artboard edge on the right.
+const CX = 900;
+const CY = 450;
+
+const R_CORE = 82;
+const R_CAPS = 152;
+const R_FEAT = 258;
+const R_MKT = 400;
+
+const CHIP_W = 152;
+const CHIP_H = 34;
+// 192 rather than 178: "Defense & Safety-Critical" is 25 characters, which at 11px JetBrains
+// Mono is ~165px and left only 6px of padding a side. Widening keeps the label whole rather than
+// shortening a name the rest of the site spells out in full.
+const PILL_W = 192;
+const PILL_H = 30;
+
+// Angles run clockwise from the top, so the first item in each ring reads at 12 o'clock.
+const pos = (r: number, i: number, n: number) => {
+	const a = ((i / n) * 360 - 90) * (Math.PI / 180);
+	return { x: CX + r * Math.cos(a), y: CY + r * Math.sin(a), a };
+};
+
+const CAP_ORDER = ['ACCOUNT', 'PROTECT', 'REPAIR', 'DETECT', 'ISOLATE', 'SUPPRESS'] as const;
+
+const capPts = CAP_ORDER.map((name, i) => ({ name, ...pos(R_CAPS, i, CAP_ORDER.length) }));
+const featPts = features.map((f, i) => ({ feature: f, ...pos(R_FEAT, i, features.length) }));
+const mktPts = sectors.map((s, i) => ({ sector: s, ...pos(R_MKT, i, sectors.length) }));
+
+// THE MATRIX, as chords. Each is one cell of Commercial Plan `03 §3`. They are drawn first and
+// the core disc is painted over them, so a chord between two near-opposite points reads as
+// passing behind the primitive rather than through it.
+const chords = featPts.flatMap((fp) =>
+	fp.feature.capabilities
+		.map((cap) => capPts.find((c) => c.name === cap))
+		.filter((c): c is NonNullable<typeof c> => Boolean(c))
+		.map((c) => ({
+			key: `${fp.feature.id}-${c.name}`,
+			x1: CX + (R_FEAT - CHIP_H / 2 - 4) * Math.cos(fp.a),
+			y1: CY + (R_FEAT - CHIP_H / 2 - 4) * Math.sin(fp.a),
+			x2: c.x,
+			y2: c.y,
+		}))
+);
+
+// Each market enters through one feature. Two markets lead with The Diary, so two lines converge
+// on it — that convergence is true and worth seeing.
+const entries = mktPts
+	.map((mp) => {
+		const target = featPts.find((fp) => fp.feature.id === mp.sector.primaryFeature);
+		if (!target) return null;
+		return {
+			key: mp.sector.id,
+			x1: CX + (R_MKT - PILL_H / 2 - 4) * Math.cos(mp.a),
+			y1: CY + (R_MKT - PILL_H / 2 - 4) * Math.sin(mp.a),
+			x2: CX + (R_FEAT + CHIP_H / 2 + 4) * Math.cos(target.a),
+			y2: CY + (R_FEAT + CHIP_H / 2 + 4) * Math.sin(target.a),
+		};
+	})
+	.filter((e): e is NonNullable<typeof e> => Boolean(e));
+
+// The four bounded operations, as a 2x2 inside the core disc.
+const ops = ['LayerNorm', 'Linear ↓', 'PReLU', 'Linear ↑'];
+
+// The ghost. Same node count as the ORMAS side's inner structure, deliberately — the point is
+// not that the standard network is smaller, it is that none of it can be addressed.
+const GX = 200;
+const GY = 450;
+// Scaled up ~1.3x from the first draft: at the previous size the ghost occupied under half its
+// own panel and read as an afterthought rather than as the other half of the comparison.
+const ghostNodes = [
+	[-96, -99], [5, -125], [101, -91],
+	[-125, 0], [-18, -18], [86, 8],
+	[-91, 96], [13, 120], [107, 91],
+];
+const ghostEdges: [number, number][] = [
+	[0, 1], [1, 2], [0, 3], [0, 4], [1, 4], [2, 4], [2, 5],
+	[3, 4], [4, 5], [3, 6], [4, 6], [4, 7], [4, 8], [5, 8], [6, 7], [7, 8],
+];
+---
+
+<div class="hero-visual">
+	<svg
+		viewBox={`0 0 ${W} ${H}`}
+		role="img"
+		aria-labelledby="hv-title hv-desc"
+		preserveAspectRatio="xMidYMid meet"
+	>
+		<title id="hv-title">ORMAS as one system</title>
+		<desc id="hv-desc">
+			On the left, a standard neural network drawn as an unlabelled mesh with a question mark at
+			its centre: no region of it can be named. On the right, ORMAS drawn as four concentric
+			rings built outward from one architectural decision — a bounded four-operation chain at
+			the centre, then the six capabilities that decision makes possible, then the seven
+			use cases, each connected to the capabilities it is built from, then the
+			five markets, each connected to the feature it enters through.
+		</desc>
+
+		{/* ── LEFT · the standard network, ghosted ─────────────────────────────────────── */}
+		<g class="hv-ghost">
+			{/* Both panel labels sit on the same baseline, outside every ring. "ORMAS · ONE SYSTEM"
+			    previously sat at y=118, which is between the market ring and the feature ring —
+			    inside the diagram, crowded by the AI Training pill directly above it. */}
+			<text class="hv-panel-label" x="72" y="150">STANDARD NETWORK</text>
+
+			{ghostEdges.map(([a, b]) => (
+				<line
+					x1={GX + ghostNodes[a][0]} y1={GY + ghostNodes[a][1]}
+					x2={GX + ghostNodes[b][0]} y2={GY + ghostNodes[b][1]}
+					class="hv-ghost-edge"
+				/>
+			))}
+			{ghostNodes.map(([dx, dy]) => (
+				<circle cx={GX + dx} cy={GY + dy} r="6" class="hv-ghost-node" />
+			))}
+
+			<circle cx={GX} cy={GY} r="42" class="hv-ghost-void" />
+			<text class="hv-ghost-mark" x={GX} y={GY + 14} text-anchor="middle">?</text>
+
+			<text class="hv-ghost-caption" x={GX} y={GY + 186} text-anchor="middle">Every signal touches every parameter.</text>
+			<text class="hv-ghost-caption hv-ghost-caption--key" x={GX} y={GY + 208} text-anchor="middle">There is no object to name.</text>
+		</g>
+
+		{/* Runs the full height of the drawn content. It previously stopped at y=170/730 while the
+		    diagram spanned 35 to 874, so it read as a stray mark rather than as a division. */}
+		<line x1="392" y1="128" x2="392" y2="812" class="hv-divider" />
+
+		{/* ── RIGHT · ORMAS, built outward from the primitive ──────────────────────────── */}
+		<text class="hv-panel-label hv-panel-label--lit" x="440" y="150">ORMAS · ONE SYSTEM</text>
+
+		{/* ring guides */}
+		<g class="hv-guides">
+			<circle cx={CX} cy={CY} r={R_CAPS} class="hv-guide hv-stage-caps" />
+			<circle cx={CX} cy={CY} r={R_FEAT} class="hv-guide hv-stage-feat" />
+			<circle cx={CX} cy={CY} r={R_MKT} class="hv-guide hv-stage-mkt" />
+		</g>
+
+		{/* the capability matrix, drawn behind the core */}
+		<g class="hv-matrix hv-stage-matrix">
+			{chords.map((c) => (
+				<line x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2} class="hv-chord" />
+			))}
+		</g>
+
+		{/* market entry lines */}
+		<g class="hv-entries hv-stage-mkt">
+			{entries.map((e) => (
+				<line x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="hv-entry" />
+			))}
+		</g>
+
+		{/* CORE · the primitive. Painted over the chords. */}
+		<g class="hv-core hv-stage-core">
+			<circle cx={CX} cy={CY} r={R_CORE} class="hv-core-disc" />
+			<circle cx={CX} cy={CY} r={R_CORE} class="hv-core-ring" />
+			{ops.map((op, i) => {
+				const col = i % 2;
+				const row = i < 2 ? 0 : 1;
+				const bx = CX - 70 + col * 72;
+				const by = CY - 32 + row * 34;
+				return (
+					<g>
+						<rect x={bx} y={by} width="68" height="26" rx="4" class="hv-op-box" />
+						<text x={bx + 34} y={by + 17} text-anchor="middle" class="hv-op-text">{op}</text>
+					</g>
+				);
+			})}
+			<text x={CX} y={CY + 62} text-anchor="middle" class="hv-core-caption">4 BOUNDED OPS</text>
+		</g>
+
+		{/* RING 1 · the six capabilities */}
+		<g class="hv-caps hv-stage-caps">
+			{capPts.map((c) => (
+				<>
+					<circle cx={c.x} cy={c.y} r="4" class="hv-cap-dot" />
+					<text
+						x={c.x}
+						y={c.y + (c.y < CY ? -13 : 22)}
+						text-anchor="middle"
+						class="hv-cap-text"
+					>{c.name}</text>
+				</>
+			))}
+		</g>
+
+		{/* RING 2 · the seven use cases */}
+		<g class="hv-feats hv-stage-feat">
+			{featPts.map((fp) => (
+				<g>
+					<rect
+						x={fp.x - CHIP_W / 2}
+						y={fp.y - CHIP_H / 2}
+						width={CHIP_W}
+						height={CHIP_H}
+						rx="6"
+						class="hv-chip"
+					/>
+					<text x={fp.x} y={fp.y + 5} text-anchor="middle" class="hv-chip-text">{fp.feature.name}</text>
+				</g>
+			))}
+		</g>
+
+		{/* RING 3 · the five markets */}
+		<g class="hv-mkts hv-stage-mkt">
+			{mktPts.map((mp) => (
+				<g>
+					<rect
+						x={mp.x - PILL_W / 2}
+						y={mp.y - PILL_H / 2}
+						width={PILL_W}
+						height={PILL_H}
+						rx="15"
+						class="hv-pill"
+					/>
+					<text x={mp.x} y={mp.y + 4} text-anchor="middle" class="hv-pill-text">{mp.sector.name}</text>
+				</g>
+			))}
+		</g>
+
+		<text class="hv-legend" x={CX} y={H - 26} text-anchor="middle">
+			One primitive · six capabilities · seven use cases · five markets
+		</text>
+	</svg>
+</div>
+
+<style>
+	.hero-visual {
+		width: 100%;
+	}
+
+	/* THE SIZE CAP. width:100% on a 1400x900 artboard inside a wide container drew the diagram at
+	   ~1900x1220 — taller than the viewport on its own, before the copy band above it. Capping
+	   the HEIGHT against the viewport is the direct control: preserveAspectRatio="xMidYMid meet"
+	   then scales the drawing down to fit and centres it, so the whole hero lands on one screen
+	   at any window size instead of running off the bottom. */
+	.hero-visual svg {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: min(52vh, 560px);
+		overflow: visible;
+	}
+
+	/* A 1400-wide artboard scaled into a 390px phone renders 11px labels at 3px — the diagram
+	   would be decoration rather than information. It scrolls in its own track instead, at a
+	   floor where the type is still readable. ui_ux/00 §2: wide content scrolls inside its own
+	   overflow-x container; the page body never scrolls sideways. */
+	@media (max-width: 1023px) {
+		.hero-visual {
+			overflow-x: auto;
+			overscroll-behavior-x: contain;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.hero-visual svg {
+			min-width: 1080px;
+		}
+	}
+
+	/* ── type ─────────────────────────────────────────────────────────────────────── */
+	.hv-panel-label,
+	.hv-cap-text,
+	.hv-op-text,
+	.hv-core-caption,
+	.hv-chip-text,
+	.hv-pill-text,
+	.hv-ghost-caption,
+	.hv-legend {
+		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	}
+
+	.hv-panel-label {
+		font-size: 13px;
+		letter-spacing: 0.18em;
+		fill: var(--text-on-dark);
+		opacity: 0.55;
+	}
+
+	.hv-panel-label--lit {
+		fill: var(--accent-on-dark);
+		opacity: 0.9;
+	}
+
+	/* ── left · the ghost ─────────────────────────────────────────────────────────── */
+	/* Lifted from 0.16 / 0.30. The ghost is half the argument — it has to be legible enough to be
+	   read as a network, not so bright that it competes with the system beside it. */
+	.hv-ghost-edge {
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		opacity: 0.22;
+	}
+
+	.hv-ghost-node {
+		fill: none;
+		stroke: var(--text-on-dark);
+		stroke-width: 1.25;
+		opacity: 0.42;
+	}
+
+	.hv-ghost-void {
+		fill: var(--bg-dark);
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		stroke-dasharray: 3 4;
+		opacity: 0.4;
+	}
+
+	.hv-ghost-mark {
+		font-family: 'Fraunces', Georgia, serif;
+		font-size: 34px;
+		fill: var(--text-on-dark);
+		opacity: 0.45;
+	}
+
+	.hv-ghost-caption {
+		font-size: 12px;
+		fill: var(--text-on-dark);
+		opacity: 0.5;
+	}
+
+	.hv-ghost-caption--key {
+		opacity: 0.8;
+	}
+
+	.hv-divider {
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		opacity: 0.12;
+	}
+
+	/* ── right · rings ────────────────────────────────────────────────────────────── */
+	.hv-guide {
+		fill: none;
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		opacity: 0.09;
+	}
+
+	.hv-chord {
+		stroke: var(--accent-on-dark);
+		stroke-width: 1;
+		opacity: 0.22;
+	}
+
+	.hv-entry {
+		stroke: var(--accent-on-dark);
+		stroke-width: 1.25;
+		opacity: 0.42;
+	}
+
+	.hv-core-disc {
+		fill: var(--bg-dark);
+	}
+
+	.hv-core-ring {
+		fill: none;
+		stroke: var(--accent-on-dark);
+		stroke-width: 1.5;
+		opacity: 0.85;
+	}
+
+	.hv-op-box {
+		fill: none;
+		stroke: var(--accent-on-dark);
+		stroke-width: 1;
+		opacity: 0.5;
+	}
+
+	.hv-op-text {
+		font-size: 10px;
+		fill: var(--accent-on-dark);
+		opacity: 0.95;
+	}
+
+	.hv-core-caption {
+		font-size: 10px;
+		letter-spacing: 0.16em;
+		fill: var(--accent-on-dark);
+		opacity: 0.75;
+	}
+
+	.hv-cap-dot {
+		fill: var(--accent-on-dark);
+		opacity: 0.9;
+	}
+
+	.hv-cap-text {
+		font-size: 11px;
+		letter-spacing: 0.14em;
+		fill: var(--text-on-dark);
+		opacity: 0.85;
+	}
+
+	.hv-chip {
+		fill: var(--bg-dark);
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		stroke-opacity: 0.35;
+	}
+
+	.hv-chip-text {
+		font-size: 11.5px;
+		fill: var(--text-on-dark);
+		opacity: 0.95;
+	}
+
+	.hv-pill {
+		fill: var(--bg-dark);
+		stroke: var(--accent-on-dark);
+		stroke-width: 1;
+		stroke-opacity: 0.6;
+	}
+
+	.hv-pill-text {
+		font-size: 11px;
+		fill: var(--accent-on-dark);
+	}
+
+	.hv-legend {
+		font-size: 11px;
+		letter-spacing: 0.16em;
+		fill: var(--text-on-dark);
+		opacity: 0.55;
+	}
+
+	/* ── build-outward, once ──────────────────────────────────────────────────────── */
+	.hv-ghost,
+	.hv-stage-core,
+	.hv-stage-caps,
+	.hv-stage-matrix,
+	.hv-stage-feat,
+	.hv-stage-mkt {
+		opacity: 0;
+		animation: hv-in 620ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) forwards;
+	}
+
+	.hv-ghost        { animation-delay: 80ms; }
+	.hv-stage-core   { animation-delay: 420ms; }
+	.hv-stage-caps   { animation-delay: 900ms; }
+	.hv-stage-matrix { animation-delay: 1400ms; }
+	.hv-stage-feat   { animation-delay: 1900ms; }
+	.hv-stage-mkt    { animation-delay: 2500ms; }
+
+	/* the core is the primitive everything else grows from, so it is the one thing that scales in */
+	.hv-stage-core {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation-name: hv-in-core;
+	}
+
+	@keyframes hv-in {
+		from { opacity: 0; }
+		to   { opacity: 1; }
+	}
+
+	@keyframes hv-in-core {
+		from { opacity: 0; transform: scale(0.86); }
+		to   { opacity: 1; transform: scale(1); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hv-ghost,
+		.hv-stage-core,
+		.hv-stage-caps,
+		.hv-stage-matrix,
+		.hv-stage-feat,
+		.hv-stage-mkt {
+			opacity: 1;
+			transform: none;
+			animation: none;
+		}
+	}
+</style>

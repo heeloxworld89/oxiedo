@@ -14,8 +14,11 @@ const { id, question } = Astro.props;
 
 <div class="accordion-item">
 	<button type="button" class="accordion-trigger" aria-expanded="true" aria-controls={id}>
-		<span class="accordion-chevron" aria-hidden="true">▸</span>
-		<span class="accordion-question">{question}</span>
+		<span class="accordion-trigger-label">
+			<slot name="meta" />
+			<span class="accordion-question">{question}</span>
+		</span>
+		<span class="accordion-icon" aria-hidden="true"></span>
 	</button>
 	<div class="accordion-panel" id={id}>
 		<div class="accordion-answer">

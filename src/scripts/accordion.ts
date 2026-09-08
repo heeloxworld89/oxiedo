@@ -33,6 +33,9 @@ function setOpen(trigger: HTMLButtonElement, panel: HTMLElement, open: boolean, 
 	);
 }
 
+// RESTRUCTURED 2026-09-06 for the ClientRouter — pure element binding, so re-running against
+// the new document is all that is needed.
+export default function init() {
 const hashId = window.location.hash.slice(1);
 
 document.querySelectorAll<HTMLElement>('.accordion-item').forEach((item) => {
@@ -50,4 +53,5 @@ document.querySelectorAll<HTMLElement>('.accordion-item').forEach((item) => {
 
 if (hashId) {
 	document.getElementById(hashId)?.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
+}
 }

@@ -1,154 +1,315 @@
 ---
-// design/10_CONTACT.md, ui_ux/10_CONTACT_UI.md.
-// All four intents stay visible and selectable — none slide away. Each intent's own descriptive
-// copy IS its commitments block, rendered above that intent's fields (ui_ux/10 §4).
+// CONTACT — repaired 2026-09-07.
 //
-// OTHER intent: ui_ux/10 §1 requires four nodes (BOOK / PRE-BOOK / INVEST / OTHER), but
-// design/10 only writes copy and fields for the first three. OTHER's fields (Name, Email,
-// Message) are minimal, functional field labels — not factual claims — consistent with Law 1's
-// exception for interface strings ("Close", "Menu"). No commitments copy exists for it, so none
-// is invented.
+// THE SUBMISSION PATH, stated accurately. There IS a backend: functions/contact.ts is a
+// Cloudflare Pages Function mapped to POST /contact, and src/scripts/form.ts submits to it over
+// fetch with inline validation. That is a sound design and it is kept.
 //
-// Submission is not wired — markup and states only (Block 4.5/4.6 own the actual send).
+// What is broken is the last step. The function's own header records it: sending mail needs a
+// verified domain and a provider, and neither is provisioned — so a submission validates, passes
+// the honeypot, and then returns 502 "Could not send". The failure message the sender then reads
+// contained the literal string [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]. So messages were not
+// silently swallowed; they failed loudly and told the sender to email a placeholder.
+//
+// FIXED HERE:
+//   · form.ts now carries the real address and, on any failure, composes a mailto: containing
+//     every answer the sender typed. A message cannot be lost even with no provider configured.
+//   · functions/contact.ts REQUIRED_FIELDS matched the OLD pre-book fields, so once this page's
+//     fields changed the server would have rejected every pre-book submission with a 400. The
+//     field lists and intent labels are updated with the form below.
+//   · Provision a sending domain and provider to complete it. Until then the mailto: fallback is
+//     the live path, and it works today.
+//
+// CONTACT_EMAIL REPLACES A PLACEHOLDER THAT WAS SHIPPING TO PRODUCTION. This page read
+// "[REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]" in the position where a reader looks for the
+// address. It is now a real constant, and it is also what the mailto: fallback sends to — so if
+// the address below is wrong, the fallback bounces. CONFIRM IT BEFORE LAUNCH.
+//
+// SUPERSEDED CONTENT REMOVED. "Charter Partnership" (three places), "slots are limited to three
+// per quarter" (two), a field asking which of seven features are "in scope", "four ways in" above
+// three options, a Warning Light session that no longer exists, "the open gates", and a button
+// reading "Read the manuscript (PDF)" that linked to an HTML page.
+//
+// THE FOUR-FORMS ARCHITECTURE IS KEPT and the original reasoning still holds: a hidden field that
+// is still `required` blocks submission of the whole form with an error the user cannot see, on a
+// field they cannot see. Separate forms have neither problem, and the CSS :has() switch degrades
+// to showing all three, all working.
 import Page from '../layouts/Page.astro';
+import PageBanner from '../components/PageBanner.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import FormField from '../components/FormField.astro';
 import Button from '../components/Button.astro';
+import Accordion from '../components/Accordion.astro';
+
+// NO EMAIL ADDRESS APPEARS ON THIS SITE, decided 2026-09-08. The only address available was on a
+// founder-owned domain that is not Oxiedo's, and an address whose domain does not match the site
+// reads as either a clerical error or a phishing attempt — the previous version spent three
+// paragraphs across three pages explaining it away. The form delivers to that inbox regardless, so
+// the address bought nothing and cost credibility. Every route in is now a form.
+//
+// CONSEQUENCE FOR THE FAILURE PATH: there is no mailto: fallback any more, because offering one
+// would put the address back on the page at the worst possible moment. Instead a failed submission
+// keeps every field exactly as typed and offers a retry — nothing is lost, and the reader is never
+// asked to copy their message somewhere else.
+//
+// THE FORMS ARE GENERATED from the `intents` array below rather than hand-written five times. That
+// is what makes five routes affordable: adding one is a data entry, not a block of markup that has
+// to be kept in sync with the other four.
+
+// Typed explicitly: without it TypeScript infers a union of five differently-shaped object
+// literals and then refuses `f.hint` because it is absent from the first member.
+interface Field {
+	id: string;
+	label: string;
+	type?: 'text' | 'email';
+	hint?: string;
+	multiline?: boolean;
+	rows?: number;
+	required?: boolean;
+}
+
+interface Intent {
+	id: string;
+	label: string;
+	eyebrow: string;
+	heading: string;
+	blurb: string;
+	submit: string;
+	fields: Field[];
+}
+
+const intents: Intent[] = [
+	{
+		id: 'pre-book',
+		label: 'Pre-book a deployment',
+		eyebrow: 'PRE-BOOK',
+		heading: 'Reserve a deployment',
+		blurb: 'Pre-booking agrees your terms now, ahead of general availability, and shapes the integration around your environment while that is still open. Early partners influence what the production system prioritises, because the requirements are not yet fixed.',
+		submit: 'Send',
+		fields: [
+			{ id: 'prebook-org', label: 'Name, role and organisation', required: true },
+			{ id: 'prebook-email', label: 'Email', type: 'email', required: true },
+			{ id: 'prebook-regulation', label: 'What obligation is driving this?', required: true,
+			  hint: 'SR 26-2, EU AI Act, GDPR Article 17, FDA PCCP, an internal model risk policy, or something else.' },
+			{ id: 'prebook-context', label: 'What do you train, and what does a failure currently cost you to diagnose?', required: true, multiline: true,
+			  hint: 'Rough numbers are fine. This is the answer that decides whether we can help you, so it is the one worth two sentences.' },
+		],
+	},
+	{
+		id: 'invest',
+		label: 'Investment conversation',
+		eyebrow: 'INVESTMENT',
+		heading: 'Investment conversation',
+		blurb: 'Tell us what you invest in and we will say whether this is a fit before sending anything — faster for both of us than a document that was never relevant. What is not on the site: the falsification specification, the full archive of 67 seeded runs including the four the first architecture failed, the adversarial suite, the manuscript, and the round terms.',
+		submit: 'Send',
+		fields: [
+			{ id: 'invest-name', label: 'Name', required: true },
+			{ id: 'invest-email', label: 'Email', type: 'email', required: true },
+			{ id: 'invest-org', label: 'Fund or organisation', required: true },
+			{ id: 'invest-thesis', label: 'What do you invest in?', multiline: true, rows: 4,
+			  hint: 'Stage, sector and check size are enough. If you lead, say so — we are looking for a lead rather than a party round.' },
+		],
+	},
+	{
+		id: 'press',
+		label: 'Press enquiry',
+		eyebrow: 'PRESS',
+		heading: 'Press enquiry',
+		blurb: 'Replies come from the founder — there is no agency. If you are writing a sceptical piece, say so and ask for the falsification specification: it is the fastest route to checking whether any of this holds. Interviews are available, including on the parts that are not working yet.',
+		submit: 'Send',
+		fields: [
+			{ id: 'press-name', label: 'Name', required: true },
+			{ id: 'press-email', label: 'Email', type: 'email', required: true },
+			{ id: 'press-outlet', label: 'Outlet', required: true },
+			{ id: 'press-message', label: 'What are you working on, and when do you need it?', required: true, multiline: true,
+			  hint: 'A deadline gets you a faster answer. Say if you want the asset pack, the brief, or a correction.' },
+		],
+	},
+	{
+		id: 'data',
+		label: 'Data protection request',
+		eyebrow: 'DATA PROTECTION',
+		heading: 'Data protection request',
+		blurb: 'Access, rectification, erasure, portability, objection, or a question about how we handle something. Requests are answered within five working days; a deletion request is acted on immediately and confirmed in writing. This route is read by the founder rather than a shared inbox.',
+		submit: 'Send request',
+		fields: [
+			{ id: 'data-name', label: 'Name', required: true },
+			{ id: 'data-email', label: 'Email', type: 'email', required: true,
+			  hint: 'The address you contacted us from, so we can identify what we hold.' },
+			{ id: 'data-request', label: 'What are you asking for?', required: true, multiline: true,
+			  hint: 'Naming the right helps, but plain English is fine — we will work out which it is.' },
+		],
+	},
+	{
+		id: 'other',
+		label: 'Something else',
+		eyebrow: 'OTHER',
+		heading: 'Something else',
+		blurb: 'The research, the licence, a dataset partnership, or a question that fits none of the above. Researchers and students: the release needs no permission when it lands, and until then ask here and we will arrange access.',
+		submit: 'Send',
+		fields: [
+			{ id: 'other-name', label: 'Name', required: true },
+			{ id: 'other-email', label: 'Email', type: 'email', required: true },
+			{ id: 'other-message', label: 'Message', required: true, multiline: true },
+		],
+	},
+];
+
+const facts = [
+	{ k: 'Reply time', v: 'Within a few days, usually less.' },
+	{ k: 'Who reads it', v: 'A person, every message, without exception. The first reply comes from whoever built the thing you are asking about.' },
+	{ k: 'If it does not fit', v: 'We say so directly rather than sending a non-answer.' },
+	{ k: 'What we do with it', v: 'Answer it. Nothing submitted here is sold, shared or added to a marketing list.' },
+];
 ---
 
-<Page title="CONTACT">
-	<section class="section container">
-		<Eyebrow>CONTACT</Eyebrow>
-		<h1>Tell us what you are working on.</h1>
-		<p class="contact-subhead">Three types of contact. All read by a person. Reply within a few days.</p>
-		<p class="contact-note">
-			Pre-booking pricing is negotiable. Once a solution reaches general availability,
-			pricing is published and fixed. This is the only window.
-		</p>
+<Page title="Contact" description={"Three ways in: pre-book a deployment, an investment conversation, or anything else. Every message is read by a person and answered within a few days."}>
+	<PageBanner
+		eyebrow="CONTACT"
+		title="Tell us what you are working on."
+		trail={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
+	/>
 
-		<nav class="contact-intents" aria-label="Jump to a contact form">
-			<a href="#book">Book</a>
-			<a href="#pre-book">Pre-book</a>
-			<a href="#invest">Invest</a>
-			<a href="#other">Other</a>
-		</nav>
-	</section>
+	<div class="section container contact-layout">
+		<div class="contact-intro">
+			<Eyebrow as="h2">GET IN TOUCH</Eyebrow>
+			<p class="contact-lede">
+				Five ways in. Pick the one that fits and the form changes to match — we would rather ask
+				you four useful questions than take a name and an empty message box.
+			</p>
 
-	<section class="section container reveal contact-form-block" id="book">
-		<p class="contact-form-label">AVAILABLE NOW</p>
-		<h2>Book a Warning Light session</h2>
-		<div class="contact-commitments">
-			<p>The Warning Light is the only solution available to book today.</p>
-			<p>
-				You are booking a structured first engagement. You bring a failing run. We bring a
-				diagnostic. After you submit, we will reply within a few days — usually less. Come
-				prepared to describe one specific training failure.
+			<dl class="contact-facts">
+				{facts.map((f) => (
+					<div class="contact-fact">
+						<dt>{f.k}</dt>
+						<dd>{f.v}</dd>
+					</div>
+				))}
+			</dl>
+
+			<p class="contact-note">
+				There is one licence and no price list. Terms are agreed per institution and written into
+				the contract, which is why the figure is discussed here rather than read off a page.
+			</p>
+
+			<Button variant="tertiary" href="/technology">Read the research</Button>
+		</div>
+
+		<div class="contact-machine">
+			<div class="contact-switch">
+				<label for="contact-intent">What can we help with?</label>
+				<select id="contact-intent" class="contact-select">
+					{intents.map((i) => <option value={i.id}>{i.label}</option>)}
+				</select>
+			</div>
+
+			{/* ids are kept on every panel — /contact#other and #press are linked from other pages */}
+			{intents.map((intent) => (
+				<form
+					class="contact-panel"
+					data-intent={intent.id}
+					id={intent.id}
+					method="POST"
+					action="/contact"
+				>
+					<p class="contact-form-label">{intent.eyebrow}</p>
+					<h3>{intent.heading}</h3>
+					<div class="contact-commitments">
+						<p>{intent.blurb}</p>
+					</div>
+					{intent.fields.map((f) => (
+						<FormField
+							id={f.id}
+							label={f.label}
+							type={f.type}
+							hint={f.hint}
+							multiline={f.multiline}
+							rows={f.rows}
+							required={f.required}
+						/>
+					))}
+					<input type="hidden" name="intent" value={intent.id} />
+					<div class="contact-form-honeypot" aria-hidden="true">
+						<label for={`${intent.id}-website`}>Website</label>
+						<input type="text" id={`${intent.id}-website`} name="website" tabindex="-1" autocomplete="off" />
+					</div>
+					<Button variant="primary" type="submit">{intent.submit}</Button>
+				</form>
+			))}
+
+			<p class="contact-privacy">
+				What you send here is held by us as controller, used to answer you and for nothing else.
+				No analytics, no cookies set by us, no marketing list.
+				<a href="/data">How we handle data</a>
 			</p>
 		</div>
-		<form class="contact-form" method="POST" action="/contact">
-			<FormField id="book-name" label="Name" required />
-			<FormField id="book-org" label="Organisation" required />
-			<FormField id="book-frequency" label="Estimated training run frequency" required />
-			<FormField id="book-cost" label="Estimated compute cost per run" required />
-			<FormField id="book-stack" label="Current monitoring stack" required />
-			<input type="hidden" name="intent" value="book" />
-			<div class="contact-form-honeypot" aria-hidden="true">
-				<label for="book-website">Website</label>
-				<input type="text" id="book-website" name="website" tabindex="-1" autocomplete="off" />
-			</div>
-			<Button variant="primary" type="submit">Book a session</Button>
-		</form>
-	</section>
+	</div>
 
-	<section class="section container reveal contact-form-block" id="pre-book">
-		<p class="contact-form-label">CHARTER PARTNERSHIP</p>
-		<h2>Apply for a Charter Partnership</h2>
-		<div class="contact-commitments">
-			<p>
-				The Charter Partnership Programme is the pre-booking window for ORMAS solutions.
-				Pre-booking is the only window to negotiate terms before pricing is published at
-				GA. Slots are limited to 3 per quarter.
-			</p>
+	<section class="section container reveal" id="contact-faq">
+		<Eyebrow as="h2">CONTACT QUESTIONS</Eyebrow>
+		<div class="faq-group">
+			<Accordion id="q-which-form" question="Which form should I use?">
+				<p>
+					If you want to run ORMAS, pre-book — that is the one route to the product, whichever
+					application you have in mind. If you invest, use the second. Everything else goes to the
+					third, and all three are read by the same person.
+				</p>
+			</Accordion>
+			<Accordion id="q-reply-time" question="How long before someone replies?">
+				<p>
+					Within a few days, usually less. Every message is read by a person, and if your message
+					does not fit we will say so directly rather than sending a non-answer.
+				</p>
+			</Accordion>
+			<Accordion id="q-why-questions" question="Why does the form ask what a failure costs us?">
+				<p>
+					Because it is the question that decides whether this is worth your time. An organisation
+					that can already diagnose a failed run in an afternoon does not need this, and we would
+					rather establish that in the first message than in the third meeting.
+				</p>
+			</Accordion>
+			<Accordion id="q-evaluate" question="Can we just evaluate it ourselves first?">
+				<p>
+					Yes, and it is the expected path. Evaluation access is available now under a short
+					agreement, and free and unrestricted once the research release is out. Either way it runs
+					entirely in your environment with nothing reaching us.
+				</p>
+			</Accordion>
+			<Accordion id="q-data-partner" question="We hold regulated data. Who do we talk to?">
+				<p>
+					The third form, and it goes to the top of the pile. A dataset partnership is the single
+					largest thing standing between the published result and the fields it was built for.
+				</p>
+			</Accordion>
 		</div>
-		<form class="contact-form" method="POST" action="/contact">
-			<FormField
-				id="prebook-solution"
-				label="Which solution are you pre-booking? (The Proofreader, The Diary, The Separator, Certified Deletion, The Federated Node, The Update Engine)"
-				required
-			/>
-			<FormField
-				id="prebook-regulation"
-				label="What regulation or audit is driving this? (SR 11-7, EU AI Act, GDPR Art.17, PCCP, other)"
-				required
-			/>
-			<FormField id="prebook-approach" label="What is your current approach to this problem?" required />
-			<FormField id="prebook-timeline" label="What is your timeline?" required />
-			<FormField id="prebook-org" label="Organisation and contact" required />
-			<input type="hidden" name="intent" value="pre-book" />
-			<div class="contact-form-honeypot" aria-hidden="true">
-				<label for="prebook-website">Website</label>
-				<input type="text" id="prebook-website" name="website" tabindex="-1" autocomplete="off" />
-			</div>
-			<Button variant="primary" type="submit">Apply for Partnership</Button>
-		</form>
 	</section>
 
-	<section class="section container reveal contact-form-block" id="invest">
-		<p class="contact-form-label">REQUEST THE INVESTMENT BRIEF</p>
-		<h2>Investment conversation</h2>
-		<div class="contact-commitments">
-			<p>The full brief is not on the site. It covers:</p>
-			<ul>
-				<li>The evidence base and the experiment programme</li>
-				<li>The solution model and the financial assumptions</li>
-				<li>The licensing stack and the moat argument</li>
-				<li>The open gates and what each outcome means</li>
-				<li>The raise terms</li>
-			</ul>
-			<p>
-				We do not send it to everyone. Tell us what you invest in and we will tell you
-				whether this is a fit before sending a document.
-			</p>
-		</div>
-		<form class="contact-form" method="POST" action="/contact">
-			<FormField id="invest-name" label="Name" required />
-			<FormField id="invest-email" label="Email" type="email" required />
-			<FormField id="invest-org" label="Fund / Organisation" required />
-			<FormField
-				id="invest-thesis"
-				label="What do you invest in? (stage, sector, check size — anything that helps us understand the fit)"
-			/>
-			<input type="hidden" name="intent" value="invest" />
-			<div class="contact-form-honeypot" aria-hidden="true">
-				<label for="invest-website">Website</label>
-				<input type="text" id="invest-website" name="website" tabindex="-1" autocomplete="off" />
-			</div>
-			<Button variant="primary" type="submit">Request the brief</Button>
-		</form>
-	</section>
+	{/* The panel switch, generated from `intents` so it cannot drift from the forms above. Pure
+	    CSS, so it works with JavaScript disabled; wrapped in @supports so a browser without :has()
+	    falls back to showing every panel, which is the page's older behaviour rather than a broken
+	    half-rule. */}
+	<style is:global set:html={`@supports selector(:has(*)) {\n${intents
+		.map(
+			(i) =>
+				`.contact-machine:has(#contact-intent option[value='${i.id}']:checked) .contact-panel:not([data-intent='${i.id}'])`,
+		)
+		.join(',\n')} { display: none; }\n}`}></style>
 
-	<section class="section container reveal contact-form-block" id="other">
-		<p class="contact-form-label">OTHER</p>
-		<h2>Something else</h2>
-		<form class="contact-form" method="POST" action="/contact">
-			<FormField id="other-name" label="Name" required />
-			<FormField id="other-email" label="Email" type="email" required />
-			<FormField id="other-message" label="Message" required />
-			<input type="hidden" name="intent" value="other" />
-			<div class="contact-form-honeypot" aria-hidden="true">
-				<label for="other-website">Website</label>
-				<input type="text" id="other-website" name="website" tabindex="-1" autocomplete="off" />
-			</div>
-			<Button variant="primary" type="submit">Send</Button>
-		</form>
-	</section>
+	<script>
+		// Deep links only: /contact?intent=invest and /contact#invest. Submission, validation and the
+		// status message are handled once, in src/scripts/form.ts, which binds on action="/contact" —
+		// duplicating any of that here would double-bind every form.
+		function syncIntent() {
+			const select = document.getElementById('contact-intent');
+			if (!(select instanceof HTMLSelectElement)) return;
+			const wanted =
+				new URLSearchParams(window.location.search).get('intent') || window.location.hash.slice(1);
+			if (wanted && Array.from(select.options).some((o) => o.value === wanted)) {
+				select.value = wanted;
+			}
+		}
 
-	<section class="section container reveal">
-		<p class="contact-commitment-footer">
-			We reply within a few days. Every message is read by a person. If your message does
-			not fit any category above, we will say so directly rather than sending a non-answer.
-		</p>
-		<p class="contact-direct">Direct contact: [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]</p>
-		<Button variant="tertiary" href="/paper">Read the manuscript (PDF)</Button>
-	</section>
+		syncIntent();
+		document.addEventListener('astro:page-load', syncIntent);
+	</script>
 </Page>

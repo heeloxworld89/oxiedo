@@ -2,6 +2,11 @@
 // `title` must be a string that already exists verbatim in website/design/ for that route — no
 // source specifies a <title> convention, so each page supplies its own sourced string rather
 // than this layout inventing one.
+// ClientRouter added 2026-09-06: moving between solution sub-pages was a hard white blink.
+// It cross-fades navigation instead. Progressive enhancement — with JS disabled the browser
+// just does a normal page load, so nothing depends on it. The reduced-motion case is handled
+// in motion.css, which disables the transition entirely rather than fading fast.
+import { ClientRouter } from 'astro:transitions';
 import '../styles/tokens.css';
 import '../styles/reset.css';
 import '../styles/base.css';
@@ -10,10 +15,39 @@ import '../styles/components.css';
 import '../styles/motion.css';
 
 export interface Props {
+	/** The page's own name. The brand suffix is appended here, once, for every page. */
 	title: string;
+	/** One sentence, 50–160 chars. Shown in search results and on every shared link. */
+	description?: string;
+	/** Set false on /press and /404 so they stay out of the index. */
+	indexable?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, description, indexable = true } = Astro.props;
+
+// SITE — confirmed by the founder 2026-09-08: oxiedo.com is owned. Canonicals, Open Graph URLs
+// and the sitemap are all built from this, and src/pages/sitemap.xml.ts holds the same constant —
+// change both together. If this is ever wrong, every canonical points at a domain we do not
+// control, which is worse for search than having no canonical at all.
+const SITE = 'https://oxiedo.com';
+
+const pageTitle = title.toLowerCase().includes('oxiedo') ? title : `${title} — Oxiedo`;
+const desc =
+	description ??
+	'ORMAS is a neural network training architecture that makes per-component causal attribution a physical property of training, not something reconstructed afterwards.';
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', SITE).href;
+const ogImage = new URL('/og.png', SITE).href;
+
+// Organisation card. Everything in it is stated on /about, so it cannot contradict the site.
+const orgLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Organization',
+	name: 'Oxiedo',
+	url: SITE,
+	description: 'Builds ORMAS, a neural network training architecture that produces a causal account of its own behaviour.',
+	foundingDate: '2023',
+	founder: { '@type': 'Person', name: 'Rokib Al Dhin Raadh' },
+};
 ---
 
 <!doctype html>
@@ -22,18 +56,121 @@ const { title } = Astro.props;
 		<meta charset="utf-8" />
 		<script is:inline>document.documentElement.classList.add('js');</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>{title}</title>
+		<title>{pageTitle}</title>
+		<meta name="description" content={desc} />
+		<link rel="canonical" href={canonical} />
+		{!indexable && <meta name="robots" content="noindex, follow" />}
+
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Oxiedo" />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={desc} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={desc} />
+		<meta name="twitter:image" content={ogImage} />
+
+		<script type="application/ld+json" set:html={JSON.stringify(orgLd)} is:inline />
+		<ClientRouter />
 		<link rel="preload" href="/fonts/Fraunces-Variable.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/PlusJakartaSans-Regular.woff2" as="font" type="font/woff2" crossorigin />
 	</head>
 	<body>
 		<slot />
+
+		<!--
+			THE MOBILE MENU, bound here and deliberately not in a module. This is the only route to
+			navigation on a phone, so it must not depend on anything that can fail upstream: no
+			bundler output, no ClientRouter, no astro:page-load, no other script's errors. It is
+			inline, runs the moment it is parsed, and every listener is delegated to `document` so
+			it keeps working after a client-side navigation replaces the header.
+		-->
+		<script is:inline>
+			(function () {
+				if (window.__oxiedoNav) return;
+				window.__oxiedoNav = true;
+
+				var HTML = document.documentElement;
+				function panel() { return document.querySelector('.nav-mobile'); }
+				function burger() { return document.querySelector('.nav-hamburger'); }
+
+				function closeMenu() {
+					var p = panel(); if (p) p.classList.remove('open');
+					var b = burger(); if (b) b.setAttribute('aria-expanded', 'false');
+					HTML.classList.remove('nav-locked');
+				}
+
+				function openMenu() {
+					var p = panel(); if (!p) return;
+					p.classList.add('open');
+					var b = burger(); if (b) b.setAttribute('aria-expanded', 'true');
+					HTML.classList.add('nav-locked');
+					var first = p.querySelector('a[href], button');
+					if (first) first.focus();
+				}
+
+				document.addEventListener('click', function (e) {
+					var t = e.target;
+					if (!t || !t.closest) return;
+					if (t.closest('.nav-hamburger')) {
+						e.preventDefault();
+						var p = panel();
+						if (p && p.classList.contains('open')) closeMenu(); else openMenu();
+						return;
+					}
+					if (t.closest('.nav-mobile-close')) { e.preventDefault(); closeMenu(); return; }
+
+					var tog = t.closest('.nav-mobile-toggle');
+					if (tog) {
+						e.preventDefault();
+						var sub = tog.parentElement && tog.parentElement.nextElementSibling;
+						var isOpen = tog.getAttribute('aria-expanded') === 'true';
+						tog.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+						if (sub) sub.hidden = isOpen;
+						return;
+					}
+					if (t.closest('.nav-mobile a')) closeMenu();
+				});
+
+				document.addEventListener('keydown', function (e) {
+					if (e.key === 'Escape') closeMenu();
+				});
+
+				document.addEventListener('astro:after-swap', closeMenu);
+			})();
+		</script>
+
 		<script>
-			import '../scripts/reveal.ts';
-			import '../scripts/nav.ts';
-			import '../scripts/accordion.ts';
-			import '../scripts/masterdetail.ts';
-			import '../scripts/form.ts';
+			// Each script exports an idempotent init. astro:page-load fires on the first load and
+			// after every ClientRouter navigation, so interactivity is re-attached to the new DOM
+			// rather than silently dying after the first client-side navigation.
+			import initReveal from '../scripts/reveal.ts';
+			import initNav from '../scripts/nav.ts';
+			import initAccordion from '../scripts/accordion.ts';
+			import initForm from '../scripts/form.ts';
+
+			// Each init is isolated. They used to run as four bare calls in one callback, so the
+			// first one to throw silently killed every init after it — a reveal-animation error
+			// could take out the mobile navigation, and nothing in the UI would say why.
+			document.addEventListener('astro:page-load', () => {
+				for (const [name, fn] of [
+					['reveal', initReveal],
+					['nav', initNav],
+					['accordion', initAccordion],
+					['form', initForm],
+				] as const) {
+					try {
+						fn();
+					} catch (err) {
+						console.error(`[oxiedo] ${name} init failed:`, err);
+					}
+				}
+			});
 		</script>
 	</body>
 </html>

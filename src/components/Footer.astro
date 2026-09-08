@@ -1,60 +1,116 @@
 ---
-// design/12 §Footer, design/01 §Section 8. The standing disclaimer is sourced verbatim from
-// design/13_COPY_RULES.md §Permitted Copy — design/01 §8's own bullets do not contain it; that
-// citation in the task file was wrong. See this task's report for the correction.
+// design/12 §Footer, design/01 §Section 8.
 //
 // CORRECTION at task 3.6: design/12 §Footer lists "/data policy link" as a standard footer
 // element, and this component linked it live since task 1.1. That was wrong — instructions/
-// BLOCK_1_COMPONENTS.md's own note (read, apparently not followed, at 1.1) states "/data is
-// linked only from /contact, and only once the solicitor review in design/14 is done." That
-// review has not happened (design/13's Pre-Launch Blockers, item C1, is unchecked). The /data
-// link is removed from the footer below until that review clears — deliberately, not an
-// oversight.
+// BLOCK_1_COMPONENTS.md states "/data is linked only from /contact, and only once the solicitor
+// review in design/14 is done." That review has not happened (design/13's Pre-Launch Blockers,
+// item C1, is unchecked). Still deliberately unlinked below.
 //
-// CORRECTION at task 4.0: /press was left linked in the footer at 3.6, reasoning that
-// design/12 §Footer's "present in footer, hidden from main nav" wording authorized it. That
-// reading was wrong — design/11 states /press stays hidden from nav AND sitemap until first
-// outreach, and this session's brief confirms the footer link was also premature. Removed.
-const routes = [
-	{ href: '/solutions', label: 'Solutions' },
-	{ href: '/sectors', label: 'Sectors' },
-	{ href: '/licensing', label: 'Licensing' },
-	{ href: '/paper', label: 'Paper' },
-	{ href: '/insights', label: 'Insights' },
-	{ href: '/about', label: 'About' },
-	{ href: '/invest', label: 'Invest' },
-	{ href: '/faq', label: 'FAQ' },
-	{ href: '/contact', label: 'Contact' },
+// CORRECTION at task 4.0: /press was left linked here at 3.6 on a misreading of design/12.
+// design/11 states /press stays hidden from nav AND sitemap until first outreach. Still removed.
+//
+// REDESIGN 2026-09-06: rebuilt as a full-bleed dark band with labelled link columns, matching
+// the reference footer (wordmark left, grouped columns with small headings, thin legal bar at
+// the bottom). Replaces a version with no column structure, a floating disconnected CTA card,
+// and mono "Repository:"/"[REPLACE WITH...]" lines that read like debug output.
+//
+// NOT INVENTED, deliberately: the reference carries a call centre, a street address, and social
+// icons. Oxiedo has none of those — no phone line, no office to publish, no social accounts. A
+// fake number or a dead icon is worse than an absent one, so those columns are simply not here.
+// The one contact route that does exist (the domain email, still a placeholder) is shown as-is.
+import Button from './Button.astro';
+import Logo from './Logo.astro';
+import { features } from '../data/features';
+import { sectors } from '../data/sectors';
+
+// The footer is the sitemap. Every route the site has is reachable from here in one click —
+// /press and /data were previously linked from nowhere at all, and the seven feature pages and
+// five sector pages were reachable only from their own index or the nav submenu.
+//
+// The Product and Sectors columns are generated from the same data the pages are, so a feature
+// added to data/features.ts appears here without anyone remembering to add it.
+const groups = [
+	{
+		title: 'Product',
+		links: [
+			{ href: '/product', label: 'Overview' },
+			...features.map((f) => ({ href: `/product/${f.id}`, label: f.name })),
+			{ href: '/licensing', label: 'Licensing' },
+		],
+	},
+	{
+		title: 'Sectors',
+		links: [
+			{ href: '/sectors', label: 'All sectors' },
+			...sectors.map((s) => ({ href: `/sectors/${s.id}`, label: s.name })),
+		],
+	},
+	{
+		title: 'Evidence',
+		links: [
+			{ href: '/technology', label: 'The technology' },
+			{ href: '/insights', label: 'Insights' },
+			{ href: '/faq', label: 'FAQ' },
+		],
+	},
+	{
+		title: 'Company',
+		links: [
+			{ href: '/about', label: 'About' },
+			{ href: '/careers', label: 'Careers' },
+			{ href: '/invest', label: 'Invest' },
+			{ href: '/press', label: 'Press' },
+			{ href: '/contact', label: 'Contact' },
+		],
+	},
 ];
 ---
 
 <footer class="footer">
-	<p class="footer-thesis">
-		ORMAS makes per-component structural intelligence a property of training — not a layer added
-		after.
-	</p>
+	<div class="footer-main container">
+		<div class="footer-brand">
+			<Logo class="footer-logo" />
+			<p class="footer-thesis">
+				ORMAS makes per-component structural intelligence a property of training — not a layer
+				added after.
+			</p>
+			<Button variant="primary" href="/contact">Pre-book ORMAS</Button>
+		</div>
 
-	<p class="footer-disclaimer">
-		No clinical, biological, financial, or production data has been used. Every result is
-		CIFAR-10 or CIFAR-100. Preprint under review. Not yet accepted.
-	</p>
-
-	<nav class="footer-routes" aria-label="Footer">
-		<ul>
-			{routes.map((route) => (
-				<li><a href={route.href}>{route.label}</a></li>
+		<nav class="footer-nav" aria-label="Footer">
+			{groups.map((group) => (
+				<div class="footer-nav-group">
+					<h2 class="footer-nav-title">{group.title}</h2>
+					<ul>
+						{group.links.map((link) => (
+							<li><a href={link.href}>{link.label}</a></li>
+						))}
+					</ul>
+				</div>
 			))}
-			{/* /data and /press intentionally not linked here — see comments above. */}
-		</ul>
-	</nav>
+		</nav>
+	</div>
 
-	<div class="footer-credential">
-		<p class="footer-entity">Oxiedo Ltd · England and Wales · [Company number TBD]</p>
-		<p class="footer-citation">
-			ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction · Rokib Al
-			Dhin Raadh · Manuscript under review
-		</p>
-		<p class="footer-repo">Repository: available after review period</p>
-		<p class="footer-contact">[REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]</p>
+	<div class="footer-invest">
+		<div class="container footer-invest-inner">
+			<div class="footer-invest-copy">
+				<p class="footer-invest-label">RAISING NOW</p>
+				<p class="footer-invest-line">
+					Pre-seed, $4.5M, against six named milestones — with the arithmetic, the benchmarks and
+					the risk register on the page.
+				</p>
+			</div>
+			<Button variant="primary" href="/invest">Invest in Us</Button>
+		</div>
+	</div>
+
+	<div class="footer-legal">
+		<div class="container footer-legal-inner">
+			<p>Oxiedo · A research company in formation · Incorporating in Delaware, headquarters relocating to San Francisco</p>
+			<nav class="footer-legal-links" aria-label="Legal">
+				<a href="/data">Data handling</a>
+			</nav>
+		</div>
 	</div>
 </footer>

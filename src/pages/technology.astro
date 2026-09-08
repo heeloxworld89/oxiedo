@@ -1,0 +1,542 @@
+---
+// THE TECHNOLOGY — was /paper, rewritten and re-routed 2026-09-07.
+//
+// WHAT WAS WRONG. It was a paper page: an abstract in a blockquote, a positioning quotation
+// floating between sections, a mechanism dump, and a BibTeX block at the end carrying more visual
+// weight than the results above it. It documented a manuscript. It never said what the technology
+// is, what problem it addresses, how large that problem is, or what is being built next.
+//
+// THE FRAME. This is a research programme against one of the field's defining unsolved problems,
+// and it should read like one. Mechanistic interpretability is the field's main attack on that
+// problem, and its own literature is candid that feasibility is contested, that work remains on
+// toy models or fragments of larger networks, and that with no unified evaluation the results rest
+// on human interpretation. That is the contrast this page exists to draw: everyone else
+// reconstructs an account out of a finished network. We constrain the network so the account is a
+// byproduct of the arithmetic.
+//
+// ON WHAT IS BUILT AND WHAT IS NEXT. The completed work is described in full. It is under peer
+// review and is NOT yet public: the release is committed to acceptance, and no preprint, venue or
+// repository is named anywhere on this site while review is open. "The published result" below is
+// shorthand distinguishing the finished research from the ongoing programme, not a claim that it
+// is downloadable today.
+// The programme after it is described BY ITS OBJECTIVES AND CONSTRAINTS ONLY. No mechanism, no
+// topology, no training procedure. Those are the IP. The section says what will become true, what
+// must hold while it does, and the single experiment that decides it.
+import Page from '../layouts/Page.astro';
+import PageBanner from '../components/PageBanner.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import ChainDiagram from '../components/ChainDiagram.astro';
+import Button from '../components/Button.astro';
+import GetInTouch from '../components/GetInTouch.astro';
+import DisclosurePanel from '../components/DisclosurePanel.astro';
+
+// LEAD WITH NUMBERS. Four figures, above everything else on the page. The fourth matters most to
+// anyone assessing this as an investment: the entire remaining programme can be falsified for
+// under thirty GPU-hours on a single card.
+const headline = [
+	{ figure: '+70.3 pp', label: 'Recovery from catastrophic structural collapse, where a parameter-matched baseline is permanently dead' },
+	{ figure: '383', label: 'Controlled experiments across four architecture families, every run reproducible from seed' },
+	{ figure: '5', label: 'Layers of causal telemetry emitted natively, from system health to per-parameter attribution' },
+	{ figure: '<30', label: 'GPU-hours to falsify the entire remaining research programme, on one card' },
+];
+
+// The implication, at the scale it operates on. Each of these is a domain currently closed to deep
+// learning for the same structural reason.
+const unlocks = [
+	{
+		domain: 'Medicine',
+		body: 'A clinical model is frozen at authorisation, because updating it on your population degrades what it knew about everyone else and because nobody can evidence what an update changed. Roughly 8% of authorised AI devices are permitted to change at all. The rest decay from the day they ship.',
+	},
+	{
+		domain: 'Finance',
+		body: 'A model that cannot be audited component by component cannot be validated, and one that is not validated is not deployed. Institutions retrain on a schedule and book the destroyed prior-regime knowledge as a cost of doing business.',
+	},
+	{
+		domain: 'Safety-critical autonomy',
+		body: 'Software entering a controlled environment must be able to account for its own behaviour. "It modified itself and we cannot say how" is not a finding that gets remediated. It ends the programme, and correctly so.',
+	},
+	{
+		domain: 'Any use of data you do not own',
+		body: 'Contracts increasingly require deletion of training data from model weights, with written attestation. The only exactly compliant method is retraining from scratch, and prevailing practice is to disclose that deletion is not feasible.',
+	},
+];
+
+// Milestone-based de-risking, which is what this class of evaluation runs on. Every figure comes
+// from the experiment programme. None of the four has been run.
+const ladder = [
+	{ cost: 'Zero GPU', name: 'Archive analysis', what: 'The weak form of the central question, answered on a laptop against 67 archived run records. It costs nothing and nobody has done it.' },
+	{ cost: '8.4 GPU-hr', name: 'Monitoring lead time', what: 'How many steps before the global loss visibly degrades does per-component health cross its own threshold. Opens or closes an entire market.' },
+	{ cost: '~1 GPU-day', name: 'Wrapper viability', what: 'Whether a model we did not train retains enough component independence for the attachment to work. Decides the lowest-friction application.' },
+	{ cost: '~20 GPU-hr', name: 'The separation study', what: 'Whether inter-component disagreement separates mislabelled data from data that is merely hard. Gates four of the seven applications.' },
+];
+
+// THE HEADLINE COMPARISON, AS A CHART.
+//
+// FORM: four paired magnitudes on one shared 0-100% scale, so a grouped horizontal bar is the
+// right form and a single axis is possible. The other two published results (label-noise decay in
+// pp, and stable-vs-NaN) are deliberately NOT forced onto this axis — different scales get their
+// own treatment rather than a second y-axis.
+//
+// COLOUR: two series, validated rather than eyeballed. #4338CA / #B4763F on the cream surface
+// passes all six checks — lightness band, chroma floor, CVD separation (ΔE 29.6 protan / 25.9
+// tritan), normal-vision floor (34.7) and 3:1 contrast. Both series are also direct-labelled and
+// separated by a 2px surface gap, so identity never rests on colour alone.
+const CH = { w: 780, rowH: 56, top: 30, labelW: 240, plotR: 754, barH: 13 };
+const chart = [
+	{ label: 'Recovery from a killed layer', ormas: 80.3, base: 10.0, unit: '%' },
+	{ label: 'Every stage killed at once', ormas: 70.8, base: 10.0, unit: '%' },
+	{ label: 'Retained after a task shift', ormas: 94.6, base: 47.3, unit: '%' },
+	{ label: 'Zero-shot compositional', ormas: 58.8, base: 25.0, unit: '%' },
+];
+const px = (v: number) => CH.labelW + (v / 100) * (CH.plotR - CH.labelW);
+const CH_H = CH.top + chart.length * CH.rowH + 26;
+
+// The architecture's own vocabulary, as a specification. Three signals and five telemetry layers,
+// named the way the paper names them.
+const signals = [
+	{ id: 'SIGNAL 1', name: 'Global backpropagation', body: 'Standard cross-entropy over the full network. Unmodified — the ordinary learning signal is left exactly as it is.' },
+	{ id: 'SIGNAL 2', name: 'Per-node local loss', body: 'Each node carries its own bounded chain — LayerNorm, Linear, PReLU, Linear — anchored through one shared low-rank bottleneck of 4,715 parameters. This is the health baseline.' },
+	{ id: 'SIGNAL 3', name: 'Health-gated self-correction', body: 'Eight diagnoses, each routed to its own treatment, each capped as a fraction of the component\'s own weight, mean-centred and logged.' },
+];
+
+const telemetry = [
+	{ id: 'L1', name: 'System health', body: 'Global optimisation trajectory, per epoch' },
+	{ id: 'L2', name: 'Component conflict', body: 'Per-node cosine similarity between the global and local gradient' },
+	{ id: 'L3', name: 'Spatial routing', body: 'Where each node attends' },
+	{ id: 'L4', name: 'Mechanistic ablation', body: 'An exact boolean tensor of every correction event' },
+	{ id: 'L5', name: 'Parameter attribution', body: 'Causal saliency through the bounded chain, per parameter' },
+];
+
+const abstract = `The neural network black box is not an inherent property of deep learning—it is a mathematical consequence of global backpropagation, where a single entangled error signal renders mid-training structural collapse invisible. We show that structurally isolating gradient chains to bounded 4-operation local paths transforms a standard neural network into a transparent, self-correcting system. Our protocol, ORMAS, extends backpropagation with a per-node local loss anchored through a capacity-constrained shared bottleneck and a health-gated self-correction mechanism that autonomously diagnoses and repairs structural pathologies in real time. Gradient conflicts between signals are resolved via PCGrad projection, and all continuous corrections satisfy a mean-centering conservation constraint, bounded by an Input-to-State Stability (ISS) convergence analysis under local strong convexity. The architecture natively emits five layers of causal telemetry—from system-level health to exact per-parameter attribution—as physical properties of the forward and backward pass, not post-hoc approximations. Empirically, correction frequency decays from 4.2 to 0.05 per epoch as the network stabilizes, consistent with the predicted ISS bound. Across 383 controlled experiments on four architectures (FC-DAG, CNN, Fat CNN, ResNet-18), ORMAS matches standard baselines on clean data while limiting accuracy decay under 40% label noise to 2.5 percentage points versus 7.8 for standard training. Under catastrophic mid-training structural collapse, ORMAS autonomously recovers to 80.3 ± 1.6% accuracy where parameter-matched baselines permanently collapse to 10.0% across all independent initializations. Under sequential task shift with no replay buffer or modularity constraint, the network self-organizes into partially factorized internal representations, achieving 58.8% mean zero-shot compositional accuracy on novel combinations versus 25% chance. These results establish architectural transparency as a structural prerequisite for autonomous robustness.`;
+
+// The field's own account of where the problem stands. Stated because the contrast is the
+// argument, and because a technical reader will check it.
+const fieldState = [
+	{
+		title: 'The dominant approach reverse-engineers a finished network',
+		body: 'Mechanistic interpretability sets out to recover the algorithms a trained network implements and translate them into something a person can follow. It is a serious research programme and it has produced real results.',
+	},
+	{
+		title: 'Its own literature questions whether the goal is reachable',
+		body: 'Published surveys record that many researchers doubt the ambition is achievable at scale, and that current work remains confined to toy models or to small fragments of larger networks.',
+	},
+	{
+		title: 'There is no agreed way to tell a true explanation from a plausible one',
+		body: 'With no unified evaluation, results rest on human interpretation — which leaves open the question of whether an explanation reflects the computation or is an artefact of the narrative imposed on it.',
+	},
+	{
+		title: 'And the substrate resists the question',
+		body: 'A single unit routinely encodes several unrelated features at once. There is no clean correspondence between the parts of the network and the concepts anyone wants to ask about.',
+	},
+];
+
+const results = [
+	{
+		n: '01',
+		name: 'Recovery from catastrophic structural collapse',
+		condition: 'A layer surgically zeroed at epoch 101, on a network that had reached 85.1%.',
+		outcome: 'Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections — 94% of lost performance reclaimed.',
+		baseline: 'Parameter-matched standard CNN: 10.0% ± 0.0%, permanently, on every seed.',
+		gap: '+70.3 pp',
+	},
+	{
+		n: '02',
+		name: 'Recovery from simultaneous full-hierarchy collapse',
+		condition: 'Every convolutional stage zeroed at once, rather than a single layer.',
+		outcome: 'Recovered to 70.8% ± 2.2%.',
+		baseline: 'Baseline: 10.0% ± 0.0%, permanent.',
+		gap: '+60.8 pp',
+	},
+	{
+		n: '03',
+		name: 'Retention through sequential task shift',
+		condition: 'Task A then Task B, with no replay buffer, no task identifier and no modularity constraint.',
+		outcome: '94.6% of Task A retained across 3/3 seeds. Zero-shot 4-way compositional accuracy of 58.8% against 25% chance — the factorisation was not designed, it emerged from gradient conflict.',
+		baseline: 'Standard ResNet-18 retained 47.3%.',
+		gap: '+47.3 pp',
+	},
+	{
+		n: '04',
+		name: 'Degradation under label noise',
+		condition: '40% symmetric label noise across 200 epochs.',
+		outcome: '−2.5 pp from peak, without ever being told the data was corrupted.',
+		baseline: 'Standard training: −7.8 pp.',
+		gap: '+5.3 pp',
+	},
+	{
+		n: '05',
+		name: 'Numerical stability at graph scale',
+		condition: 'A 50-node fully-connected DAG at 30% continuous label noise, 200 epochs.',
+		outcome: 'Stable throughout, via 22,014 autonomous corrections, each attributed and bounded.',
+		baseline: 'Standard training returned NaN.',
+		gap: 'Stable vs. NaN',
+	},
+	{
+		n: '06',
+		name: 'Insensitivity to the one hyperparameter that matters',
+		condition: 'Bottleneck dimension varied across a 16× range.',
+		outcome: 'Accuracy variance below 0.8%. The correction mechanism compensates for capacity imbalance rather than requiring it to be tuned away.',
+		baseline: '—',
+		gap: '<0.8%',
+	},
+];
+
+// The programme after the published work, described by objective and constraint. No mechanism.
+const programme = [
+	{
+		title: 'Name the data, not only the component',
+		body: 'The published system resolves to a component: which part failed, when, by how much, under what limit. The next result resolves one level further, to the specific training examples that damaged that component. That is the difference between knowing a part broke and knowing what broke it.',
+	},
+	{
+		title: 'Turn corrupted data from a liability into a contribution',
+		body: 'Every established method for handling bad data decides what to discard, and discards the hard examples along with the wrong ones. The objective here is the opposite: corrupted data is kept, and it raises final accuracy rather than merely being survived.',
+	},
+	{
+		title: 'Make a data source a nameable, removable object',
+		body: 'Once the system can attribute to data, what a model learned from one hospital, one desk, one assay run or one licensed corpus becomes an object with a name and a boundary — which is the precondition for separating it, bounding it, and removing it on request.',
+	},
+	{
+		title: 'Hold three constraints while doing it',
+		body: 'What ships stays one network of unchanged shape and unchanged inference cost. On clean data the system is identical to the published one, so nothing is paid for capability that is not being used. And every structural decision remains derivable from the logged record, because an audit trail that needs a second opaque system to explain it is not an audit trail.',
+	},
+];
+
+const open = [
+	'Every result on this page is CIFAR-10 or CIFAR-100. No clinical, financial, biological or production data has been used.',
+	'The architecture is demonstrated on fully-connected, convolutional and residual families. Transformers are a stated generalisation target, not a demonstrated result.',
+	'Test-time distribution shift is named in the paper as an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.',
+	'Under adversarial weight injection the architecture measures 1.0 pp worse than a standard baseline. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors. Published rather than omitted, and unmitigated.',
+	'Whether the signal survives at small n — tens of examples rather than tens of thousands — is untested.',
+];
+---
+
+<Page title="The technology" description={"The architecture, the three signals, five telemetry layers, 383 controlled experiments, and a section on what is not yet established."}>
+	<PageBanner
+		eyebrow="THE TECHNOLOGY"
+		title="A different bet on the oldest open problem in machine learning."
+		trail={[{ label: 'Home', href: '/' }, { label: 'Technology' }]}
+	/>
+
+	<div class="tech-stats">
+		<div class="tech-stats-inner container">
+			{headline.map((h) => (
+				<div class="tech-stat">
+					<p class="tech-stat-figure tabular">{h.figure}</p>
+					<p class="tech-stat-label">{h.label}</p>
+				</div>
+			))}
+		</div>
+	</div>
+
+	<section class="section container">
+		<div class="tech-intro">
+			<div>
+				<p class="tech-lede">
+					Neural networks fail opaquely, and not because anybody built them carelessly. Global
+					backpropagation diffuses every error signal across every parameter simultaneously, so
+					precise fault localisation is not difficult — it is mathematically unavailable. When a
+					layer dies mid-training, what a practitioner observes is a collapsed loss curve and no
+					mechanism whatsoever for identifying which component failed, when, or why.
+				</p>
+				<p class="tech-lede">
+					It is worth being precise about the size of this. Opacity is the single property
+					standing between deep learning and every domain that requires an account of a decision
+					before it will accept the decision. Not a performance ceiling — an admissibility one.
+					And those domains are not small: medicine, finance, safety-critical autonomy, and every
+					use of data belonging to somebody else.
+				</p>
+				<p class="tech-lede">
+					For a decade the field has attacked this as an inference problem, asking what a trained
+					network must have been doing. We treat it as a construction problem, and ask what a
+					network would have to be built like in order to be able to say.
+				</p>
+			</div>
+			<div class="tech-bet">
+				<p class="tech-bet-label">The bet</p>
+				<p class="tech-bet-claim">
+					Transparency is not something to recover from a finished network. It is something to
+					build into how the network trains.
+				</p>
+				<p class="tech-bet-body">
+					One architectural decision — bounding each node's local gradient chain to exactly four
+					operations — makes per-component attribution something the network computes on its way
+					past, rather than something a second procedure estimates afterwards.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>WHERE THE FIELD STANDS</Eyebrow>
+			<h2 class="section-title">The main line of attack is reverse-engineering, and it is honest about its own difficulty.</h2>
+			<p class="section-lede">
+				This is not a claim that the work is bad. It is careful work on a genuinely hard problem,
+				and the summary below is drawn from that literature's own account of itself.
+			</p>
+			<ol class="tech-field">
+				{fieldState.map((f, i) => (
+					<li>
+						<span class="tech-field-n tabular">{String(i + 1).padStart(2, '0')}</span>
+						<div>
+							<h3>{f.title}</h3>
+							<p>{f.body}</p>
+						</div>
+					</li>
+				))}
+			</ol>
+			<p class="tech-field-turn">
+				All four difficulties share a cause: the account is being reconstructed after the network
+				has already made up its mind, by a separate procedure that can itself be wrong. Constrain
+				the network during training and the account stops being a reconstruction.
+			</p>
+		</div>
+	</section>
+
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>THE ARCHITECTURE</Eyebrow>
+			<h2 class="section-title">Three signals, five layers of telemetry, one bounded chain.</h2>
+			<p class="section-lede">
+				The whole mechanism, named. Everything on this page follows from the second signal being
+				bounded to four operations.
+			</p>
+
+			<ChainDiagram />
+
+			<ol class="tech-signals">
+				{signals.map((sig) => (
+					<li>
+						<p class="tech-signal-id">{sig.id}</p>
+						<h3>{sig.name}</h3>
+						<p class="tech-signal-body">{sig.body}</p>
+					</li>
+				))}
+			</ol>
+
+			<div class="tech-telemetry">
+				<p class="tech-telemetry-label">Emitted natively, as a property of the forward and backward pass</p>
+				<div class="tech-telemetry-rows">
+					{telemetry.map((t) => (
+						<div class="tech-telemetry-row">
+							<span class="tech-telemetry-id tabular">{t.id}</span>
+							<span class="tech-telemetry-name">{t.name}</span>
+							<span class="tech-telemetry-body">{t.body}</span>
+						</div>
+					))}
+				</div>
+				<p class="tech-telemetry-note">
+					Gradient conflict between the signals is resolved by PCGrad projection. Every continuous
+					correction satisfies a mean-centring conservation constraint and is bounded by an
+					Input-to-State Stability argument under local strong convexity — and the observed
+					correction rate settles exactly as that bound predicts, which is the part that matters:
+					the stability argument is testable, and it was tested.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>WHAT IS PUBLISHED</Eyebrow>
+		<h2 class="section-title">Six results, and the conditions each was measured under.</h2>
+
+		<figure class="tech-chart">
+			<figcaption class="tech-chart-cap">
+				<span class="tech-chart-title">Four results, one scale</span>
+				<span class="tech-chart-legend">
+					<span class="tech-key tech-key--ormas">ORMAS</span>
+					<span class="tech-key tech-key--base">Parameter-matched baseline</span>
+				</span>
+			</figcaption>
+			<div class="tech-chart-wrap">
+			<svg viewBox={`0 0 ${CH.w} ${CH_H}`} role="img" aria-label="Grouped bar chart on a 0 to 100 percent scale. Recovery from a killed layer: ORMAS 80.3, baseline 10.0. Every stage killed at once: ORMAS 70.8, baseline 10.0. Retained after a task shift: ORMAS 94.6, baseline 47.3. Zero-shot compositional: ORMAS 58.8, chance 25.0.">
+				{[0, 25, 50, 75, 100].map((t) => (
+					<>
+						<line class="tech-grid" x1={px(t)} y1={CH.top - 8} x2={px(t)} y2={CH.top + chart.length * CH.rowH - 14} />
+						<text class="tech-axis" x={px(t)} y={CH.top + chart.length * CH.rowH + 6} text-anchor="middle">{t}%</text>
+					</>
+				))}
+				{chart.map((d, i) => {
+					const y = CH.top + i * CH.rowH;
+					return (
+						<>
+							<text class="tech-rowlabel" x="0" y={y + 18}>{d.label}</text>
+							<rect class="tech-bar tech-bar--ormas" x={CH.labelW} y={y} width={Math.max(px(d.ormas) - CH.labelW, 2)} height={CH.barH} rx="4">
+								<title>ORMAS · {d.ormas.toFixed(1)}%</title>
+							</rect>
+							<text class="tech-val tech-val--ormas" x={px(d.ormas) + 8} y={y + 11}>{d.ormas.toFixed(1)}%</text>
+							<rect class="tech-bar tech-bar--base" x={CH.labelW} y={y + CH.barH + 2} width={Math.max(px(d.base) - CH.labelW, 2)} height={CH.barH} rx="4">
+								<title>Baseline · {d.base.toFixed(1)}%</title>
+							</rect>
+							<text class="tech-val tech-val--base" x={px(d.base) + 8} y={y + CH.barH + 13}>{d.base.toFixed(1)}%</text>
+						</>
+					);
+				})}
+			</svg>
+			</div>
+			<p class="tech-chart-note">
+				Two further results do not share this scale and are not forced onto it. Under 40% label
+				noise the architecture decayed 2.5 pp from peak against 7.8 pp for standard training. On a
+				50-node graph at 30% noise it stayed stable through 22,014 attributed corrections, where
+				standard training returned NaN and stopped.
+			</p>
+		</figure>
+
+		{/* Behind a disclosure. Verbatim it is a 300-word wall in the middle of the page, and the
+		    reader who wants it is a different reader from the one skimming the results. */}
+		<div class="tech-abstract">
+			<DisclosurePanel label="Read the abstract in full">
+				<p class="tech-abstract-body">{abstract}</p>
+				<p class="tech-abstract-meta">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction · Rokib Al Dhin Raadh · Manuscript under review</p>
+			</DisclosurePanel>
+		</div>
+
+		<ol class="tech-results">
+			{results.map((r) => (
+				<li class="tech-result">
+					<div class="tech-result-head">
+						<span class="tech-result-n tabular">{r.n}</span>
+						<h3>{r.name}</h3>
+						<span class="tech-result-gap tabular">{r.gap}</span>
+					</div>
+					<dl class="tech-result-body">
+						<div><dt>Condition</dt><dd>{r.condition}</dd></div>
+						<div><dt>Result</dt><dd>{r.outcome}</dd></div>
+						<div><dt>Baseline</dt><dd>{r.baseline}</dd></div>
+					</dl>
+				</li>
+			))}
+		</ol>
+		<p class="tech-results-note">
+			All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in
+			the manuscript, alongside the reproducibility checklist and the scripts that regenerate every
+			run.
+		</p>
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>WHAT THIS IS FOR</Eyebrow>
+		<h2 class="section-title">Four domains are closed to deep learning for one shared reason.</h2>
+		<p class="section-lede">
+			Not one of them is closed because the models are insufficiently accurate. Each is closed
+			because a decision must be accountable before it is admissible, and no production
+			architecture can produce the account. One property gates all four.
+		</p>
+		<div class="tech-unlocks">
+			{unlocks.map((u) => (
+				<article class="tech-unlock">
+					<h3>{u.domain}</h3>
+					<p>{u.body}</p>
+				</article>
+			))}
+		</div>
+		<p class="tech-unlocks-note">
+			A network that can account for itself structurally does not make a better prediction. It
+			makes the prediction admissible, and that is the thing which has been missing.
+		</p>
+	</section>
+
+	<section class="band band--dark section reveal">
+		<div class="container">
+			<Eyebrow>WHAT WE ARE BUILDING</Eyebrow>
+			<h2 class="tech-next-title">The published result names a broken component. The next one names the data that broke it.</h2>
+			<p class="tech-next-lede">
+				The current system's diagnostic vocabulary has one subject: the component. Every treatment
+				it applies answers the question <em>what is wrong with this part?</em> But the most common
+				thing that goes wrong in real training is not a broken part. It is data actively damaging
+				a part that is working correctly — and there is no verb for that yet.
+			</p>
+			<p class="tech-next-lede">
+				The programme underway supplies it. What follows is stated as objectives and constraints
+				rather than as a method: the mechanism is the intellectual property, and it stays in the
+				building until it is published on our own terms.
+			</p>
+			<ol class="tech-programme">
+				{programme.map((p, i) => (
+					<li>
+						<span class="tech-programme-n tabular">{String(i + 1).padStart(2, '0')}</span>
+						<div>
+							<h3>{p.title}</h3>
+							<p>{p.body}</p>
+						</div>
+					</li>
+				))}
+			</ol>
+
+		</div>
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>HOW IT GETS DE-RISKED</Eyebrow>
+		<h2 class="section-title">Four measurements decide the rest of this, and together they cost under thirty GPU-hours.</h2>
+		<p class="section-lede">
+			Each is falsifiable, each carries a written prediction against it, and each runs on hardware
+			already in the building. The uncertainty in this programme is not spread across years of
+			research. It sits in four measurements, and one of them is free.
+		</p>
+		<ol class="tech-ladder">
+			{ladder.map((l, i) => (
+				<li>
+					<span class="tech-ladder-n tabular">{String(i + 1).padStart(2, '0')}</span>
+					<div class="tech-ladder-main">
+						<p class="tech-ladder-name">{l.name}</p>
+						<p class="tech-ladder-what">{l.what}</p>
+					</div>
+					<span class="tech-ladder-cost tabular">{l.cost}</span>
+				</li>
+			))}
+		</ol>
+		<p class="tech-ladder-note">
+			None has been run. A negative result on any of them narrows the programme rather than ending
+			it: the applications that ship on the published architecture depend on none of the four.
+		</p>
+
+		<div class="tech-ip">
+			<p class="tech-ip-label">The intellectual property position</p>
+			<p>
+				The completed architecture is released in full on acceptance of the manuscript — reproducible,
+				free for research and teaching, permanently. That commitment is written into the licence
+				rather than promised. It is the credential, and it is deliberately not the moat.
+			</p>
+			<p>
+				What is held is the programme above: the mechanism by which attribution extends from
+				components to data, the artefact format, the calibration procedure that turns a general
+				bound into a validated one for a specific deployment, and the record a customer
+				accumulates by running it. The first is a trade secret until we publish it on our own
+				terms. The last cannot be transferred at all, because it belongs to them.
+			</p>
+		</div>
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>WHAT IS NOT ESTABLISHED</Eyebrow>
+		<h2 class="section-title">Stated here, in the same place as the results.</h2>
+		<p class="section-lede">
+			A research page that lists only what worked is a marketing page wearing a lab coat. These are
+			the boundaries of the evidence, and they are the first thing a serious evaluator should be
+			able to find.
+		</p>
+		<ul class="tech-open">
+			{open.map((o) => <li>{o}</li>)}
+		</ul>
+
+		<div class="tech-scope">
+			<p>
+				<strong>The scope of the claim, as the paper states it.</strong> We do not claim
+				state-of-the-art accuracy on clean benchmarks, and we do not claim to replace specialised
+				noisy-label algorithms. The claim is that a single-network architecture can achieve
+				competitive accuracy while providing mechanistically logged, per-component causal
+				attribution that no prior single-network method offers — and that this structural
+				transparency is what enables recovery from failures standard architectures cannot detect.
+			</p>
+			<p class="tech-scope-line">The claim is transparency. The accuracy gap is its evidence.</p>
+		</div>
+
+		<div class="tech-cta">
+			<Button variant="primary" href="/contact">Request the manuscript</Button>
+			<Button variant="secondary" href="/product">See what is built on it</Button>
+		</div>
+	</section>
+
+	<GetInTouch variant="other" heading="Evaluating the mechanism?" />
+</Page>

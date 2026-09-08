@@ -1,103 +1,76 @@
 ---
 // design/03_SECTORS.md, ui_ux/03_SECTORS_UI.md.
-// Tabs are real anchors — with JS off, all five sections render stacked and the tabs jump to
-// them (native browser anchor behaviour, no script required). The "active" underline on the
-// first tab is a static default, matching the pattern already used on /solutions — real
-// scroll-tracking is Block 4.
+//
+// REBUILT 2026-09-06 as an index, following the case-studies reference: a banner, then a grid of
+// dark cards, each opening its own page. Was five stacked full-width panels carrying every
+// sector's complete detail on one route — the detail now lives on /sectors/[id].
+//
+// The reference puts a red date badge in each card's corner. These have no dates, so the badge
+// carries the entry-order number instead — which is real information here: design/03 is explicit
+// below. Rebuilt 2026-09-07: the entry-order badge is now the market's AXIS (`12 §1`) — whether
+// it segments by industry, by obligation, or by scale — which is a permanent property of the
+// market rather than a position in a release queue.
 import Page from '../layouts/Page.astro';
-import Eyebrow from '../components/Eyebrow.astro';
-import ComparisonMatrix from '../components/ComparisonMatrix.astro';
+import PageBanner from '../components/PageBanner.astro';
+import GetInTouch from '../components/GetInTouch.astro';
+import SectorGraphic from '../components/SectorGraphic.astro';
 import { sectors } from '../data/sectors';
 ---
 
-<Page title="SECTORS">
-	<section class="section container">
-		<Eyebrow>SECTORS</Eyebrow>
-		<h1>Sectors</h1>
-		<p class="sectors-intro">
-			ORMAS addresses a structural problem that appears across every industry that trains
-			neural networks under real operational constraints. The form the problem takes is
-			different in each sector. The solution is the same.
-		</p>
+<Page title="Five markets" description={"Five industries asking the same question in five different vocabularies: what did this model do, and can you prove it?"}>
+	<PageBanner
+		eyebrow="FIVE MARKETS"
+		title="Five industries asking the same question in five different vocabularies."
+		trail={[{ label: 'Home', href: '/' }, { label: 'Sectors' }]}
+	/>
 
-		<div class="sectors-axes">
-			<p><strong>AXIS 1 · INDUSTRY</strong> — What did the model do to itself? → The Record</p>
-			<p><strong>AXIS 2 · OBLIGATION</strong> — What data is in there, and can I remove it? → The Certificate</p>
-			<p><strong>AXIS 3 · SCALE</strong> — Is this run failing, and where? → The Alarm</p>
-		</div>
+	<section class="section container sectors-head">
+		<p class="sectors-intro">
+			A bank, a hospital, a training lab, a data controller and a defence programme all need to
+			know what a model did and why. Each calls it something different — validation, audit,
+			diagnosis, erasure, assurance — and each is told the same thing by their current stack:
+			that the answer cannot be recovered after training. It cannot. It has to be produced during
+			it.
+		</p>
 
 		<p class="sectors-order-note">
-			The order below is not ambition order. It is entry-friction order. Markets 1 and 2
-			require no regulator's permission before the first sale. Markets 3–5 cannot be
-			entered credibly without evidence from 1 and 2.
+			So these are not five products. They are five readings of one record, under one licence.
+			What differs between them is not the mechanism but the obligation driving it, the person who
+			signs, and how long the sale takes.
 		</p>
-
-		<nav class="sectors-tabs" aria-label="Jump to a sector">
-			{
-				sectors.map((s, i) => (
-					<a href={`#${s.id}`} class={i === 0 ? 'active' : undefined}>
-						{s.name}
-					</a>
-				))
-			}
-		</nav>
 	</section>
 
-	{
-		sectors.map((sector) => (
-			<section class="section container reveal sector-detail" id={sector.id}>
-				<h2>{sector.name}</h2>
-				<p class="sector-badge">{sector.badge}</p>
+	<section class="section-tight container reveal">
+		<div class="case-grid">
+			{sectors.map((sector) => (
+				<a href={`/sectors/${sector.id}`} class="case-card">
+					<div class="case-card-top">
+						<span class="case-card-tag">Market</span>
+						<span class="case-card-axis">{sector.axis}</span>
+					</div>
 
-				<p class="sector-cost">{sector.cost}</p>
-				<p class="sector-changes">{sector.changes}</p>
+					<h2 class="case-card-title">{sector.name}</h2>
+					<p class="case-card-badge">{sector.question}</p>
 
-				<ComparisonMatrix
-					leftHeader="What standard monitoring tells you"
-					rightHeader="What this adds"
-					rows={[
-						{
-							left: sector.comparisonLeft,
-							right: `<span class="comparison-matrix-amber">${sector.comparisonRight}</span>`,
-						},
-					]}
-				/>
-				<p class="sector-comparison-note">
-					Illustrative — expressed in this sector's own unit: {sector.comparisonNoun}.
-				</p>
+					<div class="case-card-art">
+						<SectorGraphic id={sector.id} />
+					</div>
 
-				<div class="buyer-card">
-					<p class="buyer-card-title">{sector.buyerTitle}</p>
-					<blockquote class="buyer-card-quote">{sector.buyerQuote}</blockquote>
-					<p class="buyer-card-figure tabular">{sector.budget}</p>
-				</div>
-
-				{
-					sector.figures.length > 0 && (
-						<ul class="sector-figures">
-							{sector.figures.map((f) => (
-								<li>
-									<span class="tabular">{f.label}</span>
-									{f.external && <span class="sector-figure-external">EXTERNAL</span>}
-								</li>
-							))}
-						</ul>
-					)
-				}
-
-				<p class="sector-entry">
-					<strong>Entry solutions:</strong> {sector.entrySolutions}
-				</p>
-				<p class="sector-gate">
-					<strong>Gate:</strong> {sector.gate}
-				</p>
-			</section>
-		))
-	}
+					<span class="case-card-cta">
+						Read the market
+						<span aria-hidden="true">→</span>
+					</span>
+				</a>
+			))}
+		</div>
+	</section>
 
 	<section class="section container reveal">
 		<p class="sectors-pricing-note">
-			All prices: designed, not yet tested against real customers.
+			ORMAS is one licence. Terms are agreed per institution and written into the contract —
+			there is no price list.
 		</p>
 	</section>
+
+	<GetInTouch variant="other" heading="Which of the five is yours?" />
 </Page>

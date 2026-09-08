@@ -1,0 +1,83 @@
+---
+// Closing contact block: dark band, headline left, card right.
+//
+// THIS NO LONGER RENDERS A FORM, changed 2026-09-07. It used to duplicate the whole intake form
+// on five pages, all of them posting to `/contact` on a static site — five more routes by which a
+// message was accepted and silently discarded. Consolidating on the single form at /contact fixes
+// all five at once, and means there is exactly one intake path to keep correct instead of six.
+//
+// What replaces it is a card that says what to bring. That was the real value of the per-variant
+// fields anyway: the questions were never for us, they were to stop the first conversation being
+// spent gathering context. Stating them as a short list does that job without a second form, and
+// the button carries the intent through to the right panel via /contact?intent=x.
+import Button from './Button.astro';
+
+export interface Props {
+	variant?: 'book' | 'pre-book' | 'invest' | 'other';
+	heading?: string;
+	solutionName?: string;
+}
+
+const { variant = 'other', heading } = Astro.props;
+
+const copy = {
+	book: {
+		title: 'Talk to us about ORMAS',
+		lede: 'Bring one specific training failure. That is the whole first conversation.',
+		bring: ['The failure you cannot currently diagnose', 'What it costs you to find it by hand'],
+		submit: 'Start the conversation',
+	},
+	'pre-book': {
+		title: 'Pre-book a deployment',
+		lede: 'One licence, no price list. Terms are agreed per institution and written into the contract, and pre-booking fixes them ahead of general availability.',
+		bring: [
+			'What you train, and roughly at what scale',
+			'The obligation driving it — SR 26-2, the EU AI Act, Article 17, a PCCP, an internal policy',
+			'What a failed run currently costs you to diagnose',
+		],
+		submit: 'Pre-book a deployment',
+	},
+	invest: {
+		title: 'Investment conversation',
+		lede: 'Tell us what you invest in and we will say whether this is a fit before sending anything.',
+		bring: ['Stage, sector and check size', 'Whether you lead'],
+		submit: 'Open a conversation',
+	},
+	other: {
+		title: 'Start a conversation',
+		lede: 'Tell us what you are trying to see inside your models, and we will say plainly whether this is the right thing for it.',
+		bring: [
+			'What you train and what you need to prove about it',
+			'Anything you have already tried',
+		],
+		submit: 'Send a message',
+	},
+}[variant];
+
+const intent = variant === 'book' ? 'pre-book' : variant;
+---
+
+<section class="band band--dark reveal get-in-touch">
+	<div class="section container get-in-touch-inner">
+		<div class="get-in-touch-copy">
+			<h2>{heading ?? 'Start with the problem you already have.'}</h2>
+			<p>
+				Every engagement starts with one specific problem — a run that died, an audit that asked a
+				question you could not answer, a dataset you cannot vouch for.
+			</p>
+			<p class="get-in-touch-note">
+				We reply within a few days. Every message is read by a person.
+			</p>
+		</div>
+
+		<div class="get-in-touch-card">
+			<h3>{copy.title}</h3>
+			<p class="get-in-touch-lede">{copy.lede}</p>
+			<p class="get-in-touch-bring-label">Useful to bring</p>
+			<ul class="get-in-touch-bring">
+				{copy.bring.map((b) => <li>{b}</li>)}
+			</ul>
+			<Button variant="primary" href={`/contact?intent=${intent}#${intent}`}>{copy.submit}</Button>
+		</div>
+	</div>
+</section>

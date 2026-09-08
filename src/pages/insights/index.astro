@@ -1,7 +1,10 @@
 ---
-// design/06_INSIGHTS.md, ui_ux/06_INSIGHTS_UI.md. Data-table feed, no thumbnails. Zero posts at
-// launch is fine — the empty state below is deliberate, not broken (see content.config.ts for
-// why nothing is fabricated to fill it).
+// Data-table feed, no thumbnails. Zero posts is deliberate and nothing is fabricated to fill it.
+//
+// REWRITTEN 2026-09-07. The empty state was one sentence — "Nothing published yet" — which reads
+// as an abandoned section rather than one that has not started. An empty page on a live site
+// costs credibility unless it says why it is empty and hands the reader somewhere real, so it
+// now does both. The feed markup below is untouched and takes over the moment a post exists.
 import Page from '../../layouts/Page.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import { getCollection } from 'astro:content';
@@ -11,24 +14,42 @@ const posts = (await getCollection('insights')).sort(
 );
 ---
 
-<Page title="OXIEDO INSIGHTS">
+<Page title="Insights" description={"Documented analysis with sourced claims — what we know, what we do not, and what changed our minds."}>
 	<section class="section container">
-		<Eyebrow>OXIEDO INSIGHTS</Eyebrow>
+		<Eyebrow>INSIGHTS</Eyebrow>
 		<h1>Insights</h1>
 		<p class="insights-intro">
-			We publish what we know, what we do not know, and why it matters to the people who
-			train neural networks at scale. Not marketing. Not opinion. Documented analysis with
-			sourced claims.
+			Documented analysis with sourced claims — what we know, what we do not, and what changed
+			our minds. Not marketing, and not opinion pieces about the future of AI.
 		</p>
 	</section>
 
 	<section class="section container reveal">
 		{
 			posts.length === 0 ? (
-				<p class="insights-empty">
-					Nothing published yet. In the meantime, the evidence base is on{' '}
-					<a href="/paper">/paper</a>.
-				</p>
+				<div class="insights-empty">
+					<p class="insights-empty-title">Nothing here yet, and that is on purpose.</p>
+					<p class="insights-empty-body">
+						Every hour spent writing about the work is an hour not spent on it, and at a team of
+						one that trade is not currently worth making. Posts will appear here when there is
+						something to report that is not already written up properly somewhere else on this
+						site — which, at the moment, everything is.
+					</p>
+					<p class="insights-empty-body">
+						If you came looking for the substance, it is not hidden. It is on these three pages.
+					</p>
+					<ul class="insights-empty-routes">
+						<li>
+							<a href="/technology"><strong>The technology</strong><span>The architecture, 383 experiments, the results, and a section on what is not established</span></a>
+						</li>
+						<li>
+							<a href="/sectors"><strong>The markets</strong><span>Five industries, the regulation driving each, and the sources behind every figure</span></a>
+						</li>
+						<li>
+							<a href="/faq"><strong>The FAQ</strong><span>The questions an evaluation actually asks, answered without hedging</span></a>
+						</li>
+					</ul>
+				</div>
 			) : (
 				<div class="insights-feed">
 					{posts.map((post) => (

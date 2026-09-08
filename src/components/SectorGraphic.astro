@@ -1,0 +1,720 @@
+---
+// One technical illustration per market, for the sector cards on / and /sectors.
+//
+// Why hand-built SVG and not photography: there is no image-fetch or image-generation tool in
+// this environment, and 01_STACK forbids third-party requests outright ("zero third-party
+// requests, fully self-hosted"), which rules out hotlinking stock imagery even if one could be
+// fetched.
+//
+// REDRAWN 2026-09-06. The first set was five decorative sketches — a smooth curve, four bars, an
+// X of circles — that gestured at a subject without stating anything. These are charts: every
+// one plots the specific figure its own card text quotes, out of data/sectors.ts, and carries an
+// annotation layer that names the claim.
+//
+//   ai-training              per-node grad norm crosses the bound 647 steps before the loss spikes
+//   regulated-finance        2021-regime retention while training 2024: 94.6% held vs 47.3% baseline
+//   medical-ai               six per-site small multiples; site 4 collapses at round 39, global at 41
+//   data-obligation          batch 12's contribution named, bounded, excised — model otherwise identical
+//   defense-safety-critical  graceful degradation to 80.3% vs collapse to 10%, measured/not-run split
+//
+// TWO CRAFT DECISIONS worth keeping:
+//
+// 1. The series are COMPUTED, not drawn. Real loss curves and eval traces carry instrument noise;
+//    a smooth bezier reads as an illustration of a chart rather than a chart. Every series below
+//    is generated from an explicit model (exponential decay, logistic divergence) plus jitter.
+//
+// 2. Annotations share the marks' typography, colour and line style, so each figure reads as one
+//    object rather than a picture with captions stuck on. Same viewBox, same type ramp, same
+//    palette across all five: they are a family, which is the point — it is one primitive.
+//
+// The drawing itself is aria-hidden — an SVG full of <text> reads as a stream of disconnected
+// fragments. The meaning reaches assistive tech through the figcaption instead, which is a real
+// sentence. See the note on CAPTIONS below.
+//
+// Colours are the on-dark variants, not --chart-warning/--chart-recovery: these are drawn on a
+// --bg-dark tile, where those light-ground values compute to 2.99:1 and 2.85:1 and effectively
+// disappear. The on-dark pair lands at 6.93:1 and 10.05:1; --accent-on-dark at 7.56:1.
+export interface Props {
+	id: string;
+	caption?: boolean;
+}
+
+const { id, caption = true } = Astro.props;
+
+// PLAIN READING. Asked whether a first-time visitor would understand these, the honest answer
+// was no: every title named its metric ("training loss", "gradient norm per node") instead of
+// stating the finding, and nothing said why it mattered. The in-figure labels now lead with the
+// finding; these sentences carry the rest.
+//
+// They are HTML, deliberately, not more <text> inside the SVG. Real text is selectable and
+// translatable, reflows at the reader's own font size instead of scaling with the viewBox, and
+// reaches a screen reader — which matters more than usual here, because the figures themselves
+// are aria-hidden. Before this, a screen-reader user got nothing from them at all.
+//
+// Each one names the consequence in money or time, taken from that sector's own figures[] in
+// data/sectors.ts. "647 steps" means nothing to someone who does not know how long a step takes;
+// "$16,000-$24,000" needs no priming.
+const CAPTIONS: Record<string, string> = {
+	'ai-training':
+		'A big training run breaks, and today the first sign is the crash itself. ORMAS watches each machine separately, so it flags the one that went wrong 647 steps earlier — roughly two hours of compute, or $16,000–$24,000.',
+	'regulated-finance':
+		'Teach a model about 2024 and it quietly forgets 2021. ORMAS keeps 94.6% of the old behaviour where an ordinary model keeps 47.3% — and a validator can check that claim component by component.',
+	'medical-ai':
+		'Six hospitals train one shared model together. When its accuracy drops, ORMAS names which hospital caused it, two rounds before the drop is even visible in the shared result.',
+	'data-obligation':
+		'A customer withdraws the data you trained on. ORMAS removes just their contribution and issues signed proof, instead of retraining the whole model from scratch for $100,000–$500,000.',
+	'defense-safety-critical':
+		'As conditions degrade — jamming, spoofing, a failing sensor — a bounded model keeps 80.3% of what it could do, where a frozen one collapses to 10%. Measured during training; the test-time case is named as not yet run.',
+};
+
+// Gradients and patterns are referenced by url(#id), which resolves to the FIRST match in the
+// document — and /sectors renders five of these on one page. Without a per-instance suffix the
+// later cards would reach into the first card's defs. This exact bug has bitten the logo twice.
+const uid = Math.random().toString(36).slice(2, 8);
+
+// Deterministic jitter. Math.random() would redraw every chart on every build; these are static
+// assets and the shape has to be stable across deploys. A hash of (series, index) repeats
+// exactly while still looking like instrument noise rather than a drawn waveform.
+function jitter(series: number, i: number, amp: number): number {
+	const t = Math.sin(series * 127.1 + i * 311.7) * 43758.5453;
+	return (t - Math.floor(t) - 0.5) * 2 * amp;
+}
+
+function line(points: [number, number][]): string {
+	return points.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+}
+
+function series(n: number, x0: number, x1: number, f: (x: number, i: number) => number): [number, number][] {
+	return Array.from({ length: n }, (_, i) => {
+		const x = x0 + (i / (n - 1)) * (x1 - x0);
+		return [x, f(x, i)] as [number, number];
+	});
+}
+
+/* ── 1 · AI TRAINING ────────────────────────────────────────────────────────────────────────
+   Two panels on a shared step axis. Top: aggregate loss, the delayed indicator — it spikes at
+   step 40,200, which is the card's own left-hand column ("the loss spiked at step 40,200").
+   Bottom: per-node gradient norm, where node 1 crosses the declared bound at 39,553 — the
+   right-hand column. The 647-step gap between the two reference lines IS the product. */
+const STEP0 = 38500;
+const STEP1 = 41000;
+const sx = (s: number) => 40 + ((s - STEP0) / (STEP1 - STEP0)) * 260;
+const X_NODE = sx(39553);
+const X_SPIKE = sx(40200);
+
+// Vertical rhythm is tight enough that it has to be reasoned about rather than eyeballed. The
+// loss panel ends at 90 and the node panel starts at 128, leaving a 38-unit gutter for the
+// lead-time bracket. The two reference lines are drawn in two segments that stop short of that
+// gutter, so the bracket's label sits in clear ground instead of being crossed by them — the
+// alternative, a knockout rect behind the text, cannot work here because the card ground is a
+// gradient and a flat patch would show as a seam.
+const yLoss = (l: number) => 30 + ((3.6 - l) / 1.9) * 60;
+const yGrad = (g: number) => 178 - (g / 2.4) * 50;
+const G_BOUND = yGrad(1.65);
+
+const lossPath = line(
+	series(61, 40, 300, (x, i) => {
+		let l: number;
+		if (x < X_SPIKE) l = 2.36 - (x - 40) * 0.0016;
+		else if (x < X_SPIKE + 10) l = 2.36 - (X_SPIKE - 40) * 0.0016 + (x - X_SPIKE) * 0.13;
+		else l = 2.62 + 0.55 * Math.exp(-(x - X_SPIKE - 10) / 22);
+		return yLoss(l + jitter(1, i, 0.035));
+	}),
+);
+
+// Logistic centred at 147 so the curve passes g=1.65 (the bound) at x=150.2 — the marker sits on
+// a computed crossing, not an eyeballed one.
+const node1Path = line(
+	series(61, 40, 300, (x, i) => yGrad(0.45 + 1.9 / (1 + Math.exp(-(x - 147) / 6)) + jitter(2, i, 0.05))),
+);
+const otherNodes = [0, 1, 2, 3, 4, 5].map((n) =>
+	line(series(61, 40, 300, (_x, i) => yGrad(0.42 + n * 0.035 + jitter(10 + n, i, 0.06)))),
+);
+
+/* ── 2 · REGULATED FINANCE ──────────────────────────────────────────────────────────────────
+   Retention of the 2021 regime while training continues on 2024. The two figures are the
+   sector's only quoted numbers: 94.6% held, 47.3% baseline. The shaded delta between them is
+   47.3 points — coincidentally equal to the baseline, which is worth annotating. */
+const yPct = (p: number) => 162 - (p / 100) * 128;
+const F_SHIFT = 92;
+
+const finOrmas = series(56, 46, 268, (x, i) => {
+	const p = x < F_SHIFT ? 99.4 : 94.6 + 5.4 * Math.exp(-(x - F_SHIFT) / 50);
+	return yPct(p + jitter(3, i, 0.7));
+});
+const finBase = series(56, 46, 268, (x, i) => {
+	const p = x < F_SHIFT ? 99.2 : 47.3 + 52.7 * Math.exp(-(x - F_SHIFT) / 40);
+	return yPct(p + jitter(4, i, 1.4));
+});
+// Area between the curves: forward along the held line, back along the collapsed one.
+const finDelta = `${line(finOrmas)} L${finBase[finBase.length - 1][0].toFixed(1)} ${finBase[finBase.length - 1][1].toFixed(1)} ${finBase
+	.slice()
+	.reverse()
+	.slice(1)
+	.map(([x, y]) => `L${x.toFixed(1)} ${y.toFixed(1)}`)
+	.join(' ')} Z`;
+
+/* ── 3 · MEDICAL AI ─────────────────────────────────────────────────────────────────────────
+   Small multiples, which the literature treats as the right answer for "compare these
+   categories" — and the buyer's quote is literally a comparison failure: "Round 41 dropped six
+   points and we can't tell which site." Six site panels on a shared round axis with a shared
+   reference line at round 39; five are flat and one is not. The question answers itself. */
+const M_R = 16; // rounds 30-45
+const roundX = (i: number, px: number, pw: number) => px + (i / (M_R - 1)) * pw;
+const R39 = 9;
+const R41 = 11;
+
+const globalAcc = line(
+	series(M_R, 34, 306, (_x, i) => {
+		const a = i >= R41 ? 84 + jitter(40, i, 0.55) : 90 + jitter(40, i, 0.45);
+		return 62 - ((a - 78) / 14) * 34;
+	}),
+);
+
+const sitePanels = [0, 1, 2, 3, 4, 5].map((n) => {
+	const col = n % 3;
+	const row = Math.floor(n / 3);
+	const px = 34 + col * 94;
+	const py = 92 + row * 54;
+	const pw = 84;
+	const ph = 30;
+	const bad = n === 3; // site 4
+	const path = line(
+		Array.from({ length: M_R }, (_, i) => {
+			let a = 0.74 + jitter(20 + n, i, 0.06);
+			if (bad && i >= R39) a = 0.74 - Math.min(0.64, (i - R39 + 1) * 0.13) + jitter(20 + n, i, 0.03);
+			return [roundX(i, px, pw), py + 10 + ph - a * ph] as [number, number];
+		}),
+	);
+	return { n, px, py, pw, ph, bad, path, refX: roundX(R39, px, pw) };
+});
+
+/* ── 4 · DATA OBLIGATION ────────────────────────────────────────────────────────────────────
+   The card's claim is "batch 12's contribution is named, bounded, and removable". So: the same
+   parameter field twice, before and after, with batch 12's six cells excised and every other
+   cell byte-identical. The point is what does NOT change — which is only legible if the two
+   grids are drawn from one definition, as they are. */
+const CELL = 11;
+const GAP = 3;
+const cells = Array.from({ length: 36 }, (_, i) => ({ r: Math.floor(i / 6), c: i % 6 }));
+const inBatch12 = (r: number, c: number) => r >= 2 && r <= 3 && c >= 2 && c <= 4;
+const cellXY = (ox: number, r: number, c: number) => [ox + c * (CELL + GAP), 52 + r * (CELL + GAP)];
+
+/* ── 5 · DEFENSE & SAFETY-CRITICAL ──────────────────────────────────────────────────────────
+   Graceful degradation to 80.3% against collapse to 10%, both from the card. The honest part is
+   the vertical split: design/03 says plainly that this is "a measured, training-time property —
+   the market's problem is test-time, and that gap is named, not finessed". So the left half is
+   solid and the right half is hatched and dashed and labelled NOT RUN. A chart that overstated
+   here would contradict the page it sits on. */
+const D_SPLIT = 168;
+const defBounded = series(56, 46, 268, (x, i) => yPct(80.3 + 19.7 * Math.exp(-(x - 46) / 55) + jitter(5, i, 0.6)));
+const defCollapse = series(56, 46, 268, (x, i) => yPct(10 + 90 * Math.exp(-(x - 46) / 45) + jitter(6, i, 1.1)));
+const solid = (s: [number, number][]) => line(s.filter(([x]) => x <= D_SPLIT));
+const dashed = (s: [number, number][]) => line(s.filter(([x]) => x >= D_SPLIT - 5));
+---
+
+{/* figure/figcaption, and aria-hidden moved off the wrapper onto the art alone — the caption has
+    to reach assistive tech, which is the whole reason it exists as text rather than as more SVG */}
+<figure class="sector-graphic">
+	<div class="sector-graphic-art" aria-hidden="true">
+	{id === 'ai-training' && (
+		<svg viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMidYMid meet">
+			<defs>
+				<linearGradient id={`sg-degraded-${uid}`} x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0%" class="sg-stop-warn-a" />
+					<stop offset="100%" class="sg-stop-warn-b" />
+				</linearGradient>
+			</defs>
+
+			{/* "What you see today" / "What ORMAS sees" rather than "training loss" / "gradient
+			    norm per node". The panels are a before-and-after of the reader's own situation,
+			    which needs no ML vocabulary to follow; the exact terms live in the caption below
+			    the figure, where an expert still finds them. */}
+			<text x="40" y="16" class="sg-title">WHAT YOU SEE TODAY</text>
+			<text x="300" y="16" text-anchor="end" class="sg-title sg-bad">the run breaks · step 40,200</text>
+
+			{[30, 50, 70, 90].map((y) => <line x1="40" y1={y} x2="300" y2={y} class="sg-grid" />)}
+
+			{/* Nothing on an unlabelled axis tells a first-time reader whether up is good. Without
+			    this the spike is just "a line moved" rather than "the run got worse". */}
+			<text x="44" y="38" class="sg-micro">worse ↑</text>
+
+			{/* everything after the spike is a degraded run — the band says so without a label */}
+			<rect x={X_SPIKE} y="30" width={300 - X_SPIKE} height="60" fill={`url(#sg-degraded-${uid})`} />
+
+			<path d={lossPath} class="sg-trace" />
+
+			{/* reference lines, upper segment. They stop at 94 so the bracket label below sits in
+			    clear ground — see the note on vertical rhythm in the frontmatter. */}
+			<line x1={X_NODE} y1="26" x2={X_NODE} y2="94" class="sg-ref sg-good-stroke" />
+			<line x1={X_SPIKE} y1="26" x2={X_SPIKE} y2="94" class="sg-ref sg-bad-stroke" />
+			<circle cx={X_SPIKE} cy={yLoss(3.35)} r="3.4" class="sg-marker-bad" />
+
+			{/* the lead-time bracket lives in the gutter between the panels, spanning both
+			    reference lines — it belongs to neither panel, which is exactly what it measures */}
+			<line x1={X_NODE} y1="108" x2={X_SPIKE} y2="108" class="sg-bracket" />
+			<line x1={X_NODE} y1="104" x2={X_NODE} y2="112" class="sg-bracket" />
+			<line x1={X_SPIKE} y1="104" x2={X_SPIKE} y2="112" class="sg-bracket" />
+			{/* the gap in compute hours, not just in steps — "647" means nothing to a reader who
+			    does not know how long a step takes, and the money is in the caption */}
+			<text x={(X_NODE + X_SPIKE) / 2} y="102" text-anchor="middle" class="sg-annot">
+				647 steps earlier ≈ 2 hours of compute
+			</text>
+
+			<text x="40" y="122" class="sg-title">WHAT ORMAS SEES</text>
+			<text x="300" y="122" text-anchor="end" class="sg-title sg-good">machine 1 flagged · step 39,553</text>
+
+			{otherNodes.map((d) => <path d={d} class="sg-trace-ghost" />)}
+
+			<line x1="40" y1={G_BOUND} x2="300" y2={G_BOUND} class="sg-bound-line" />
+			<text x="44" y={G_BOUND - 4} class="sg-micro">safe limit</text>
+
+			<path d={node1Path} class="sg-trace sg-good-stroke" />
+
+			<line x1={X_NODE} y1="126" x2={X_NODE} y2="182" class="sg-ref sg-good-stroke" />
+			<line x1={X_SPIKE} y1="126" x2={X_SPIKE} y2="182" class="sg-ref sg-bad-stroke" />
+			<circle cx={X_NODE} cy={G_BOUND} r="3.4" class="sg-marker-good" />
+
+			{[39000, 40000, 41000].map((s) => (
+				<text x={sx(s)} y="194" text-anchor={s === 41000 ? 'end' : 'middle'} class="sg-micro">
+					{s.toLocaleString('en-US')}
+				</text>
+			))}
+			<text x="40" y="194" class="sg-micro">step</text>
+		</svg>
+	)}
+
+	{id === 'regulated-finance' && (
+		<svg viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMidYMid meet">
+			<defs>
+				<linearGradient id={`sg-delta-${uid}`} x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0%" class="sg-stop-good-a" />
+					<stop offset="100%" class="sg-stop-good-b" />
+				</linearGradient>
+			</defs>
+
+			<text x="46" y="16" class="sg-title">HOW MUCH OF 2021 IT REMEMBERS</text>
+			<text x="298" y="16" text-anchor="end" class="sg-title">SR 26-2</text>
+
+			{[100, 75, 50, 25, 0].map((p) => (
+				<>
+					<line x1="46" y1={yPct(p)} x2="268" y2={yPct(p)} class="sg-grid" />
+					<text x="42" y={yPct(p) + 2} text-anchor="end" class="sg-micro">{p}</text>
+				</>
+			))}
+
+			{/* the capability the baseline loses and ORMAS keeps — the chart's whole subject, so
+			    it is a filled region rather than something the reader has to measure by eye */}
+			<path d={finDelta} fill={`url(#sg-delta-${uid})`} />
+
+			<line x1={F_SHIFT} y1="28" x2={F_SHIFT} y2="168" class="sg-ref sg-accent-stroke" />
+			<text x={F_SHIFT + 4} y="26" class="sg-micro sg-accent">starts learning 2024</text>
+
+			<path d={line(finBase)} class="sg-trace sg-bad-stroke" />
+			<path d={line(finOrmas)} class="sg-trace sg-good-stroke" />
+
+			<line x1="252" y1={yPct(94.6)} x2="252" y2={yPct(47.3)} class="sg-bracket" />
+			<line x1="248" y1={yPct(94.6)} x2="256" y2={yPct(94.6)} class="sg-bracket" />
+			<line x1="248" y1={yPct(47.3)} x2="256" y2={yPct(47.3)} class="sg-bracket" />
+			<text x="244" y={yPct(71) + 2} text-anchor="end" class="sg-annot">+47.3 points kept</text>
+
+			<circle cx="268" cy={yPct(94.6)} r="3.4" class="sg-marker-good" />
+			<circle cx="268" cy={yPct(47.3)} r="3.4" class="sg-marker-bad" />
+			<text x="274" y={yPct(94.6) + 1} class="sg-value sg-good">94.6%</text>
+			<text x="274" y={yPct(94.6) + 10} class="sg-micro">with ORMAS</text>
+			<text x="274" y={yPct(47.3) + 1} class="sg-value sg-bad">47.3%</text>
+			<text x="274" y={yPct(47.3) + 10} class="sg-micro">standard</text>
+
+			<text x="46" y="180" class="sg-micro">training on new data →</text>
+		</svg>
+	)}
+
+	{id === 'medical-ai' && (
+		<svg viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMidYMid meet">
+			<text x="34" y="14" class="sg-title">THE SHARED MODEL</text>
+			<text x="306" y="14" text-anchor="end" class="sg-title sg-bad">drops 6 points — cause unknown</text>
+
+			{[28, 45, 62].map((y) => <line x1="34" y1={y} x2="306" y2={y} class="sg-grid" />)}
+			<path d={globalAcc} class="sg-trace" />
+
+			<line x1={roundX(R39, 34, 272)} y1="22" x2={roundX(R39, 34, 272)} y2="68" class="sg-ref sg-good-stroke" />
+			<line x1={roundX(R41, 34, 272)} y1="22" x2={roundX(R41, 34, 272)} y2="68" class="sg-ref sg-bad-stroke" />
+			<circle cx={roundX(R41, 34, 272)} cy={62 - ((84 - 78) / 14) * 34} r="3.4" class="sg-marker-bad" />
+			<text x={roundX(R39, 34, 272)} y="78" text-anchor="middle" class="sg-micro sg-good">round 39</text>
+			<text x={roundX(R41, 34, 272)} y="78" text-anchor="middle" class="sg-micro sg-bad">round 41</text>
+
+			<text x="34" y="88" class="sg-title">EACH HOSPITAL, SEPARATELY</text>
+			<text x="306" y="88" text-anchor="end" class="sg-title sg-good">hospital 4 · 2 rounds sooner</text>
+
+			{sitePanels.map((p) => (
+				<>
+					{p.bad && <rect x={p.px - 4} y={p.py - 4} width={p.pw + 8} height={p.ph + 20} rx="4" class="sg-panel-flag" />}
+					<text x={p.px} y={p.py + 4} class={`sg-micro${p.bad ? ' sg-bad' : ''}`}>
+						SITE 0{p.n + 1}
+					</text>
+					<line x1={p.px} y1={p.py + 10 + p.ph} x2={p.px + p.pw} y2={p.py + 10 + p.ph} class="sg-grid" />
+					{/* the same reference round in every panel — the comparison the buyer cannot make today */}
+					<line x1={p.refX} y1={p.py + 10} x2={p.refX} y2={p.py + 10 + p.ph} class="sg-ref-faint" />
+					<path d={p.path} class={p.bad ? 'sg-spark sg-bad-stroke' : 'sg-spark'} />
+					{p.bad && <circle cx={p.refX} cy={p.py + 10 + p.ph - 0.74 * p.ph} r="2.6" class="sg-marker-bad" />}
+				</>
+			))}
+		</svg>
+	)}
+
+	{id === 'data-obligation' && (
+		<svg viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMidYMid meet">
+			<text x="34" y="22" class="sg-title">WHAT THE MODEL LEARNED, BY DATA SOURCE</text>
+
+			<text x="34" y="44" class="sg-micro">BEFORE</text>
+			<text x="205" y="44" class="sg-micro">AFTER</text>
+
+			{/* Left: the field with batch 12 named and bounded. Right: the identical field with
+			    those six cells hollow. Both grids come from one `cells` definition, so "nothing
+			    else moved" is guaranteed by construction rather than by careful copying. */}
+			{cells.map(({ r, c }) => {
+				const [x, y] = cellXY(34, r, c);
+				return (
+					<rect
+						x={x}
+						y={y}
+						width={CELL}
+						height={CELL}
+						rx="2"
+						class={inBatch12(r, c) ? 'sg-cell sg-cell--named' : 'sg-cell'}
+					/>
+				);
+			})}
+			<rect x="59" y="77" width="45" height="31" rx="3" class="sg-bound-box" />
+			<text x="59" y="73" class="sg-micro sg-accent">customer 12</text>
+
+			{cells.map(({ r, c }) => {
+				const [x, y] = cellXY(205, r, c);
+				return inBatch12(r, c) ? (
+					<rect x={x} y={y} width={CELL} height={CELL} rx="2" class="sg-cell sg-cell--removed" />
+				) : (
+					<rect x={x} y={y} width={CELL} height={CELL} rx="2" class="sg-cell" />
+				);
+			})}
+			<rect x="230" y="77" width="45" height="31" rx="3" class="sg-bound-box sg-bound-box--empty" />
+
+			<line x1="128" y1="92" x2="186" y2="92" class="sg-arrow" />
+			<path d="M180 88 L186 92 L180 96" class="sg-arrow" />
+			<text x="157" y="84" text-anchor="middle" class="sg-annot">REMOVE</text>
+			<text x="157" y="104" text-anchor="middle" class="sg-micro">no retraining</text>
+
+			<rect x="34" y="146" width="252" height="36" rx="6" class="sg-cert" />
+			<circle cx="52" cy="164" r="8" class="sg-cert-badge" />
+			<path d="M48 164 L51 167 L57 160" class="sg-check" />
+			<text x="68" y="161" class="sg-annot sg-good">CERTIFICATE OF DELETION</text>
+			{/* on the upper line, not the lower one: the hash string below runs to x=252 and the
+			    two would have collided at 6px mono (0.6em advance = 3.6 units a character) */}
+			<text x="274" y="161" text-anchor="end" class="sg-micro">instead of $100k–$500k</text>
+			<text x="68" y="173" class="sg-micro">signed proof · customer 12's data is gone</text>
+		</svg>
+	)}
+
+	{id === 'defense-safety-critical' && (
+		<svg viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMidYMid meet">
+			<defs>
+				<pattern
+					id={`sg-hatch-${uid}`}
+					width="6"
+					height="6"
+					patternUnits="userSpaceOnUse"
+					patternTransform="rotate(45)"
+				>
+					<line x1="0" y1="0" x2="0" y2="6" class="sg-hatch-line" />
+				</pattern>
+			</defs>
+
+			<text x="46" y="16" class="sg-title">HOW MUCH STILL WORKS</text>
+			<text x="298" y="16" text-anchor="end" class="sg-title">% still working</text>
+
+			{[100, 75, 50, 25, 0].map((p) => (
+				<>
+					<line x1="46" y1={yPct(p)} x2="268" y2={yPct(p)} class="sg-grid" />
+					<text x="42" y={yPct(p) + 2} text-anchor="end" class="sg-micro">{p}</text>
+				</>
+			))}
+
+			{/* Everything right of the split is hatched because it has not been run. design/03 is
+			    explicit that this gap is "named, not finessed"; a chart that ran the solid line
+			    all the way across would be the site's only dishonest object. */}
+			<rect x={D_SPLIT} y="30" width={268 - D_SPLIT} height="136" fill={`url(#sg-hatch-${uid})`} />
+			<line x1={D_SPLIT} y1="28" x2={D_SPLIT} y2="168" class="sg-ref" />
+			<text x={D_SPLIT - 4} y="26" text-anchor="end" class="sg-micro">tested</text>
+			<text x={D_SPLIT + 4} y="26" class="sg-micro sg-pending">not tested yet</text>
+
+			<line x1="46" y1={yPct(80)} x2="268" y2={yPct(80)} class="sg-bound-line" />
+			<text x="50" y={yPct(80) - 4} class="sg-micro">guaranteed floor</text>
+
+			<path d={solid(defCollapse)} class="sg-trace sg-bad-stroke" />
+			<path d={dashed(defCollapse)} class="sg-trace sg-bad-stroke sg-projected" />
+			<path d={solid(defBounded)} class="sg-trace sg-good-stroke" />
+			<path d={dashed(defBounded)} class="sg-trace sg-good-stroke sg-projected" />
+
+			<circle cx="268" cy={yPct(80.3)} r="3.4" class="sg-marker-good" />
+			<circle cx="268" cy={yPct(10)} r="3.4" class="sg-marker-bad" />
+			<text x="274" y={yPct(80.3) + 1} class="sg-value sg-good">80.3%</text>
+			<text x="274" y={yPct(80.3) + 10} class="sg-micro">bounded</text>
+			<text x="274" y={yPct(10) + 1} class="sg-value sg-bad">10.0%</text>
+			<text x="274" y={yPct(10) + 10} class="sg-micro">frozen</text>
+
+			<text x="46" y="180" class="sg-micro">normal → jamming → spoofing → sensor failure</text>
+		</svg>
+	)}
+	</div>
+
+	{caption && CAPTIONS[id] && <figcaption class="sector-caption">{CAPTIONS[id]}</figcaption>}
+</figure>
+
+<style>
+	.sector-graphic {
+		width: 100%;
+		margin: 0; /* <figure> carries a browser default margin */
+	}
+
+	.sector-graphic svg {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	/* The figures sit in a dark well (.case-card-art), so the caption is on-dark. 0.82 computes
+	   to 11.6:1 on the ink — this is the one piece of text in the component a reader is actually
+	   meant to read end to end, so it gets body size rather than the chart's label sizes. */
+	.sector-caption {
+		margin: var(--space-md) 0 0;
+		padding: 0 var(--space-sm) var(--space-sm);
+		font-size: var(--text-small);
+		line-height: 1.55;
+		color: var(--text-on-dark);
+		opacity: 0.82;
+		max-width: 62ch;
+	}
+
+	/* ---- type ramp. One family, one set of sizes, used identically in all five figures. ---- */
+	.sg-title,
+	.sg-annot,
+	.sg-micro,
+	.sg-value {
+		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+		fill: var(--text-on-dark);
+	}
+
+	.sg-title {
+		font-size: 7px;
+		letter-spacing: 0.06em;
+		opacity: 0.55;
+	}
+
+	.sg-annot {
+		font-size: 7px;
+		letter-spacing: 0.02em;
+		fill: var(--accent-on-dark);
+	}
+
+	/* 0.55, not the 0.42 this started at: --text-on-dark at 0.42 over the ink computes to 3.72:1
+	   and these are 6px labels, well inside "normal text". 0.55 lands at 5.45:1, the same ratio
+	   .sg-title already used. 29 of the 60 labels in the five figures are this class. */
+	.sg-micro {
+		font-size: 6px;
+		letter-spacing: 0.02em;
+		opacity: 0.55;
+	}
+
+	.sg-value {
+		font-size: 11px;
+		font-weight: 700;
+	}
+
+	/* text colour roles — the same three the rest of the site uses */
+	.sg-good { fill: var(--status-available-on-dark); opacity: 1; }
+	.sg-bad { fill: var(--chart-warning-on-dark); opacity: 1; }
+	.sg-accent { fill: var(--accent-on-dark); opacity: 1; }
+	.sg-pending { fill: var(--status-inbuild-on-dark); opacity: 0.9; }
+
+	/* ---- structure ---- */
+	.sg-grid {
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		opacity: 0.09;
+	}
+
+	.sg-ref {
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		stroke-dasharray: 3 3;
+		opacity: 0.45;
+	}
+
+	.sg-ref-faint {
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		stroke-dasharray: 2 3;
+		opacity: 0.16;
+	}
+
+	.sg-bound-line {
+		stroke: var(--text-on-dark);
+		stroke-width: 1;
+		stroke-dasharray: 5 3;
+		opacity: 0.32;
+	}
+
+	.sg-bracket {
+		stroke: var(--accent-on-dark);
+		stroke-width: 1;
+		opacity: 0.85;
+	}
+
+	/* ---- traces ---- */
+	.sg-trace {
+		stroke: var(--text-on-dark);
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		opacity: 0.8;
+	}
+
+	/* The other nodes are context, not subject: thin, dim, never in front. 2.52:1 — deliberately
+	   below the 3:1 graphical threshold, which is the one place in these figures that is true.
+	   It is correct here: the healthy nodes carry no information (that is the entire point — one
+	   node moved and seven did not), the figures are aria-hidden decorative with the claim stated
+	   in text beside them, and node 1 sits at 10.05:1. Raising these to 3:1 would flatten the
+	   hierarchy and bury the one trace that matters. */
+	.sg-trace-ghost {
+		stroke: var(--text-on-dark);
+		stroke-width: 0.9;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		opacity: 0.3;
+	}
+
+	.sg-spark {
+		stroke: var(--text-on-dark);
+		stroke-width: 1.3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		opacity: 0.5;
+	}
+
+	.sg-good-stroke { stroke: var(--status-available-on-dark); opacity: 1; }
+	.sg-bad-stroke { stroke: var(--chart-warning-on-dark); opacity: 1; }
+	.sg-accent-stroke { stroke: var(--accent-on-dark); opacity: 0.8; }
+
+	/* dashed = modelled, not measured */
+	.sg-projected {
+		stroke-dasharray: 4 4;
+		opacity: 0.6;
+	}
+
+	.sg-marker-good { fill: var(--status-available-on-dark); }
+	.sg-marker-bad { fill: var(--chart-warning-on-dark); }
+
+	/* ---- gradient stops (fill/opacity live here so tokens.css stays the only colour source) ---- */
+	.sg-stop-warn-a { stop-color: var(--chart-warning-on-dark); stop-opacity: 0.16; }
+	.sg-stop-warn-b { stop-color: var(--chart-warning-on-dark); stop-opacity: 0; }
+	.sg-stop-good-a { stop-color: var(--status-available-on-dark); stop-opacity: 0.2; }
+	.sg-stop-good-b { stop-color: var(--status-available-on-dark); stop-opacity: 0.04; }
+
+	.sg-hatch-line {
+		stroke: var(--status-inbuild-on-dark);
+		stroke-width: 1;
+		opacity: 0.18;
+	}
+
+	/* ---- data-obligation ---- */
+	.sg-cell {
+		fill: var(--text-on-dark);
+		opacity: 0.16;
+	}
+
+	.sg-cell--named {
+		fill: var(--accent-on-dark);
+		opacity: 0.95;
+	}
+
+	.sg-cell--removed {
+		fill: none;
+		stroke: var(--accent-on-dark);
+		stroke-width: 1;
+		stroke-dasharray: 2 2;
+		opacity: 0.5;
+	}
+
+	.sg-bound-box {
+		fill: none;
+		stroke: var(--accent-on-dark);
+		stroke-width: 1;
+		stroke-dasharray: 3 2;
+		opacity: 0.8;
+	}
+
+	.sg-bound-box--empty {
+		opacity: 0.35;
+	}
+
+	.sg-arrow {
+		stroke: var(--text-on-dark);
+		stroke-width: 1.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		fill: none;
+		opacity: 0.5;
+	}
+
+	.sg-cert {
+		fill: var(--status-available-on-dark);
+		fill-opacity: 0.06;
+		stroke: var(--status-available-on-dark);
+		stroke-width: 1;
+		stroke-opacity: 0.4;
+	}
+
+	.sg-cert-badge {
+		fill: var(--status-available-on-dark);
+		fill-opacity: 0.16;
+		stroke: var(--status-available-on-dark);
+		stroke-width: 1;
+		stroke-opacity: 0.7;
+	}
+
+	.sg-check {
+		stroke: var(--status-available-on-dark);
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		fill: none;
+	}
+
+	/* ---- medical-ai ---- */
+	.sg-panel-flag {
+		fill: var(--chart-warning-on-dark);
+		fill-opacity: 0.06;
+		stroke: var(--chart-warning-on-dark);
+		stroke-width: 1;
+		stroke-opacity: 0.35;
+	}
+
+	/* HIDDEN ON MOBILE. This is a 320-unit artboard whose labels are authored at 6px and 7px. On
+	   desktop it scales up and they read; at phone width it renders roughly 1:1 and they are
+	   illegible — a block of grey noise taking a screen and a half of scroll. Every claim it makes
+	   is stated in words in the section around it, so removing it below the breakpoint costs the
+	   reader nothing and saves them the scroll. */
+	@media (max-width: 759px) {
+		.sector-graphic {
+			display: none;
+		}
+	}
+
+	/* HIDDEN BELOW THE LAYOUT BREAKPOINT. This is a 320-unit artboard whose labels are authored at
+	   6px and 7px. On desktop it scales up and they read; at phone width it renders roughly 1:1
+	   and they are illegible — a block of grey noise costing a screen and a half of scroll. Every
+	   claim it makes is stated in words in the section around it, so removing it here costs the
+	   reader nothing and saves them the scrolling. */
+	@media (max-width: 759px) {
+		.sector-graphic { display: none; }
+	}
+</style>

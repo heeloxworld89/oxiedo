@@ -1,181 +1,370 @@
 ---
-// design/04_LICENSING.md, ui_ux/04_LICENSING_UI.md.
+// LICENSING — full rewrite, 2026-09-07.
 //
-// HARD RULES PANEL, a real source conflict, resolved not silently: ui_ux/04 §2 gives five
-// specific bracketed rule lines for this panel, one of which ("No delivery-date commitments")
-// does not appear in design/04 §Section 4 at all — design/04's own fifth item there is
-// "On-premise only." Both are real, sourced commitments ("No delivery-date commitments" is
-// design/13's own Never-Permitted rule). Read this as two different things rather than a
-// contradiction: ui_ux/04's five lines are the literal content for this specific terse panel
-// component (which design/04 doesn't itself describe as a panel), while design/04's own five
-// numbered items are reproduced below as the fuller prose section, headers and all. Nothing
-// from either source is dropped.
+// WHAT WAS WRONG. The page read as commentary about a licensing philosophy rather than as a
+// licensing page. It had no comparison of what is published against what is licensed, which is
+// the single artefact a buyer comes to a page like this for; it explained the four layers before
+// establishing the model; and it mixed pre-booking mechanics into the middle of the licence terms.
 //
-// HOVER: the dim-others-on-hover interaction is pure CSS (:hover + sibling selector) — it
-// needs no JavaScript, so it is built now rather than deferred to Block 4.
+// THE COMMERCIAL POSITION, decided and stated here so it does not drift:
+//
+//   THE PUBLISHED RELEASE IS NOT MIT AND IS NOT OSI OPEN SOURCE. It is a research licence:
+//   unrestricted for research, teaching and independent evaluation, and licensed for anything in
+//   production. Earlier copy across the site said "MIT, permanently", carried over from
+//   Commercial Plan `18 §5`. That is superseded by a founder decision and corrected everywhere.
+//
+//   This is the stronger position, not a weaker one, and the page says so: the mechanism is fully
+//   readable so it can be checked, and there is no ambiguity about who pays. Credibility in these
+//   markets rests on 383 reproducible experiments that anyone can run.
+//
+//   What is licensed is the production system and, more precisely, the accountability: the
+//   submission-grade artefact layer, the bound calibrated and validated for one deployment,
+//   reproducible builds, support, indemnity, and a counterparty who signs. `18 §3` carries the
+//   sentence the page turns on: open-source software has no counterparty. An institution cannot
+//   put a licence in a filing, and cannot sue it.
+//
+// STRUCTURE follows how these pages are actually built (HashiCorp's licensing FAQ, the open-core
+// edition-comparison convention): model first, then a comparison table, then the layers, then
+// terms, then a grouped FAQ. Not a philosophy essay.
+//
+// NO RELEASE-VERSION LANGUAGE anywhere on this page. The site does not discuss internal versions.
 import Page from '../layouts/Page.astro';
+import PageBanner from '../components/PageBanner.astro';
 import Eyebrow from '../components/Eyebrow.astro';
+import Accordion from '../components/Accordion.astro';
 import Button from '../components/Button.astro';
+import GetInTouch from '../components/GetInTouch.astro';
+
+// The comparison a buyer actually comes here for. `published` is the research release; `licensed` is
+// what the deployment licence adds. The rows are ordered so the free column runs out first — the
+// point of the table is where it stops.
+const matrix = [
+	{ item: 'The training architecture itself', published: true, note: 'The mechanism, in full. Run it, modify it, ship what you build with it.' },
+	{ item: 'The telemetry channels', published: true, note: 'All five layers, emitted natively, exactly as the paper describes them.' },
+	{ item: 'The correction mechanism and its bounds', published: true, note: 'Eight diagnoses, their triggers, and the per-diagnosis ceilings.' },
+	{ item: 'The paper and every experiment behind it', published: true, note: '383 controlled runs, each regenerating from seed, with the reproducibility checklist.' },
+	{ item: 'Teaching, publishing and independent evaluation', published: true, note: 'Use it in a course, cite it in a paper, or evaluate our claims against it. No permission needed, and no notification to us.' },
+
+	{ item: 'Submission-grade record generation', published: false, note: 'The record in the shape a reviewer expects to receive, rather than a research log.' },
+	{ item: 'The diff engine', published: false, note: 'Two records compared line by line. The only question a reviewer actually asks.' },
+	{ item: 'Cryptographic signing and a frozen reader', published: false, note: 'A hash over a canonical body, a detached signature, and a reader binary you keep.' },
+	{ item: 'The bound, calibrated for your domain', published: false, note: 'Derived against your data and your risk profile, then validated. Not a default.' },
+	{ item: 'Integration into your stack', published: false, note: 'Bindings for your training infrastructure, your federation, your imaging pipeline.' },
+	{ item: 'Version-pinned reproducible builds', published: false, note: 'Hash-pinned, with the means to verify the binary you run is the one validated.' },
+	{ item: 'Support against an agreed response time', published: false, note: 'With the person who built the architecture, not a tier-one queue.' },
+	{ item: 'Indemnity', published: false, note: 'Contractual liability, which is the thing an open licence structurally cannot offer.' },
+	{ item: 'A counterparty who signs the bound', published: false, note: 'Somebody who will stand behind the declaration under questioning.' },
+];
 
 const layers = [
 	{
-		id: 'l0',
-		name: 'L0 · THE PRIMITIVE',
-		status: 'MIT, forever. Free.',
-		body: 'Contains: the core ORMAS engine, telemetry channels, the submitted paper, and 383 experimental runs. For: researchers, academics, independent evaluators. Purpose: credibility, peer review, and standard-setting. Revenue: zero.',
+		tag: 'RESEARCH LICENCE',
+		name: 'The research release',
+		terms: 'Free for research, teaching and evaluation. Permanent.',
+		body: 'The architecture, the telemetry, the correction mechanism and every experiment behind them, released in full on publication. The manuscript is under peer review and the release follows acceptance — a commitment written into the licence rather than an intention. From that day a researcher, a student, a model-risk validator or a regulator can run it, reproduce our results, teach from it and publish about it without asking us and without paying us. Evaluation access is available before then under agreement. Production use sits under the deployment licence.',
+		revenue: 'Purpose: the mechanism can be checked.',
 	},
 	{
-		id: 'l1',
-		name: 'L1 · THE ARTIFACT LAYER',
-		status: 'Source-available, non-compete, date-certain conversion to permissive.',
-		body: 'Free for academic/non-commercial research. Paid for regulated commercial deployment. Contains: the report generator, the diff engine, and artifact signing mechanisms. Purpose: the format play — wide reading, controlled commercial use.',
+		tag: 'SOURCE-AVAILABLE',
+		name: 'The artefact layer',
+		terms: 'Free for research. Licensed for regulated commercial deployment.',
+		body: 'The record generator, the diff engine, the signing and versioning machinery, and the templates mapped onto the frameworks these markets file under. Readable by anyone, because a format nobody can inspect is a format nobody adopts. Converts to a permissive licence on a date fixed in the licence text.',
+		revenue: 'Purpose: the format, not the fee.',
 	},
 	{
-		id: 'l2',
-		name: 'L2 · THE DEPLOYMENT LICENCE',
-		status: 'Commercial, annual, on-premise per-institution.',
-		body: 'All revenue lives here. Contains: integration bindings, the calibrated bound for the customer\'s specific domain, version-pinned reproducible builds, support, and indemnity. Purpose: enterprise execution and liability transfer.',
+		tag: 'COMMERCIAL',
+		name: 'The deployment licence',
+		terms: 'Annual, per institution, on your infrastructure.',
+		body: 'Integration into your environment, the bound calibrated and validated for your domain, reproducible builds, support, and indemnity. This is the licence, and essentially all revenue is here.',
+		revenue: 'Where the commercial relationship lives.',
 	},
 	{
-		id: 'l3',
-		name: 'L3 · THE ASSURANCE SERVICE',
-		status: 'Engagement-priced.',
-		body: 'Contains: bound calibration for novel domains, change-control plan drafting, expert testimony. Purpose: custom regulatory alignment and validation defense. It makes L2 renew.',
+		tag: 'ENGAGEMENT',
+		name: 'Assurance work',
+		terms: 'Priced per engagement.',
+		body: 'Calibrating a bound for a domain nobody has calibrated before, drafting a change-control plan, authoring the validation report, and appearing to defend it. Low volume, high value, and the reason a deployment licence renews.',
+		revenue: 'The layer that cannot be copied at all.',
 	},
 ];
 
-const hardRules = [
-	'No per-seat pricing',
-	'No usage metering that phones home',
-	'No free tier that touches regulated data',
-	'No open-core bait-and-switch on L0',
-	'No delivery-date commitments',
+const clauses = [
+	{
+		name: 'Artefact survival',
+		what: 'On termination you keep a perpetual, irrevocable right to read, retain and reproduce every record generated during the term, together with a frozen reader binary.',
+		why: 'Your obligations outlive our commercial relationship. A customer who suspects they could lose their audit trail by not renewing will never sign in the first place, so this clause costs us nothing and makes the contract signable.',
+	},
+	{
+		name: 'Bound immutability',
+		what: 'The declared bound and modification set are fixed when the licence executes. They change only by a documented, mutually signed amendment that generates its own record.',
+		why: 'If we can quietly alter the bound, the bound is worth nothing and every filing that references it is void. Our own product goes under change control, and we volunteer that rather than waiting to be asked.',
+	},
+	{
+		name: 'Reproducible build attestation',
+		what: 'You receive hash-pinned builds and the means to verify that the binary running in your environment is the exact artefact that was validated.',
+		why: 'Technical documentation requirements and software provenance expectations both point here. It costs us a build pipeline and it removes an entire class of question from a security review.',
+	},
+];
+
+const never = [
+	{ rule: 'No per-seat pricing', why: 'The buyer is an institution carrying an obligation, not a team with users. Charging per seat would price the wrong thing and cap the deal at headcount.' },
+	{ rule: 'No metering that phones home', why: 'In a hospital enclave or a bank network, outbound telemetry is a security review we would not pass — and should not.' },
+	{ rule: 'No free tier touching regulated data', why: 'Unbounded support exposure and real liability, in exchange for a lead. The research release is free; a free production tier is not the same thing.' },
+	{ rule: 'No relicensing of the research core', why: 'Publishing and then closing after adoption would destroy the credibility every commercial claim here rests on. The research release is permanent once made, and that is a commitment written into the licence rather than a default.' },
+	{ rule: 'No delivery-date commitments', why: 'We will tell you what is built, what is being built, and what is not started. We will not put a date on the third category.' },
 ];
 ---
 
-<Page title="LICENSING">
+<Page title="Licensing" description={"A research licence, free for research and teaching. Production deployment is licensed, because an open licence has no counterparty to stand behind a filing."}>
+	<PageBanner
+		eyebrow="LICENSING"
+		title="We publish the mechanism. We license the accountability."
+		trail={[{ label: 'Home', href: '/' }, { label: 'Licensing' }]}
+	/>
+
 	<section class="section container">
-		<Eyebrow>LICENSING</Eyebrow>
-		<h1>The engine is MIT-licensed. The record it generates belongs to you.</h1>
-		<p class="licensing-sub">
-			The commercial structure of ORMAS separates the public mechanism of validation from
-			the private execution of compliance. The commercial value is the record.
-		</p>
+		<div class="lic-intro">
+			<div>
+				<p class="lic-lede">
+					Everything that makes the architecture work is released on publication and stays
+					released: the mechanism, the telemetry, the correction system, the paper and all 383
+					experiments behind it. The manuscript is under peer review; the release follows
+					acceptance and the terms are already fixed. From that day a researcher, a student, a
+					model-risk validator or a regulator can read it, run it, reproduce every result and
+					publish about it, permanently and without asking us. That commitment is why any of
+					this is checkable rather than merely asserted.
+				</p>
+				<p class="lic-licence-link">
+					<a href="/LICENCE.txt">Read the full licence text</a> — a working draft, published now
+					so a university or an enterprise legal team can clear it before the release lands rather
+					than after.
+				</p>
+				<p class="lic-lede">
+					Running it in production is licensed. The distinction is deliberate and it is not
+					hidden anywhere in a footnote: research and teaching are free, and an institution
+					putting this into a regulated deployment takes a licence.
+				</p>
+			</div>
+			<div class="lic-turn">
+				<p>
+					Published code has no counterparty. You cannot put it in a filing, you cannot ask it to
+					stand behind a declaration, and there is nobody to hold to it.
+				</p>
+				<p class="lic-turn-sub">
+					A licence gives you the thing the repository structurally cannot: a named party who
+					calibrated the bound, validated it against your domain, and signed it. In markets that
+					buy on auditability, that is what is actually being purchased.
+				</p>
+			</div>
+		</div>
 	</section>
 
-	<section class="section container reveal">
-		<h2>Four layers. All revenue from one.</h2>
-		<div class="licensing-stack">
-			{
-				layers.slice().reverse().map((layer) => (
-					<div class={`licensing-band licensing-band--${layer.id}`}>
-						<p class="licensing-band-name">{layer.name}</p>
-						<p class="licensing-band-status">{layer.status}</p>
-						<p class="licensing-band-body">{layer.body}</p>
+	<!-- The artefact a buyer comes to a licensing page for, and the page did not have one. -->
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>WHAT IS PUBLISHED, AND WHAT IS LICENSED</Eyebrow>
+			<h2 class="section-title">The line, drawn once.</h2>
+			<p class="section-lede">
+				The rows are in order. The free column runs out partway down, and where it stops is the
+				product.
+			</p>
+
+			<div class="lic-table">
+				<div class="lic-table-head">
+					<span></span>
+					<span>Research licence</span>
+					<span class="lic-col-lit">Deployment licence</span>
+				</div>
+				{matrix.map((r) => (
+					<div class={`lic-row${r.published ? '' : ' lic-row--paid'}`}>
+						<div class="lic-row-item">
+							<p class="lic-row-name">{r.item}</p>
+							<p class="lic-row-note">{r.note}</p>
+						</div>
+						<div class="lic-cell">
+							<span class="lic-cell-label" aria-hidden="true">Research</span>
+							<span class="lic-mark" aria-label={r.published ? 'Included in the research release' : 'Not in the research release'}>
+								{r.published ? '●' : '—'}
+							</span>
+						</div>
+						<div class="lic-cell">
+							<span class="lic-cell-label" aria-hidden="true">Deployment</span>
+							<span class="lic-mark lic-mark--lit" aria-label="Included in the deployment licence">●</span>
+						</div>
 					</div>
-				))
-			}
+				))}
+			</div>
 		</div>
 	</section>
 
 	<section class="section container reveal">
-		<h2>The engine is free. The record is yours.</h2>
-		<p class="licensing-prose">
-			The open-source engine creates the market, but the compliance record it generates for
-			your infrastructure is the solution. When you run ORMAS on your training run, the
-			flight recorder that results belongs to you. Your infrastructure. Your audit trail.
-			Your compliance evidence. That record cannot be replicated without running ORMAS. The
-			code is free. The record is yours.
-		</p>
-		<div class="licensing-clause">
-			<p class="licensing-clause-label">Artifact Survival Clause</p>
-			<p class="licensing-prose">
-				On termination of the contract, the customer retains the perpetual, irrevocable
-				right to read, retain, and reproduce every artifact generated during the term,
-				alongside a frozen reader binary. Your regulatory obligations outlive our
-				relationship; your access to your audit trail must do the same.
+		<Eyebrow>THE FOUR LAYERS</Eyebrow>
+		<h2 class="section-title">One of them is the business, and it is not the one people expect.</h2>
+		<ol class="lic-layers">
+			{layers.map((l, i) => (
+				<li class={`lic-layer${i === 2 ? ' lic-layer--revenue' : ''}`}>
+					<div class="lic-layer-head">
+						<span class="lic-layer-tag">{l.tag}</span>
+						<h3>{l.name}</h3>
+						<p class="lic-layer-terms">{l.terms}</p>
+					</div>
+					<div>
+						<p class="lic-layer-body">{l.body}</p>
+						<p class="lic-layer-revenue">{l.revenue}</p>
+					</div>
+				</li>
+			))}
+		</ol>
+	</section>
+
+	<section class="band band--dark section reveal">
+		<div class="container">
+			<Eyebrow>WHAT THE FIGURE IS BUILT FROM</Eyebrow>
+			<h2 class="lic-dark-title">Priced against your exposure, not against a feature list.</h2>
+			<p class="lic-dark-lede">
+				A rate card would price the software. What an institution is buying here is the removal of
+				a specific, quantified risk, and that is worth a different amount to a consortium than to
+				a bank. The figure is set per institution and written into the contract. Four things
+				determine it.
+			</p>
+			<ol class="lic-price">
+				<li><span class="tabular">01</span><div><p>What the problem currently costs you, which is the only anchor that means anything.</p></div></li>
+				<li><span class="tabular">02</span><div><p>Which applications you turn on, and how much of your model portfolio is in scope.</p></div></li>
+				<li><span class="tabular">03</span><div><p>Whether the bound for your domain already exists or has to be calibrated and validated from nothing.</p></div></li>
+				<li><span class="tabular">04</span><div><p>What you need us to sign, and therefore what we are carrying.</p></div></li>
+			</ol>
+			<p class="lic-dark-note">
+				Annual, per institution, on-premise. No per-seat component and no consumption meter.
 			</p>
 		</div>
-		<div class="licensing-clause">
-			<p class="licensing-clause-label">Bound Immutability Clause</p>
-			<p class="licensing-prose">
-				The declared bound and modification set are fixed at execution. They may only be
-				altered through a documented, mutually signed amendment that generates its own
-				permanent artifact. The bound cannot be silently changed. If we can silently change
-				the bound, the bound is worthless.
-			</p>
-		</div>
-		<div class="licensing-clause">
-			<p class="licensing-clause-label">Reproducible Build Attestation</p>
-			<p class="licensing-prose">
-				The customer receives hash-pinned builds. You possess the cryptographic means to
-				verify that the binary operating in your environment is the exact artifact that
-				was validated and insured.
-			</p>
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>THREE CLAUSES THAT ARE NOT STANDARD</Eyebrow>
+		<h2 class="section-title">Written to survive the questions a procurement team is paid to ask.</h2>
+		<div class="lic-clauses">
+			{clauses.map((c, i) => (
+				<article class="lic-clause">
+					<p class="lic-clause-n tabular">{String(i + 1).padStart(2, '0')}</p>
+					<h3>{c.name}</h3>
+					<p class="lic-clause-what">{c.what}</p>
+					<p class="lic-clause-why"><span>Why</span> {c.why}</p>
+				</article>
+			))}
 		</div>
 	</section>
 
-	<section class="section container reveal">
-		<h2>Pre-booking vs. post-launch availability</h2>
-		<p class="licensing-prose">
-			Prior to General Availability, terms are negotiable. This is the only window.
-			Institutions that commit during this engineering validation phase become Charter
-			Partners. Charter Partners lock in flat-rate, enterprise-wide pricing for 5 years. They
-			experience no consumption metering and gain direct access to the engineering team.
-		</p>
-		<p class="licensing-prose">
-			Following General Availability, pricing is published and fixed. There is no individual
-			negotiation, and there are no exceptions. The pricing model shifts strictly to
-			per-model consumption rates.
-		</p>
-		<p class="licensing-prose">
-			Institutional buyers require budget predictability over multi-year horizons; we
-			require strict engineering capacity commitments. Flexible pricing post-launch creates
-			an unbounded negotiation overhead that a capacity-constrained infrastructure team
-			cannot absorb.
-		</p>
-		<Button variant="primary" href="/contact">Discuss pre-booking terms</Button>
-	</section>
-
-	<section class="section container reveal">
-		<h2>The on-premise requirement</h2>
-		<p class="licensing-prose">
-			Every ORMAS commercial deployment is on-premise. We do not offer a managed cloud
-			service. Regulated environments — including hospital enclaves governed by HIPAA,
-			European entities subject to GDPR Article 5, and classified defense networks — require
-			absolute data sovereignty. Sending neural network telemetry or internal model weights
-			to an external SaaS provider is a disqualifying security risk.
-		</p>
-		<p class="licensing-prose">
-			Integration occurs entirely within the customer's secure environment. The ORMAS binary
-			operates where your data lives. We do not see your data.
-		</p>
-	</section>
-
-	<section class="section container reveal">
-		<h2>The L0 commitment</h2>
-		<p class="licensing-prose">
-			The core ORMAS engine is released under the MIT licence. This is a permanent
-			commitment, not a temporary default. Reproducibility is the foundational sales asset.
-			In markets that purchase based on auditability, a closed reimplementation of a
-			published method is strictly less credible than the published mechanism itself.
-		</p>
-		<p class="licensing-prose licensing-moat">
-			The moat is not the engine. Any competent engineering team can fork the repository.
-			The moat is what you produce by running it. The compliance record your infrastructure
-			generates belongs to you, and it cannot be replicated without running ORMAS.
-		</p>
-	</section>
-
-	<section class="section container reveal">
-		<div class="licensing-hard-rules">
-			{
-				hardRules.map((rule) => (
-					<p class="licensing-hard-rule">
-						<span class="licensing-hard-rule-mark">[ ✗ ]</span> {rule}
-					</p>
-				))
-			}
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>DEPLOYMENT</Eyebrow>
+			<h2 class="section-title">It runs where your data already is, and there is no other option.</h2>
+			<div class="lic-deploy">
+				<p>
+					Every commercial deployment is on-premise or inside your own cloud environment. There
+					is no hosted tier and there will not be one. Model weights and training telemetry
+					leaving a controlled network is a disqualifying finding in a hospital enclave, a bank,
+					or a classified environment, and those are the markets this exists for.
+				</p>
+				<p>
+					The practical consequence is that you hold the artefact. Nothing checks in, nothing
+					reports usage, and nothing stops working if we do. That is a constraint we designed
+					around rather than a feature we chose, and it shapes every commercial term above.
+				</p>
+			</div>
 		</div>
 	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>WHAT WE WILL NOT DO</Eyebrow>
+		<h2 class="section-title">Five commitments, with the reasoning attached.</h2>
+		<ul class="lic-never">
+			{never.map((n) => (
+				<li>
+					<p class="lic-never-rule">{n.rule}</p>
+					<p class="lic-never-why">{n.why}</p>
+				</li>
+			))}
+		</ul>
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>LICENSING QUESTIONS</Eyebrow>
+		<h2 class="section-title">The ones that decide whether this is workable for you.</h2>
+		<div class="faq-group lic-faq">
+			<Accordion id="lic-fork" question="Why publish the mechanism at all?">
+				<p>
+					Because a claim nobody can check is worth nothing to the people who buy this. A
+					validator, an assurance lab or a regulator can take the published release, run all 383
+					experiments, and confirm every number on this site independently. A closed
+					reimplementation of a published method is worth less to that audience, not more — which
+					is why publishing is a commercial decision rather than a generous one.
+				</p>
+			</Accordion>
+			<Accordion id="lic-commercial-free" question="Can we use the published release in production?">
+				<p>
+					Research, teaching, benchmarking and independent evaluation are free and always will
+					be. Production is licensed. If you are a university group, a student, or a validator
+					checking our claims, take it and go — you owe us nothing and you need no permission.
+					If it is going into something your institution operates, that is a licence, and the
+					licence is where the calibrated bound, the reproducible builds, the support and the
+					indemnity live.
+				</p>
+			</Accordion>
+			<Accordion id="lic-relicense" question="Will the research terms be withdrawn later?">
+				<p>
+					No, and the licence text says so. Free research and teaching access is permanent.
+					Publishing a method, waiting for academic adoption and then withdrawing it is a move
+					that works exactly once, and it would take the credibility of every commercial claim
+					we make with it. The published release is the reason the rest is believable, so it is
+					not something we would trade.
+				</p>
+			</Accordion>
+			<Accordion id="lic-when-public" question="When does the code become public?">
+				<p>
+					When the review period on the paper closes. Peer review sets that timing, not us, so
+					there is no date on this page. If you want the mechanism before then, ask — we send
+					the preprint and the supplementary material to serious evaluators on request.
+				</p>
+			</Accordion>
+			<Accordion id="lic-end" question="If we stop paying, do we lose our records?">
+				<p>
+					No, and the licence says so explicitly. You keep a perpetual, irrevocable right to
+					read, retain and reproduce every record generated during the term, plus a frozen
+					reader binary you keep permanently. Your regulatory obligations outlive our commercial
+					relationship and your access to your own audit trail has to outlive it too.
+				</p>
+			</Accordion>
+			<Accordion id="lic-audit" question="Does anything phone home for licence compliance?">
+				<p>
+					Nothing. No telemetry, no usage meter, no licence server, no call-out of any kind. In a
+					hospital enclave, a bank network or a classified environment, anything that reaches
+					outward fails the security review before anyone opens the commercial terms — so the
+					product is built for the environment it is sold into rather than for our convenience.
+				</p>
+			</Accordion>
+			<Accordion id="lic-oss-policy" question="Our software policy requires review of every dependency. What is your counsel reviewing?">
+				<p>
+					Two documents, and you get both before you engage rather than after. The research
+					licence, which permits reading, running, reproducing and teaching, and reserves
+					production use. And the deployment licence, an ordinary commercial agreement carrying
+					the three clauses set out above. Neither is a copyleft licence and neither imposes any
+					obligation on code you write alongside it.
+				</p>
+			</Accordion>
+			<Accordion id="lic-indemnity" question="What exactly is indemnified?">
+				<p>
+					Scope is set with your counsel, because a consortium and a bank are not carrying the
+					same exposure and a single template would serve neither well. What does not vary: the
+					bound we declare is one we will defend under questioning, and we do not sign
+					declarations we are not prepared to stand behind.
+				</p>
+			</Accordion>
+		</div>
+
+		<div class="lic-cta">
+			<Button variant="primary" href="/contact">Discuss licence terms</Button>
+			<Button variant="secondary" href="/product">See the product</Button>
+		</div>
+	</section>
+
+	<GetInTouch variant="pre-book" heading="Licensing conversations start with what you have to be able to prove." />
 </Page>

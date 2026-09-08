@@ -1,182 +1,256 @@
 ---
-// design/11_PRESS.md, ui_ux/11_PRESS_UI.md. Hidden from nav (Nav.astro has never included it)
-// and excluded from the sitemap — sitemap generation itself is a Block 5 task; flagging here so
-// whoever wires it in remembers to exclude this route explicitly.
+// PRESS — rewritten 2026-09-07.
 //
-// VENUE: "AAAI 2027" appears twice in design/11's source (the one-page brief, and PR-001's
-// headline/body). Same site-wide correction as Home/Footer/Paper — omitted until the AAAI
-// anonymity check clears (design/12 §Pre-Launch Checklist).
+// WHAT WAS WRONG, in order of severity:
+//   1. "Oxiedo Confirms Central V2 Premise" — an internal version number in a press release
+//      headline, on a public page, against the standing rule that no version number appears
+//      anywhere on this site. A second reference sat in the one-page brief.
+//   2. "[REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]" twice — as the press contact and as the
+//      corrections address, i.e. in both places a journalist would actually write to.
+//   3. The superseded product model throughout: Warning Light "available for immediate
+//      engagement", two applications "in active build", "four more in development", and Charter
+//      Partnership pre-booking. There is one product and one licence.
+//   4. "Founded by Rokib Al Dhin Raadh, an independent researcher" — a technical founder with
+//      prior exits, which is both true and stronger.
+//   5. "Not yet venture-backed", "unfunded" — the company is raising.
+//   6. A link to oxiedo.com/solutions, a route that does not exist.
+//   7. An assets list naming eight files, none of which exist to download.
 //
-// TBD PLACEHOLDERS, not resolved (per this task's own instruction — these are pending
-// decisions, not copy gaps): the location line, and PR-002's partner name/finding summary.
-// Each renders with the visible amber-ghost/amber-mid-border treatment ui_ux/11 §2 specifies,
-// so a missing variable reads as a missing variable, not as finished copy.
+// THE PREPARED RELEASES ARE KEPT, including the one for the downside case. Publishing the
+// release you would issue if your own study failed is unusual and it is the single most
+// credible thing on this page — the old file said so itself, and it was right.
+//
+// STALE COMMENT CORRECTED: the previous header said this page is hidden from nav. It is not,
+// and has not been since /press was added to the Company menu.
 import Page from '../layouts/Page.astro';
+import PageBanner from '../components/PageBanner.astro';
 import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+
+// NO ADDRESS ON THIS PAGE. Press enquiries, asset requests and corrections all route through the
+// press form on /contact, which is delivered to the founder directly. The only address available
+// was on a domain that is not Oxiedo's, and on a press page a mismatched domain is the first thing
+// a journalist notices and the last thing you want them writing about.
+
+const facts = [
+	{ k: 'What it is', v: 'A neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns.' },
+	{ k: 'Name', v: 'ORMAS — Orchestrated Repair and Monitoring with Architectural Self-correction. Oxiedo is the company; ORMAS is the architecture.' },
+	{ k: 'Founded', v: '2023 as a research effort. Registered 2025.' },
+	{ k: 'Entity', v: 'Oxiedo is a research company in formation and is not yet separately incorporated. A Delaware C-corporation is being established alongside the move to San Francisco. Until it completes, contracting and payments run through an existing UK-registered company, which is named in full in any agreement.' },
+	{ k: 'Founder', v: 'Rokib Al Dhin Raadh — technical founder, with companies built and exited before this one.' },
+	{ k: 'Team size', v: 'One.' },
+	{ k: 'Funding', v: 'Pre-revenue. No institutional investment to date. Raising a pre-seed round.' },
+	{ k: 'Customers', v: 'None. Zero customer conversations have taken place.' },
+	{ k: 'Licence', v: 'A research licence — free for research, teaching and evaluation from the moment the release lands. Production use is licensed. Not open source, and not described as one.' },
+	{ k: 'Evidence base', v: '383 controlled experiments, four architecture families, 67 archived runs each regenerating from seed. Manuscript under peer review; the architecture and the full archive are released on acceptance.' },
+	{ k: 'Data used', v: 'CIFAR-10 and CIFAR-100 only. No clinical, biological, financial or defence data has ever touched the system.' },
+];
+
+const results = [
+	{ v: '80.3%', d: 'Recovery from mid-training structural collapse, where a parameter-matched standard network stays permanently at 10.0% — a gap of +70.3 percentage points.' },
+	{ v: '94.6%', d: 'Task retention after sequential shift, with no replay buffer and no task ID. Baseline: 47.3%.' },
+	{ v: '58.8%', d: 'Zero-shot compositional accuracy on unseen combinations. Baseline: 25%.' },
+	{ v: '−2.5 pp', d: 'Degradation under 40% label noise. Baseline: −7.8 pp.' },
+	{ v: '−1.0 pp', d: 'Under adversarial weight injection, ORMAS performs worse than baseline. This is the one adverse result in the programme and is published alongside the others.' },
+];
+
+const releases = [
+	{
+		id: 'PR-001',
+		status: 'READY — on formal acceptance of the manuscript',
+		headline: 'Oxiedo Publishes Research Architecture That Lets Neural Networks Keep a Record of What They Change',
+		sub: '383-experiment evidence base shows +70.3 pp recovery advantage over standard networks under mid-training structural collapse',
+		body: [
+			'Oxiedo today released the full research foundation for its training architecture, ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), via a submitted manuscript.',
+			'The architecture bounds each node’s local gradient chain to four operations, producing per-node attribution as a physical property of the backward pass rather than as a reconstruction. Across 383 controlled experiments on CIFAR-10 and CIFAR-100, the system recovered to 80.3% from mid-training structural collapse against a permanent 10.0% for parameter-matched standard networks — a gap of +70.3 percentage points.',
+		],
+		note: 'Founder quote and assets added at release.',
+	},
+	{
+		id: 'PR-002',
+		status: 'HOLD — on completion of a first external engagement, with partner approval',
+		headline: 'Oxiedo Completes First External Deployment',
+		sub: 'Template. Partner name and finding summary are supplied at release and are not drafted in advance.',
+		body: [],
+		note: 'Deliberately unwritten. A press release describing a result we have not obtained, about a partner we do not have, is the kind of document that later has to be corrected.',
+	},
+	{
+		id: 'PR-003',
+		status: 'HOLD — if the source-attribution study succeeds',
+		headline: 'Oxiedo Confirms Architecture Separates Mislabelled Data from Hard Examples Reliably',
+		sub: 'Exact figures added on completion.',
+		body: [],
+		note: 'The study that decides several applications of the architecture. It runs early rather than late, because running it late costs the same and buys nothing.',
+	},
+	{
+		id: 'PR-004',
+		status: 'HOLD — if the source-attribution study fails',
+		headline: 'Oxiedo Reports Source-Attribution Study Result and Updates the Application Roadmap',
+		sub: '',
+		body: [
+			'The source-attribution validation study returned a negative result. The applications that depended on it are withdrawn. The Proofreader, the Warning Light and the Diary are unaffected, and the published architecture and its results are unchanged.',
+		],
+		note: 'That PR-004 exists at all is the point. A company with a press release already written for its own downside case is one a journalist can check against later.',
+	},
+];
 ---
 
-<Page title="PRESS">
+<Page title="Press" description={"Press kit, fast facts, every published result including the adverse one, prepared releases, and a corrections policy. Everything here is checkable."} indexable={false}>
+	<PageBanner
+		eyebrow="PRESS"
+		title="Everything on this page is checkable, including the unflattering parts."
+		trail={[{ label: 'Home', href: '/' }, { label: 'Press' }]}
+	/>
+
 	<section class="section container press-page">
-		<Eyebrow>PRESS</Eyebrow>
-		<h1>Press</h1>
-		<p class="press-prose">
-			Materials for journalists, analysts, and researchers covering Oxiedo. All factual
-			claims on this page are sourced and verifiable. We will respond to press inquiries
-			within a few days — usually less.
-		</p>
-		<p class="press-contact">
-			Press contact: [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH]<br />
-			Subject line: "Press inquiry — [outlet name]"
-		</p>
+		<div class="press-contact-card">
+			<div>
+				<p class="press-contact-label">Press contact</p>
+				<p class="press-contact-note">
+					Replies come within a few days, usually less, and they come from the founder. There is no
+					agency and no press office standing between you and the person who built this. Say if you
+					are on a deadline and it will be faster.
+				</p>
+				<Button variant="primary" href="/contact?intent=press#press">Open the press form</Button>
+			</div>
+			<div>
+				<p class="press-contact-label">Interviews</p>
+				<p class="press-contact-note">
+					Available, including on the parts of this that are not working yet. If you are writing
+					a sceptical piece, the falsification specification is yours on request — it is the
+					fastest route to checking whether any of this holds.
+				</p>
+			</div>
+		</div>
 	</section>
 
 	<section class="section container reveal press-page">
-		<h2>The one-page brief</h2>
+		<Eyebrow as="h2">FAST FACTS</Eyebrow>
+		<h2 class="press-h2">The one-page brief.</h2>
+		<dl class="press-facts">
+			{facts.map((f) => (
+				<div class="press-fact">
+					<dt>{f.k}</dt>
+					<dd>{f.v}</dd>
+				</div>
+			))}
+		</dl>
+	</section>
+
+	<section class="section container reveal press-page">
+		<Eyebrow as="h2">THE RESULTS</Eyebrow>
+		<h2 class="press-h2">Every published figure, including the one that goes the wrong way.</h2>
+		<ul class="press-results">
+			{results.map((r) => (
+				<li class="press-result">
+					<span class="press-result-v tabular">{r.v}</span>
+					<span class="press-result-d">{r.d}</span>
+				</li>
+			))}
+		</ul>
 		<p class="press-prose">
-			<strong>What Oxiedo is:</strong> Oxiedo is building on a single architectural
-			discovery: bounding each node of a neural network's local gradient chain to four
-			operations makes that node independently addressable. The company calls this property
-			"addressability." It enables a new class of commercial solutions — the first of which
-			are ready to engage today.
+			All results on CIFAR-10 and CIFAR-100. Manuscript under peer review, with the architecture
+			and the full experimental archive released on acceptance. Every run regenerates from seed, so
+			every figure here is reproducible rather than asserted — journalists who want to verify one
+			before then should ask.
 		</p>
-		<p class="press-prose">
-			<strong>The technology:</strong> The ORMAS architecture (Orchestrated Repair and
-			Monitoring with Architectural Self-correction) emits a five-layer telemetry stack as a
-			physical byproduct of training — not as post-hoc analysis. Results across 383
-			controlled experiments show:
-		</p>
+		<Button variant="tertiary" href="/technology">The full technical account</Button>
+	</section>
+
+	<section class="section container reveal press-page">
+		<Eyebrow as="h2">WHAT WE WILL NOT CLAIM</Eyebrow>
+		<h2 class="press-h2">Four things worth knowing before you write.</h2>
 		<ul class="press-list">
 			<li>
-				80.3% recovery from mid-training structural collapse where a standard network
-				permanently collapsed to 10% (+70.3 pp gap)
+				ORMAS does not make anyone compliant. It produces evidence a compliance determination
+				requires. The determination is made by the institution and accepted by its regulator.
 			</li>
-			<li>94.6% task retention after sequential shift, no replay buffer, no task ID (baseline: 47.3%)</li>
-			<li>58.8% zero-shot compositional accuracy on unseen combinations (baseline: 25%)</li>
-			<li>−2.5 pp degradation under 40% label noise (baseline: −7.8 pp)</li>
-		</ul>
-		<p class="press-prose">All results: CIFAR-10 / CIFAR-100. Manuscript under review.</p>
-		<p class="press-prose">
-			<strong>The solutions:</strong> The Warning Light is available for immediate
-			engagement. The Proofreader (label quality analysis) and The Diary (compliance record)
-			are in active build and open for Charter Partnership pre-booking. Four more are in
-			development, pending V2 completion and one validation study.
-		</p>
-		<p class="press-prose">
-			<strong>The company:</strong> Founded by Rokib Al Dhin Raadh, an independent
-			researcher. Engine MIT-licensed. Repository will be public after the review period.
-			Pre-revenue. Not yet venture-backed. Based in <span class="press-tbd">LOCATION TBD — add before press outreach begins</span>.
-		</p>
-	</section>
-
-	<section class="section container reveal press-page">
-		<h2>Press releases (prepared, not released)</h2>
-		<p class="press-prose">These are drafted but on hold. They are stored here for when each event occurs.</p>
-
-		<div class="press-release">
-			<p class="press-release-status tabular">PR-001 · STATUS: READY TO RELEASE when manuscript is formally accepted.</p>
-			<p class="press-release-headline">
-				Oxiedo Publishes Research Architecture That Lets Neural Networks Keep a Record of
-				What They Change
-			</p>
-			<p class="press-prose">
-				383-Experiment Evidence Base Shows +70.3 pp Recovery Advantage Over Standard
-				Networks Under Mid-Training Structural Collapse
-			</p>
-			<p class="press-prose">
-				Oxiedo today released the full research foundation for its training architecture,
-				ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), via
-				a submitted manuscript.
-			</p>
-			<p class="press-prose">
-				The architecture bounds each node's local gradient chain to four operations,
-				producing per-node attribution as a physical property of the backward pass — not
-				as a reconstruction. Across 383 controlled experiments on CIFAR-10 and CIFAR-100,
-				the system demonstrated 80.3% recovery from mid-training structural collapse
-				compared to a permanent 10.0% for parameter-matched standard networks, a gap of
-				+70.3 percentage points.
-			</p>
-			<p class="press-prose-note">(Full boilerplate, quote from founder, and assets to be added at release.)</p>
-		</div>
-
-		<div class="press-release">
-			<p class="press-release-status tabular">
-				PR-002 · STATUS: HOLD — release when first external engagement is complete and
-				partner approves.
-			</p>
-			<p class="press-release-headline">
-				Oxiedo Completes First External Diagnostic: <span class="press-tbd">PARTNER NAME</span>
-				<span class="press-tbd">FINDING SUMMARY</span>
-			</p>
-			<p class="press-prose-note">(Template — fill in specifics.)</p>
-		</div>
-
-		<div class="press-release">
-			<p class="press-release-status tabular">PR-003 · STATUS: HOLD — release if/when separation study passes.</p>
-			<p class="press-release-headline">
-				Oxiedo Confirms Central V2 Premise: Architecture Separates Mislabelled Data from
-				Hard Examples Reliably
-			</p>
-			<p class="press-prose-note">(Template — add exact results.)</p>
-		</div>
-
-		<div class="press-release">
-			<p class="press-release-status tabular">PR-004 · STATUS: HOLD — release if separation study fails.</p>
-			<p class="press-release-headline">Oxiedo Reports Separation Study Result and Updates Solution Roadmap</p>
-			<p class="press-prose">
-				The source-attribution validation study returned <span class="press-tbd">result</span>.
-				Four solutions as previously described are removed from the roadmap. The Warning
-				Light, The Proofreader, and The Diary are unaffected. Updated roadmap available at
-				oxiedo.com/solutions.
-			</p>
-			<p class="press-prose-note">
-				Note: having PR-004 already written is itself a signal. Companies that have a
-				press release ready for their downside case are companies a journalist can trust.
-			</p>
-		</div>
-	</section>
-
-	<section class="section container reveal press-page">
-		<h2>Assets</h2>
-		<ul class="press-list">
-			<li>Logo (SVG) — full colour</li>
-			<li>Logo (SVG) — white on transparent</li>
-			<li>Logo (PNG) — 1200px</li>
-			<li>Founder photo (if available)</li>
-			<li>Solution diagram — the four operations</li>
-			<li>Market map diagram — five sectors</li>
-			<li>Architecture diagram — three signals + telemetry stack</li>
-			<li>Press brief (PDF, one page)</li>
+			<li>
+				Nothing here has been tested at frontier scale, on regulated data, or in production over
+				time. No deployment exists.
+			</li>
+			<li>
+				The architecture will be released in full on acceptance, so a competitor can reimplement it.
+				That is deliberate and not a vulnerability we are downplaying.
+			</li>
+			<li>
+				There is a programme extending this work. Its objectives and constraints are public; its
+				mechanism is not, and will not be until it is protected. We will not discuss it on
+				background either.
+			</li>
 		</ul>
 	</section>
 
 	<section class="section container reveal press-page">
-		<h2>Boilerplate</h2>
+		<Eyebrow as="h2">PREPARED RELEASES</Eyebrow>
+		<h2 class="press-h2">Written in advance, published here unreleased.</h2>
 		<p class="press-prose">
-			Oxiedo is building on the ORMAS architecture (Orchestrated Repair and Monitoring with
-			Architectural Self-correction), a neural network design that makes per-node causal
-			attribution a physical property of training — enabling per-component diagnosis,
-			bounded structural treatment, audit, and deletion of data contributions in trained
-			models. All corrections are logged, bounded, and human-reviewable. The architecture is
-			submitted for peer review, with 383 controlled experiments across four architecture
-			families. The engine is MIT-licensed. The repository will be made public after the
-			review period ends.
+			These are drafted and held. They are on this page rather than in a folder because a company
+			willing to show you the release it would issue for its own failure is one you can check
+			against later.
 		</p>
-		<p class="press-prose">
-			All experimental results are CIFAR-10 / CIFAR-100. No clinical, biological, financial,
-			or production data has been used. The Warning Light is available for immediate
-			engagement. The Proofreader and The Diary are in active build and open for Charter
-			Partnership pre-booking. Oxiedo is pre-revenue and unfunded as of September 2026.
-		</p>
+		<div class="press-releases">
+			{releases.map((r) => (
+				<article class="press-release">
+					<p class="press-release-status tabular">{r.id} · {r.status}</p>
+					<p class="press-release-headline">{r.headline}</p>
+					{r.sub && <p class="press-release-sub">{r.sub}</p>}
+					{r.body.map((b) => <p class="press-prose">{b}</p>)}
+					<p class="press-prose-note">{r.note}</p>
+				</article>
+			))}
+		</div>
 	</section>
 
 	<section class="section container reveal press-page">
-		<h2>Corrections policy</h2>
-		<p class="press-prose">If you believe a claim on this site or in a press release is inaccurate:</p>
+		<Eyebrow as="h2">BOILERPLATE</Eyebrow>
+		<h2 class="press-h2">Copy this.</h2>
+		<div class="press-boiler">
+			<p class="press-boiler-label">Short</p>
+			<p class="press-prose">
+				Oxiedo builds ORMAS, a neural network training architecture that makes per-component
+				causal attribution a physical property of training rather than something reconstructed
+				afterwards. The mechanism is published on acceptance of the manuscript; production
+				deployment is licensed.
+			</p>
+		</div>
+		<div class="press-boiler">
+			<p class="press-boiler-label">Full</p>
+			<p class="press-prose">
+				Oxiedo builds ORMAS (Orchestrated Repair and Monitoring with Architectural
+				Self-correction), a neural network architecture that makes per-node causal attribution a
+				physical property of the backward pass — enabling per-component diagnosis, bounded
+				structural repair, audit, and accounting for the contribution of data to a trained model.
+				Every correction is logged, bounded and human-reviewable. The architecture is submitted
+				for peer review and supported by 383 controlled experiments across four architecture
+				families, each regenerating from seed. The mechanism is released under a research licence
+				on acceptance of the manuscript — free for research, teaching and evaluation from that
+				day; production use is licensed separately. All experimental results are CIFAR-10 and CIFAR-100; no clinical, biological,
+				financial or defence data has been used. Oxiedo is pre-revenue, has no customers, and is
+				raising a pre-seed round as of September 2026.
+			</p>
+		</div>
+	</section>
+
+	<section class="section container reveal press-page">
+		<Eyebrow as="h2">ASSETS</Eyebrow>
+		<h2 class="press-h2">On request, same day.</h2>
 		<p class="press-prose">
-			Contact [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH] with "Correction — [specific claim]"
-			in the subject line. Every claim on this site is sourced. We will respond with the
-			source or issue a correction.
+			Logos in SVG and PNG, the architecture diagram, the five-market map, the four-operation
+			diagram, and a founder photograph. Ask and they arrive as a single archive — we would rather
+			send you the current versions than leave stale files on a page.
 		</p>
-		<p class="press-prose">We do not have a PR agency. You will receive a response from the founder.</p>
+		<Button variant="tertiary" href="/contact?intent=press#press">Request the asset pack</Button>
+	</section>
+
+	<section class="section container reveal press-page">
+		<Eyebrow as="h2">CORRECTIONS</Eyebrow>
+		<h2 class="press-h2">If something here is wrong, we would like to know before you publish.</h2>
+		<p class="press-prose">
+			Use the <a href="/contact?intent=press#press">press form</a> and say
+			<span class="press-mono">Correction</span> plus the specific claim. Every claim
+			on this site is sourced, so you will get either the source or a correction, and the
+			correction will be made on the page rather than only in a reply.
+		</p>
 	</section>
 </Page>

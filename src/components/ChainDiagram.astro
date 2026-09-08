@@ -1,0 +1,74 @@
+---
+// THE FOUR-OPERATION CHAIN, drawn. Added 2026-09-08, rebuilt the same day.
+//
+// WHY IT EXISTS. The central claim of this company is that bounding a node's local gradient chain
+// to four operations turns attribution from an estimate into a measurement. That claim was stated
+// in words on seven pages and never once shown. It is a spatial idea — a path that either runs
+// through the whole network or stops after four steps — and a sentence is the wrong instrument.
+//
+// WHY IT IS NOT AN SVG, which was the first attempt and was wrong. SVG text does not wrap and it
+// scales with the viewBox: a 760-unit artboard set to width:100% renders at ~2.5x on a wide
+// monitor, so a 12.5px caption became 31px display type and the long caption ran off the right
+// edge and was clipped mid-word. Boxes joined by lines are a layout problem, not a drawing
+// problem. In HTML the type stays at its intended size at every width, the captions wrap, the
+// text is selectable and searchable, and the row reflows on a narrow screen instead of forcing a
+// horizontal scrollbar.
+//
+// WHAT IT DRAWS. The comparison, not the mechanism alone: the top row is a standard architecture
+// where the path from a parameter to the loss runs through everything downstream and trails off,
+// because it has no fixed end. The bottom row is the same path under ORMAS — four named
+// operations, then a hard stop. The contrast is the argument; either row alone is a flowchart.
+//
+// COLOUR CARRIES MEANING: muted is the status quo, accent is the bounded path. The dashed tail
+// says "continues indefinitely", which is the one thing a reader must take away.
+export interface Props {
+	/** Set on a dark band so the palette inverts. */
+	onDark?: boolean;
+}
+const { onDark = false } = Astro.props;
+---
+
+<figure class={`chain${onDark ? ' chain--dark' : ''}`}>
+	<div class="chain-row">
+		<p class="chain-label">Standard architecture</p>
+		<div class="chain-flow">
+			<span class="chain-node">one node</span>
+			<ol class="chain-ops">
+				{[0, 1, 2, 3].map(() => <li class="chain-op">op</li>)}
+			</ol>
+			<span class="chain-tail" aria-hidden="true"></span>
+			<span class="chain-tail-text">continues through every remaining layer</span>
+		</div>
+		<p class="chain-caption">
+			The path from one parameter to the loss runs through everything downstream. It has no fixed
+			length, so per-node attribution cannot be computed — only estimated afterwards, by a
+			separate model, which is what every interpretability tool is.
+		</p>
+	</div>
+
+	<div class="chain-row chain-row--lit">
+		<p class="chain-label">ORMAS</p>
+		<div class="chain-flow">
+			<span class="chain-node">one node</span>
+			<ol class="chain-ops">
+				{['LayerNorm', 'Linear', 'PReLU', 'Linear'].map((op) => (
+					<li class="chain-op chain-op--lit">{op}</li>
+				))}
+			</ol>
+			<span class="chain-stop" aria-hidden="true"></span>
+			<span class="chain-term">
+				<strong>loss</strong>
+				<em>measured, not estimated</em>
+			</span>
+		</div>
+		<p class="chain-caption">
+			Four operations, through a shared 4,715-parameter bottleneck. The chain cannot grow with the
+			network, so the contribution of each node is read directly off the backward pass.
+		</p>
+	</div>
+
+	<figcaption class="chain-cap">
+		The bound is the product — everything else on this site follows from the second row having a
+		fixed length.
+	</figcaption>
+</figure>

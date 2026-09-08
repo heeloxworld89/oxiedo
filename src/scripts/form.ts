@@ -4,31 +4,63 @@
 // follows Cloudflare Pages' convention of a top-level functions/ file mirroring its route — the
 // same URL as the page, a different method).
 
-const CONFIRMATIONS: Record<string, string> = {
-	book: 'Your session request has been received. You will hear from us within a few days — usually less. Come prepared to describe one specific training failure.',
-	'pre-book': 'Your application has been received. Charter Partner applications are reviewed personally. You will hear from us within a few days.',
-	invest: 'We will read your message and reply to let you know if the brief is a fit for what you invest in. If it is, we will send it. If it is not, we will say so plainly.',
-	other: 'Your message is logged. We read everything personally and respond within a few days — usually less.',
+// WHERE SUBMISSIONS GO. Two supported shapes; switching between them is this one constant.
+//
+//   A third-party relay (the default). Works on ANY static host, because it is a plain
+//   cross-origin POST from the browser and needs no backend of ours. The default precisely so the
+//   contact form is not blocked on a hosting decision.
+//
+//   '/contact'. Uses functions/contact.ts — server-side validation, IP rate limiting, and Resend.
+//   Strictly better, and Cloudflare Pages only. Switch the moment the site deploys there.
+//
+// The recipient address is deliberately NOT rendered anywhere on the site: it is on a
+// founder-owned domain that is not Oxiedo's, and an address whose domain does not match the site
+// reads as a mistake or a phish. It exists here, in the endpoint, and nowhere a reader sees.
+//
+// FIRST-RUN STEP, once: the first submission triggers a one-off confirmation email to that
+// address. Click the link in it and everything after that delivers silently.
+const FORM_ENDPOINT = 'https://formsubmit.co/ajax/rokib@blackbloxie.com';
+
+// Human-readable intent names, used in the subject line so a message is triageable from the inbox
+// list without opening it.
+const INTENTS: Record<string, string> = {
+	'pre-book': 'pre-booking a deployment',
+	invest: 'investment conversation',
+	press: 'press enquiry',
+	data: 'data protection request',
+	apply: 'application',
+	other: 'general enquiry',
 };
 
-const FAILURE_MESSAGE =
-	'That did not send. Email [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH] directly and we will pick it up.';
+const CONFIRMATIONS: Record<string, string> = {
+	'pre-book': 'Received, and read personally. You will hear back within a few days, usually less.',
+	invest: 'Received. We will reply to say whether this is a fit for what you invest in — if it is, we send the material; if it is not, we will say so plainly.',
+	press: 'Received. Replies come from the founder, usually within a few days. Say if you are on a deadline and it will be faster.',
+	data: 'Received. Data requests are answered within five working days, and a deletion request is acted on immediately and confirmed in writing.',
+	apply: 'Received, and it goes straight to the founder. If it is not a fit you will be told directly rather than left to work it out from silence.',
+	other: 'Received. We read everything personally and reply within a few days, usually less.',
+};
 
-function fieldMessage(input: HTMLInputElement): string {
+// Includes HTMLSelectElement: the role picker on /careers carries .form-field-input and is
+// required, so it goes through the same validation path as every text field.
+type Field = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+
+function fieldMessage(input: Field): string {
 	if (input.validity.valueMissing) {
 		const label = input.labels?.[0]?.textContent?.trim().toLowerCase() ?? 'this field';
 		return `Enter ${label}.`;
 	}
-	if (input.validity.typeMismatch && input.type === 'email') return 'Enter a work email address.';
+	if (input.validity.typeMismatch && (input as HTMLInputElement).type === 'email')
+		return 'Enter a work email address.';
 	return 'Check this field.';
 }
 
-function setFieldState(input: HTMLInputElement, state: 'default' | 'error' | 'success') {
+function setFieldState(input: Field, state: 'default' | 'error' | 'success') {
 	input.classList.remove('form-field-input--default', 'form-field-input--error', 'form-field-input--success');
 	input.classList.add(`form-field-input--${state}`);
 }
 
-function validateField(input: HTMLInputElement) {
+function validateField(input: Field) {
 	const errorId = `${input.id}-error`;
 	let message = document.getElementById(errorId);
 	if (input.checkValidity()) {
@@ -49,8 +81,21 @@ function validateField(input: HTMLInputElement) {
 	return false;
 }
 
-document.querySelectorAll<HTMLFormElement>('.contact-form').forEach((form) => {
-	form.querySelectorAll<HTMLInputElement>('.form-field-input').forEach((input) => {
+// RESTRUCTURED 2026-09-06 for the ClientRouter. Two hazards this guards against: re-running
+// must not bind blur handlers twice on a form that survived navigation, and it must not append
+// a second status paragraph after each form. The data-form-bound marker makes init idempotent.
+export default function init() {
+// Bound by ACTION, not by class. This selector was '.contact-form', which silently stopped
+// matching the four forms on /contact when they were renamed to .contact-panel in the switching
+// -form rebuild, and never matched .invest-form at all — so the two highest-value pages on the
+// site lost inline validation, async submit and the status message with no error anywhere. The
+// forms still posted natively, so nothing looked wrong. Keying on the endpoint means any form
+// that submits to it is enhanced, and a future class rename cannot break the binding again.
+document.querySelectorAll<HTMLFormElement>('form[action="/contact"]').forEach((form) => {
+	if (form.dataset.formBound === 'true') return;
+	form.dataset.formBound = 'true';
+
+	form.querySelectorAll<Field>('.form-field-input').forEach((input) => {
 		input.addEventListener('blur', () => validateField(input));
 	});
 
@@ -62,7 +107,7 @@ document.querySelectorAll<HTMLFormElement>('.contact-form').forEach((form) => {
 	form.addEventListener('submit', async (event) => {
 		event.preventDefault();
 
-		const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('.form-field-input'));
+		const inputs = Array.from(form.querySelectorAll<Field>('.form-field-input'));
 		const results = inputs.map(validateField);
 		const firstInvalid = inputs[results.indexOf(false)];
 		if (firstInvalid) {
@@ -70,6 +115,7 @@ document.querySelectorAll<HTMLFormElement>('.contact-form').forEach((form) => {
 			return;
 		}
 
+		const intent = String(new FormData(form).get('intent') ?? 'other');
 		const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
 		const originalLabel = submitBtn?.textContent ?? '';
 		if (submitBtn) {
@@ -80,15 +126,26 @@ document.querySelectorAll<HTMLFormElement>('.contact-form').forEach((form) => {
 		status.textContent = '';
 
 		try {
-			const response = await fetch('/contact', { method: 'POST', body: new FormData(form) });
+			const data = new FormData(form);
+			// Relay control fields. Harmless to the Cloudflare function, which ignores unknown keys.
+			if (FORM_ENDPOINT.startsWith('http')) {
+				data.append('_subject', `Oxiedo — ${INTENTS[intent] ?? intent}`);
+				data.append('_captcha', 'false');
+				data.append('_template', 'table');
+			}
+			const response = await fetch(FORM_ENDPOINT, {
+				method: 'POST',
+				body: data,
+				headers: { Accept: 'application/json' },
+			});
 			if (!response.ok) throw new Error('send failed');
 
-			const intent = form.closest<HTMLElement>('section[id]')?.id ?? 'other';
 			form.hidden = true;
 			status.textContent = CONFIRMATIONS[intent] ?? CONFIRMATIONS.other;
 		} catch {
 			status.classList.add('contact-form-status--error');
-			status.textContent = FAILURE_MESSAGE;
+			status.textContent =
+				'That did not send. Nothing you typed has been lost — every field is exactly as you left it, so press send again. If it fails twice, give it a minute and retry; the form will not clear.';
 			if (submitBtn) {
 				submitBtn.disabled = false;
 				submitBtn.textContent = originalLabel;
@@ -96,3 +153,4 @@ document.querySelectorAll<HTMLFormElement>('.contact-form').forEach((form) => {
 		}
 	});
 });
+}

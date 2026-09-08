@@ -1,0 +1,88 @@
+---
+// How pricing works — replaces PricingTiers, 2026-09-07.
+//
+// FOUNDER DECISION: one product, one licence, no published prices. Price is negotiated per
+// engagement and scoped to the capabilities actually enabled; the number lives in the contract,
+// not on the site.
+//
+// WHAT THIS REPLACES AND WHY IT MATTERS. The site previously published seven separate price
+// lists, every one of them carrying the note "Designed; not yet tested against real customers."
+// Publishing an untested number does two things that cannot be undone: it anchors every future
+// negotiation to a figure invented before a single customer conversation, and it caps the
+// enterprise deal at whatever the founder guessed. The Warning Light was listed at $10,000 a run
+// against frontier training runs costing $200M-$500M. Removing the numbers is not a loss of
+// transparency — the honest position is that the price is not known yet, and saying so is more
+// accurate than printing a guess.
+//
+// The buyer's OWN costs stay on the site everywhere they appeared (recovery cost, retrain cost,
+// established spend). Those are the value anchors and they are external, sourced facts. What is
+// gone is our side of the number.
+export interface Props {
+	/** the gate this capability waits on, if any — shown so scope is honest before a conversation */
+	gateNote?: string | null;
+	ctaLabel?: string;
+	ctaHref?: string;
+	/** capability name, so the block can say what is being scoped */
+	name?: string;
+}
+
+const { gateNote = null, ctaLabel = 'Start a conversation', ctaHref = '/contact', name } = Astro.props;
+
+const steps = [
+	{
+		n: '01',
+		title: 'Scope',
+		body: 'We agree which capabilities you actually need enabled. Most institutions start with one.',
+	},
+	{
+		n: '02',
+		title: 'Price',
+		body: 'Priced against what the problem already costs you, not a list. It scales with the capabilities in scope and the size of the deployment.',
+	},
+	{
+		n: '03',
+		title: 'Contract',
+		body: 'The figure is written into the licence. Annual, on-premise, per institution.',
+	},
+];
+---
+
+<section class="section container reveal pricing-model">
+	<div class="pricing-model-head">
+		<p class="pricing-model-eyebrow">/ how pricing works /</p>
+		<h2 class="pricing-model-title">One licence. Priced to what you use.</h2>
+		<p class="pricing-model-lede">
+			ORMAS is a single product under a single licence. There is no price list, because the
+			price depends on which capabilities you enable and what the problem currently costs you.
+			We agree it in conversation and write it into the contract.
+		</p>
+	</div>
+
+	<ol class="pricing-model-steps">
+		{
+			steps.map((s) => (
+				<li class="pricing-model-step">
+					<span class="pricing-model-step-index tabular">{s.n}</span>
+					<div>
+						<p class="pricing-model-step-title">{s.title}</p>
+						<p class="pricing-model-step-body">{s.body}</p>
+					</div>
+				</li>
+			))
+		}
+	</ol>
+
+	{
+		gateNote && (
+			<p class="pricing-model-gate">
+				<span class="pricing-model-gate-label">SCOPE NOTE</span>
+				{name ? `${name} is not yet available. ` : ''}It depends on one open question — {gateNote}.
+				We will say so in the conversation rather than after it.
+			</p>
+		)
+	}
+
+	<div class="pricing-model-cta">
+		<a class="btn btn--primary" href={ctaHref}>{ctaLabel}</a>
+	</div>
+</section>

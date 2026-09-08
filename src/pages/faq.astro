@@ -1,386 +1,236 @@
 ---
-// design/09_FAQ.md, ui_ux/09_FAQ_UI.md. Every panel renders open by default (Accordion,
-// task 1.10) — Block 4's accordion.ts collapses them once JS confirms it can run. Category
-// "tabs" are real anchors jumping to each group, matching the site's established pattern
-// (Solutions, Sectors) rather than JS-driven filtering.
+// FAQ — rebuilt 2026-09-07.
+//
+// WHAT THE OLD PAGE WAS. Twenty-five questions in five hard-coded groups, with category "tabs"
+// that were anchor links rather than filters, a superseded product model ("six pre-bookable
+// solutions", "are the features sold separately"), invented scarcity ("three slots per quarter"),
+// a price range contradicting /licensing, and one sentence with a clause missing. All gone; the
+// question set now lives in data/faq.ts.
+//
+// WHY THIS PAGE HAS SEARCH. Research on FAQ UX is consistent that a search field is the single
+// largest improvement available to any page past roughly twenty questions, and that filtering
+// beats anchor-jumping because it removes what does not match rather than merely moving the
+// viewport. This page has 55. It gets both, plus a live count so the filter's effect is visible
+// rather than inferred.
+//
+// WHY <details> RATHER THAN THE Accordion COMPONENT. Accordion.astro renders open and depends on
+// accordion.ts to collapse, so without JS the page is 55 open answers. Native <details> is closed
+// by default with no JS at all, is keyboard-operable for free, and lets the browser's own find
+// function reach text inside collapsed panels. On the one page most likely to be read by someone
+// searching for a single specific answer, that is the correct primitive.
+//
+// STRUCTURED DATA. The FAQPage JSON-LD is generated from the same array the page renders, so the
+// two cannot drift. Hand-maintaining it beside the markup is how structured data silently stops
+// matching the page it describes.
 import Page from '../layouts/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
-import Accordion from '../components/Accordion.astro';
+import Button from '../components/Button.astro';
+import PageBanner from '../components/PageBanner.astro';
+import { faqs, faqCategories } from '../data/faq';
 
-const categories = [
-	{ id: 'the-solution', label: 'The Solution' },
-	{ id: 'the-research', label: 'The Research' },
-	{ id: 'licensing', label: 'Licensing' },
-	{ id: 'investing', label: 'Investing' },
-	{ id: 'the-company', label: 'The Company' },
-];
+const countFor = (id: string) => faqs.filter((f) => f.cat === id).length;
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'FAQPage',
+	mainEntity: faqs.map((f) => ({
+		'@type': 'Question',
+		name: f.q,
+		acceptedAnswer: { '@type': 'Answer', text: f.a.join(' ') },
+	})),
+};
 ---
 
-<Page title="FAQ">
-	<section class="section container">
-		<Eyebrow>FAQ</Eyebrow>
-		<h1>Everything people ask. Answered completely.</h1>
-		<nav class="faq-tabs" aria-label="Jump to a category">
-			<a href="#the-solution">All</a>
-			{categories.map((c) => <a href={`#${c.id}`}>{c.label}</a>)}
-		</nav>
+<Page title="FAQ" description={"The questions a technical evaluation, a security review and a procurement process actually ask, answered without hedging — including the uncomfortable ones."}>
+	<PageBanner
+		eyebrow="FAQ"
+		title={`${faqs.length} questions, answered without hedging.`}
+		trail={[{ label: 'Home', href: '/' }, { label: 'FAQ' }]}
+	/>
+
+	<section class="section-tight container">
+		<p class="faq-lede">
+			These are the questions that actually get asked in a technical evaluation, a security
+			review and a procurement process — including the ones with uncomfortable answers. Where
+			something is not established, it says so and says why.
+		</p>
+
+		<div class="faq-search">
+			<label class="visually-hidden" for="faq-q">Search the questions</label>
+			<span class="faq-search-icon" aria-hidden="true">⌕</span>
+			<input
+				type="search"
+				id="faq-q"
+				class="faq-search-input"
+				placeholder="Search — try &ldquo;GDPR&rdquo;, &ldquo;cost&rdquo;, &ldquo;on-premise&rdquo;, &ldquo;scale&rdquo;"
+				autocomplete="off"
+			/>
+			<kbd class="faq-search-key" aria-hidden="true">/</kbd>
+		</div>
+
+		<div class="faq-filters" role="group" aria-label="Filter by category">
+			<button type="button" class="faq-chip is-active" data-cat="all">
+				Everything <span class="faq-chip-n tabular">{faqs.length}</span>
+			</button>
+			{faqCategories.map((c) => (
+				<button type="button" class="faq-chip" data-cat={c.id}>
+					{c.label} <span class="faq-chip-n tabular">{countFor(c.id)}</span>
+				</button>
+			))}
+		</div>
+
+		<p class="faq-count" id="faq-count" role="status" aria-live="polite">
+			Showing all {faqs.length} questions
+		</p>
 	</section>
 
-	<section class="section container reveal" id="the-solution">
-		<Eyebrow as="h2">THE SOLUTION</Eyebrow>
-		<div class="faq-group">
-			<Accordion id="q-charter-partnership" question="What is a Charter Partnership?">
-				<p>
-					The Charter Partnership Programme is the pre-booking window for ORMAS solutions
-					that are in build or in active development. Charter Partners negotiate terms
-					before pricing is published. Once a solution reaches general availability,
-					pricing is fixed. Charter Partners lock in flat-rate enterprise-wide pricing
-					before pricing is standardised at general availability. Three slots are
-					available per quarter.
+	<section class="section-tight container">
+		<div class="faq-body">
+			{faqCategories.map((c) => (
+				<section class="faq-cat" data-cat={c.id}>
+					<div class="faq-cat-head">
+						<h2 class="faq-cat-title">{c.label}</h2>
+						<p class="faq-cat-blurb">{c.blurb}</p>
+					</div>
+					{faqs.filter((f) => f.cat === c.id).map((f) => (
+						<details class="faq-item" id={f.id} data-cat={c.id}>
+							<summary class="faq-q">
+								<span class="faq-q-text">{f.q}</span>
+								<span class="faq-q-icon" aria-hidden="true"></span>
+							</summary>
+							<div class="faq-a">
+								{f.a.map((para) => <p class="faq-a-p">{para}</p>)}
+								{f.link && (
+									<a class="faq-a-link" href={f.link.href}>{f.link.label} →</a>
+								)}
+							</div>
+						</details>
+					))}
+				</section>
+			))}
+
+			<div class="faq-empty" id="faq-empty" hidden>
+				<p class="faq-empty-title">Nothing matches that.</p>
+				<p class="faq-empty-body">
+					If the question is not here, it is one worth answering. Ask it directly and the reply
+					comes from the person who built the architecture.
 				</p>
-			</Accordion>
-			<Accordion id="q-charter-get" question="What does a Charter Partner actually get?">
-				<p>
-					Five things. Your compliance workflow and edge cases become the baseline
-					architecture of the solution — the product is built around your requirements,
-					not a generic spec. Flat-rate enterprise-wide pricing locked for five years,
-					before per-model consumption pricing is published at launch. Direct engineering
-					access — the person who built ORMAS is your integration contact, not an account
-					manager. A guaranteed deployment slot before the regulatory compliance window
-					closes. And the first-mover position: institutions that define the compliance
-					standard before it is imposed do not just comply — they set the benchmark
-					others will follow.
-				</p>
-			</Accordion>
-			<Accordion id="q-prebooking-close" question="When does the pre-booking window close?">
-				<p>
-					When the solution reaches general availability. At that point, pricing is
-					published and fixed. Individual negotiation is not available post-launch. The
-					timeline is tied to engineering milestones, not an arbitrary date. Four of the
-					six pre-bookable solutions depend on a single validation study currently being
-					scoped. The build timeline for the other two (Label Audit, Model Change Record)
-					is weeks to months. Pre-booking now means locking terms before these milestones
-					are met.
-				</p>
-			</Accordion>
-			<Accordion
-				id="q-prebooking-vs-launch"
-				question="What is the difference between pre-booking pricing and launch pricing?"
-			>
-				<p>
-					Pre-booking pricing is negotiated individually between us and the Charter
-					Partner, taking into account the specific integration, data environment,
-					regulatory framework, and deployment scope. Launch pricing will be a published
-					rate card: annual institutional licence, per-solution, non-negotiable. The
-					structure will shift toward per-model consumption pricing at GA. Charter
-					Partners are not on the per-model model — they are on a flat institutional rate.
-				</p>
-			</Accordion>
-			<Accordion id="q-multiple-prebook" question="Can I pre-book more than one solution?">
-				<p>
-					Yes. An enterprise substrate Charter Partnership covers the full portfolio
-					under a single institutional licence ($500k–$1.5M, designed — not yet tested
-					against real customers). That conversation happens at /contact and is the
-					highest-priority intake path. If you are deploying ORMAS across a full
-					regulated or third-party-data model portfolio, the substrate tier is the right
-					starting point.
-				</p>
-			</Accordion>
-			<Accordion
-				id="q-warning-light-only"
-				question="Why is The Warning Light the only solution available to book today?"
-			>
-				<p>
-					The Warning Light is the only solution where the core capability —
-					per-component health monitoring during training — already runs in the existing
-					codebase. The other solutions require additional engineering (Label Audit,
-					Model Change Record) or a pending validation study (Source Separator, Certified
-					Deletion, The Federated Node, The Update Engine). We publish the engineering
-					status clearly because the alternative — selling something not yet built as
-					available — is how a company loses a regulated buyer permanently.
-				</p>
-			</Accordion>
-			<Accordion id="q-what-does-ormas-do" question="What does ORMAS do?">
-				<p>
-					ORMAS is a training architecture that gives your model a complete, causally
-					attributed record of every structural event — automatically, during training,
-					as a property of how it is built. Not a monitoring wrapper. Not a post-hoc
-					analysis tool. The way the model trains. From this capability, we have built
-					three solutions: The Proofreader, The Warning Light, and The Diary. Each solves
-					a specific business problem.
-				</p>
-			</Accordion>
-			<Accordion id="q-download-engine" question="Can I just download and run the engine myself?">
-				<p>
-					Once the repository is made public (after the review period), yes — the engine
-					is MIT-licensed. What you will get: the training architecture, the telemetry
-					emitter, the correction mechanism, and the experiment reproduction scripts.
-					What you will not get: the artifact generator, the signed diff, the
-					cryptographic signing and reader binary, the calibrated bound for your domain,
-					or the support and indemnity that make the record usable in a filing. L0 (the
-					engine) will be free and openly available. L2 (the deployment licence) is
-					where the commercial solution lives. See /licensing for the full stack. The
-					repository is not yet public — it is under review.
-				</p>
-			</Accordion>
-			<Accordion
-				id="q-proofreader-frozen"
-				question="Can The Proofreader attach to any model, or only ORMAS-trained ones?"
-			>
-				<p>
-					This is the open question that gates the solution. In full ORMAS training, the
-					per-node readouts are shaped to be informative by design — the local loss
-					drives them to encode independent views of the data. That is the property The
-					Proofreader uses. A frozen model's layers were not shaped that way. Whether
-					they retain enough independence for the readouts to be meaningful is an
-					untested empirical question. One GPU-day answers it. We run that measurement
-					before any engagement using wrapper mode. If it fails, The Proofreader survives
-					as a native-training-mode solution — stronger signal, higher friction for the
-					buyer (they need to retrain). Still a solution. Different description.
-				</p>
-			</Accordion>
-			<Accordion
-				id="q-warning-light-specificity"
-				question="The Warning Light names a failing component. How specific is the attribution?"
-			>
-				<p>
-					We do not yet have a published lead-time number. The paper demonstrates that
-					per-node health is a structural property with diagnostic value; the precise
-					lead time in steps has not been measured. This measurement is the first thing
-					we run before any Warning Light engagement. If the warning is not early, we
-					will tell you, and restate the solution description accordingly. We have not
-					made a claim we cannot back up.
-				</p>
-			</Accordion>
-			<Accordion id="q-data-to-share" question="What data do I have to share to book a session?">
-				<p>
-					For The Proofreader and The Warning Light: a model checkpoint and your labelled
-					data, or access to a training run. We run on-premise if required. No data
-					leaves your environment if that is your preference. For The Diary: a training
-					session run through the ORMAS architecture (or retrained through it). We
-					generate the record from the telemetry. We treat your data under the same
-					principles we apply to our own: we do not retain it beyond the engagement, we
-					do not use it to train anything, and we do not reference it without your
-					explicit permission.
-				</p>
-			</Accordion>
-			<Accordion id="q-diagnostic-report" question="What does a diagnostic report look like?">
-				<p>
-					For The Proofreader: a ranked list of examples sorted by per-node disagreement
-					score, split into likely mislabelled / likely hard-but-correct / clean, with a
-					breakdown by class and by source if your data carries a source column. For The
-					Warning Light: a step-by-step log of health events during the run — which
-					component, what diagnosis, what magnitude, at what step. For The Diary: a
-					signed, diff-able modification record — node ID, diagnosis, step, magnitude,
-					treatment applied, bound respected, correction tensor — formatted for
-					regulatory use.
-				</p>
-			</Accordion>
-			<Accordion id="q-vs-shap" question="How does this compare to SHAP or LIME?">
-				<p>
-					SHAP and LIME explain the predictions of a trained, frozen model. They answer:
-					"which input features mattered most for this output?" ORMAS instruments the
-					training process that produces the model. It answers: "which component is
-					structurally compromised, what kind of compromise, and what was done about it —
-					at every step." They solve different problems at different points in the
-					lifecycle. Use both if your workflow spans both stages.
-				</p>
-			</Accordion>
-			<Accordion id="q-vs-wandb" question="How does this compare to Weights & Biases or MLflow?">
-				<p>
-					W&B and MLflow monitor global training metrics: loss, accuracy, learning rate,
-					GPU utilisation. They are excellent experiment trackers. ORMAS monitors
-					per-node structural health: which node is dead, which is oscillating, which was
-					corrected and why. W&B tells you what happened to your run. ORMAS tells you
-					what happened inside your model. Use both.
-				</p>
-			</Accordion>
+				<Button variant="primary" href="/contact">Ask it directly</Button>
+			</div>
 		</div>
 	</section>
 
-	<section class="section container reveal" id="the-research">
-		<Eyebrow as="h2">THE RESEARCH</Eyebrow>
-		<div class="faq-group">
-			<Accordion id="q-evidence" question="What is the evidence that this works?">
-				<p>
-					383 controlled experiments across 4 architecture families. 67 archived runs
-					with reproducible seeds. +70.3 pp recovery advantage over standard networks
-					under structural collapse. The full evidence base is on /paper. The known
-					failure case is also there — we publish both.
-				</p>
-			</Accordion>
-			<Accordion
-				id="q-claim-is-transparency"
-				question={'The paper says "the claim is transparency; the accuracy gap is its evidence." What does that mean?'}
-			>
-				<p>
-					ORMAS is not a higher-accuracy architecture. In most standard benchmarks, a
-					standard network trained on the same data with the same architecture will
-					match or exceed it. What ORMAS provides is structural accountability — a
-					record of what happened, bounded and causally attributed. The accuracy gap in
-					the headline experiments is evidence that the mechanism works, not that the
-					architecture should be preferred on accuracy grounds in standard settings. The
-					commercial value is the record, not the accuracy delta.
-				</p>
-			</Accordion>
-			<Accordion
-				id="q-adversarial-weight"
-				question="Adversarial weight injection — ORMAS is 1 pp worse than baseline. Isn't that a problem?"
-			>
-				<p>
-					Yes. It is a known structural blind spot, and it is published rather than
-					buried. Adversarially crafted weight perturbations are designed to maintain
-					nominal activation statistics while degrading decision boundaries — which
-					means they evade exactly what ORMAS monitors. There is currently no mitigation.
-					The 1.0 pp deficit is measured and stated. For the markets this architecture
-					primarily serves — training monitoring, compliance records, data origin —
-					adversarial weight injection is not the primary threat. For defense and
-					safety-critical applications, it is, which is part of why that market is named
-					but not currently pursued.
-				</p>
-			</Accordion>
-			<Accordion id="q-kill-test" question="What is the kill test, and why haven't you re-run it?">
-				<p>
-					In April 2026, a purpose-built destruction suite was written in advance and run
-					against the previous version of the architecture. It failed comprehensively —
-					Signal 3 never triggered, ORMAS lost to a plain CNN on every noise level, and
-					the ablation arms were indistinguishable from the full system. The current
-					architecture has never been re-run through that suite. Re-running it is on the
-					immediate task list — it is a regression run, not a new experiment. It is an
-					open and named item. It is not hidden.
-				</p>
-			</Accordion>
+	<section class="band band--dark section reveal">
+		<div class="container faq-closing">
+			<Eyebrow>STILL DECIDING</Eyebrow>
+			<h2 class="faq-closing-title">The fastest way through this is a conversation.</h2>
+			<p class="faq-closing-lede">
+				Bring what you train, what obligation you carry, and what a failure currently costs you to
+				diagnose. Those three answers decide whether this is relevant to you faster than any page
+				can.
+			</p>
+			<div class="faq-closing-cta">
+				<Button variant="primary" href="/contact">Start a conversation</Button>
+				<Button variant="secondary" href="/technology">Read the research</Button>
+			</div>
 		</div>
 	</section>
 
-	<section class="section container reveal" id="licensing">
-		<Eyebrow as="h2">LICENSING</Eyebrow>
-		<div class="faq-group">
-			<Accordion
-				id="q-fork-competitor"
-				question="The engine is MIT. What prevents a competitor from forking it and building the same solutions?"
-			>
-				<p>
-					Nothing prevents them from forking the engine. This is by design. What they
-					cannot fork: the customer's accumulated record, the calibrated bound for a
-					specific domain, the artifact format and the L1 licence restrictions that
-					protect it commercially, and the fact that somebody signed it and stands behind
-					it. The moat is not the code. It is the record, the calibration, and the
-					indemnity. See /licensing for the full argument.
-				</p>
-			</Accordion>
-			<Accordion
-				id="q-contract-ends"
-				question="If my contract with Oxiedo ends, can I still read my compliance records?"
-			>
-				<p>
-					Yes. This is one of three non-standard clauses that must appear in every L2
-					contract. On termination: perpetual, irrevocable right to read, retain, and
-					reproduce every artifact generated during the term, plus a frozen reader binary
-					you keep forever. Your regulatory obligations outlive our commercial
-					relationship.
-				</p>
-			</Accordion>
-			<Accordion id="q-free-commercial" question="Can I use the engine for free for commercial purposes?">
-				<p>
-					The engine (L0) is MIT. You can use it commercially, for free, with no
-					obligation to us. The artifact layer (L1), the deployment licence (L2), and the
-					assurance service (L3) are not free for regulated commercial deployment. If you
-					want to use L0 to build something, you are free to do so. If you want the
-					record, the indemnity, and the signed artifact, that is L2.
-				</p>
-			</Accordion>
-		</div>
-	</section>
+	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
 
-	<section class="section container reveal" id="investing">
-		<Eyebrow as="h2">INVESTING</Eyebrow>
-		<div class="faq-group">
-			<Accordion id="q-raising" question="Is Oxiedo currently raising?">
-				<p>
-					Yes. We are looking for investors who understand deep-tech primitives,
-					long-cycle B2B markets, and the distinction between a validated research result
-					and a validated commercial thesis. The research is validated adversarially. The
-					commercial thesis has not yet been tested against a paying customer. The raise
-					funds the two validation studies, the first three engagements, the legal and
-					regulatory consultations, and hiring a technical co-founder. Request the full
-					brief at /contact or /invest.
-				</p>
-			</Accordion>
-			<Accordion id="q-downside-risk" question="What is the downside risk profile?">
-				<p>
-					If the validation study underperforms, four planned solutions will be paused.
-					Three core solutions remain fully viable: The Proofreader, The Warning Light,
-					The Diary. These three require no further research and can be engaged today. A
-					company built on three solutions in two critical markets with a licensing moat
-					on the compliance record remains a fundamentally sound business. This is the
-					stated downside risk. It does not affect the three available solutions.
-				</p>
-			</Accordion>
-			<Accordion
-				id="q-strategic-or-financial"
-				question="Are you looking for strategic investors or financial investors?"
-			>
-				<p>
-					Both, for different reasons. A strategic investor — a firm or institution that
-					operates in one of the five markets — would also be a potential design partner.
-					A financial investor needs to be comfortable with: pre-revenue, long-cycle
-					markets, one person currently, high evidence-to-customer ratio, the specific
-					risk that the validation study fails, and the specific opportunity that it
-					passes. If those are the right parameters for your fund, reach out.
-				</p>
-			</Accordion>
-		</div>
-	</section>
+	<script>
+		// Search + category filtering. Both narrow the same set, so they compose: picking a category
+		// and then typing searches within it. The count line is the feedback mechanism — a filter
+		// whose effect is not visible reads as a broken filter.
+		const input = document.getElementById('faq-q') as HTMLInputElement | null;
+		const countEl = document.getElementById('faq-count');
+		const emptyEl = document.getElementById('faq-empty');
+		const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.faq-chip'));
+		const cats = Array.from(document.querySelectorAll<HTMLElement>('.faq-cat'));
+		const items = Array.from(document.querySelectorAll<HTMLDetailsElement>('.faq-item'));
 
-	<section class="section container reveal" id="the-company">
-		<Eyebrow as="h2">THE COMPANY</Eyebrow>
-		<div class="faq-group">
-			<Accordion id="q-why-oxiedo" question="Why is this called Oxiedo? What does it mean?">
-				<p>
-					It is the company name. The solution primitive is called ORMAS — the public
-					solution name and the research codename. The naming question — what brand goes
-					on the full solution — is one of the open decisions in the company. A clinical
-					brand forecloses four of five markets. A domain-neutral name is the direction.
-					The specific name has not been decided.
-				</p>
-			</Accordion>
-			<Accordion id="q-one-person" question="One person built all of this?">
-				<p>
-					Yes. 16,316 lines of code. 85 Python files. 383 controlled experiments. 67
-					archived flight recorders. A research manuscript submitted for peer review. A
-					30,000-word V2 specification. A 54-file implementation plan. A 35,000-word
-					commercial plan. The prior architecture failed its own kill suite in April
-					2026. The current one is what came out four months later. That is an unusual
-					artifact for an unfunded, one-person effort. It is also incomplete — no
-					customers, no second person, no real-world data. Both halves of that statement
-					are true and both matter.
-				</p>
-			</Accordion>
-			<Accordion id="q-trust-no-customers" question="Why should I trust a company with no paying engagements?">
-				<p>
-					You should not trust it on faith. We have not asked you to. We have an evidence
-					base, a documented mechanism, a commercial structure, and a manuscript under
-					peer review. If those are sufficient for your purposes, the solutions are
-					available to engage today. If they are not, we would rather you wait than
-					engage on insufficient grounds.
-				</p>
-			</Accordion>
-			<Accordion id="q-certifications" question="What compliance certifications do you have?">
-				<p>
-					None yet. SOC 2 Type II and ISO 27001 will be pursued after the first three
-					engagements generate sufficient revenue to fund the audits. A DPA template is
-					available on /data. We list what we don't have so you don't have to ask.
-				</p>
-			</Accordion>
-			<Accordion id="q-how-to-contact" question="How do I contact you?">
-				<p>
-					/contact — for solution engagement, research collaboration, co-founder
-					interest, and investment inquiries. [REPLACE WITH DOMAIN EMAIL BEFORE LAUNCH] —
-					for direct contact. We respond within a few days. Every message is read by a
-					person.
-				</p>
-			</Accordion>
-		</div>
-	</section>
+		// Index built from the DOM rather than shipped as data attributes: the text is already on
+		// the page, and duplicating ~30KB of it into markup to search it would be absurd.
+		const index = items.map((el) => ({
+			el,
+			cat: el.dataset.cat ?? '',
+			text: (el.textContent ?? '').toLowerCase().replace(/\s+/g, ' '),
+		}));
+
+		let activeCat = 'all';
+
+		function apply() {
+			const q = (input?.value ?? '').trim().toLowerCase();
+			const terms = q.split(/\s+/).filter(Boolean);
+			let shown = 0;
+
+			for (const entry of index) {
+				const catOk = activeCat === 'all' || entry.cat === activeCat;
+				const textOk = terms.every((t) => entry.text.includes(t));
+				const visible = catOk && textOk;
+				entry.el.hidden = !visible;
+				// Open matches while searching so the answer is readable without a second click,
+				// and close them again when the query is cleared.
+				if (terms.length) entry.el.open = visible;
+				else entry.el.open = false;
+				if (visible) shown += 1;
+			}
+
+			// A category heading with nothing under it is noise.
+			for (const cat of cats) {
+				const any = Array.from(cat.querySelectorAll<HTMLDetailsElement>('.faq-item')).some(
+					(el) => !el.hidden,
+				);
+				cat.hidden = !any;
+			}
+
+			if (emptyEl) emptyEl.hidden = shown !== 0;
+			if (countEl) {
+				if (shown === 0) countEl.textContent = 'No matching questions';
+				else if (!terms.length && activeCat === 'all') {
+					countEl.textContent = `Showing all ${shown} questions`;
+				} else {
+					countEl.textContent = `Showing ${shown} of ${index.length} questions`;
+				}
+			}
+		}
+
+		input?.addEventListener('input', apply);
+
+		for (const chip of chips) {
+			chip.addEventListener('click', () => {
+				activeCat = chip.dataset.cat ?? 'all';
+				for (const c of chips) c.classList.toggle('is-active', c === chip);
+				apply();
+			});
+		}
+
+		// "/" focuses search, Escape clears it. Both are the conventions a reader who uses search
+		// heavily will already try.
+		document.addEventListener('keydown', (e) => {
+			const target = e.target as HTMLElement | null;
+			const typing = target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName);
+			if (e.key === '/' && !typing) {
+				e.preventDefault();
+				input?.focus();
+			}
+			if (e.key === 'Escape' && typing && input && input.value) {
+				input.value = '';
+				apply();
+			}
+		});
+
+		// Deep links: /faq#gdpr-position opens that answer rather than scrolling to a closed row.
+		function openHash() {
+			const id = decodeURIComponent(location.hash.slice(1));
+			if (!id) return;
+			const el = document.getElementById(id);
+			if (el instanceof HTMLDetailsElement) {
+				el.open = true;
+				el.scrollIntoView({ block: 'center' });
+			}
+		}
+		window.addEventListener('hashchange', openHash);
+		openHash();
+	</script>
 </Page>

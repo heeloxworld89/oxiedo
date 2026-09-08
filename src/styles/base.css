@@ -66,6 +66,8 @@ body {
 	line-height: var(--lh-body);
 }
 
+/* REVERTED 2026-09-05 — the founder preferred the original serif/sans pairing over the
+   all-Jakarta-Sans redesign attempt. Fraunces is back on H1 only, as it was originally. */
 h1 {
 	font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
 	font-size: var(--text-display);
@@ -92,27 +94,71 @@ pre {
 	line-height: var(--lh-mono);
 }
 
+/* Every in-page anchor (#l0 on /licensing, the FAQ and sector tab rows, the solutions rail)
+   scrolled its target to the very top of the viewport — underneath the fixed header, so
+   the heading you clicked was hidden and the section looked like it had jumped to the wrong
+   place. One scroll-padding on the scroll container fixes all of them, including the
+   scrollIntoView calls in accordion.ts and masterdetail.ts. */
+html {
+	scroll-padding-top: calc(var(--nav-h) + var(--space-lg)); /* nav bar + breathing room */
+}
+
+/* Links carry the signature accent rather than inheriting body colour — a plain underlined
+   black run of text is indistinguishable from emphasis, and the site has 48 in-prose links.
+   Components that manage their own link colour (nav, footer, buttons, cards) set it locally
+   and are unaffected. Underline offset keeps descenders legible. */
 a {
-	color: inherit;
+	color: var(--accent-dark);
 	text-decoration: underline;
+	text-underline-offset: 0.15em;
+	text-decoration-thickness: 1px;
+	transition: color var(--duration-fast) var(--ease-out);
+}
+
+/* Buttons are excluded. .btn--primary sets its label colour at (0,1,0) and its own :hover rule
+   only sets `filter`, so a bare `a:hover` at (0,1,1) outranked it and repainted the label
+   --accent-mid on the indigo fill: 1.17:1, effectively invisible. Buttons own their colours. */
+a:not(.btn):hover {
+	color: var(--accent-mid);
+}
+
+/* Guarantee, not a convention: --accent-dark computes to 2.21:1 on the ink, so a link that
+   lands on a dark surface must use the on-dark accent (7.56:1). Scoped to links inside running
+   text — components on dark surfaces (nav, footer columns, buttons) set their own colour, and
+   this must not outrank them. The footer is deliberately absent: it has no prose links (all 10
+   are component-styled nav links), so including it would only risk outranking
+   .footer-nav-group a. */
+.band--dark :is(p, li, dd, dt) a:not(.btn),
+.hero :is(p, li, dd, dt) a:not(.btn),
+.telemetry-block a:not(.btn) {
+	color: var(--accent-on-dark);
+}
+
+.band--dark :is(p, li, dd, dt) a:not(.btn):hover,
+.hero :is(p, li, dd, dt) a:not(.btn):hover {
+	color: var(--text-on-dark);
 }
 
 /* Law 6 — every interactive element gets a visible focus ring. */
 :focus-visible {
-	outline: 2px solid var(--amber-bright);
+	outline: 2px solid var(--accent-dark);
 	outline-offset: 2px;
 }
 
 /* Law 6 — skip link. No source specifies its visual treatment (a pure a11y utility, not a
    design element); off-screen until focused, then pinned above everything else, styled from
    existing tokens only. First focusable element on every route (Page.astro). */
+/* position:fixed with a transform, not absolute + top:-100%. The percentage resolved against a
+   containing block that is not always the viewport, so the link could sit partly on screen at the
+   left edge instead of fully off it. A transform is unconditional. */
 .skip-link {
-	position: absolute;
-	top: -100%;
+	position: fixed;
+	top: 0;
+	transform: translateY(-200%);
 	left: var(--space-md);
 	z-index: 999;
-	background: var(--amber-bright);
-	color: var(--text-on-amber);
+	background: var(--accent-dark);
+	color: var(--text-on-dark);
 	padding: var(--space-sm) var(--space-md);
 	border-radius: 2px;
 	font-weight: 600;
@@ -120,7 +166,7 @@ a {
 }
 
 .skip-link:focus-visible {
-	top: var(--space-md);
+	transform: translateY(var(--space-md));
 }
 
 /* design/12 §Typography binding — every number a reader might compare to another. */

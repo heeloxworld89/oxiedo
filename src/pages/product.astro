@@ -1,0 +1,219 @@
+---
+// THE PRODUCT PAGE.
+//
+// WHAT WAS WRONG. It opened "ORMAS is one product. These are its seven features," which defines
+// the product AS the seven — so a reader arrived at a page about seven things rather than a page
+// about one architecture. Every section after it inherited that error: a capability grid framed as
+// "what the seven are built from", a feature list framed as the product surface, and nothing at
+// all introducing what ORMAS actually is or what class of problem it exists to solve.
+//
+// THE CORRECTION. ORMAS is one training architecture with a broad capability surface. Seven
+// applications of it are proven, mapped to a market, and sold with confidence — but they are the
+// seven we lead with, not the definition of the thing. Other combinations exist.
+//
+// SOURCES. The introduction is written from ormas_preprint/main.tex §Introduction (the opacity
+// argument, the bounded 4-operation chain, the five telemetry layers, the flight-recorder
+// framing), Commercial Plan `00` (addressability), `03 §2-3` (capabilities and the matrix), `07`
+// (the record, the bound table, the diff, signing), `06 §5` (the read-only mode) and `18 §5` (the
+// licence). Nothing here is invented.
+import Page from '../layouts/Page.astro';
+import PageBanner from '../components/PageBanner.astro';
+import GetInTouch from '../components/GetInTouch.astro';
+import Button from '../components/Button.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import ChainDiagram from '../components/ChainDiagram.astro';
+import { features } from '../data/features';
+import { sectors } from '../data/sectors';
+
+// The breadth of the product, as concrete capabilities rather than abstractions. Every line is a
+// property the architecture has today, stated in the register of somebody who has to deploy and
+// answer for it rather than build it.
+const surface = [
+	{
+		title: 'Five layers of telemetry',
+		body: 'From the health of the whole system down to the attribution of a single parameter. The network computes these as it trains; switching them off would take extra work rather than save any.',
+	},
+	{
+		title: 'Health for every component, at every step',
+		body: 'Not sampled and not periodic. Each component is measured continuously against its own baseline, so a component drifting away from itself shows up while it is still drifting.',
+	},
+	{
+		title: 'Eight named failure conditions',
+		body: 'A component can die, oscillate, saturate, stagnate, explode, lose confidence, lose its gradient, or fail in a way the system declines to classify. Each one has a name and a declared ceiling on the response.',
+	},
+	{
+		title: 'Corrections capped before they happen',
+		body: 'Nothing is altered by more than a stated fraction of that component\'s own weight. Every change is balanced so it adds nothing on net, and whatever is left over is written down.',
+	},
+	{
+		title: 'A read-only mode',
+		body: 'Full diagnostics, zero modification. Most institutions want to watch a system for a year before they let it touch a model, and this is the mode that lets them.',
+	},
+	{
+		title: 'A record you can diff',
+		body: 'Hashed, exportable, and comparable line by line against the version you last approved. Reviewers rarely ask what your model is. They ask what changed.',
+	},
+	{
+		title: 'Runs where your data already is',
+		body: 'No hosted service, no metering, nothing leaving your network. Inside a hospital enclave or a bank, this is what decides whether the conversation happens at all.',
+	},
+];
+
+// Which markets each application is aimed at, and which one it leads. Read from data/sectors.ts so
+// the mapping cannot drift from the sector pages.
+const marketsFor = (id: string) => sectors.filter((s) => s.features.includes(id));
+const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
+---
+
+<Page title="ORMAS, the product" description={"One architecture, one licence, seven applications. Every model it trains arrives with the evidence of how it was made."}>
+	<PageBanner
+		eyebrow="THE PRODUCT"
+		title="Every model it trains arrives with the evidence of how it was made."
+		trail={[{ label: 'Home', href: '/' }, { label: 'Product' }]}
+	/>
+
+	<!-- 1. WHAT IT IS. The page had no such section: it went from a banner straight to a capability
+	     grid, which asks a reader to absorb a taxonomy before knowing what the thing is. -->
+	<section class="section container">
+		<h2 class="section-title">Each component stays addressable from the first step to the last.</h2>
+		<ChainDiagram />
+		<div class="prod-intro">
+			<p>
+				Train a model the ordinary way and the process erases itself. You finish with weights, a
+				loss curve, and whatever the team still remembers. Six months on, a regulator asks what
+				changed between the version you validated and the version you shipped, and every available
+				answer is a reconstruction.
+			</p>
+			<p>
+				The cause is not carelessness. In a standard network every error signal reaches every
+				parameter on every step, so by the time training ends there is no component left that a
+				question can be put to. The information was never lost. It was never separable in the
+				first place.
+			</p>
+			<p>
+				ORMAS bounds each component's learning path so the component stays individually
+				addressable throughout the run. Your data does not change. Your objective does not change.
+				The model you deploy is the one you would have deployed anyway. You also finish with a
+				record of what happened inside it, and with parts you can point at by name.
+			</p>
+			<p class="prod-intro-turn">
+				Naming is the whole thing. A part that has a name can be watched while it trains,
+				protected when it starts to fail, corrected inside a limit you set in advance, tied back
+				to the data that produced it, and taken out when a contract says it has to go.
+			</p>
+		</div>
+	</section>
+
+	<!-- 2. THE BREADTH. "It has many features" was asserted nowhere and demonstrated nowhere; the
+	     page jumped straight to six abstractions. These are concrete and they are all shipping
+	     properties of the architecture. -->
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>WHAT THE ARCHITECTURE GIVES YOU</Eyebrow>
+			<h2 class="section-title">All of it is produced while the model trains.</h2>
+			<p class="section-lede">
+				None of this is assembled afterwards out of logs. It falls out of the arithmetic the
+				network is already doing, which is why it can be trusted and why it costs nothing extra to
+				generate.
+			</p>
+			<div class="surface-list">
+				{surface.map((s, i) => (
+					<article class="surface-item">
+						<div class="surface-label">
+							<span class="surface-index tabular">{String(i + 1).padStart(2, '0')}</span>
+							<h3>{s.title}</h3>
+						</div>
+						<p class="surface-body">{s.body}</p>
+					</article>
+				))}
+			</div>
+		</div>
+	</section>
+
+	<!-- 3. THE SEVEN. Framed correctly: not what the product IS, but what it is proven at. -->
+	<section class="section container reveal">
+		<Eyebrow>WHERE WE LEAD</Eyebrow>
+		<h2 class="section-title">Seven applications, worked out end to end.</h2>
+		<p class="section-lede">
+			Six operations on a named part — protect, repair, account, detect, isolate, remove — combine
+			into a large number of useful things. We have not proven all of them and will not claim to
+			have. Seven are finished, aimed at a market that is already paying for their absence, and
+			backed by evidence we will show you. They appear in the order of what each one asks of you.
+		</p>
+
+		<ol class="applications">
+			{features.map((f, i) => {
+				const lead = leadFor(f.id);
+				const serves = marketsFor(f.id);
+				return (
+					<li class="application">
+						<div class="application-head">
+							<p class="application-index tabular">{String(i + 1).padStart(2, '0')}</p>
+							<div>
+								<h3><a href={`/product/${f.id}`}>{f.name}</a></h3>
+								<p class="application-q">{f.question}</p>
+							</div>
+						</div>
+
+						<div class="application-body">
+							<p class="application-summary">{f.summary}</p>
+							<dl class="application-meta">
+								<div>
+									<dt>Built from</dt>
+									<dd class="application-caps">
+										{f.capabilities.map((c) => <span>{c}</span>)}
+									</dd>
+								</div>
+								<div>
+									<dt>Asks of you</dt>
+									<dd>{f.requires}</dd>
+								</div>
+								<div>
+									<dt>{lead ? 'Leads in' : 'Serves'}</dt>
+									<dd>
+										{lead
+											? `${lead.name}${serves.length > 1 ? ` · and ${serves.length - 1} more market${serves.length > 2 ? 's' : ''}` : ''}`
+											: serves.length === sectors.length
+												? 'All five markets'
+												: serves.map((s) => s.name).join(' · ')}
+									</dd>
+								</div>
+							</dl>
+							<a class="application-link" href={`/product/${f.id}`}>Read this application →</a>
+						</div>
+					</li>
+				);
+			})}
+		</ol>
+
+		<p class="applications-note">
+			Other combinations are possible and some of them are obvious. They are absent from this page
+			because we would not yet sign a contract against them.
+		</p>
+	</section>
+
+	<!-- 4. THE LICENCE. -->
+	<section class="band band--dark section reveal">
+		<div class="container">
+			<Eyebrow>HOW YOU GET IT</Eyebrow>
+			<h2 class="licence-title">There is no menu, and no per-application price.</h2>
+			<div class="licence-cols">
+				<p>
+					One deployment licence covers the architecture and everything it can be asked to do.
+					You turn on what your situation needs, and the scope goes into the contract rather than
+					onto a meter. Annual, per institution, running inside your own environment.
+				</p>
+				<p>
+					Beyond the software, the licence carries the parts that actually decide a regulated
+					deployment: integration into your stack, limits calibrated for your domain, builds
+					pinned to a version you can reproduce yourself, support, and indemnity. The research
+					and its experiments stay published, so the mechanism can be checked by anyone who
+					cares to.
+				</p>
+			</div>
+			<Button variant="secondary" href="/licensing">How licensing works</Button>
+		</div>
+	</section>
+
+	<GetInTouch variant="pre-book" heading="Start with the problem you already have." />
+</Page>

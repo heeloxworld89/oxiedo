@@ -13,6 +13,14 @@
 export interface Props {
 	id: string;
 	label: string;
+	/** Renders a <textarea>. A message field was a single-line <input> until 2026-09-07, which
+	 *  meant the one field people most needed to write in could not be written in. */
+	multiline?: boolean;
+	rows?: number;
+	/** Shown under the label in small type — used for "what to include" guidance. */
+	hint?: string;
+	/** Renders a <select>. Used for the role picker on /careers. */
+	options?: string[];
 	type?: 'text' | 'email' | 'tel' | 'url' | 'password' | 'number';
 	name?: string;
 	state?: 'default' | 'error' | 'disabled' | 'success';
@@ -24,6 +32,10 @@ export interface Props {
 const {
 	id,
 	label,
+	multiline = false,
+	rows = 5,
+	hint,
+	options,
 	type = 'text',
 	name,
 	state = 'default',
@@ -33,21 +45,50 @@ const {
 } = Astro.props;
 
 const errorId = `${id}-error`;
+const hintId = `${id}-hint`;
+const describedBy = [state === 'error' && errorMessage ? errorId : null, hint ? hintId : null]
+	.filter(Boolean)
+	.join(' ') || undefined;
 ---
 
 <div class="form-field">
 	<label for={id} class="form-field-label">{label}{required && ' *'}</label>
-	<input
-		id={id}
-		name={name ?? id}
-		type={type}
-		class={`form-field-input form-field-input--${state}`}
-		disabled={state === 'disabled'}
-		aria-invalid={state === 'error' ? 'true' : undefined}
-		aria-describedby={state === 'error' && errorMessage ? errorId : undefined}
-		value={value}
-		required={required}
-	/>
+	{hint && <p id={hintId} class="form-field-hint">{hint}</p>}
+	{options ? (
+		<select
+			id={id}
+			name={name ?? id}
+			class={`form-field-input form-field-select form-field-input--${state}`}
+			aria-describedby={describedBy}
+			required={required}
+		>
+			<option value="">Choose one…</option>
+			{options.map((o) => <option value={o}>{o}</option>)}
+		</select>
+	) : multiline ? (
+		<textarea
+			id={id}
+			name={name ?? id}
+			rows={rows}
+			class={`form-field-input form-field-textarea form-field-input--${state}`}
+			disabled={state === 'disabled'}
+			aria-invalid={state === 'error' ? 'true' : undefined}
+			aria-describedby={describedBy}
+			required={required}
+		>{value}</textarea>
+	) : (
+		<input
+			id={id}
+			name={name ?? id}
+			type={type}
+			class={`form-field-input form-field-input--${state}`}
+			disabled={state === 'disabled'}
+			aria-invalid={state === 'error' ? 'true' : undefined}
+			aria-describedby={describedBy}
+			value={value}
+			required={required}
+		/>
+	)}
 	{
 		state === 'error' && errorMessage && (
 			<p id={errorId} class="form-field-error">

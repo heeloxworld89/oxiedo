@@ -1,0 +1,219 @@
+---
+// CAREERS — new page, 2026-09-07. The five open roles were the tail of /about, which is the wrong
+// home: somebody looking for work does not read a company page to the bottom to find them, and
+// their presence there pushed the actual company story down the page.
+//
+// Every role keeps its TRUE commitment shape in the meta line — equity, a single engagement, one
+// consultation, a research partnership — because this is a pre-revenue, unfunded company and
+// presenting a one-off consultation as a salaried post is the one claim on this page a reader
+// could act on and be wrong about.
+//
+// Vocabulary updated in transit: "features" -> "applications", per the product reframe.
+import Page from '../layouts/Page.astro';
+import PageBanner from '../components/PageBanner.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import FormField from '../components/FormField.astro';
+
+const roles = [
+	{
+		id: 'dataset-partner',
+		title: 'Dataset partner',
+		meta: 'Research partnership · no equity, no fee',
+		flag: 'The binding constraint on everything else',
+		lede: 'No clinical, biological, financial or defence data has ever touched this system.',
+		body: [
+			'Every result to date is CIFAR-10 or CIFAR-100. That is not a gap in the engineering — the engineering is done and published. It is a gap in access, and it is the single thing most limiting this company.',
+			'If you hold a labelled dataset you suspect is dirty, or you have had a training run fail in a way nobody could explain afterwards, that is the conversation we want.',
+			'A dataset is not a gift and we do not ask for one. It is a research partnership: we run the diagnostic, you receive the report, your data never leaves your environment unless you decide otherwise, and we publish together if you want to.',
+		],
+	},
+	{
+		id: 'co-founder',
+		title: 'Co-founder',
+		meta: 'Equity · full-time',
+		flag: null,
+		lede: 'The architecture exists. What is missing is a second person.',
+		body: [
+			'Someone who has stood on the other side of the buying table in one regulated domain — inside a hospital\'s AI group, a bank\'s model risk function, a biotech\'s data team, or coordinating a multi-site research consortium.',
+			'Technically literate enough to survive a CTO\'s questions without needing to be the architect. What matters more is a network that cannot be built from where this is being built from.',
+			'This is not a hire. It is the other half of the company, and it is described that way because pretending otherwise would waste a year of someone\'s life.',
+		],
+	},
+	{
+		id: 'researcher',
+		title: 'Researcher',
+		meta: 'Contract or equity · part-time to full-time',
+		flag: null,
+		lede: 'Four measurements decide how much of this is real, and not one has been run.',
+		body: [
+			'Two of them matter most. Does the per-component health signal actually lead the global loss curve, and by how much? And does inter-component disagreement separate mislabelled data from data that is merely hard?',
+			'Four of the seven applications depend on the second answer. A negative result narrows what the product can be, which is exactly why the study is scheduled before the build rather than after it.',
+			'Beyond those: the architecture is demonstrated on fully-connected, convolutional and residual families. Whether it generalises to transformers is genuinely open — not assumed and not dismissed.',
+			'You would run experiments capable of falsifying the thesis, and co-author the result whichever way it goes.',
+		],
+	},
+	{
+		id: 'regulatory-consultant',
+		title: 'Regulatory consultant',
+		meta: 'One engagement · months of lead time',
+		flag: null,
+		lede: 'It gates the largest application in the product, and it has not started.',
+		body: [
+			'Someone who has actually filed a change-control plan for a machine learning system — under the FDA\'s PCCP framework, the EU AI Act, or an equivalent regime. Filed one, not read about one.',
+			'The work is to read a specification and say whether the artefact format matches what a reviewer expects to receive, or whether it is something adjacent that a reviewer would not recognise.',
+			'Either answer is worth having. If it is the wrong shape, that is worth knowing before more is built on it.',
+		],
+	},
+	{
+		id: 'data-protection-lawyer',
+		title: 'Data-protection lawyer',
+		meta: 'One consultation · no ongoing commitment',
+		flag: null,
+		lede: 'Until this is answered, certified deletion is a strong story rather than a certifiable product.',
+		body: [
+			'Someone working in AI data rights, willing to state what may and may not be put in writing when data is removed from a trained model.',
+			'The specific question: if we delete a bounded structure trained on a named sample set, and we can state a measured bound on the residual influence of that data — what may we certify, what may our customer certify to theirs, and does any of it constitute erasure under Article 17?',
+			'A certificate whose wording has not been checked is worse than no certificate, because it creates liability instead of removing it.',
+		],
+	},
+];
+---
+
+<Page title="Careers" description={"Five roles ordered by how much each unblocks. The one that matters most is not a job — it is a partner who holds data under obligation."}>
+	<PageBanner
+		eyebrow="CAREERS"
+		title="Five people would change what this company can do."
+		trail={[{ label: 'Home', href: '/' }, { label: 'Careers' }]}
+	/>
+
+	<section class="section container">
+		<div class="car-intro">
+			<div>
+				<p class="car-lede">
+					Oxiedo is pre-revenue and unfunded, and one person has built everything that exists. The
+					commitment shape is stated on every role below — some are equity, one is a single
+					consultation, one is a research partnership with no money attached in either direction —
+					because it would be easy to make this list look larger than it is, and you would find
+					out later.
+				</p>
+				<p class="car-lede">
+					They are ordered by how much each one unblocks, not by seniority. The first is not a job
+					at all, and it is the one that matters most.
+				</p>
+			</div>
+			<div class="car-facts">
+				<dl>
+					<div><dt>Stage</dt><dd>Pre-revenue, pre-customer</dd></div>
+					<div><dt>Team</dt><dd>One</dd></div>
+					<div><dt>Location</dt><dd>Remote, with the headquarters relocating to San Francisco</dd></div>
+					<div><dt>Reply time</dt><dd>A few days, usually less. Every message read by a person</dd></div>
+				</dl>
+			</div>
+		</div>
+	</section>
+
+	<section class="section container reveal">
+		<ol class="car-roles">
+			{roles.map((r, i) => (
+				<li class={`car-role${r.flag ? ' car-role--flag' : ''}`} id={r.id}>
+					<div class="car-role-head">
+						<span class="car-role-n tabular">{String(i + 1).padStart(2, '0')}</span>
+						<div>
+							<h2 class="car-role-title">{r.title}</h2>
+							<p class="car-role-meta">{r.meta}</p>
+							{r.flag && <p class="car-role-flag">{r.flag}</p>}
+						</div>
+					</div>
+					<div class="car-role-body">
+						<p class="car-role-lede">{r.lede}</p>
+						{r.body.map((para) => <p>{para}</p>)}
+						<Button variant="secondary" href="#apply" data-role={r.id}>Apply for this</Button>
+					</div>
+				</li>
+			))}
+		</ol>
+	</section>
+
+	<section class="band band--dark section reveal">
+		<div class="container">
+			<Eyebrow>HOW TO APPLY</Eyebrow>
+			<h2 class="car-dark-title">There is no form, no tracking system and no process.</h2>
+			<div class="car-apply">
+				<p>
+					Write to us and say which one, and what you have done that is relevant. A paragraph is
+					enough. A CV is fine if you have one to hand, and not required if you do not.
+				</p>
+				<p>
+					If it is not a fit we will say so directly rather than going quiet, because the
+					alternative wastes your time and we would rather not. If it is, the next conversation is
+					with the person who built this, because there is nobody else.
+				</p>
+			</div>
+			<Button variant="primary" href="#apply">Apply</Button>
+		</div>
+	</section>
+
+	<section class="section container reveal" id="apply">
+		<Eyebrow>APPLY</Eyebrow>
+		<h2 class="car-apply-title">One form, and it goes straight to the founder.</h2>
+		<p class="car-apply-lede">
+			No tracking system, no automated screen, no acknowledgement email written by somebody else.
+			If it is not a fit you will be told directly rather than left to work it out from silence.
+		</p>
+
+		<form class="car-form" id="apply-form" method="POST" action="/contact">
+			<FormField
+				id="apply-role"
+				label="Which one?"
+				options={[...roles.map((r) => r.title), 'Something else entirely']}
+				required
+			/>
+			<FormField id="apply-name" label="Name" required />
+			<FormField id="apply-email" label="Email" type="email" required />
+			<FormField
+				id="apply-links"
+				label="Anything that shows your work"
+				hint="A repository, a paper, a filing you wrote, a system you built. One good link beats a CV. Optional, but it is the part we read first."
+			/>
+			<FormField
+				id="apply-why"
+				label="Why this, and what would you want to own?"
+				hint="Two honest paragraphs are worth more than a page of qualifications. If you are bringing data rather than looking for a job, say what you hold and what would have to be true for you to release it."
+				multiline
+				required
+			/>
+			<input type="hidden" name="intent" value="apply" />
+			<div class="contact-form-honeypot" aria-hidden="true">
+				<label for="apply-website">Website</label>
+				<input type="text" id="apply-website" name="website" tabindex="-1" autocomplete="off" />
+			</div>
+			<Button variant="primary" type="submit">Send application</Button>
+		</form>
+	</section>
+
+	<script>
+		// A role card's "Apply for this" jumps to the form and preselects the role, so nobody has to
+		// remember which of five they were reading. Progressive enhancement: with JS off the links
+		// still land on the form, just without the preselection.
+		function wireRoleLinks() {
+			const select = document.getElementById('apply-role');
+			if (!(select instanceof HTMLSelectElement)) return;
+			document.querySelectorAll<HTMLAnchorElement>('a[data-role]').forEach((a) => {
+				if (a.dataset.roleBound) return;
+				a.dataset.roleBound = 'true';
+				a.addEventListener('click', (e) => {
+					e.preventDefault();
+					const card = document.getElementById(a.dataset.role ?? '');
+					const title = card?.querySelector('.car-role-title')?.textContent?.trim();
+					if (title && Array.from(select.options).some((o) => o.value === title)) {
+						select.value = title;
+					}
+					document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				});
+			});
+		}
+		wireRoleLinks();
+		document.addEventListener('astro:page-load', wireRoleLinks);
+	</script>
+</Page>

@@ -1,0 +1,348 @@
+---
+// ONE PAGE PER MARKET.
+//
+// WHAT WAS WRONG. The page rendered data/sectors.ts, which is an index: a name, an axis, a
+// question and one cost line. That is enough for a card. It produced a page of key points that
+// never explained what breaks, why the existing answers do not work, what we do about it
+// mechanically, or what it is worth — which is everything a buyer in these markets needs.
+//
+// It now renders data/markets.ts: situation, sourced evidence, named failures, an honest account
+// of the incumbents, the mechanism, the dated obligation landscape, the applications in scope, the
+// buyer, what we refuse to claim, and the sources. Every external figure is footnoted at the
+// bottom of the page it appears on.
+import Page from '../../layouts/Page.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import SectorGraphic from '../../components/SectorGraphic.astro';
+import GetInTouch from '../../components/GetInTouch.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import Button from '../../components/Button.astro';
+import { sectors } from '../../data/sectors';
+import { markets } from '../../data/markets';
+import { features } from '../../data/features';
+
+export function getStaticPaths() {
+	return sectors.map((sector) => ({ params: { id: sector.id }, props: { sector } }));
+}
+
+const { sector } = Astro.props;
+const m = markets[sector.id];
+
+// AI Training carries `regulatory: []` deliberately — it is the one market driven by cost rather
+// than by an instrument, which is exactly why its buyer sits in infrastructure and pays out of a
+// compute budget rather than a compliance one. The summary states that instead of rendering an
+// empty cell, and the distinction is a selling point rather than a gap.
+const driver = m.regulatory[0]?.title ?? 'No regulator — the compute budget the failed run came out of';
+const headline = m.evidence[0];
+
+const inScope = sector.features
+	.map((id) => features.find((f) => f.id === id))
+	.filter((f): f is NonNullable<typeof f> => Boolean(f));
+const lead = inScope.find((f) => f.id === sector.primaryFeature) ?? inScope[0];
+const rest = inScope.filter((f) => f.id !== lead.id);
+
+// Built from the same array that renders the sections, so the rail cannot drift out of step.
+const toc = [
+	{ id: 'situation', label: 'Where this market is' },
+	{ id: 'evidence', label: 'What it costs' },
+	{ id: 'failures', label: 'What breaks' },
+	{ id: 'incumbents', label: 'What is used today' },
+	{ id: 'mechanism', label: 'What ORMAS does' },
+	...(m.regulatory.length ? [{ id: 'regulatory', label: 'The obligations' }] : []),
+	{ id: 'scope', label: 'Applications in scope' },
+	{ id: 'objections', label: 'The objections' },
+	{ id: 'buyer', label: 'Who buys it' },
+	{ id: 'internal', label: 'Making the case' },
+	{ id: 'proof', label: 'What we can show you' },
+	{ id: 'limits', label: 'What we do not claim' },
+];
+---
+
+<Page title={sector.name} description={`${sector.question} How ORMAS applies in ${sector.name.toLowerCase()}: the failures, the regulation, the buyer, and the limits.`}>
+	<PageBanner
+		eyebrow="MARKET"
+		title={sector.name}
+		trail={[{ label: 'Home', href: '/' }, { label: 'Sectors', href: '/sectors' }, { label: sector.name }]}
+	/>
+
+	<nav class="appnav" aria-label="Markets">
+		<div class="appnav-inner container">
+			<span class="appnav-label">Markets</span>
+			<ul>
+				{sectors.map((s, i) => (
+					<li>
+						<a href={`/sectors/${s.id}`} aria-current={s.id === sector.id ? 'page' : undefined}>
+							<span class="appnav-index tabular">{String(i + 1).padStart(2, '0')}</span>
+							{s.name}
+						</a>
+					</li>
+				))}
+			</ul>
+		</div>
+	</nav>
+
+	<section class="section-tight container reveal">
+		<dl class="mk-summary">
+			<div class="mk-summary-cell">
+				<dt>The question</dt>
+				<dd>{sector.question}</dd>
+			</div>
+			<div class="mk-summary-cell">
+				<dt>What forces it</dt>
+				<dd>{driver}</dd>
+			</div>
+			<div class="mk-summary-cell mk-summary-cell--figure">
+				<dt>The number</dt>
+				<dd>
+					<span class="mk-summary-figure tabular">{headline.figure}</span>
+					<span class="mk-summary-unit">{headline.unit}</span>
+					<span class="mk-summary-note">{headline.note}</span>
+				</dd>
+			</div>
+		</dl>
+	</section>
+
+	<section class="section-tight container">
+		<div class="mk-intro">
+			<div>
+				<p class="mk-question">{sector.question}</p>
+				<p class="mk-thesis">{m.thesis}</p>
+			</div>
+			<div class="mk-reframe">
+				<p class="mk-reframe-claim">{m.reframe.claim}</p>
+				<p class="mk-reframe-body">{m.reframe.body}</p>
+			</div>
+		</div>
+	</section>
+
+	<div class="section container detail-layout">
+		<aside class="detail-rail">
+			<nav class="feature-toc" aria-label="On this page">
+				<p class="detail-rail-label">ON THIS PAGE</p>
+				<ol>
+					{toc.map((t, i) => (
+						<li>
+							<a href={`#${t.id}`}>
+								<span class="feature-toc-index tabular">{String(i + 1).padStart(2, '0')}</span>
+								{t.label}
+							</a>
+						</li>
+					))}
+				</ol>
+			</nav>
+		</aside>
+
+		<div class="detail-main">
+			<section class="mk-section" id="situation">
+				<Eyebrow>WHERE THIS MARKET IS</Eyebrow>
+				<div class="mk-prose">
+					{m.situation.map((para) => <p>{para}</p>)}
+				</div>
+				<div class="mk-figure">
+					<SectorGraphic id={sector.id} />
+				</div>
+			</section>
+
+			<section class="mk-section" id="evidence">
+				<Eyebrow>WHAT IT COSTS</Eyebrow>
+				<h2 class="section-title">The numbers this market already publishes about itself.</h2>
+				<div class="mk-evidence">
+					{m.evidence.map((e) => (
+						<div class="mk-evidence-item">
+							<p class="mk-evidence-figure tabular">{e.figure}</p>
+							<p class="mk-evidence-unit">{e.unit}</p>
+							<p class="mk-evidence-note">{e.note}</p>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section class="mk-section" id="failures">
+				<Eyebrow>WHAT BREAKS</Eyebrow>
+				<h2 class="section-title">Four things that go wrong, and why none of them is a tooling problem.</h2>
+				<ol class="mk-list">
+					{m.failures.map((f, i) => (
+						<li class="mk-list-item">
+							<span class="mk-list-index tabular">{String(i + 1).padStart(2, '0')}</span>
+							<div>
+								<h3>{f.title}</h3>
+								<p>{f.body}</p>
+							</div>
+						</li>
+					))}
+				</ol>
+			</section>
+
+			<section class="mk-section" id="incumbents">
+				<Eyebrow>WHAT IS USED TODAY</Eyebrow>
+				<h2 class="section-title">The current answers, and what each one genuinely does.</h2>
+				<p class="mk-section-lede">
+					These are not strawmen. Each is used because it works at the job it was built for. The
+					question is what remains unanswered afterwards.
+				</p>
+				<div class="mk-incumbents">
+					{m.incumbents.map((c) => (
+						<div class="mk-incumbent">
+							<h3>{c.title}</h3>
+							<p>{c.body}</p>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section class="mk-section mk-section--lit" id="mechanism">
+				<Eyebrow>WHAT ORMAS DOES</Eyebrow>
+				<h2 class="section-title">{sector.changes}</h2>
+				<ol class="mk-list">
+					{m.mechanism.map((x, i) => (
+						<li class="mk-list-item">
+							<span class="mk-list-index tabular">{String(i + 1).padStart(2, '0')}</span>
+							<div>
+								<h3>{x.title}</h3>
+								<p>{x.body}</p>
+							</div>
+						</li>
+					))}
+				</ol>
+			</section>
+
+			{m.regulatory.length > 0 && (
+				<section class="mk-section" id="regulatory">
+					<Eyebrow>THE OBLIGATIONS</Eyebrow>
+					<h2 class="section-title">What is required, and from when.</h2>
+					<div class="mk-reg">
+						{m.regulatory.map((r) => (
+							<div class="mk-reg-item">
+								<h3>{r.title}</h3>
+								<p>{r.body}</p>
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<section class="mk-section" id="scope">
+				<Eyebrow>APPLICATIONS IN SCOPE</Eyebrow>
+				<h2 class="section-title">{inScope.length} of the seven apply here. This is the one to start with.</h2>
+				<div class="mk-lead">
+					<p class="mk-lead-label">Lead application</p>
+					<h3><a href={`/product/${lead.id}`}>{lead.name}</a></h3>
+					<p class="mk-lead-q">{lead.question}</p>
+					<p class="mk-lead-body">{lead.summary}</p>
+					<p class="mk-lead-asks"><span>Asks of you</span> {lead.requires}</p>
+				</div>
+				<ul class="mk-rest">
+					{rest.map((f) => (
+						<li>
+							<a href={`/product/${f.id}`}>{f.name}</a>
+							<span>{f.question}</span>
+						</li>
+					))}
+				</ul>
+			</section>
+
+			<section class="mk-section" id="objections">
+				<Eyebrow>THE OBJECTIONS</Eyebrow>
+				<h2 class="section-title">Four things you are about to say, answered.</h2>
+				<p class="mk-section-lede">
+					A repeated objection is a gap in what we have explained, not a nuisance. These are the
+					four we expect in this market, in the words a buyer actually uses.
+				</p>
+				<div class="mk-objections">
+					{m.objections.map((o, i) => (
+						<div class="mk-objection">
+							<p class="mk-objection-q">
+								<span class="mk-objection-mark tabular">{String(i + 1).padStart(2, '0')}</span>
+								{o.q}
+							</p>
+							<p class="mk-objection-a">{o.a}</p>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section class="mk-section" id="buyer">
+				<Eyebrow>WHO BUYS IT</Eyebrow>
+				<h2 class="section-title">{m.buyer.title}</h2>
+				<dl class="mk-buyer">
+					<div><dt>Sits in</dt><dd>{m.buyer.sits}</dd></div>
+					<div><dt>Budget</dt><dd>{m.buyer.budget}</dd></div>
+					<div><dt>Trigger</dt><dd>{m.buyer.trigger}</dd></div>
+				</dl>
+				<blockquote class="mk-quote">
+					<p>{m.buyer.quote}</p>
+					<cite>{m.buyer.title}</cite>
+				</blockquote>
+			</section>
+
+			<section class="mk-section mk-section--lit" id="internal">
+				<Eyebrow>MAKING THE CASE</Eyebrow>
+				<h2 class="section-title">You are not the only person who has to say yes.</h2>
+				<p class="mk-section-lede">
+					Nothing at this size is bought by one person. These are the lines for the other four,
+					in the terms each of them is actually measured on.
+				</p>
+				<div class="mk-internal">
+					{m.internalCase.map((c) => (
+						<div class="mk-internal-item">
+							<p class="mk-internal-role">{c.role}</p>
+							<p class="mk-internal-needs">{c.needs}</p>
+							<p class="mk-internal-line">{c.line}</p>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section class="mk-section" id="proof">
+				<Eyebrow>WHAT WE CAN SHOW YOU</Eyebrow>
+				<h2 class="section-title">No customer references. An unusual amount of everything else.</h2>
+				<p class="mk-section-lede">
+					Nobody has deployed this, and we are not going to imply otherwise. What we can put in
+					front of an evaluation is the following, and most of it needs no contract first.
+				</p>
+				<ul class="mk-proof">
+					{m.proof.map((x) => <li>{x}</li>)}
+				</ul>
+
+				<div class="mk-notfor">
+					<p class="mk-notfor-label">Not for you if</p>
+					<ul>
+						{m.notFor.map((x) => <li>{x}</li>)}
+					</ul>
+				</div>
+			</section>
+
+			<section class="mk-section" id="limits">
+				<Eyebrow>WHAT WE DO NOT CLAIM</Eyebrow>
+				<h2 class="section-title">The boundaries, before you find them yourself.</h2>
+				<p class="mk-section-lede">
+					In markets whose central complaint is that vendors overstate their approximations,
+					stating our own limit precisely is the position rather than a caveat on it.
+				</p>
+				<ul class="mk-limits">
+					{m.limits.map((l) => <li>{l}</li>)}
+				</ul>
+			</section>
+
+			<section class="mk-section mk-sources">
+				<p class="mk-sources-label">Sources</p>
+				<ul>
+					{m.sources.map((s) => (
+						<li><a href={s.url} rel="noopener noreferrer" target="_blank">{s.label}</a></li>
+					))}
+				</ul>
+				<p class="mk-sources-note">
+					Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and
+					CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.
+					<a href="/technology"> The paper</a> carries the conditions for each.
+				</p>
+			</section>
+
+			<div class="mk-cta">
+				<Button variant="primary" href="/contact">Talk to us about this market</Button>
+				<Button variant="secondary" href="/product">See the product</Button>
+			</div>
+		</div>
+	</div>
+
+	<GetInTouch variant="other" heading={`Working in ${sector.name}?`} />
+</Page>

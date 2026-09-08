@@ -21,13 +21,21 @@ interface RateLimitStore {
 
 interface Env {
 	CONTACT_RATE_LIMIT?: RateLimitStore;
-	// TODO (Block 5): bind the chosen email provider here, e.g. an API token secret.
+	/** Resend API key. Without it this endpoint returns 502 and the client falls back to mailto. */
+	RESEND_API_KEY?: string;
+	/** Verified sender, e.g. "Oxiedo <contact@oxiedo.com>". Falls back to Resend's shared domain. */
+	MAIL_FROM?: string;
+	/** Recipient. Defaults to the founder's address, which is what the site publishes. */
+	MAIL_TO?: string;
 }
 
 const INTENTS: Record<string, string> = {
-	book: 'Book a Warning Light session',
-	'pre-book': 'Apply for a Charter Partnership',
+	book: 'Legacy intent, no longer sent by any form',
+	'pre-book': 'Pre-book a deployment',
 	invest: 'Investment conversation',
+	press: 'Press enquiry',
+	data: 'Data protection request',
+	apply: 'Application',
 	other: 'Other',
 };
 
@@ -36,14 +44,15 @@ const INTENTS: Record<string, string> = {
 // Fields not listed (e.g. invest-thesis) are genuinely optional and must not be rejected empty.
 const REQUIRED_FIELDS: Record<string, string[]> = {
 	book: ['book-name', 'book-org', 'book-frequency', 'book-cost', 'book-stack'],
-	'pre-book': [
-		'prebook-solution',
-		'prebook-regulation',
-		'prebook-approach',
-		'prebook-timeline',
-		'prebook-org',
-	],
+	// UPDATED 2026-09-07 with the rewritten form. These names must match the `required` fields in
+	// src/pages/contact.astro exactly — the old list named prebook-solution/-approach/-timeline,
+	// which no longer exist, so every pre-book submission would have been rejected with a 400
+	// naming a field the sender could not see.
+	'pre-book': ['prebook-org', 'prebook-email', 'prebook-regulation', 'prebook-context'],
 	invest: ['invest-name', 'invest-email', 'invest-org'],
+	press: ['press-name', 'press-email', 'press-outlet', 'press-message'],
+	data: ['data-name', 'data-email', 'data-request'],
+	apply: ['apply-role', 'apply-name', 'apply-email', 'apply-why'],
 	other: ['other-name', 'other-email', 'other-message'],
 };
 
@@ -63,11 +72,51 @@ async function isRateLimited(env: Env, ip: string): Promise<boolean> {
 	return false;
 }
 
-async function sendEmail(_subject: string, _fields: Record<string, string>): Promise<void> {
-	// TODO (Block 5): no sending domain or provider is configured yet. Wire the chosen provider
-	// here once the domain email in design/10, design/14, and the footer is real. Do not log
-	// `_fields` anywhere — message bodies are never persisted, per design/14 §9.
-	throw new Error('Email sending is not configured yet — see TODO above.');
+// Implemented 2026-09-08. Resend, because it is one fetch with no SDK — a Pages Function has no
+// npm install step, so a provider that needs a client library is the wrong choice here.
+//
+// The body is assembled as plain text and passed straight to the provider. It is never logged,
+// never persisted and never written to KV: the only copy that exists after this call returns is
+// the one in the recipient's inbox.
+async function sendEmail(
+	env: Env,
+	subject: string,
+	fields: Record<string, string>,
+): Promise<void> {
+	if (!env.RESEND_API_KEY) {
+		throw new Error('RESEND_API_KEY is not bound.');
+	}
+
+	const text = Object.entries(fields)
+		.map(([k, v]) => `${k}\n${v}\n`)
+		.join('\n');
+
+	const res = await fetch('https://api.resend.com/emails', {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${env.RESEND_API_KEY}`,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			from: env.MAIL_FROM ?? 'Oxiedo <onboarding@resend.dev>',
+			to: [env.MAIL_TO ?? 'rokib@blackbloxie.com'],
+			// Reply-to is whichever email field the intent actually carried, so hitting reply in the
+		// inbox goes to the sender rather than to us.
+		reply_to:
+			fields['prebook-email'] ??
+			fields['invest-email'] ??
+			fields['press-email'] ??
+			fields['data-email'] ??
+			fields['apply-email'] ??
+			fields['other-email'],
+			subject,
+			text,
+		}),
+	});
+
+	// Deliberately not reading the body on failure: it can echo submitted content, and this
+	// function does not put message content anywhere it could be captured by a log.
+	if (!res.ok) throw new Error(`Provider returned ${res.status}`);
 }
 
 export const onRequestPost = async (context: { request: Request; env: Env }): Promise<Response> => {
@@ -110,7 +159,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
 	}
 
 	try {
-		await sendEmail(`Oxiedo contact — ${INTENTS[intentId]}`, fields);
+		await sendEmail(env, `Oxiedo contact — ${INTENTS[intentId]}`, fields);
 	} catch {
 		return new Response('Could not send.', { status: 502 });
 	}

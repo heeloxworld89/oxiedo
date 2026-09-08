@@ -1,208 +1,543 @@
 ---
-// design/08_INVEST.md, ui_ux/08_INVEST_UI.md.
-// No TAM figure, no projection sparklines, no simulated raise indicators — all explicitly
-// forbidden by ui_ux/08. "What is open" (§4) must outweigh the metric bento visually; it is
-// rendered larger and after the ladder, not squeezed beside the metrics.
+// INVEST — rebuilt 2026-09-07 as a pre-seed investor page.
+//
+// THE ROUND SIZE IS NOW DERIVED, NOT GUESSED. An earlier draft said "$2M–$5M" on the strength of
+// a single band in one article. That was too vague to survive a partner meeting: any investor
+// prices the compute line in their head in about ten seconds, and a range that wide reads as a
+// founder who has not done it. The figure below is built bottom-up from published 2026 rates and
+// benchmarked against pre-seed market data. Both are shown on the page, because showing the
+// arithmetic is itself the credential.
+//
+//   MARKET (H1 2026): broad pre-seed median ~$1.2M, range $500K–$2.5M. Deep tech and AI
+//   infrastructure raise $2M–$5M because of compute. AI seed median $4.6M, a 1.3x premium.
+//   Pre-money medians $7M–$12M, AI ~42% above non-AI peers. The market has split into a barbell —
+//   sub-$250K party rounds and $2.5M+ lead-led rounds — so a figure between those is the one
+//   position with no natural buyer.
+//
+//   BOTTOM-UP: compute $1.6M + team $1.8M + data partnerships $550K + assurance $350K +
+//   operating $200K = $4.5M. Every line is costed on the page.
+//
+// "800 CLUSTERS" IS READ AS AN 800-GPU CLUSTER, and — this is the substantive change — as a
+// BOUNDED CAMPAIGN rather than standing capacity. At reserved 2026 rates of roughly $2.00–3.09
+// per GPU-hour, 800 accelerators cost about $1.15M *per month*. Standing capacity would consume
+// the entire round in under four months and no investor would fund it. A defined window with an
+// acceptance criterion and then release is both affordable and a capital-discipline signal.
+// If 800 was meant as standing capacity, or as clusters rather than GPUs, the round is a Series A
+// or B and this page needs rebuilding around that instead.
+//
+// HOW THIS PAGE IS ORDERED, and why it is not the order of the rest of the site. Investor
+// research is consistent on three things: the insight is the strongest asset and goes first; the
+// silent question behind every "why now" is "if this is a good idea, why has nobody built it";
+// and money is committed against de-risking, not against science. So: insight, then why the
+// window is open and dated, then what is already de-risked, then what this round de-risks next,
+// then what remains true and unflattering. The risk register is on the page deliberately — deep
+// tech investors read its absence as naivety, and its presence is the cheapest credibility on
+// offer.
+//
+// THE MOAT ARGUMENT IS "UNCOMPRESSIBLE TIME", not secrecy. The mechanism is published, so the
+// defensibility cannot rest on nobody knowing it. It rests on what capital cannot compress:
+// regulatory acceptance, calibration history, and an adversarial record. That is the strongest
+// available position for a published architecture and it is stated as such rather than hedged.
 import Page from '../layouts/Page.astro';
+import PageBanner from '../components/PageBanner.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Button from '../components/Button.astro';
-import DisclosurePanel from '../components/DisclosurePanel.astro';
-import LadderSchematic from '../components/LadderSchematic.astro';
-import FormField from '../components/FormField.astro';
-import { solutions } from '../data/solutions';
 
-const metrics = [
-	{ figure: '+70.3 pp', label: 'Recovery advantage over standard networks' },
-	{ figure: '383', label: 'Controlled experiments' },
-	{ figure: '16,316', label: 'Lines of code' },
-	{ figure: '7 / 1', label: 'Solutions specified / available now' },
+const raise = {
+	stage: 'Pre-seed',
+	size: '$4.5M',
+	gpus: 800,
+	runway: '24 months',
+	gpuRate: '$2.00',
+	gpuDays: 40,
+};
+
+// Published H1 2026 benchmarks. On the page because pricing yourself against the market, out loud,
+// is a stronger signal than any adjective — and because an investor is holding these numbers
+// anyway.
+const benchmarks = [
+	{ k: 'Broad pre-seed median', v: '$1.2M', note: 'All sectors, H1 2026. Range $500K–$2.5M.' },
+	{ k: 'Deep tech and AI infrastructure', v: '$2M–$5M', note: 'Raised above the median specifically to cover compute and research.' },
+	{ k: 'AI seed median', v: '$4.6M', note: 'A 1.3x premium on the broader seed market.' },
+	{ k: 'This round', v: '$4.5M', note: 'Top of the deep tech pre-seed band, costed line by line below.' },
 ];
 
-const ladderRows = solutions.map((s) => ({
-	name: s.name,
-	price: s.pricing.map((p) => `${p.label}: ${p.amount}`).join(' · '),
-	gate: s.gate ? s.gate.name : 'Available now',
-}));
+// (6) THE ONE-SCREEN SUMMARY. This page is ~2,600 words inside a 45,000-word site, and a partner
+// meeting runs on something a single person can forward. Six lines, ~210 words, every figure
+// repeated verbatim from further down the page so the summary can never drift from the argument
+// it summarises. It sits above everything because the reader who needs it most is the one who
+// will not scroll.
+const brief = [
+	{ k: 'The insight', v: 'Every interpretability and monitoring tool estimates a model from outside it, and an estimate is an opinion. ORMAS bounds each node’s gradient chain to four operations, so attribution stops being an estimate and becomes a measurement taken during training. If that is right, every regulated training run eventually has to be built this way, and the layer the market is currently funding is the wrong layer.' },
+	{ k: 'What exists', v: '383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Manuscript under peer review.' },
+	{ k: 'Why now', v: 'The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.' },
+	{ k: 'The moat', v: 'The mechanism publishes on acceptance, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.' },
+	{ k: 'The ask', v: '$4.5M pre-seed, 24 months, six milestones with acceptance criteria. Team $1.8M · compute $1.6M · data partnerships $550K · assurance $350K · operating $200K.' },
+	{ k: 'The risk', v: 'No revenue, no customers, zero customer conversations. One person. Every result on CIFAR-10 and CIFAR-100. The whole remaining programme is falsifiable for under 30 GPU-hours, which is the fastest way to find out if we are wrong.' },
+];
 
-const raiseUses = [
+const stats = [
+	{ figure: '+70.3', unit: 'pp', label: 'Recovery from catastrophic structural collapse, where a parameter-matched baseline is permanently dead' },
+	{ figure: '383', unit: '', label: 'Controlled experiments across four architecture families, every run reproducible from seed' },
+	{ figure: '<30', unit: 'GPU-hrs', label: 'To falsify the entire remaining research programme, on a single card' },
+	{ figure: '1', unit: 'person', label: 'Who built all of it. The second is the most consequential thing this round buys' },
+];
+
+// The regulatory calendar. Every date here is legislated rather than forecast, which is the whole
+// argument of the section — the demand event has a date on it and the architecture has to exist
+// before it, not after.
+const CH = { w: 780, h: 0, rowH: 48, top: 56, labelW: 274, plotR: 752 };
+const events = [
+	{ date: '2026-04-17', label: 'SR 26-2 supersedes SR 11-7', who: 'Fed · FDIC · OCC', past: true },
+	{ date: '2026-07-27', label: 'EU AI Act Omnibus in force', who: 'European Commission', past: true },
+	{ date: '2027-12-02', label: 'Annex III high-risk obligations apply', who: 'EU AI Act', past: false },
+	{ date: '2028-08-02', label: 'Annex I obligations apply', who: 'EU AI Act', past: false },
+	{ date: '2029-03-01', label: 'European Health Data Space, first phase', who: 'EHDS', past: false },
+	{ date: '2031-03-01', label: 'European Health Data Space, full scope', who: 'EHDS', past: false },
+];
+CH.h = CH.top + events.length * CH.rowH + 24;
+const T0 = Date.parse('2026-01-01');
+const T1 = Date.parse('2032-01-01');
+const x = (d: string) => CH.labelW + ((Date.parse(d) - T0) / (T1 - T0)) * (CH.plotR - CH.labelW);
+const years = [2026, 2027, 2028, 2029, 2030, 2031];
+const today = '2026-09-07';
+
+const uses = [
 	{
-		title: 'The two validation studies',
-		body: 'The monitoring lead-time measurement (~8 GPU-hours): does the health signal lead the global loss curve? The separation study (~20 GPU-hours): does inter-node disagreement separate mislabelled data from hard data? Both run on existing hardware. Capital accelerates the timeline.',
+		n: '01',
+		title: 'Team',
+		amount: '$1.8M',
+		pct: 40,
+		unit: 'Five people, 24 months, fully loaded',
+		body: 'A co-founder, two research engineers, a systems engineer to take a research codebase to something an institution can deploy, and an assurance lead who owns the bound. The company is one person. That is not modesty — there is more validated work available right now than one person can execute, and every month of it is being lost.',
+		milestone: 'Three people who can independently extend the architecture, and one production implementation with the modification record unified across every code path.',
+		removes: 'Key-person risk',
 	},
 	{
-		title: 'The first three engagements',
-		body: 'Turning "bookable" into "booked." Taking the first design partners through a full diagnostic, generating the first real non-CIFAR result, and publishing it with the partner.',
+		n: '02',
+		title: 'Compute',
+		amount: '$1.6M',
+		pct: 36,
+		unit: '800 NVIDIA SXM accelerators — 100 nodes × 8 — NVLink intra-node, 400G InfiniBand fabric, all-flash NVMe. Reserved, not owned. A bounded 4–6 week campaign.',
+		body: 'Every result to date runs on CIFAR because that is what one person could afford. The first question any technical evaluator asks is whether the property holds at scale, and it is answerable with hardware and not answerable without it. The requirement is a genuine training fabric rather than a pile of cards: 100 eight-GPU nodes on NVLink, joined by 400G InfiniBand, with flash on the same fabric — the bottleneck in a bounded-attribution run is interconnect, not FLOPs. It is rented and released. Buying 800 accelerators is roughly $30M of hardware before power, and holding them idle is the most common way a round this size disappears with nothing attached to it.',
+		milestone: 'Bounded attribution demonstrated at frontier parameter counts, on the same adversarial suite the current architecture was hardened against, with every run reproducible from seed.',
+		removes: 'Scale risk',
 	},
 	{
-		title: 'The legal and regulatory consultations',
-		body: 'Two consultations with months of lead time, both urgently needed: a regulatory consultant who has filed a change-control plan, and a data-protection lawyer who works in AI. Neither has been engaged.',
+		n: '03',
+		title: 'Data partnerships',
+		amount: '$550K',
+		pct: 12,
+		unit: 'Three to five non-exclusive regulated datasets, $50K–$500K each, plus the legal work around them',
+		body: 'No clinical, biological, financial or defence data has ever touched this system, and one partnership does not fix that — a property demonstrated on a single dataset is a coincidence until it holds across sectors. This funds several in parallel, plus the data use agreements, ethics approvals and custodian assurance work that gate each one. Healthcare AI developers spend an average of $2.4M a year on licensed data; the ask here is deliberately at the non-exclusive end.',
+		milestone: 'Three signed dataset partnerships across at least two regulated sectors, and the property demonstrated on data carrying a real obligation.',
+		removes: 'Domain risk',
 	},
 	{
-		title: 'The technical co-founder',
-		body: 'One person is building this. Capital allows that person to be found rather than competed for later. The architecture is done; the company-building is not.',
+		n: '04',
+		title: 'Assurance, certification and IP',
+		amount: '$350K',
+		pct: 8,
+		unit: 'Delaware C-corp conversion, SOC 2 Type II, ISO 27001, EU Article 27 representation, patent filings',
+		body: 'Every one of these is a gate rather than an ornament. The Delaware conversion has to complete before a US institutional round can close into it. SOC 2 is a procurement baseline in 2026 rather than a differentiator. An EU Article 27 representative is a legal requirement for a UK company offering services to EU data subjects. And the programme extending the architecture cannot be published until it is protected. None of this is optional and all of it has a lead time measured in months.',
+		milestone: 'Delaware C-corporation incorporated and the round able to close into it, SOC 2 Type II held, EU representation appointed, and priority filings made.',
+		removes: 'Procurement and structural risk',
 	},
+	{
+		n: '05',
+		title: 'Calibrating the bound',
+		amount: 'Within compute and team',
+		pct: 0,
+		unit: 'The asset a reimplementation does not come with',
+		body: 'What an institution licenses is not the architecture, which is released on publication and free to copy from that day. It is a calibrated bound and a counterparty who will stand behind it in a filing. Calibration is accumulated runs, adversarial testing and failure history — it is bought with the compute and the people above, and it is the single line on this page that compounds.',
+		milestone: 'A published calibration methodology and a bound an external validator can independently verify.',
+		removes: 'Commercial risk',
+	},
+	{
+		n: '06',
+		title: 'Operating',
+		amount: '$200K',
+		pct: 4,
+		unit: '24 months of everything else',
+		body: 'Insurance, tooling, accounting, the San Francisco relocation, and the contingency any honest budget carries. Listed rather than folded into another line, because a use-of-funds with no operating line has simply hidden it somewhere else.',
+		milestone: '24 months of runway with the milestones above met inside it.',
+		removes: 'Runway risk',
+	},
+];
+
+// Capital discipline reads louder than ambition at pre-seed, and what a founder refuses to spend
+// on says more than what they will.
+const notSpending = [
+	{ k: 'Standing GPU capacity', v: 'The compute is a bounded campaign with a release date. Idle accelerators are the most common way a deep tech round disappears without a result attached.' },
+	{ k: 'Sales headcount', v: 'There is nothing to scale yet. The first conversations are had by the person who built the architecture, because at this stage they are technical conversations.' },
+	{ k: 'Marketing spend', v: 'The buyers are a few hundred institutions worldwide and they are reachable by name. Demand generation is not the constraint; evidence is.' },
+	{ k: 'Exclusive data deals', v: 'Exclusive refreshed regulated data runs $500K–$5M a year and would consume the round. Non-exclusive datasets prove the same property at a tenth of the price.' },
+];
+
+const derisked = [
+	{ k: 'Does the mechanism work', v: 'Removed. 383 controlled experiments, 67 archived runs reproducible from seed, +70.3 pp recovery under structural collapse, published and checkable.', done: true },
+	{ k: 'Is it a real architecture or a wrapper', v: 'Removed. 16,316 lines across 85 files, four architecture families, an adversarial suite the first version failed and the second had to clear.', done: true },
+	{ k: 'Is the demand real', v: 'Removed by legislation rather than by us. The obligations arrive on dates already in law.', done: true },
+	{ k: 'Does it hold at scale', v: 'Live. This is what the compute in this round buys, and it is falsifiable for under 30 GPU-hours.', done: false },
+	{ k: 'Does it hold on regulated data', v: 'Live. Requires a dataset partner, which is the first line item after compute.', done: false },
+	{ k: 'Will institutions buy it', v: 'Live. Zero customer conversations have taken place.', done: false },
+];
+
+const risks = [
+	{ q: 'No revenue, no customers, no pilot.', a: 'Zero customer conversations have taken place. Nothing on this site claims otherwise, and any diligence process will confirm it quickly.' },
+	{ q: 'One adverse published result.', a: 'Under adversarial weight injection the architecture is 1.0 pp worse than a parameter-matched baseline. It is published on the technology page and named in every market where it bears on a decision.' },
+	{ q: 'Key-person risk is total.', a: 'One person wrote all of it. That is the first thing this round is spent on, and it is the reason the round exists at this size rather than a smaller one.' },
+	{ q: 'You are giving the mechanism away.', a: 'Deliberately, and on acceptance rather than now — a result nobody can check is worth nothing to a regulator, and the defensibility was never intended to rest on secrecy. What is not published is the programme extending it, which stays unpublished until it is protected.' },
+	{ q: 'The evidence base is CIFAR-10 and CIFAR-100.', a: 'Stated on every page where a result appears. The architecture is domain-independent by construction; that is an argument, and this round converts it into a result.' },
+	{ q: 'Regulatory timelines can move.', a: 'They can, and they have moved before — the Omnibus shifted Annex III to December 2027. They move later, not away. Every reset extends the window rather than closing it.' },
 ];
 ---
 
-<Page title="THE INVESTMENT CASE">
+<Page title="Invest" description={"Pre-seed, $4.5M, six named milestones. Every regulated training run will soon have to account for itself, and almost none of them can."}>
+	<PageBanner
+		eyebrow="INVEST"
+		title="Every model in a regulated industry will soon have to account for itself. Almost none of them can."
+		trail={[{ label: 'Home', href: '/' }, { label: 'Invest' }]}
+	/>
+
+	<section class="section-tight container reveal">
+		<div class="iv-brief">
+			<p class="iv-brief-label">The whole thing, in one screen</p>
+			<dl class="iv-brief-list">
+				{brief.map((b) => (
+					<div class="iv-brief-row">
+						<dt>{b.k}</dt>
+						<dd>{b.v}</dd>
+					</div>
+				))}
+			</dl>
+		</div>
+	</section>
+
 	<section class="section container">
-		<Eyebrow>THE INVESTMENT CASE</Eyebrow>
-		<h1>
-			ORMAS is a commercial primitive in a market that does not yet have one. The primitive
-			works. The solutions are specified. The evidence is documented.
-		</h1>
-		<p class="invest-subhead">
-			We are not asking anyone to believe the category exists. We are asking whether the
-			evidence justifies a conversation.
-		</p>
-		<Button variant="primary" href="/contact">Request the full brief</Button>
+		<div class="iv-thesis">
+			<p class="iv-thesis-lead">
+				The entire field treats attribution as something you reconstruct after training. It is not.
+				It is something a network either computes about itself, or does not.
+			</p>
+			<div class="iv-thesis-body">
+				<p class="iv-thesis-p">
+					Interpretability, monitoring and governance tooling all share one assumption: that you
+					can build a simpler model of a trained network and report what the approximation says.
+					That assumption is why two of those tools disagree on the same input, and why none of
+					their output can be entered as evidence by an institution that is legally obliged to
+					produce some.
+				</p>
+				<p class="iv-thesis-p">
+					ORMAS bounds each node’s local gradient chain to four operations through a shared
+					4,715-parameter bottleneck. Because the chain is bounded, per-node attribution stops
+					being an estimate and becomes a measurement taken from the backward pass. A model
+					trained this way arrives with the account already made.
+				</p>
+				<p class="iv-thesis-turn">
+					If that is right, every regulated training run eventually has to be built this way, and
+					the layer everyone is currently investing in is the wrong layer.
+				</p>
+			</div>
+		</div>
 	</section>
 
-	<section class="section container reveal">
-		<div class="metric-bento">
-			{
-				metrics.map((m) => (
-					<div class="metric-bento-cell">
-						<p class="metric-bento-figure tabular">{m.figure}</p>
-						<p class="metric-bento-label">{m.label}</p>
+	<section class="band band--dark section reveal">
+		<div class="container">
+			<div class="iv-stats">
+				{stats.map((s) => (
+					<div class="iv-stat">
+						<p class="iv-stat-figure tabular">
+							{s.figure}{s.unit && <span class="iv-stat-unit">{s.unit}</span>}
+						</p>
+						<p class="iv-stat-label">{s.label}</p>
 					</div>
-				))
-			}
+				))}
+			</div>
 		</div>
 	</section>
 
 	<section class="section container reveal">
-		<p class="invest-case">
-			ORMAS is an architectural primitive — a constraint on how neural networks train — that
-			gives every node of the network an independently addressable identity. That property
-			does not exist in standard architectures. It cannot be approximated by post-hoc tools.
-			It can only be built in, and it has been.
+		<Eyebrow>WHY NOW</Eyebrow>
+		<h2 class="iv-h2">The demand event has a date on it.</h2>
+		<p class="iv-lede">
+			The usual answer to “why has nobody built this” is that the incentive did not exist. Here it
+			is arriving on a legislated calendar, and an architecture cannot be retrofitted into a model
+			that has already been trained — so it has to exist before the date, not after it.
 		</p>
-		<p class="invest-case">
-			The commercial consequence: a network with addressable nodes can protect regions,
-			repair them, account for their activity, separate them by data source, and delete
-			specific data contributions on request. Those five operations map directly onto five
-			markets with clearly named buyers, documented pain, and published alternatives that are
-			either absent or orders of magnitude more expensive than what this architecture makes
-			possible.
-		</p>
-		<p class="invest-case">
-			The evidence base for the primitive is 383 controlled experiments across four
-			architecture families, adversarially tested by its own author's kill suite, with a
-			preprint under review. That is an unusual artifact for an unfunded company. The
-			question the raise answers is: what does this look like at scale?
+
+		<figure class="iv-chart">
+			<svg
+				viewBox={`0 0 ${CH.w} ${CH.h}`}
+				class="iv-chart-svg"
+				role="img"
+				aria-label="Regulatory calendar from 2026 to 2031. SR 26-2 effective April 2026. EU AI Act Omnibus in force July 2026. EU AI Act Annex III high-risk obligations apply 2 December 2027. Annex I obligations apply 2 August 2028. European Health Data Space first phase 2029, full scope 2031."
+			>
+				{years.map((y) => (
+					<g>
+						<line
+							x1={x(`${y}-01-01`)} y1={CH.top - 22}
+							x2={x(`${y}-01-01`)} y2={CH.h - 20}
+							class="iv-chart-grid"
+						/>
+						<text x={x(`${y}-01-01`)} y={CH.top - 30} class="iv-chart-year">{y}</text>
+					</g>
+				))}
+
+				<line
+					x1={x(today)} y1={CH.top - 22}
+					x2={x(today)} y2={CH.h - 20}
+					class="iv-chart-now"
+				/>
+				<text x={x(today)} y={CH.h - 6} class="iv-chart-nowlabel">TODAY</text>
+
+				{events.map((e, i) => {
+					const cy = CH.top + i * CH.rowH;
+					return (
+						<g>
+							<text x={CH.labelW - 16} y={cy - 2} class="iv-chart-label">{e.label}</text>
+							<text x={CH.labelW - 16} y={cy + 13} class="iv-chart-who">{e.who}</text>
+							<line x1={CH.labelW} y1={cy + 1} x2={x(e.date) - 7} y2={cy + 1} class="iv-chart-lead" />
+							<circle
+								cx={x(e.date)} cy={cy + 1} r="5.5"
+								class={e.past ? 'iv-chart-dot iv-chart-dot--past' : 'iv-chart-dot'}
+							/>
+						</g>
+					);
+				})}
+			</svg>
+			<figcaption class="iv-chart-cap">
+				Dates in law as at September 2026. Filled marks have already taken effect.
+			</figcaption>
+		</figure>
+
+		<p class="iv-note">
+			Two of these have already happened. An institution that begins the architecture question in
+			2027 is not late by a quarter — it is late by a training cycle, and a training cycle in a
+			regulated environment is measured in years.
 		</p>
 	</section>
 
-	<section class="section container reveal">
-		<Eyebrow>THE SOLUTION LADDER</Eyebrow>
-		<h2>Seven solutions. One available now, two open for pre-booking. One gate separates the tiers.</h2>
-		<LadderSchematic />
-		<div class="invest-ladder-detail">
-			{
-				ladderRows.map((row) => (
-					<div class="invest-ladder-row">
-						<p class="invest-ladder-name">{row.name}</p>
-						<p class="invest-ladder-price tabular">{row.price}</p>
-						<p class="invest-ladder-gate">{row.gate}</p>
-					</div>
-				))
-			}
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>DEFENSIBILITY</Eyebrow>
+			<h2 class="iv-h2">The moat is time nobody can buy.</h2>
+			<p class="iv-lede">
+				The mechanism is published on acceptance, so defensibility does not rest on secrecy and this
+				page will not pretend it does. It rests on the things capital cannot compress.
+			</p>
+			<div class="iv-moat">
+				<article class="iv-moat-item">
+					<h3 class="iv-moat-title">Regulatory acceptance is not compressible</h3>
+					<p class="iv-moat-body">
+						A competitor can reimplement a published architecture in weeks. They cannot compress
+						the time it takes a validator, an examiner or a notified body to accept a counterparty
+						and a method. That clock runs at the speed of institutions, and it does not run faster
+						for a better-funded entrant.
+					</p>
+				</article>
+				<article class="iv-moat-item">
+					<h3 class="iv-moat-title">Calibration is empirical, not architectural</h3>
+					<p class="iv-moat-body">
+						What is licensed is a calibrated bound and somebody accountable for it. Calibration is
+						accumulated runs, adversarial testing and failure history. A reimplementation arrives
+						with the architecture and none of the record behind it, which is the part an institution
+						is actually buying.
+					</p>
+				</article>
+				<article class="iv-moat-item">
+					<h3 class="iv-moat-title">Publishing is the distribution strategy</h3>
+					<p class="iv-moat-body">
+						In fields where the buyer is obliged to show their working, the released implementation
+						becomes the one validators check against. Being the reference is a stronger position
+						than being the secret, and it is only available to whoever publishes first.
+					</p>
+				</article>
+				<article class="iv-moat-item">
+					<h3 class="iv-moat-title">The incumbents are structurally committed</h3>
+					<p class="iv-moat-body">
+						Every interpretability and observability vendor is built on the premise that attribution
+						is recovered after training. Adopting this architecture means conceding that premise was
+						wrong. That is not a product decision they can take quickly.
+					</p>
+				</article>
+			</div>
 		</div>
-		<p class="invest-ladder-note">All prices: designed, not yet tested against real customers.</p>
-		<p class="invest-gate-summary">
-			Four of the seven solutions depend on one validation study: a 20 GPU-hour run that
-			tests whether the architecture's per-node readouts can separate mislabelled data from
-			hard-but-correctly-labelled data. Pass: all seven solutions are reachable. Fail: four
-			solutions close. The first three remain. The downside case is a working company, not
-			zero.
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>THE NUMBER</Eyebrow>
+		<h2 class="iv-h2">{raise.size}, and here is the arithmetic behind it.</h2>
+		<p class="iv-lede">
+			Priced against the market rather than picked. The published H1 2026 benchmarks are below,
+			and every line of the round is costed underneath them at rates anyone can check.
 		</p>
-		<Button variant="tertiary" href="/solutions">See the full solution detail</Button>
-	</section>
-
-	<section class="section container reveal">
-		<Eyebrow>THE FIVE MARKETS</Eyebrow>
-		<h2>Five markets. All reading the same record differently.</h2>
-		<Button variant="tertiary" href="/sectors">Full market analysis</Button>
-	</section>
-
-	<section class="section container reveal">
-		<Eyebrow>THE LICENSING MOAT</Eyebrow>
-		<h2>The engine is MIT. The moat is the record.</h2>
-		<p class="invest-case">
-			What compounds is not the code. The customer's accumulated record. Their calibrated
-			bound. The fact that somebody signed it.
+		<div class="iv-bench">
+			{benchmarks.map((b, i) => (
+				<div class={i === benchmarks.length - 1 ? 'iv-bench-row iv-bench-row--ours' : 'iv-bench-row'}>
+					<p class="iv-bench-k">{b.k}</p>
+					<p class="iv-bench-v tabular">{b.v}</p>
+					<p class="iv-bench-note">{b.note}</p>
+				</div>
+			))}
+		</div>
+		<p class="iv-note">
+			The pre-seed market in 2026 is a barbell — sub-$250K party rounds at one end, $2.5M+
+			lead-led rounds at the other. A figure in between is the one position with no natural
+			buyer, and it would also not cover the compute.
 		</p>
-		<Button variant="tertiary" href="/licensing">Full licensing detail</Button>
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>WHAT THE RAISE IS FOR</Eyebrow>
-		<h2>What this becomes with capital.</h2>
-		<ol class="invest-raise-uses">
-			{
-				raiseUses.map((use, i) => (
-					<li class="invest-raise-use">
-						<span class="invest-raise-use-index">{i + 1}</span>
-						<div>
-							<p class="invest-raise-use-title">{use.title}</p>
-							<p class="invest-raise-use-body">{use.body}</p>
+		<Eyebrow>USE OF FUNDS</Eyebrow>
+		<h2 class="iv-h2">Six line items. Each one buys down a named risk.</h2>
+		<p class="iv-lede">
+			Deep tech is funded against de-risking rather than revenue, so this is set out as risks
+			removed rather than categories of spend. Every item carries an acceptance criterion, because
+			a milestone you cannot write acceptance criteria for is an intention. Runway is {raise.runway}.
+		</p>
+		<ol class="iv-uses">
+			{uses.map((u) => (
+				<li class="iv-use">
+					<div class="iv-use-head">
+						<span class="iv-use-n tabular">{u.n}</span>
+						<div class="iv-use-heading">
+							<h3 class="iv-use-title">{u.title}</h3>
+							<p class="iv-use-alloc">{u.unit}</p>
 						</div>
-					</li>
-				))
-			}
+						<span class="iv-use-amount tabular">{u.amount}</span>
+						<span class="iv-use-removes">{u.removes}</span>
+					</div>
+					{u.pct > 0 && (
+						<div class="iv-use-bar" aria-hidden="true">
+							<span class="iv-use-bar-fill" style={`width:${u.pct}%`}></span>
+						</div>
+					)}
+					<p class="iv-use-body">{u.body}</p>
+					<p class="iv-use-milestone">
+						<span class="iv-use-milestone-k">Done when</span>
+						{u.milestone}
+					</p>
+				</li>
+			))}
 		</ol>
 	</section>
 
-	<section class="section container reveal invest-open">
-		<Eyebrow>WHAT IS OPEN</Eyebrow>
-		<h2>What is not known yet.</h2>
-		<DisclosurePanel label="The honest section">
-			<p>Zero customer conversations have happened.</p>
-			<p>
-				Every buyer title, price, and cycle length in the commercial plan is reasoned
-				bottom-up from established spend on alternatives. None of it is tested against a
-				real customer.
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>CAPITAL DISCIPLINE</Eyebrow>
+			<h2 class="iv-h2">What this round is deliberately not spent on.</h2>
+			<p class="iv-lede">
+				A use-of-funds is only as credible as the things it refuses. These four are the most
+				common ways a round this size disappears with no result attached to it.
 			</p>
-			<p>The separation study has not been run.</p>
-			<p>The monitoring lead time has not been measured.</p>
-			<p>No regulatory consultant has read the specification.</p>
-			<p>No data-protection lawyer has told us what may be certified.</p>
-			<p>
-				These are the four things the raise is for. If any of them produces a negative
-				result, the plan is updated accordingly.
-			</p>
-			<p class="invest-open-closer">
-				The research has been adversarially validated. The commercial thesis has not been
-				tested at all.
-			</p>
-		</DisclosurePanel>
+			<div class="iv-not">
+				{notSpending.map((n) => (
+					<article class="iv-not-item">
+						<h3 class="iv-not-k">{n.k}</h3>
+						<p class="iv-not-v">{n.v}</p>
+					</article>
+				))}
+			</div>
+		</div>
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>IF THIS IS THE KIND OF THING YOU INVEST IN</Eyebrow>
-		<p class="invest-case">
-			We are open to conversations with investors who understand deep-tech primitives,
-			long-cycle B2B markets, and the specific risk profile of a pre-revenue company with a
-			validated research result but no customer conversations yet.
-		</p>
-		<p class="invest-case">
-			We are not doing a general raise. If you want to see the full brief — the evidence, the
-			model, the solution ladder, the financial assumptions, and the open questions — request
-			it below. We will respond within a few days.
-		</p>
+		<Eyebrow>THE LADDER</Eyebrow>
+		<h2 class="iv-h2">What is already removed, and what this round removes next.</h2>
+		<ul class="iv-ladder">
+			{derisked.map((d) => (
+				<li class={d.done ? 'iv-rung iv-rung--done' : 'iv-rung'}>
+					<span class="iv-rung-state">{d.done ? 'REMOVED' : 'LIVE'}</span>
+					<div>
+						<h3 class="iv-rung-k">{d.k}</h3>
+						<p class="iv-rung-v">{d.v}</p>
+					</div>
+				</li>
+			))}
+		</ul>
+	</section>
 
-		<form class="invest-form">
-			<FormField id="invest-name" label="Name" />
-			<FormField id="invest-email" label="Email" type="email" />
-			<FormField id="invest-org" label="Fund / Organisation" />
-			<FormField id="invest-thesis" label="What you invest in" />
-			<Button variant="primary" type="submit">Request the brief</Button>
-		</form>
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>THE RISK REGISTER</Eyebrow>
+			<h2 class="iv-h2">Everything a diligence process would find, listed first.</h2>
+			<p class="iv-lede">
+				None of this is disclosed reluctantly. An investor who finds these in week three discounts
+				everything else on the page; an investor who reads them here is evaluating the same
+				company with better information.
+			</p>
+			<div class="iv-risks">
+				{risks.map((r) => (
+					<article class="iv-risk">
+						<h3 class="iv-risk-q">{r.q}</h3>
+						<p class="iv-risk-a">{r.a}</p>
+					</article>
+				))}
+			</div>
+		</div>
+	</section>
 
-		<p class="invest-form-note">
-			We are not looking for a fast close. We are looking for the right partner. If that is
-			you, we will spend the time to make it clear.
+	<section class="section container reveal">
+		<Eyebrow>DILIGENCE</Eyebrow>
+		<h2 class="iv-h2">Waiting does not buy you information here.</h2>
+		<p class="iv-lede">
+			The rational default on any pre-seed is to wait. More data arrives, the founder becomes
+			better known, and the option costs nothing. That default is usually correct, and on this
+			company it is not, for one specific reason.
 		</p>
+		<div class="iv-wait">
+			<p class="iv-wait-lead">
+				The entire remaining research programme can be falsified for under 30 GPU-hours, on a
+				single card, using a specification we hand you.
+			</p>
+			<p class="iv-wait-body">
+				That is not a claim about how confident we are. It is a statement about how cheap the
+				experiment is. The thing a quarter of waiting would tell you is available this week, for
+				roughly the cost of a business lunch, and it can be run by your own technical partner on
+				your own hardware without us in the room.
+			</p>
+			<p class="iv-wait-body">
+				Everything else is checkable now, under a short agreement: the mechanism, all 383 seeded
+				runs including the ones that failed, the adversarial suite, and the manuscript in full. The
+				one adverse result is already on the technology page. The data room does not contain a
+				better story than this page does — it contains the same story with the workings attached.
+			</p>
+		</div>
+		<div class="iv-assets">
+			<p class="iv-assets-label">What we will put in front of you</p>
+			<ul class="iv-assets-list">
+				<li>The falsification specification, and the runs that would execute it.</li>
+				<li>The full archive of 67 seeded runs, including the four the first architecture failed.</li>
+				<li>The adversarial suite, written before the results, with its pass/fail list intact.</li>
+				<li>The manuscript under review, in full.</li>
+				<li>A demonstration on your own workload, run in your environment.</li>
+			</ul>
+		</div>
+	</section>
+
+	<section class="band band--dark section reveal">
+		<div class="container iv-close">
+			<Eyebrow>THE ASK</Eyebrow>
+			<h2 class="iv-close-title">{raise.size} {raise.stage.toLowerCase()}, {raise.runway} of runway, six named milestones.</h2>
+			<p class="iv-close-lede">
+				Oxiedo is founder-owned and incorporating as a Delaware C-corporation alongside the move to
+				San Francisco, so the round closes into the structure US institutional investors require
+				rather than one they would ask us to change first. The conversion is the first line of the
+				assurance budget above for exactly that reason. We are open to conversations ahead of a priced round and are looking for a lead
+				rather than a party round — the milestones above need someone still in the room at the next one.
+			</p>
+			<p class="iv-close-lede">
+				The investor this suits backs technical risk that has already been measured rather than
+				technical risk that is still a hypothesis, and is unbothered by a regulated go-to-market
+				where the timetable is legislated and the sales cycle is long. The window is not closing
+				because we say so. It closes on 2 December 2027, when the first obligations apply, and an
+				architecture cannot be retrofitted into a model that has already been trained.
+			</p>
+			<div class="iv-close-cta">
+				<Button variant="primary" href="/contact">Open a conversation</Button>
+				<Button variant="secondary" href="/technology">Read the research first</Button>
+			</div>
+		</div>
 	</section>
 </Page>

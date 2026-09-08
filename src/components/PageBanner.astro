@@ -1,0 +1,64 @@
+---
+// Full-bleed page banner with a breadcrumb chip, per the services/sub-service reference:
+// a tall coloured band carrying the page title, with the trail pinned bottom-right.
+//
+// The reference uses a photographic background. There is no image tooling here and the site
+// forbids third-party requests, so the band is built from layered gradients plus an optional
+// generative field (a lightweight SVG lattice) — it reads as a designed surface rather than a
+// flat colour, and it costs nothing to load.
+export interface Props {
+	eyebrow?: string;
+	title: string;
+	trail: Array<{ label: string; href?: string }>;
+	tone?: 'ink' | 'accent';
+}
+
+const { eyebrow, title, trail, tone = 'ink' } = Astro.props;
+---
+
+<section class={`page-banner page-banner--${tone}`}>
+	<div class="page-banner-field" aria-hidden="true">
+		<svg viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice">
+			<defs>
+				<linearGradient id="pb-fade" x1="0" y1="0" x2="1" y2="1">
+					<stop offset="0%" stop-color="var(--accent-on-dark)" stop-opacity="0.55" />
+					<stop offset="100%" stop-color="var(--accent-on-dark)" stop-opacity="0" />
+				</linearGradient>
+			</defs>
+			{Array.from({ length: 26 }).map((_, i) => (
+				<path
+					d={`M${-100 + i * 52} 400 C ${120 + i * 52} 280, ${240 + i * 52} 150, ${520 + i * 52} -40`}
+					stroke="url(#pb-fade)"
+					stroke-width="1"
+					fill="none"
+				/>
+			))}
+		</svg>
+	</div>
+
+	<div class="page-banner-inner container">
+		{eyebrow && <p class="page-banner-eyebrow">{eyebrow}</p>}
+		<h1 class="page-banner-title">{title}</h1>
+
+		{/* The trail was a sibling of .container, pinned flex-end against the full-bleed band —
+		    so it anchored to the VIEWPORT corner, not to the content. On a wide monitor it
+		    floated thousands of pixels from its own title with nothing between them. It now
+		    lives inside the container, on a rule that runs from the title across to it: the
+		    band's width becomes deliberate instead of empty. */}
+		<div class="page-banner-foot">
+			<nav class="page-banner-trail" aria-label="Breadcrumb">
+				<ol>
+					{trail.map((crumb, i) => (
+						<li>
+							{crumb.href && i < trail.length - 1 ? (
+								<a href={crumb.href}>{crumb.label}</a>
+							) : (
+								<span aria-current="page">{crumb.label}</span>
+							)}
+						</li>
+					))}
+				</ol>
+			</nav>
+		</div>
+	</div>
+</section>

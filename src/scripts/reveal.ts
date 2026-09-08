@@ -8,7 +8,12 @@
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-if (!prefersReducedMotion) {
+// RESTRUCTURED 2026-09-06 for the ClientRouter — re-observes the new document's .reveal
+// elements after each client-side navigation. A fresh observer per page is correct: the old
+// document's nodes are gone, so the previous observer has nothing left to hold.
+export default function init() {
+	if (prefersReducedMotion) return;
+	{
 	const observer = new IntersectionObserver(
 		(entries) => {
 			for (const entry of entries) {
@@ -22,4 +27,5 @@ if (!prefersReducedMotion) {
 	);
 
 	document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+}
 }

@@ -1,0 +1,252 @@
+---
+// One page per FEATURE of ORMAS — seven routes from data/features.ts.
+//
+// REBUILT 2026-09-07 (second pass). The first version put four unlabelled prose blocks in a
+// single column under identical `/ eyebrow /` headers, so the page had no scan anchors and no
+// way to tell what was below the fold. Three specific faults, all fixed here:
+//
+//   1. THE MASSIVE BLOCK. `buyer` is one long string that already contains structure — either
+//      "Who this is for: a; b; c. Who this is NOT for: d; e", or a list of buyer types followed
+//      by a funding/trigger note. It was rendered as a single 405-character paragraph. It now
+//      renders as lists, from the buyerFor/buyerNot/buyerNote fields in data/features.ts. Those
+//      are split BY HAND and stored: deriving them by splitting on punctuation mangled real copy
+//      (one buyer whose description contains commas came out as three buyers).
+//   2. NOTHING TOLD YOU WHAT WAS BELOW. The rail carried a card that just repeated the question
+//      already in the heading. It now carries a numbered contents list that jumps to each
+//      section, which is the thing a long page actually needs.
+//   3. NO RHYTHM. Every section looked the same. Sections are numbered, the problem gets lede
+//      weight, what-it-delivers sits on a raised surface, and the capabilities are a numbered
+//      sequence rather than a definition list.
+//
+// Nothing new is written here. Every string still comes from data/features.ts, which carries the
+// sourced copy from design/02 and the structure from Commercial Plan `03`.
+import Page from '../../layouts/Page.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import Accordion from '../../components/Accordion.astro';
+import GetInTouch from '../../components/GetInTouch.astro';
+import { features } from '../../data/features';
+import { sectors } from '../../data/sectors';
+
+export function getStaticPaths() {
+	return features.map((feature) => ({
+		params: { id: feature.id },
+		props: { feature },
+	}));
+}
+
+const { feature } = Astro.props;
+
+const usedBy = sectors.filter((s) => s.features.includes(feature.id));
+
+// The buyer lists are stored, not derived. Splitting the prose on punctuation mangled real
+// copy — see the note in data/features.ts.
+const buyer = { forList: feature.buyerFor, notList: feature.buyerNot, note: feature.buyerNote };
+
+// `03 §2` The Capability Layer — what each three-letter tag actually means.
+const CAPABILITY_TEXT: Record<string, string> = {
+	ACCOUNT: 'Emit a bounded, timestamped, causally attributed record of every modification the network made to itself.',
+	PROTECT: 'Gate a component out of the forward path when its health falls, so a failing region cannot poison what follows.',
+	REPAIR: 'Apply a bounded, conserved, logged correction to a named component under a declared per-diagnosis bound.',
+	DETECT: 'Identify which samples are damaging which component, and separate mislabelled from hard-but-correct.',
+	ISOLATE: 'Allocate dedicated capacity bound to a named sample set, under a bound, with the binding recorded.',
+	SUPPRESS: 'Remove an isolated component and ship without it, with a bounded statement about what changed.',
+};
+
+// The contents list is generated from the same array that renders the section headers, so the
+// rail can never drift out of step with the page.
+const sections = [
+	{ id: 'problem', label: 'The problem' },
+	{ id: 'delivers', label: 'What it delivers' },
+	{ id: 'who', label: 'Who it is for' },
+	{ id: 'how', label: 'How it works' },
+	{ id: 'industries', label: 'In your industry' },
+	...(usedBy.length ? [{ id: 'markets', label: 'Markets using it' }] : []),
+	{ id: 'questions', label: 'Questions' },
+];
+
+const faqs = [
+	{
+		q: 'Is this a separate product?',
+		a: `No. ORMAS is one product under one licence, and ${feature.name} is one of the seven things it is proven at. You turn on what your situation needs; there is no separate purchase, no separate integration and no separate contract.`,
+	},
+	{
+		q: 'Does this only work in my industry?',
+		a: "The mechanism does not know what industry it is in. What changes between them is the noun, not the method — the table above is the same mechanism with each sector's own vocabulary substituted, which is why one product serves all of them.",
+	},
+	{
+		q: 'Where does it run, and does our data leave?',
+		a: 'On your infrastructure. The licence is on-premise and per-institution: nothing is sent to a third party, there is no hosted tier, and no usage metering phones home. In a hospital enclave or a controlled environment, that is a requirement rather than a preference.',
+	},
+];
+---
+
+<Page title={feature.name} description={`${feature.summary} One architecture, one licence — ${feature.name} is how this capability is used, not a separate product.`}>
+	<PageBanner
+		eyebrow="AN APPLICATION OF ORMAS"
+		title={feature.name}
+		trail={[
+			{ label: 'Home', href: '/' },
+			{ label: 'Product', href: '/product' },
+			{ label: feature.name },
+		]}
+	/>
+
+	{/* All seven, with the current one marked. Replaces a sidebar card headed "THE OTHER SIX" that
+	    listed only the ones you were not reading and gave no sense of position. */}
+	<nav class="appnav" aria-label="Applications">
+		<div class="appnav-inner container">
+			<span class="appnav-label">Applications</span>
+			<ul>
+				{features.map((f, i) => (
+					<li>
+						<a
+							href={`/product/${f.id}`}
+							aria-current={f.id === feature.id ? 'page' : undefined}
+						>
+							<span class="appnav-index tabular">{String(i + 1).padStart(2, '0')}</span>
+							{f.name}
+						</a>
+					</li>
+				))}
+			</ul>
+		</div>
+	</nav>
+
+	{/* The question, once, at full weight — it was previously both a rail card and the first
+	    section's h2, which is the same sentence twice before any content. */}
+	<section class="section-tight container feature-intro">
+		<p class="feature-intro-label">THE QUESTION IT ANSWERS</p>
+		<p class="feature-intro-question">{feature.question}</p>
+		<ul class="feature-intro-caps">
+			{feature.capabilities.map((c) => <li>{c}</li>)}
+		</ul>
+	</section>
+
+	<div class="section container detail-layout">
+		<aside class="detail-rail">
+			<nav class="feature-toc" aria-label="On this page">
+				<p class="detail-rail-label">ON THIS PAGE</p>
+				<ol>
+					{sections.map((s, i) => (
+						<li>
+							<a href={`#${s.id}`}>
+								<span class="feature-toc-index tabular">{String(i + 1).padStart(2, '0')}</span>
+								{s.label}
+							</a>
+						</li>
+					))}
+				</ol>
+			</nav>
+
+		</aside>
+
+		<div class="detail-main">
+			<section class="feature-section" id="problem">
+				<p class="feature-section-num tabular">01</p>
+				<h2>The problem</h2>
+				<p class="feature-lede">{feature.problem}</p>
+			</section>
+
+			<section class="feature-section" id="delivers">
+				<p class="feature-section-num tabular">02</p>
+				<h2>What it delivers</h2>
+				<div class="feature-delivers">
+					<p>{feature.delivers}</p>
+				</div>
+			</section>
+
+			{/* The 405-character wall. The copy was already a list; it is rendered as one now. */}
+			<section class="feature-section" id="who">
+				<p class="feature-section-num tabular">03</p>
+				<h2>Who it is for</h2>
+				<div class="buyer-split">
+					<div class="buyer-col">
+						<p class="buyer-col-label buyer-col-label--yes">A fit for</p>
+						<ul>{buyer.forList.map((x) => <li>{x}</li>)}</ul>
+					</div>
+					{buyer.notList.length > 0 && (
+						<div class="buyer-col">
+							<p class="buyer-col-label buyer-col-label--no">Not a fit for</p>
+							<ul>{buyer.notList.map((x) => <li>{x}</li>)}</ul>
+						</div>
+					)}
+				</div>
+				{buyer.note && <p class="buyer-note">{buyer.note}</p>}
+			</section>
+
+			<section class="feature-section" id="how">
+				<p class="feature-section-num tabular">04</p>
+				<h2>How it works</h2>
+				<p class="feature-section-intro">
+					{feature.name} is built from {feature.capabilities.length === 1 ? 'one capability' : `${feature.capabilities.length} of the six capabilities`} of the ORMAS
+					architecture. Each is a property of how the network trains, not a tool bolted on afterwards.
+				</p>
+				<ol class="capability-steps">
+					{feature.capabilities.map((c, i) => (
+						<li>
+							<span class="capability-step-num tabular">{String(i + 1).padStart(2, '0')}</span>
+							<span class="capability-step-body">
+								<span class="capability-step-id">{c}</span>
+								<span class="capability-step-text">{CAPABILITY_TEXT[c]}</span>
+							</span>
+						</li>
+					))}
+				</ol>
+			</section>
+
+			{/* `03 §4` — the horizontality proof. A dark card in the column, not a full-bleed band:
+			    a band here reset the page geometry mid-scroll, so the rail stopped and the reading
+			    column jumped width halfway down the document. */}
+			<section class="feature-section" id="industries">
+				<p class="feature-section-num tabular">05</p>
+				<h2>In your industry</h2>
+				<p class="feature-section-intro">
+					This is why ORMAS is one product rather than seven. {feature.name} is the same
+					mechanism in every row below — only the customer's own vocabulary changes.
+				</p>
+				<dl class="industry-table">
+					{feature.industryNouns.map((n) => (
+						<div class="industry-row">
+							<dt>{n.industry}</dt>
+							<dd>{n.noun}</dd>
+						</div>
+					))}
+				</dl>
+			</section>
+
+			{usedBy.length > 0 && (
+				<section class="feature-section" id="markets">
+					<p class="feature-section-num tabular">06</p>
+					<h2>Markets using it</h2>
+					<ul class="feature-markets">
+						{usedBy.map((s) => (
+							<li>
+								<a href={`/sectors/${s.id}`}>{s.name}</a>
+								<span>Segments by {s.axis.toLowerCase()}</span>
+								{s.primaryFeature === feature.id && <em>lead</em>}
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
+
+			<section class="feature-section" id="questions">
+				<p class="feature-section-num tabular">{usedBy.length > 0 ? '07' : '06'}</p>
+				<h2>Questions</h2>
+				<div class="detail-faq">
+					{faqs.map((item, i) => (
+						<Accordion id={`${feature.id}-q${i + 1}`} question={item.q}>
+							<p>{item.a}</p>
+						</Accordion>
+					))}
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<GetInTouch
+		variant="pre-book"
+		solutionName={feature.name}
+		heading={`Pre-book ORMAS with ${feature.name} in scope.`}
+	/>
+</Page>

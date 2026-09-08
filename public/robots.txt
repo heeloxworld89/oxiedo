@@ -1,0 +1,10 @@
+# Oxiedo
+User-agent: *
+Allow: /
+
+# Kept out of the index deliberately, and matched by a noindex tag on the pages themselves:
+# /press until outreach begins, /404 because a soft-404 in search results helps nobody.
+Disallow: /press
+Disallow: /404
+
+Sitemap: https://oxiedo.com/sitemap.xml

@@ -3,6 +3,11 @@
 // (text + arrow). Disabled state is signalled by opacity and cursor, never colour alone (Law 6).
 // `size="small"` is the nav bar's CTA treatment (folded onto this component at task 2.1 — Nav
 // carried its own duplicate .nav-cta-* rules until now, an artifact of build order).
+// PASSTHROUGH ADDED 2026-09-08. This component destructured a fixed prop set and dropped
+// everything else, so `data-*`, `aria-*`, `id`, `target` and `rel` were silently discarded — the
+// "Apply for this" buttons on /careers carried a data-role attribute that never reached the DOM,
+// and the script keyed on it bound to nothing. Failing silently is the problem: the markup looked
+// correct and the button simply did nothing. Extra attributes now pass through.
 export interface Props {
 	variant?: 'primary' | 'secondary' | 'tertiary';
 	size?: 'default' | 'small';
@@ -10,6 +15,7 @@ export interface Props {
 	href?: string;
 	disabled?: boolean;
 	type?: 'button' | 'submit' | 'reset';
+	[key: string]: unknown;
 }
 
 const {
@@ -19,6 +25,7 @@ const {
 	href,
 	disabled = false,
 	type = 'button',
+	...rest
 } = Astro.props;
 
 const classes = [
@@ -38,12 +45,13 @@ const classes = [
 			href={disabled ? undefined : href}
 			aria-disabled={disabled ? 'true' : undefined}
 			tabindex={disabled ? -1 : undefined}
+			{...rest}
 		>
 			<slot />
 			{variant === 'tertiary' && <span aria-hidden="true"> →</span>}
 		</a>
 	) : (
-		<button class={classes} type={type} disabled={disabled}>
+		<button class={classes} type={type} disabled={disabled} {...rest}>
 			<slot />
 			{variant === 'tertiary' && <span aria-hidden="true"> →</span>}
 		</button>

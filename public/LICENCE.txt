@@ -1,0 +1,137 @@
+OXIEDO RESEARCH LICENCE
+Version 1.0 — draft of 8 September 2026
+
+This licence governs the ORMAS reference implementation, the accompanying paper, and
+the experimental archive published with them ("the Software"). It is a source-available
+licence. It is NOT an open source licence as defined by the Open Source Initiative, and
+Oxiedo does not describe it as one: the restriction on production use in section 3 is
+the whole point of it, and that restriction is incompatible with the OSI definition.
+
+Oxiedo ("we") is the licensor. Oxiedo is a research company in formation; the legal entity
+that grants this licence is named in full in the released copy, and any successor entity is
+bound by section 4.
+
+
+1. ACCEPTANCE
+
+By using the Software you accept this licence. If you do not accept it, do not use the
+Software. This licence applies to anyone who receives a copy, however they received it.
+
+
+2. WHAT YOU MAY DO, FREELY AND WITHOUT ASKING
+
+You may use, copy, modify, compile, run and distribute the Software, and publish results
+obtained with it, for any of the following Permitted Purposes:
+
+  (a) Research, including research carried out inside a commercial organisation and
+      research that is externally funded.
+
+  (b) Teaching, coursework, theses, and academic supervision.
+
+  (c) Evaluation — determining whether the Software is suitable for a purpose, including
+      evaluation by a commercial organisation deciding whether to obtain a Production
+      Licence. Evaluation may use your own data and your own infrastructure.
+
+  (d) Publication and independent verification, including publishing results that
+      contradict Oxiedo's own. No permission, notification or embargo applies. Oxiedo
+      claims no right of review over anything you publish about the Software.
+
+  (e) Personal use unconnected with any commercial activity.
+
+No registration, no seat count, no reporting, no fee, and no notification to Oxiedo is
+required for any Permitted Purpose. Oxiedo does not track who uses the Software.
+
+
+3. WHAT REQUIRES A PRODUCTION LICENCE
+
+Any use that is not a Permitted Purpose requires a separate written agreement with
+Oxiedo (a "Production Licence"). Without limiting that, the following require one:
+
+  (a) Training, fine-tuning or operating a model with the Software where the resulting
+      model, or any output of it, is used in the provision of goods or services to a
+      third party, or in an internal process that a third party relies upon.
+
+  (b) Any use in which an artefact produced by the Software — a record, a bound, a
+      certificate or a log — is submitted to, relied upon by, or presented to a
+      regulator, auditor, notified body, court, or customer as evidence.
+
+  (c) Incorporating the Software, or a derivative of it, into a product or service made
+      available to third parties, whether or not for a fee.
+
+  (d) Use by or on behalf of a government body in an operational, non-research capacity.
+
+If you are unsure which side of this line your use falls, write to Oxiedo and ask. The
+answer will be given in writing and Oxiedo will not treat a good-faith question as an
+admission of breach.
+
+
+4. THE RELEASE COMMITMENT
+
+Once Oxiedo has published a version of the Software under this licence, that publication
+is irrevocable. Oxiedo will not withdraw it, relicense that version under more
+restrictive terms, or assert any right that would prevent continued use of it under
+section 2.
+
+This obligation survives any change of control, sale of assets, insolvency, or wind-up of
+Oxiedo, and binds any successor in title to the Software.
+
+
+5. ATTRIBUTION
+
+If you publish results obtained with the Software, cite the accompanying paper. If you
+distribute the Software or a derivative, include this licence and a notice identifying
+what you changed. Do not use "Oxiedo" or "ORMAS" to suggest that Oxiedo endorses,
+supplied, or verified your work, or that a bound you derived was calibrated by us.
+
+
+6. PATENTS
+
+Oxiedo grants you a licence, under any patent claims it can license, to make and use the
+Software for the Permitted Purposes. That patent licence ends immediately if you assert,
+or fund the assertion of, a patent claim against anyone alleging that the Software
+infringes it.
+
+
+7. NO WARRANTY, AND NO CALIBRATED BOUND
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NON-INFRINGEMENT. TO THE EXTENT PERMITTED BY LAW, OXIEDO IS NOT LIABLE FOR ANY CLAIM,
+DAMAGE OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.
+
+Stated plainly, because it matters more here than the capitals above: any bound,
+threshold or limit included in the Software is a research default. It has not been
+calibrated for your data, your domain or your risk profile, and it has not been validated
+by us for any deployment. Calibration and the accountability that follows from it are
+what a Production Licence provides. Nothing in a Permitted Purpose use should be
+presented to a regulator as a validated bound.
+
+
+8. TERMINATION
+
+Your rights under section 2 end automatically if you breach this licence and do not cure
+the breach within 30 days of becoming aware of it. Rights properly granted to anyone who
+received the Software from you are unaffected by your breach.
+
+
+9. DEFINITIONS
+
+"Production Licence" means a written agreement signed by Oxiedo permitting use beyond the
+Permitted Purposes.
+
+"You" means the individual or entity exercising rights under this licence, and any
+affiliate under common control with it.
+
+
+--------------------------------------------------------------------------------------
+DRAFTING NOTE — REMOVE BEFORE RELEASE
+
+This is a working draft prepared for review, not executed legal advice. It follows the
+structure of the PolyForm licence family, which is well-tested source-available drafting,
+adapted to Oxiedo's terms. Have a solicitor review it before the Software is released,
+paying particular attention to: the section 3(b) evidence clause, which is unusual and is
+the commercially load-bearing one; the section 4 survival wording, which needs to bind a
+successor properly under the law of the governing jurisdiction; the licensor's legal name,
+which changes on the Delaware reincorporation; and the governing law and forum clause,
+deliberately absent here until that completes.
+--------------------------------------------------------------------------------------

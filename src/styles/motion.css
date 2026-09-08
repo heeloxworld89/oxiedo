@@ -40,3 +40,46 @@
 		transform: none !important;
 	}
 }
+
+/* Cross-page transition (ClientRouter, Base.astro).
+   
+   REWORKED 2026-09-06 — the first version felt laggy and it was three separate faults:
+
+   1. GHOSTING. Old faded out over 180ms while new faded in over 260ms, so both documents were
+      on screen at partial opacity for most of the transition. Two overlapping copies of a
+      near-identical page is exactly the "double image" smear that reads as broken. The old
+      view is now cut immediately and only the new one animates — no overlap, nothing to ghost.
+
+   2. THE PAGE SHIFTED. The incoming view slid 6px on translateY, which moves the fixed nav too,
+      since ::view-transition-* animates a snapshot of the whole viewport. Removed: opacity only.
+
+   3. TOO LONG. 440ms end to end on a navigation that is otherwise instant, which is what read
+      as lag rather than polish. 150ms — long enough to soften the swap, short enough that it
+      never feels like waiting. */
+@view-transition {
+	navigation: auto;
+}
+
+::view-transition-old(root) {
+	/* cut, do not cross-fade — this is what removes the smear */
+	animation: none;
+	opacity: 0;
+}
+
+::view-transition-new(root) {
+	animation: vt-in 150ms var(--ease-out) both;
+}
+
+@keyframes vt-in {
+	from {
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation: none;
+		opacity: 1;
+	}
+}

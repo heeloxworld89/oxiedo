@@ -14,27 +14,92 @@
 
 .grid {
 	display: grid;
-	grid-template-columns: repeat(12, 1fr);
+	/* minmax(0, 1fr), not bare 1fr — a bare 1fr track refuses to shrink below its content's
+	   intrinsic width (default min-width: auto on grid items), so a long unbroken string (a
+	   large tabular stat figure, a long caption) blows the track past its fair share and pushes
+	   content outside the card. This was the cause of the reported "giant overflowing box." */
+	grid-template-columns: repeat(12, minmax(0, 1fr));
 	gap: var(--space-xl);
 }
 
 .container {
+	/* Was 1100px, while the nav bar (a separate element, not wrapped in .container) has always
+	   used 1280px — the header's edges didn't line up with the body content beneath it, one of
+	   the things reported as making the page look "boxed" and misaligned. Unified to 1280px,
+	   matching the nav and design/12's own "wide" breakpoint. */
 	width: 100%;
-	max-width: 1100px;
+	max-width: 1280px;
 	margin-inline: auto;
 	padding-inline: 20px; /* design/12 §Responsive Breakpoints — mobile side padding */
 }
 
-.container--wide {
-	max-width: 1280px;
+/* .container--wide is gone: it set 1440px "for very large monitors", which is exactly what the
+   tier below now does on its own, and nothing used it. .container--prose moved BELOW the media
+   queries — a modifier and .container have equal specificity (0,1,0), so a max-width set inside
+   a later @media block was overriding it and every prose column would have stretched to the
+   full container width above 1600px. Order is the whole fix; it must stay after the tier. */
+
+/* Container tier. Was a single step to 1440px at 1600 and then nothing — on a 2560px or wider
+   display the content held 1440px and the rest of the screen was empty band.
+
+   The ceiling stops at 1680px on purpose. Filling a 5000px screen with content is the wrong
+   goal: past ~1700px a longer line stops being readable, and a two-column article layout simply
+   has nothing to put out there. The fix for "everything looks tiny" is the type and space
+   tokens (tokens.css §LARGE VIEWPORT TIER) scaling ~24% — a 1680px column at 1.31rem reads like
+   a 1280px column at 1rem, correctly proportioned rather than merely wider.
+
+   .nav-bar mirrors these exact steps (components.css) — the header's edges must line up with
+   the body content beneath it, which is what .container's own note above is about. Changing a
+   number here without changing it there reintroduces that misalignment. */
+@media (min-width: 1600px) {
+	.container {
+		max-width: 1440px;
+	}
 }
 
+@media (min-width: 1920px) {
+	.container {
+		max-width: 1560px;
+	}
+}
+
+@media (min-width: 2400px) {
+	.container {
+		max-width: 1680px;
+	}
+}
+
+/* Gutters grow with the viewport too. At 20px a full-bleed band's content sat hard against the
+   screen edge on wide monitors whenever the container was already at its ceiling. */
+@media (min-width: 1024px) {
+	.container {
+		padding-inline: var(--space-xl);
+	}
+}
+
+/* Must stay after the tier above — see the note on .container--wide's removal. */
 .container--prose {
 	max-width: 65ch; /* ui_ux/00 §2 — reading measure, every prose column, every page */
 }
 
 .section {
 	padding-block: var(--space-xl); /* 40px mobile */
+}
+
+/* Full-bleed colour bands. The <section> carries the background edge to edge; an inner
+   .container holds the content to the reading width. Added 2026-09-06 — sections that carried
+   both a background AND .container were clipping their own band to 1280px. */
+.band {
+	width: 100%;
+}
+
+.band--surface {
+	background: var(--bg-surface);
+}
+
+.band--dark {
+	background: var(--bg-dark);
+	color: var(--text-on-dark);
 }
 
 @media (min-width: 640px) {
@@ -47,4 +112,28 @@
 	.section {
 		padding-block: 80px; /* design/12 §Spacing — desktop section padding */
 	}
+}
+
+/* Vertical rhythm has to scale with the type, or the bands crowd their own contents once the
+   headings grow. --space-3xl is 112px at this breakpoint and 128px at 2400. */
+@media (min-width: 1800px) {
+	.section {
+		padding-block: var(--space-3xl);
+	}
+}
+
+/* DOUBLED PADDING BETWEEN SAME-GROUND SECTIONS, fixed 2026-09-08.
+   .section pads top AND bottom, which is right for a colour band — the padding is what keeps a
+   band off its own contents. It is wrong for two plain sections sitting on the same background,
+   where the two paddings meet and produce 224px of empty page at 1800px+, reported as the page
+   looking "compressed in the middle": a narrow column of content with large voids between every
+   block of it.
+   Collapsing the second section's top padding leaves one full gap instead of two. Bands are
+   excluded on both sides, because a band genuinely needs its own top padding no matter what
+   precedes it. Specificity here is (0,4,0), so it clears .section's media queries (0,1,0) and
+   any page-scoped .section.x rule (0,2,0) without depending on source order. */
+.section:not(.band) + .section:not(.band),
+.section:not(.band) + .section-tight:not(.band),
+.section-tight:not(.band) + .section:not(.band) {
+	padding-top: 0;
 }
