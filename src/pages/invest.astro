@@ -118,7 +118,7 @@ const uses = [
 		title: 'Compute',
 		amount: '$1.6M',
 		pct: 36,
-		unit: '800 NVIDIA SXM accelerators — 100 nodes × 8 — NVLink intra-node, 400G InfiniBand fabric, all-flash NVMe. Reserved, not owned. A bounded 4–6 week campaign.',
+		unit: '800 NVIDIA SXM accelerators, 100 nodes of 8, with NVLink intra-node, 400G InfiniBand fabric, all-flash NVMe. Reserved, not owned. A bounded 4–6 week campaign.',
 		body: 'Every result to date runs on CIFAR because that is what one person could afford. The first question any technical evaluator asks is whether the property holds at scale, and it is answerable with hardware and not answerable without it. The requirement is a genuine training fabric rather than a pile of cards: 100 eight-GPU nodes on NVLink, joined by 400G InfiniBand, with flash on the same fabric — the bottleneck in a bounded-attribution run is interconnect, not FLOPs. It is rented and released. Buying 800 accelerators is roughly $30M of hardware before power, and holding them idle is the most common way a round this size disappears with nothing attached to it.',
 		milestone: 'Bounded attribution demonstrated at frontier parameter counts, on the same adversarial suite the current architecture was hardened against, with every run reproducible from seed.',
 		removes: 'Scale risk',
@@ -129,7 +129,7 @@ const uses = [
 		amount: '$550K',
 		pct: 12,
 		unit: 'Three to five non-exclusive regulated datasets, $50K–$500K each, plus the legal work around them',
-		body: 'No clinical, biological, financial or defence data has ever touched this system, and one partnership does not fix that — a property demonstrated on a single dataset is a coincidence until it holds across sectors. This funds several in parallel, plus the data use agreements, ethics approvals and custodian assurance work that gate each one. Healthcare AI developers spend an average of $2.4M a year on licensed data; the ask here is deliberately at the non-exclusive end.',
+		body: 'No clinical, biological, financial or defence data has ever touched this system, and one partnership does not fix that. A property demonstrated on a single dataset is a coincidence until it holds across sectors. This funds several in parallel, plus the data use agreements, ethics approvals and custodian assurance work that gate each one. Healthcare AI developers spend an average of $2.4M a year on licensed data; the ask here is deliberately at the non-exclusive end.',
 		milestone: 'Three signed dataset partnerships across at least two regulated sectors, and the property demonstrated on data carrying a real obligation.',
 		removes: 'Domain risk',
 	},
@@ -187,9 +187,9 @@ const risks = [
 	{ q: 'No revenue, no customers, no pilot.', a: 'Zero customer conversations have taken place. Nothing on this site claims otherwise, and any diligence process will confirm it quickly.' },
 	{ q: 'One adverse published result.', a: 'Under adversarial weight injection the architecture is 1.0 pp worse than a parameter-matched baseline. It is published on the technology page and named in every market where it bears on a decision.' },
 	{ q: 'Key-person risk is total.', a: 'One person wrote all of it. That is the first thing this round is spent on, and it is the reason the round exists at this size rather than a smaller one.' },
-	{ q: 'You are giving the mechanism away.', a: 'Deliberately, and on acceptance rather than now — a result nobody can check is worth nothing to a regulator, and the defensibility was never intended to rest on secrecy. What is not published is the programme extending it, which stays unpublished until it is protected.' },
+	{ q: 'You are giving the mechanism away.', a: 'Deliberately, and on acceptance rather than now. A result nobody can check is worth nothing to a regulator, and the defensibility was never intended to rest on secrecy. What is not published is the programme extending it, which stays unpublished until it is protected.' },
 	{ q: 'The evidence base is CIFAR-10 and CIFAR-100.', a: 'Stated on every page where a result appears. The architecture is domain-independent by construction; that is an argument, and this round converts it into a result.' },
-	{ q: 'Regulatory timelines can move.', a: 'They can, and they have moved before — the Omnibus shifted Annex III to December 2027. They move later, not away. Every reset extends the window rather than closing it.' },
+	{ q: 'Regulatory timelines can move.', a: 'They can, and they have moved before: the Omnibus shifted Annex III to December 2027. They move later, not away. Every reset extends the window rather than closing it.' },
 ];
 ---
 
@@ -217,13 +217,13 @@ const risks = [
 	<section class="section container">
 		<div class="iv-thesis">
 			<p class="iv-thesis-lead">
-				The entire field treats attribution as something you reconstruct after training. It is not.
+				The entire field treats attribution as something reconstructed after training. It is not.
 				It is something a network either computes about itself, or does not.
 			</p>
 			<div class="iv-thesis-body">
 				<p class="iv-thesis-p">
-					Interpretability, monitoring and governance tooling all share one assumption: that you
-					can build a simpler model of a trained network and report what the approximation says.
+					Interpretability, monitoring and governance tooling all share one assumption: that a
+					simpler model of a trained network can be built and its approximation reported.
 					That assumption is why two of those tools disagree on the same input, and why none of
 					their output can be entered as evidence by an institution that is legally obliged to
 					produce some.
@@ -263,7 +263,7 @@ const risks = [
 		<p class="iv-lede">
 			The usual answer to “why has nobody built this” is that the incentive did not exist. Here it
 			is arriving on a legislated calendar, and an architecture cannot be retrofitted into a model
-			that has already been trained — so it has to exist before the date, not after it.
+			that has already been trained, so it has to exist before the date, not after it.
 		</p>
 
 		<figure class="iv-chart">
@@ -313,7 +313,7 @@ const risks = [
 
 		<p class="iv-note">
 			Two of these have already happened. An institution that begins the architecture question in
-			2027 is not late by a quarter — it is late by a training cycle, and a training cycle in a
+			2027 is not late by a quarter; it is late by a training cycle, and a training cycle in a
 			regulated environment is measured in years.
 		</p>
 	</section>
@@ -382,7 +382,7 @@ const risks = [
 			))}
 		</div>
 		<p class="iv-note">
-			The pre-seed market in 2026 is a barbell — sub-$250K party rounds at one end, $2.5M+
+			The pre-seed market in 2026 is a barbell: sub-$250K party rounds at one end, $2.5M+
 			lead-led rounds at the other. A figure in between is the one position with no natural
 			buyer, and it would also not cover the compute.
 		</p>
@@ -394,7 +394,7 @@ const risks = [
 		<p class="iv-lede">
 			Deep tech is funded against de-risking rather than revenue, so this is set out as risks
 			removed rather than categories of spend. Every item carries an acceptance criterion, because
-			a milestone you cannot write acceptance criteria for is an intention. Runway is {raise.runway}.
+			a milestone without acceptance criteria is an intention. Runway is {raise.runway}.
 		</p>
 		<ol class="iv-uses">
 			{uses.map((u) => (
@@ -480,7 +480,7 @@ const risks = [
 
 	<section class="section container reveal">
 		<Eyebrow>DILIGENCE</Eyebrow>
-		<h2 class="iv-h2">Waiting does not buy you information here.</h2>
+		<h2 class="iv-h2">Waiting buys no information here.</h2>
 		<p class="iv-lede">
 			The rational default on any pre-seed is to wait. More data arrives, the founder becomes
 			better known, and the option costs nothing. That default is usually correct, and on this
@@ -489,29 +489,29 @@ const risks = [
 		<div class="iv-wait">
 			<p class="iv-wait-lead">
 				The entire remaining research programme can be falsified for under 30 GPU-hours, on a
-				single card, using a specification we hand you.
+				single card, using a specification we supply.
 			</p>
 			<p class="iv-wait-body">
 				That is not a claim about how confident we are. It is a statement about how cheap the
-				experiment is. The thing a quarter of waiting would tell you is available this week, for
-				roughly the cost of a business lunch, and it can be run by your own technical partner on
-				your own hardware without us in the room.
+				experiment is. What a quarter of waiting would establish is available this week, for
+				roughly the cost of a business lunch, and it can be run by their own technical partner on
+				customer hardware without us in the room.
 			</p>
 			<p class="iv-wait-body">
 				Everything else is checkable now, under a short agreement: the mechanism, all 383 seeded
 				runs including the ones that failed, the adversarial suite, and the manuscript in full. The
 				one adverse result is already on the technology page. The data room does not contain a
-				better story than this page does — it contains the same story with the workings attached.
+				better story than this page does. It contains the same story with the workings attached.
 			</p>
 		</div>
 		<div class="iv-assets">
-			<p class="iv-assets-label">What we will put in front of you</p>
+			<p class="iv-assets-label">What goes in front of an investor</p>
 			<ul class="iv-assets-list">
 				<li>The falsification specification, and the runs that would execute it.</li>
 				<li>The full archive of 67 seeded runs, including the four the first architecture failed.</li>
 				<li>The adversarial suite, written before the results, with its pass/fail list intact.</li>
 				<li>The manuscript under review, in full.</li>
-				<li>A demonstration on your own workload, run in your environment.</li>
+				<li>A demonstration on their own workload, run in the customer environment.</li>
 			</ul>
 		</div>
 	</section>
@@ -525,7 +525,7 @@ const risks = [
 				San Francisco, so the round closes into the structure US institutional investors require
 				rather than one they would ask us to change first. The conversion is the first line of the
 				assurance budget above for exactly that reason. We are open to conversations ahead of a priced round and are looking for a lead
-				rather than a party round — the milestones above need someone still in the room at the next one.
+				rather than a party round, because the milestones above need someone still in the room at the next one.
 			</p>
 			<p class="iv-close-lede">
 				The investor this suits backs technical risk that has already been measured rather than

@@ -62,9 +62,9 @@ const CAPTIONS: Record<string, string> = {
 	'medical-ai':
 		'Six hospitals train one shared model together. When its accuracy drops, ORMAS names which hospital caused it, two rounds before the drop is even visible in the shared result.',
 	'data-obligation':
-		'A customer withdraws the data you trained on. ORMAS removes just their contribution and issues signed proof, instead of retraining the whole model from scratch for $100,000–$500,000.',
+		'A customer withdraws the data a model was trained on. ORMAS removes just their contribution and issues signed proof, instead of retraining the whole model from scratch for $100,000–$500,000.',
 	'defense-safety-critical':
-		'As conditions degrade — jamming, spoofing, a failing sensor — a bounded model keeps 80.3% of what it could do, where a frozen one collapses to 10%. Measured during training; the test-time case is named as not yet run.',
+		'As conditions degrade, whether by jamming, spoofing or a failing sensor, a bounded model keeps 80.3% of what it could do, where a frozen one collapses to 10%. Measured during training; the test-time case is named as not yet run.',
 };
 
 // Gradients and patterns are referenced by url(#id), which resolves to the FIRST match in the
@@ -332,7 +332,7 @@ const dashed = (s: [number, number][]) => line(s.filter(([x]) => x >= D_SPLIT - 
 	{id === 'medical-ai' && (
 		<svg viewBox="0 0 320 200" fill="none" preserveAspectRatio="xMidYMid meet">
 			<text x="34" y="14" class="sg-title">THE SHARED MODEL</text>
-			<text x="306" y="14" text-anchor="end" class="sg-title sg-bad">drops 6 points — cause unknown</text>
+			<text x="306" y="14" text-anchor="end" class="sg-title sg-bad">drops 6 points, cause unknown</text>
 
 			{[28, 45, 62].map((y) => <line x1="34" y1={y} x2="306" y2={y} class="sg-grid" />)}
 			<path d={globalAcc} class="sg-trace" />

@@ -52,7 +52,7 @@ const toc = [
 	{ id: 'objections', label: 'The objections' },
 	{ id: 'buyer', label: 'Who buys it' },
 	{ id: 'internal', label: 'Making the case' },
-	{ id: 'proof', label: 'What we can show you' },
+	{ id: 'proof', label: 'What can be shown' },
 	{ id: 'limits', label: 'What we do not claim' },
 ];
 ---
@@ -228,7 +228,7 @@ const toc = [
 					<h3><a href={`/product/${lead.id}`}>{lead.name}</a></h3>
 					<p class="mk-lead-q">{lead.question}</p>
 					<p class="mk-lead-body">{lead.summary}</p>
-					<p class="mk-lead-asks"><span>Asks of you</span> {lead.requires}</p>
+					<p class="mk-lead-asks"><span>What it asks for</span> {lead.requires}</p>
 				</div>
 				<ul class="mk-rest">
 					{rest.map((f) => (
@@ -242,7 +242,7 @@ const toc = [
 
 			<section class="mk-section" id="objections">
 				<Eyebrow>THE OBJECTIONS</Eyebrow>
-				<h2 class="section-title">Four things you are about to say, answered.</h2>
+				<h2 class="section-title">Four objections, answered before they are raised.</h2>
 				<p class="mk-section-lede">
 					A repeated objection is a gap in what we have explained, not a nuisance. These are the
 					four we expect in this market, in the words a buyer actually uses.
@@ -304,7 +304,7 @@ const toc = [
 				</ul>
 
 				<div class="mk-notfor">
-					<p class="mk-notfor-label">Not for you if</p>
+					<p class="mk-notfor-label">Not a fit where</p>
 					<ul>
 						{m.notFor.map((x) => <li>{x}</li>)}
 					</ul>
@@ -313,7 +313,7 @@ const toc = [
 
 			<section class="mk-section" id="limits">
 				<Eyebrow>WHAT WE DO NOT CLAIM</Eyebrow>
-				<h2 class="section-title">The boundaries, before you find them yourself.</h2>
+				<h2 class="section-title">The boundaries, stated rather than discovered.</h2>
 				<p class="mk-section-lede">
 					In markets whose central complaint is that vendors overstate their approximations,
 					stating our own limit precisely is the position rather than a caveat on it.

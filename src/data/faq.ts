@@ -49,7 +49,7 @@ export const faqCategories: FaqCategory[] = [
 	{ id: 'product', label: 'What it is', blurb: 'The architecture, the property it produces, and what it is not.' },
 	{ id: 'evidence', label: 'Evidence & limits', blurb: 'The results, the benchmarks they were measured on, and where it loses.' },
 	{ id: 'deploy', label: 'Running it', blurb: 'Where it executes, what it costs to run, and what integration involves.' },
-	{ id: 'data', label: 'Data, IP & security', blurb: 'What we receive, who owns what, and what happens to your records.' },
+	{ id: 'data', label: 'Data, IP & security', blurb: 'What we receive, who owns what, and what happens to the records.' },
 	{ id: 'compliance', label: 'Compliance', blurb: 'The frameworks an evaluator will hold this against, answered individually.' },
 	{ id: 'commercial', label: 'Licence & commercial', blurb: 'The licence, what is free, what is not, and how terms are agreed.' },
 	{ id: 'company', label: 'The company', blurb: 'Who is behind it, how it is funded, and what happens if it fails.' },
@@ -63,8 +63,8 @@ export const faqs: FaqItem[] = [
 		q: 'What is ORMAS?',
 		a: [
 			'A neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns.',
-			'Every node in an ORMAS network carries a bounded local gradient chain — four operations through a shared 4,715-parameter bottleneck. Because that chain is bounded, the contribution of each node to the loss is not estimated after training, it is read directly off the backward pass. Attribution stops being an interpretation of the model and becomes a measurement taken from it.',
-			'The practical consequence is that a model trained under ORMAS arrives with a record of what it did, which component was responsible, and what changed — produced during training, not reconstructed afterwards.',
+			'Every node in an ORMAS network carries a bounded local gradient chain of four operations, through a shared 4,715-parameter bottleneck. Because that chain is bounded, the contribution of each node to the loss is not estimated after training, it is read directly off the backward pass. Attribution stops being an interpretation of the model and becomes a measurement taken from it.',
+			'The practical consequence is that a model trained under ORMAS arrives with a record of what it did, which component was responsible, and what changed. The record is produced during training, not reconstructed afterwards.',
 		],
 		link: { href: '/technology', label: 'The architecture in full' },
 	},
@@ -84,7 +84,7 @@ export const faqs: FaqItem[] = [
 		q: 'How is this different from Weights & Biases, MLflow, Arize or our own observability stack?',
 		a: [
 			'Those tools record what a training run reported about itself. They are excellent at it, and ORMAS does not replace them.',
-			'What they cannot do is answer a causal question, because the information required to answer it was never produced. A loss curve tells you the run degraded at step 40,000. It cannot tell you which component caused the degradation, because a standard architecture does not compute that quantity at any point.',
+			'What they cannot do is answer a causal question, because the information required to answer it was never produced. A loss curve reports that the run degraded at step 40,000. It cannot name the component that caused the degradation, because a standard architecture does not compute that quantity at any point.',
 			'ORMAS produces the quantity. An observability platform is then the natural place to put it.',
 		],
 	},
@@ -93,7 +93,7 @@ export const faqs: FaqItem[] = [
 		cat: 'product',
 		q: 'Is it a model, a library, a wrapper, or a training method?',
 		a: [
-			'A training architecture, delivered as software you run in your own environment. You bring the task, the data and the compute; ORMAS determines how the network is structured and how the backward pass is instrumented.',
+			'A training architecture, delivered as software that runs in the customer environment. The customer brings the task, the data and the compute; ORMAS determines how the network is structured and how the backward pass is instrumented.',
 			'It is not a pre-trained model, and it is not a monitoring layer bolted onto one. The property it delivers cannot be added to a network after training, which is the entire reason it has to sit at the architecture level.',
 		],
 	},
@@ -102,8 +102,8 @@ export const faqs: FaqItem[] = [
 		cat: 'product',
 		q: 'You list seven applications. Are those seven products?',
 		a: [
-			'No. There is one product and one licence. The seven are what the same mechanism is called by the people who buy it — a bank, a hospital and a training lab describe the identical capability using three different nouns, because each is solving the problem in front of them.',
-			'They are ordered on the product page by how hard it is to say yes to them, from sending us a file to agreeing a bound with your regulator. That order is the recommendation.',
+			'No. There is one product and one licence. The seven are what the same mechanism is called by the people who buy it. A bank, a hospital and a training lab describe the identical capability using three different nouns, because each is solving the problem in front of them.',
+			'They are ordered on the product page by how hard it is to say yes to them, from sending us a file to agreeing a bound with the regulator. That order is the recommendation.',
 		],
 		link: { href: '/product', label: 'The seven applications' },
 	},
@@ -131,7 +131,7 @@ export const faqs: FaqItem[] = [
 		cat: 'product',
 		q: 'What does "bounded" actually mean here?',
 		a: [
-			'That the local gradient chain for any node is four operations long — LayerNorm, Linear, PReLU, Linear — and cannot grow with the depth or width of the surrounding network.',
+			'That the local gradient chain for any node is four operations long, LayerNorm then Linear then PReLU then Linear, and cannot grow with the depth or width of the surrounding network.',
 			'An unbounded chain is why attribution in a standard deep network is intractable: the causal path from a parameter to the loss runs through the entire remaining architecture. Fixing the length of that path is what converts attribution from an estimation problem into a measurement.',
 		],
 	},
@@ -144,7 +144,7 @@ export const faqs: FaqItem[] = [
 		a: [
 			'383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, and 16,316 lines of instrumentation across 85 files. A manuscript is under peer review, and the architecture and every experiment behind it are published.',
 			'The headline result is recovery: +70.3 percentage points from catastrophic structural collapse, in conditions where a parameter-matched baseline is permanently dead rather than merely degraded.',
-			'Every run regenerates from seed. The claim is not that you should believe the numbers; it is that you can produce them yourself.',
+			'Every run regenerates from seed. The claim is not that the numbers deserve belief on our word; it is that any reader with the seed can produce them independently.',
 		],
 		link: { href: '/technology', label: 'The results in full' },
 	},
@@ -154,7 +154,7 @@ export const faqs: FaqItem[] = [
 		q: 'What benchmarks were these measured on?',
 		a: [
 			'CIFAR-10 and CIFAR-100. That is the honest scope of the published evidence and it is stated on every page where a result appears.',
-			'No clinical, biological, financial or defence data has ever touched this system. The mechanism is domain-independent by construction — it operates on the backward pass, not on the semantics of the input — but a mechanism being domain-independent is an argument, and an argument is not a result.',
+			'No clinical, biological, financial or defence data has ever touched this system. The mechanism is domain-independent by construction, operating on the backward pass rather than on the semantics of the input. But a mechanism being domain-independent is an argument, and an argument is not a result.',
 			'Closing that gap is what the dataset partnership on the careers page exists to do, and it is the single largest thing standing between the result and the fields it was built for.',
 		],
 	},
@@ -221,8 +221,8 @@ export const faqs: FaqItem[] = [
 		cat: 'deploy',
 		q: 'Where does it run?',
 		a: [
-			'Inside your environment, on your hardware, against your data. On-premise, in your own cloud tenancy, or in an air-gapped enclave.',
-			'There is no hosted service, no inference endpoint and no control plane operated by us. The software has no outbound route, which is an architectural property rather than a policy commitment — a policy can be broken and a system with no network path cannot be.',
+			'Inside the customer environment, on existing hardware, against the data. On-premise, in their own cloud tenancy, or in an air-gapped enclave.',
+			'There is no hosted service, no inference endpoint and no control plane operated by us. The software has no outbound route, which is an architectural property rather than a policy commitment: a policy can be broken and a system with no network path cannot be.',
 		],
 		link: { href: '/data', label: 'The full data position' },
 	},
@@ -231,7 +231,7 @@ export const faqs: FaqItem[] = [
 		cat: 'deploy',
 		q: 'Does it need to contact you to run? Licence checks, telemetry, updates?',
 		a: [
-			'No. Not for licence validation, not for telemetry, not for updates. It runs with no connection outward from your network.',
+			'No. Not for licence validation, not for telemetry, not for updates. It runs with no connection outward from the network.',
 			'This is the first question every security reviewer in a regulated environment asks, and the answer determines whether the rest of the review happens at all.',
 		],
 	},
@@ -240,8 +240,8 @@ export const faqs: FaqItem[] = [
 		cat: 'deploy',
 		q: 'What frameworks and hardware does it need?',
 		a: [
-			'It is a PyTorch architecture and runs on standard NVIDIA accelerators. It requires no specialised silicon, no custom kernels and no changes to your scheduler or orchestration layer.',
-			'Integration is a change to how the network is defined and trained, not a change to your platform.',
+			'It is a PyTorch architecture and runs on standard NVIDIA accelerators. It requires no specialised silicon, no custom kernels and no changes to the scheduler or orchestration layer.',
+			'Integration is a change to how the network is defined and trained, not a change to the platform.',
 		],
 	},
 	{
@@ -249,7 +249,7 @@ export const faqs: FaqItem[] = [
 		cat: 'deploy',
 		q: 'Can we apply this to models we have already trained?',
 		a: [
-			'Not retroactively, and this is the honest constraint at the centre of the product. The account is generated during training. A model already trained under a standard architecture never produced the quantity, and nothing can recover it afterwards — that is precisely the problem ORMAS exists to solve, so it would be incoherent to claim otherwise.',
+			'Not retroactively, and this is the honest constraint at the centre of the product. The account is generated during training. A model already trained under a standard architecture never produced the quantity, and nothing can recover it afterwards. That is precisely the problem ORMAS exists to solve, so it would be incoherent to claim otherwise.',
 			'What applies to an existing model is assessment: a trained checkpoint can be examined and reported on. Forward from that, models trained under ORMAS carry the record natively.',
 		],
 	},
@@ -258,8 +258,8 @@ export const faqs: FaqItem[] = [
 		cat: 'deploy',
 		q: 'What does the instrumentation cost in compute?',
 		a: [
-			'The bottleneck is 4,715 shared parameters and the local chain is fixed at four operations, so the overhead is a bounded constant rather than a proportion of your model.',
-			'Set against it is the cost of the failure it prevents. A frontier run that dies at 60 percent and is restarted blind burns thousands of GPU-hours to reach the same checkpoint twice. The telemetry is not a tax on training; it is what stops you paying for the same training more than once.',
+			'The bottleneck is 4,715 shared parameters and the local chain is fixed at four operations, so the overhead is a bounded constant rather than a proportion of the model.',
+			'Set against it is the cost of the failure it prevents. A frontier run that dies at 60 percent and is restarted blind burns thousands of GPU-hours to reach the same checkpoint twice. The telemetry is not a tax on training; it is what stops an organisation paying for the same training more than once.',
 		],
 	},
 	{
@@ -268,7 +268,7 @@ export const faqs: FaqItem[] = [
 		q: 'Does it modify weights? Can we stop it doing that?',
 		a: [
 			'Read-only is the default posture, not a reduced tier. In that mode the network produces the full five layers of telemetry and changes nothing about itself.',
-			'Self-correction is enabled deliberately, by you, when you have seen enough of the telemetry to want it. Nobody sensible allows an unproven system to modify weights inside a run that costs six figures, and the product does not ask them to.',
+			'Self-correction is enabled deliberately, by the licensee, once the telemetry has earned that decision. Nobody sensible allows an unproven system to modify weights inside a run that costs six figures, and the product does not ask them to.',
 		],
 	},
 	{
@@ -276,8 +276,8 @@ export const faqs: FaqItem[] = [
 		cat: 'deploy',
 		q: 'What does integration actually involve on our side?',
 		a: [
-			'Defining your network under the ORMAS architecture and routing the telemetry it emits into wherever you already keep run records. The second part is usually the shorter one.',
-			'The people who need to be in the room are the team that owns model training and whoever owns your evidence retention. It is not a platform migration.',
+			'Defining the network under the ORMAS architecture and routing the telemetry it emits into wherever run records are already kept. The second part is usually the shorter one.',
+			'The people who need to be in the room are the team that owns model training and whoever owns evidence retention. It is not a platform migration.',
 		],
 	},
 
@@ -289,7 +289,7 @@ export const faqs: FaqItem[] = [
 		a: [
 			'Under a deployment licence, none. Not the training data, not the weights, not the telemetry, not the records. The software runs with no outbound route, so there is no transfer to govern.',
 			'This changes the legal analysis rather than merely softening it: where we do not receive, store, transmit or access personal data, no processing occurs on our behalf and no Article 28 relationship arises in respect of it.',
-			'The exception is an evaluation you send us deliberately, which is a different mode with its own terms and a data processing agreement executed before anything moves.',
+			'The exception is an evaluation sent to us deliberately, which is a different mode with its own terms and a data processing agreement executed before anything moves.',
 		],
 		link: { href: '/data', label: 'The three modes, separated in law' },
 	},
@@ -307,8 +307,8 @@ export const faqs: FaqItem[] = [
 		cat: 'data',
 		q: 'Who owns the models we train and the records they produce?',
 		a: [
-			'You do. Your weights, your training data, your telemetry and your compliance records are yours without qualification. We claim no interest in the outputs of a licensed deployment and no right to inspect them.',
-			'The licence covers the architecture you are running. It does not reach what you build with it.',
+			'The licensee does, without qualification: the weights, the training data, the telemetry and the compliance records. We claim no interest in the outputs of a licensed deployment and no right to inspect them.',
+			'The licence covers the architecture. It does not reach what is built with it.',
 		],
 	},
 	{
@@ -316,8 +316,8 @@ export const faqs: FaqItem[] = [
 		cat: 'data',
 		q: 'If our licence ends, can we still read the records we already produced?',
 		a: [
-			'Yes, permanently. Records are written in a documented, open format that does not require our software to interpret, and they live in your storage rather than ours.',
-			'A compliance record that becomes unreadable when a commercial relationship ends is not a compliance record. Retention obligations outlive vendor contracts routinely — the EU AI Act alone requires logs to be kept for at least six months, and sector rules run to years — so artefact survival is written into the licence rather than left to goodwill.',
+			'Yes, permanently. Records are written in a documented, open format that does not require our software to interpret, and they live in customer storage rather than ours.',
+			'A compliance record that becomes unreadable when a commercial relationship ends is not a compliance record. Retention obligations outlive vendor contracts routinely. The EU AI Act alone requires logs to be kept for at least six months, and sector rules run to years, so artefact survival is written into the licence rather than left to goodwill.',
 		],
 		link: { href: '/licensing', label: 'Artefact survival in the licence' },
 	},
@@ -326,7 +326,7 @@ export const faqs: FaqItem[] = [
 		cat: 'data',
 		q: 'Is source code escrow available?',
 		a: [
-			'Yes, and alongside it the licence carries a release commitment: the mechanism is published in full on acceptance of the manuscript, irrevocably. That is a stronger position than escrow, because the architecture cannot become unavailable to you once released, and escrow covers the implementation until then.',
+			'Yes, and alongside it the licence carries a release commitment: the mechanism is published in full on acceptance of the manuscript, irrevocably. That is a stronger position than escrow, because the architecture cannot become unavailable to a licensee once released, and escrow covers the implementation until then.',
 			'Escrow covers the production implementation and the assurance work around it, and is agreed in the contract.',
 		],
 	},
@@ -335,7 +335,7 @@ export const faqs: FaqItem[] = [
 		cat: 'data',
 		q: 'What is your security posture as a supplier?',
 		a: [
-			'Under a deployment licence we are a software supplier rather than a service provider. There is no outbound connectivity to review, no data residency question, no standing credentials to any customer environment and no subprocessor touching your data, because none of it moves.',
+			'Under a deployment licence we are a software supplier rather than a service provider. There is no outbound connectivity to review, no data residency question, no standing credentials to any customer environment and no subprocessor touching the data, because none of it moves.',
 			'That is a materially smaller third-party risk surface than a hosted vendor presents, and most of a standard questionnaire resolves to "not applicable" for a structural reason rather than an asserted one.',
 		],
 	},
@@ -344,8 +344,8 @@ export const faqs: FaqItem[] = [
 		cat: 'data',
 		q: 'You are going to publish the mechanism. What stops a competitor building it?',
 		a: [
-			'Nothing will stop them reproducing it once it is out, and that is intentional — a result nobody can check is worth nothing in the fields this sells into.',
-			'What a reimplementation does not come with is the calibration behind the bound, the adversarial suite the architecture was hardened against, the archived experimental record, or a counterparty who will stand behind a number in your filing. Institutions under obligation are not buying source code. They are buying somebody who is accountable for it.',
+			'Nothing will stop them reproducing it once it is out, and that is intentional: a result nobody can check is worth nothing in the fields this sells into.',
+			'What a reimplementation does not come with is the calibration behind the bound, the adversarial suite the architecture was hardened against, the archived experimental record, or a counterparty who will stand behind a number in the filing. Institutions under obligation are not buying source code. They are buying somebody who is accountable for it.',
 		],
 	},
 
@@ -355,7 +355,7 @@ export const faqs: FaqItem[] = [
 		cat: 'compliance',
 		q: 'Does this make us compliant?',
 		a: [
-			'No, and any vendor claiming otherwise is selling you a problem. Compliance is a determination made by you and accepted by your regulator, about your system, your use case and your controls.',
+			'No, and any vendor claiming otherwise is selling a problem rather than a product. Compliance is a determination made by the deploying organisation and accepted by the regulator, about its system, its use case and its controls.',
 			'What ORMAS produces is the evidence such a determination requires and which most organisations currently cannot generate: a causal record of what the model did, which component was responsible, and what changed. The evidence has been the missing input, not the paperwork around it.',
 		],
 	},
@@ -365,7 +365,7 @@ export const faqs: FaqItem[] = [
 		q: 'How does this bear on the EU AI Act?',
 		a: [
 			'Article 12 requires high-risk systems to technically allow automatic recording of events across their lifetime, sufficient to identify risk and substantial modification, support post-market monitoring, and monitor operation. Article 19 requires providers to retain those logs for at least six months, and longer where the intended purpose demands it.',
-			'The obligation is on the system to be capable of producing such a record. Standard architectures satisfy it with operational logs that capture what happened without capturing what caused it — which meets the letter for many systems and leaves the provider unable to answer the substantial-modification question when it is actually asked.',
+			'The obligation is on the system to be capable of producing such a record. Standard architectures satisfy it with operational logs that capture what happened without capturing what caused it, which meets the letter for many systems while leaving the provider unable to answer the substantial-modification question when it is actually asked.',
 			'ORMAS produces a per-component causal record natively, which is a materially stronger position under the same article. Under the Omnibus timetable, Annex III obligations apply from 2 December 2027 and Annex I from 2 August 2028.',
 		],
 	},
@@ -376,7 +376,7 @@ export const faqs: FaqItem[] = [
 		a: [
 			'Directly, in three of its clauses. 42001 asks for documented operational information (7.5), controlled development with version records for traceability and reproducibility (8.3), and monitoring and measurement that supports audit and incident analysis (9.1). Model and dataset lineage sit underneath all three.',
 			'Those clauses describe evidence an organisation must be able to produce. ORMAS produces it as a by-product of training rather than as a documentation exercise performed alongside it.',
-			'Oxiedo does not hold 42001 certification, and a certification held by us would not transfer to you in any case. The relevance is to your management system, not ours.',
+			'Oxiedo does not hold 42001 certification, and a certification held by us would not transfer to a customer in any case. The relevance is to the customer\'s management system, not ours.',
 		],
 	},
 	{
@@ -384,7 +384,7 @@ export const faqs: FaqItem[] = [
 		cat: 'compliance',
 		q: 'How does this map to the NIST AI Risk Management Framework?',
 		a: [
-			'Most usefully to MEASURE, which is the function organisations struggle to evidence because it requires quantities they do not compute. MAP and GOVERN are largely organisational; MEASURE asks what the system actually did and how you know.',
+			'Most usefully to MEASURE, which is the function organisations struggle to evidence because it requires quantities they do not compute. MAP and GOVERN are largely organisational; MEASURE asks what the system actually did and on what evidence.',
 			'Per-component attribution and the five telemetry layers are measurement functions in the framework sense. They also feed MANAGE, in that a named failing component is actionable where an aggregate degradation signal is not.',
 		],
 	},
@@ -393,8 +393,8 @@ export const faqs: FaqItem[] = [
 		cat: 'compliance',
 		q: 'Under GDPR, are you a controller or a processor?',
 		a: [
-			'Under a deployment licence, neither, in respect of your data. You remain the controller. A processor is a party that processes personal data on behalf of a controller, and where we do not receive, store, transmit or access it, no such processing occurs.',
-			'For an evaluation you send us, we are your processor and a DPA is executed before any transfer. For this website, we are the controller of what you submit through it.',
+			'Under a deployment licence, neither, in respect of the data. The customer remains the controller. A processor is a party that processes personal data on behalf of a controller, and where we do not receive, store, transmit or access it, no such processing occurs.',
+			'For an evaluation sent to us, we are the customer\'s processor and a DPA is executed before any transfer. For this website, we are the controller of what is submitted through it.',
 			'Oxiedo is not yet separately incorporated; a Delaware C-corporation is being formed. Until it completes, the controller for anything submitted through this site is the UK-registered company through which we currently contract, and UK GDPR and the Data Protection Act 2018 apply to it as home law. EU GDPR applies under Article 3(2) for data subjects in the Union. That entity is named in full in any agreement and before any data is transferred to us.',
 		],
 		link: { href: '/data', label: 'Positions under GDPR and HIPAA' },
@@ -414,8 +414,8 @@ export const faqs: FaqItem[] = [
 		q: 'How does this relate to an FDA predetermined change control plan?',
 		a: [
 			'A PCCP requires a manufacturer to specify in advance what modifications a device may undergo, the methods used to implement them, and the evidence that each stays inside the authorised envelope. The hard part in practice is the third.',
-			'A model that modifies itself and records each change against a declared bound produces exactly the artefact that requirement describes. Of the 1,451 FDA-cleared AI-enabled devices at the end of 2025, roughly 8 percent carry a PCCP — the constraint has been the ability to evidence adherence, not willingness to file.',
-			'Oxiedo makes no regulatory submission on your behalf and holds no clearance. The submission and its contents remain yours.',
+			'A model that modifies itself and records each change against a declared bound produces exactly the artefact that requirement describes. Of the 1,451 FDA-cleared AI-enabled devices at the end of 2025, roughly 8 percent carry a PCCP. The constraint has been the ability to evidence adherence, not willingness to file.',
+			'Oxiedo makes no regulatory submission on a customer\'s behalf and holds no clearance. The submission and its contents remain the customer\'s.',
 		],
 		link: { href: '/sectors/medical-ai', label: 'The medical AI position' },
 	},
@@ -435,7 +435,7 @@ export const faqs: FaqItem[] = [
 		q: 'Do you hold SOC 2 or ISO 27001?',
 		a: [
 			'Neither, and both are planned once first engagements fund the audit. Claiming otherwise would be the fastest way to fail a diligence process that verifies certificates directly.',
-			'What is worth weighing is what those attestations cover. Both assess controls over data a vendor holds. Under a deployment licence we hold none of yours, which is why most of a security questionnaire resolves structurally rather than by attestation.',
+			'What is worth weighing is what those attestations cover. Both assess controls over data a vendor holds. Under a deployment licence we hold no customer data, which is why most of a security questionnaire resolves structurally rather than by attestation.',
 		],
 		link: { href: '/data', label: 'What is held and what is not' },
 	},
@@ -445,7 +445,7 @@ export const faqs: FaqItem[] = [
 		q: 'Will a regulator accept these records?',
 		a: [
 			'No regulator pre-certifies an evidence format, and any vendor promising acceptance is describing something that does not exist.',
-			'What can be said precisely: the records are per-component, causally grounded, immutable once written, and readable without our software. Those are the properties that make evidence admissible in a supervisory process. The determination remains your regulator’s, and the records are built to survive it rather than to anticipate it.',
+			'What can be said precisely: the records are per-component, causally grounded, immutable once written, and readable without our software. Those are the properties that make evidence admissible in a supervisory process. The determination remains the regulator’s, and the records are built to survive it rather than to anticipate it.',
 		],
 	},
 
@@ -456,7 +456,7 @@ export const faqs: FaqItem[] = [
 		q: 'What licence is this under?',
 		a: [
 			'A research licence. Free for research, teaching and evaluation, including commercial evaluation, from the moment the release lands. Production use is licensed separately.',
-			'It is not an open source licence and is not described as one. Open source has a specific meaning and this does not meet it — the restriction on production use is the entire point.',
+			'It is not an open source licence and is not described as one. Open source has a specific meaning and this does not meet it: the restriction on production use is the entire point.',
 		],
 		link: { href: '/licensing', label: 'The licence in full' },
 	},
@@ -465,8 +465,8 @@ export const faqs: FaqItem[] = [
 		cat: 'commercial',
 		q: 'What exactly can we do for free?',
 		a: [
-			'Read the architecture, reproduce every experiment, teach from it, publish on it, and evaluate it against your own workload — including inside a commercial organisation deciding whether to buy. Evaluation access is available now under a short agreement; everything else follows the release.',
-			'What the free licence does not carry is production deployment, the calibrated bound, the assurance work, or a counterparty. An open licence has no counterparty: you cannot put it in a filing, you cannot ask it to stand behind a declaration, and there is nobody to hold to it.',
+			'Read the architecture, reproduce every experiment, teach from it, publish on it, and evaluate it against their own workload, including inside a commercial organisation deciding whether to buy. Evaluation access is available now under a short agreement; everything else follows the release.',
+			'What the free licence does not carry is production deployment, the calibrated bound, the assurance work, or a counterparty. An open licence has no counterparty: it cannot be named in a filing, it cannot stand behind a declaration, and there is nobody to hold to it.',
 		],
 	},
 	{
@@ -474,7 +474,7 @@ export const faqs: FaqItem[] = [
 		cat: 'commercial',
 		q: 'We are a university lab. Is there anything to sign?',
 		a: [
-			'Nothing, once the release is out — no registration, no seat count, no notification to us. Publish what you find, including results that contradict ours. Before then, ask and we will give you evaluation access.',
+			'Nothing, once the release is out: no registration, no seat count, no notification to us. Findings may be published freely, including results that contradict ours. Before then, ask and evaluation access is granted.',
 			'A mechanism researchers must ask permission to examine is not published in any meaningful sense, which is why the release carries no gate at all.',
 		],
 	},
@@ -484,7 +484,7 @@ export const faqs: FaqItem[] = [
 		q: 'What does a deployment licence cost?',
 		a: [
 			'There is no price list. The figure is agreed per institution against scale of deployment and the assurance work involved, and written into the contract.',
-			'This is not evasion. A published number would be wrong for nearly every reader of it, and the variable that matters — what a failure in your environment costs you — is one you can calculate before the first conversation and we cannot calculate at all.',
+			'This is not evasion. A published number would be wrong for nearly every reader of it, and the variable that matters, what a failure in the customer environment costs, is one the customer can calculate before the first conversation and we cannot calculate at all.',
 		],
 	},
 	{
@@ -492,7 +492,7 @@ export const faqs: FaqItem[] = [
 		cat: 'commercial',
 		q: 'What does pre-booking mean?',
 		a: [
-			'Agreeing deployment terms now, ahead of general availability, and shaping the integration around your environment while that is still possible.',
+			'Agreeing deployment terms now, ahead of general availability, and shaping the integration around the customer environment while that is still possible.',
 			'Early partners influence what the production system prioritises, because the requirements are still open. There is no artificial limit on how many are accepted and no countdown attached to it.',
 		],
 		link: { href: '/contact', label: 'Start a conversation' },
@@ -502,8 +502,8 @@ export const faqs: FaqItem[] = [
 		cat: 'commercial',
 		q: 'Can we evaluate before committing?',
 		a: [
-			'Yes, and it is the expected path. Evaluation access is available now under a short agreement, and free and unrestricted once the research release is out. Either way it runs entirely in your environment against your workload, with nothing reaching us.',
-			'Where you would rather we assessed a checkpoint directly, that is a scoped evaluation with a DPA executed first.',
+			'Yes, and it is the expected path. Evaluation access is available now under a short agreement, and free and unrestricted once the research release is out. Either way it runs entirely in the customer environment against the workload, with nothing reaching us.',
+			'Where a customer would rather we assessed a checkpoint directly, that is a scoped evaluation with a DPA executed first.',
 		],
 	},
 	{
@@ -511,8 +511,8 @@ export const faqs: FaqItem[] = [
 		cat: 'commercial',
 		q: 'What support comes with a licence?',
 		a: [
-			'Direct engineering access to the people who built the architecture. There is no support tier structure and no account management layer between you and the work.',
-			'We hold no standing credentials to any customer environment. Where a support question requires us to see something, you decide what to share and share it deliberately, and that transfer carries evaluation terms.',
+			'Direct engineering access to the people who built the architecture. There is no support tier structure and no account management layer in between.',
+			'We hold no standing credentials to any customer environment. Where a support question requires us to see something, the customer decides what to share and shares it deliberately, and that transfer carries evaluation terms.',
 		],
 	},
 
@@ -533,7 +533,7 @@ export const faqs: FaqItem[] = [
 		q: 'How much of this actually exists?',
 		a: [
 			'16,316 lines across 85 files, 383 controlled experiments across four architecture families, and 67 archived runs that regenerate from seed. The architecture is complete and the experimental programme is closed.',
-			'The right way to weigh that is not to take it on trust. Every run regenerates from seed, and the mechanism is released in full on acceptance — so the work becomes checkable in a way that a larger team behind a permanently closed implementation never is.',
+			'The right way to weigh that is not to take it on trust. Every run regenerates from seed, and the mechanism is released in full on acceptance, so the work becomes checkable in a way that a larger team behind a permanently closed implementation never is.',
 		],
 	},
 	{
@@ -552,7 +552,7 @@ export const faqs: FaqItem[] = [
 		q: 'Why should we engage a company with no paying customers?',
 		a: [
 			'Because the alternative on offer is a mature vendor selling an approximation, and an approximation does not become admissible by being sold at scale. The question is not who has more customers; it is which one produces evidence that survives a regulator.',
-			'What is normally opaque at this stage is not opaque here. The release commitment is written into the licence, every experiment regenerates from seed, the one adverse result is disclosed on this site, and the falsification test costs under 30 GPU-hours. Most established vendors will not give you any of that.',
+			'What is normally opaque at this stage is not opaque here. The release commitment is written into the licence, every experiment regenerates from seed, the one adverse result is disclosed on this site, and the falsification test costs under 30 GPU-hours. Most established vendors disclose none of it.',
 			'Zero customer conversations have taken place, and it is on the about page in those words.',
 		],
 	},
@@ -561,8 +561,8 @@ export const faqs: FaqItem[] = [
 		cat: 'company',
 		q: 'What happens to us if Oxiedo fails?',
 		a: [
-			'You keep everything that matters. Once the architecture is released it cannot be withdrawn — the licence makes that irrevocable — and escrow covers the implementation before then. Your models, weights and records are in your environment and were never in ours. The records are written in a documented open format that needs no software of ours to read, and remain readable indefinitely.',
-			'Escrow covers the production implementation. This is the concentration-risk question every procurement function is right to ask, and the answer is structural rather than reassuring: there is no switch we could throw that would take anything away from you.',
+			'Everything that matters stays with the licensee. Once the architecture is released it cannot be withdrawn, because the licence makes that irrevocable, and escrow covers the implementation before then. The models, weights and records sit in the customer environment and were never in ours. The records are written in a documented open format that needs no software of ours to read, and remain readable indefinitely.',
+			'Escrow covers the production implementation. This is the concentration-risk question every procurement function is right to ask, and the answer is structural rather than reassuring: there is no switch we could throw that would take anything away from a licensee.',
 		],
 	},
 	{
@@ -588,7 +588,7 @@ export const faqs: FaqItem[] = [
 		q: 'How do we start a conversation?',
 		a: [
 			'Through the contact page. Every message is read by a person and answered within a few days, and the first reply comes from the person who built the architecture rather than from a qualification process.',
-			'Useful things to bring: what you train, what obligation you carry, and what a failure currently costs you to diagnose.',
+			'Useful things to bring: what is being trained, what obligation attaches to it, and what a failure currently costs to diagnose.',
 		],
 		link: { href: '/contact', label: 'Contact' },
 	},

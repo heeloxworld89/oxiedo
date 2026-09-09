@@ -59,7 +59,7 @@ const sections = [
 	{ id: 'delivers', label: 'What it delivers' },
 	{ id: 'who', label: 'Who it is for' },
 	{ id: 'how', label: 'How it works' },
-	{ id: 'industries', label: 'In your industry' },
+	{ id: 'industries', label: 'Where it is bought' },
 	...(usedBy.length ? [{ id: 'markets', label: 'Markets using it' }] : []),
 	{ id: 'questions', label: 'Questions' },
 ];
@@ -67,20 +67,20 @@ const sections = [
 const faqs = [
 	{
 		q: 'Is this a separate product?',
-		a: `No. ORMAS is one product under one licence, and ${feature.name} is one of the seven things it is proven at. You turn on what your situation needs; there is no separate purchase, no separate integration and no separate contract.`,
+		a: `No. ORMAS is one product under one licence, and ${feature.name} is one of the seven things it is proven at. An institution turns on what its situation needs; there is no separate purchase, no separate integration and no separate contract.`,
 	},
 	{
 		q: 'Does this only work in my industry?',
-		a: "The mechanism does not know what industry it is in. What changes between them is the noun, not the method — the table above is the same mechanism with each sector's own vocabulary substituted, which is why one product serves all of them.",
+		a: "The mechanism does not know what industry it is in. What changes between them is the noun, not the method. The table above is the same mechanism with each sector's own vocabulary substituted, which is why one product serves all of them.",
 	},
 	{
 		q: 'Where does it run, and does our data leave?',
-		a: 'On your infrastructure. The licence is on-premise and per-institution: nothing is sent to a third party, there is no hosted tier, and no usage metering phones home. In a hospital enclave or a controlled environment, that is a requirement rather than a preference.',
+		a: 'On customer infrastructure. The licence is on-premise and per-institution: nothing is sent to a third party, there is no hosted tier, and no usage metering phones home. In a hospital enclave or a controlled environment, that is a requirement rather than a preference.',
 	},
 ];
 ---
 
-<Page title={feature.name} description={`${feature.summary} One architecture, one licence — ${feature.name} is how this capability is used, not a separate product.`}>
+<Page title={feature.name} description={`${feature.summary} One architecture, one licence. ${feature.name} is how this capability is used, not a separate product.`}>
 	<PageBanner
 		eyebrow="AN APPLICATION OF ORMAS"
 		title={feature.name}
@@ -92,7 +92,7 @@ const faqs = [
 	/>
 
 	{/* All seven, with the current one marked. Replaces a sidebar card headed "THE OTHER SIX" that
-	    listed only the ones you were not reading and gave no sense of position. */}
+	    listed only the ones not being read and gave no sense of position. */}
 	<nav class="appnav" aria-label="Applications">
 		<div class="appnav-inner container">
 			<span class="appnav-label">Applications</span>
@@ -199,10 +199,10 @@ const faqs = [
 			    column jumped width halfway down the document. */}
 			<section class="feature-section" id="industries">
 				<p class="feature-section-num tabular">05</p>
-				<h2>In your industry</h2>
+				<h2>Where it is bought</h2>
 				<p class="feature-section-intro">
 					This is why ORMAS is one product rather than seven. {feature.name} is the same
-					mechanism in every row below — only the customer's own vocabulary changes.
+					mechanism in every row below; only the customer’s own vocabulary changes.
 				</p>
 				<dl class="industry-table">
 					{feature.industryNouns.map((n) => (

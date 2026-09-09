@@ -77,7 +77,7 @@ export const markets: Record<string, MarketDeep> = {
 			'A training run is the most expensive thing most AI organisations own, and it is supervised by the one instrument that cannot see inside it.',
 		situation: [
 			'The economics of this market are unusual: the buyer does not need to be convinced the problem exists. They lost money to it recently, they can name the run, and they can find the invoice. What they have never had is an instrument that tells them anything smaller than "the run is in trouble."',
-			'The standard operating picture for a large training job is a loss curve on a dashboard, a gradient-norm chart beside it, and checkpointing at some interval chosen as a compromise between storage cost and how much work you are willing to lose. When something goes wrong, all three of those tell you the same thing at the same time: something went wrong. None of them tells you which part, or when it started.',
+			'The standard operating picture for a large training job is a loss curve on a dashboard, a gradient-norm chart beside it, and checkpointing at some interval chosen as a compromise between storage cost and how much work is acceptable to lose. When something goes wrong, all three report the same thing at the same time: something went wrong. None of them names which part, or when it started.',
 			'That gap is not a tooling oversight. In a standard network every error signal reaches every parameter on every step, so there is no component whose behaviour can be isolated from the aggregate. The information required to answer "which part?" is not being withheld. It was never separable.',
 		],
 		evidence: [
@@ -113,7 +113,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'The cause is not reliably reproducible',
-				body: 'Loss spikes are hypothesised to arise from rare interactions between the optimiser state and specific input batches — a combination that is fragile, hard to predict, and difficult to reproduce deliberately. Post-mortem analysis of an aggregate signal cannot distinguish a benign spike that would have recovered on its own from a malignant one that leads to irreversible divergence.',
+				body: 'Loss spikes are hypothesised to arise from rare interactions between the optimiser state and specific input batches, a combination that is fragile, hard to predict, and difficult to reproduce deliberately. Post-mortem analysis of an aggregate signal cannot distinguish a benign spike that would have recovered on its own from a malignant one that leads to irreversible divergence.',
 			},
 			{
 				title: 'The failure is invisible until it is expensive',
@@ -127,7 +127,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'Checkpointing and automated restart',
-				body: 'Solves crash recovery, which is a real and different problem. It tells you how to resume, never what to fix, and its cost model is set by interval rather than by fault size.',
+				body: 'Solves crash recovery, which is a real and different problem. It states how to resume, never what to fix, and its cost model is set by interval rather than by fault size.',
 			},
 			{
 				title: 'Experiment trackers',
@@ -135,7 +135,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'Gradient clipping and spike mitigation',
-				body: 'Adaptive clipping methods reduce the incidence of spikes. They suppress the symptom without localising the cause, and a suppressed spike still leaves you unable to say which component was involved.',
+				body: 'Adaptive clipping methods reduce the incidence of spikes. They suppress the symptom without localising the cause, and a suppressed spike still leaves the component involved unnamed.',
 			},
 		],
 		mechanism: [
@@ -160,7 +160,7 @@ export const markets: Record<string, MarketDeep> = {
 		buyer: {
 			title: 'The person who owns the training run',
 			sits: 'Infrastructure or research engineering, inside a team doing large fine-tunes, continued pre-training, or a domain-specific build.',
-			budget: 'Compute. Not governance, not compliance — the same budget line the failed run came out of.',
+			budget: 'Compute. Not governance, not compliance. It is the same budget line the failed run came out of.',
 			trigger: 'A run that died, or degraded silently, and could not be explained afterwards.',
 			quote: 'We lost four days and we still do not know what happened at step forty thousand.',
 		},
@@ -170,25 +170,25 @@ export const markets: Record<string, MarketDeep> = {
 			'Our evidence for the health signal comes from corruption-driven failure. Whether it transfers cleanly to optimiser-driven instability is an open question, and a frontier engineer will raise it inside five minutes.',
 		],
 		reframe: {
-			claim: 'The question is not whether you can detect a failing run. It is how small a thing you can detect, and how early.',
+			claim: 'The question is not whether a failing run can be detected. It is how small a fault can be detected, and how early.',
 			body: 'Every tool in this category answers at the level of the run. Compare them on resolution instead: what is the smallest unit the instrument can name, and how long after the fault does it name it? A loss curve resolves to the whole model, after the aggregate moves. This resolves to a component, at the step it happened.',
 		},
 		objections: [
 			{
 				q: 'We already have monitoring. Why would we add another dashboard?',
-				a: 'You should not, and we do not ship one. The alarm exports to wherever your team already looks — JSONL, a webhook, or your existing experiment tracker. Nobody adopts a second place to look, and a product that requires them to is a product that gets switched off in month two. What changes is not where you look, but what is in the alert: a component name and a step number instead of a curve.',
+				a: 'Nobody should, and we do not ship one. The alarm exports to wherever the team already looks: JSONL, a webhook, or the existing experiment tracker. Nobody adopts a second place to look, and a product that requires them to is a product that gets switched off in month two. What changes is not where the team looks, but what is in the alert: a component name and a step number instead of a curve.',
 			},
 			{
 				q: 'What does the instrumentation cost us in throughput?',
-				a: 'The honest answer is that the full system carries a measured overhead of 1.35× on a graph backbone, and that most of it is gradient surgery you do not need for monitoring. The read-only path runs none of that. Its wall-clock cost has been characterised as negligible in the paper and has not been separately benchmarked, which is a measurement we will run against your configuration rather than quote at you.',
+				a: 'The honest answer is that the full system carries a measured overhead of 1.35× on a graph backbone, and that most of it is gradient surgery that monitoring does not need. The read-only path runs none of that. Its wall-clock cost has been characterised as negligible in the paper and has not been separately benchmarked, so it is a measurement we will run against the customer configuration rather than quote.',
 			},
 			{
 				q: 'This has never been run on a transformer.',
-				a: 'Correct, and you would find that out in ten minutes so we will say it first. The architecture is demonstrated on fully-connected, CNN and ResNet families. The monitoring half of a transformer port is the cheap half — a local readout on intermediate activations, which is already demonstrated on a non-graph backbone — and the correction half is the expensive one you would not want anyway on a run that size.',
+				a: 'Correct, and ten minutes of reading would establish it, so we state it first. The architecture is demonstrated on fully-connected, CNN and ResNet families. The monitoring half of a transformer port is the cheap half, a local readout on intermediate activations already demonstrated on a non-graph backbone. The correction half is the expensive one, and it is not the half anyone wants on a run that size.',
 			},
 			{
 				q: 'Our failures are hardware, not model pathology. Half of Llama 3\'s were GPUs.',
-				a: 'Also correct, and a monitor does not fix a dead GPU. The distinction that matters is between a job that crashes and a job that keeps running while getting worse. A crash is detected by your orchestrator in seconds. Silent degradation is the one that consumes the full budget and produces a model you throw away, and it is the one nothing currently catches.',
+				a: 'Also correct, and a monitor does not fix a dead GPU. The distinction that matters is between a job that crashes and a job that keeps running while getting worse. A crash is detected by the orchestrator in seconds. Silent degradation is the one that consumes the full budget and produces a model that gets thrown away, and it is the one nothing currently catches.',
 			},
 		],
 		internalCase: [
@@ -205,25 +205,25 @@ export const markets: Record<string, MarketDeep> = {
 			{
 				role: 'The research lead',
 				needs: 'To know the mechanism is real',
-				line: '383 controlled experiments across four architecture families, a preprint, and 67 archived run records reproducible from seed. Send them the paper, not the deck.',
+				line: '383 controlled experiments across four architecture families, the manuscript, and 67 archived run records reproducible from seed. Send them the paper, not the deck.',
 			},
 			{
 				role: 'Security',
 				needs: 'To know nothing leaves',
-				line: 'Runs inside your environment. No hosted tier, no metering, no telemetry egress.',
+				line: 'Runs inside the customer environment. No hosted tier, no metering, no telemetry egress.',
 			},
 		],
 		proof: [
-			'The preprint, in full, with the reproducibility checklist',
+			'The manuscript, in full, with the reproducibility checklist',
 			'67 archived run records, each reproducible from seed',
 			'A worked example of the alarm output: component, diagnosis, step, magnitude',
 			'The read-only configuration, so the first engagement modifies nothing',
-			'Evaluation access under the research licence, so your team can run the mechanism before any contract exists',
+			'Evaluation access under the research licence, so the team can run the mechanism before any contract exists',
 		],
 		notFor: [
-			'Teams whose runs cost less than about $10,000. The arithmetic does not work and we will tell you so.',
-			'The dozen frontier labs who build their own infrastructure. We would rather have a research partnership with you than a licence fee.',
-			'Anyone looking for a replacement for their experiment tracker. This is not that, and it composes with the one you have.',
+			'Teams whose runs cost less than about $10,000. The arithmetic does not work, and we say so.',
+			'The dozen frontier labs who build their own infrastructure. A research partnership serves both sides better than a licence fee.',
+			'Anyone looking for a replacement for their experiment tracker. This is not that, and it composes with whichever tracker is already in place.',
 		],
 		sources: [
 			{ label: 'Meta · Llama 3 training interruptions (Tom\'s Hardware)', url: 'https://www.tomshardware.com/tech-industry/artificial-intelligence/faulty-nvidia-h100-gpus-and-hbm3-memory-caused-half-of-the-failures-during-llama-3-training-one-failure-every-three-hours-for-metas-16384-gpu-training-cluster' },
@@ -238,7 +238,7 @@ export const markets: Record<string, MarketDeep> = {
 		thesis:
 			'Every quantitative firm is already paying for catastrophic forgetting in cash, and booking it as a cost of doing business rather than as the architectural defect it is.',
 		situation: [
-			'A model is trained through one market regime. The regime turns. The model degrades at exactly the moment its output matters most, so the firm retrains on the new regime — and the retraining quietly destroys what the model knew about the old one. Then the old regime returns.',
+			'A model is trained through one market regime. The regime turns. The model degrades at exactly the moment its output matters most, so the firm retrains on the new regime, and the retraining quietly destroys what the model knew about the old one. Then the old regime returns.',
 			'The industry response is to retrain on a schedule and absorb the difference. That is a rational response to a constraint nobody has been able to remove, and it is worth being precise about what the constraint is: it is not a tuning problem, and no amount of hyperparameter search resolves it. It is catastrophic forgetting, and it is a property of how gradient descent updates a shared parameter space.',
 			'Meanwhile the supervisory picture changed. On 17 April 2026 the Federal Reserve, FDIC and OCC jointly issued SR 26-2, superseding the SR 11-7 framework that had governed model risk management since 2011. The core disciplines survive — inventory, independent validation, board-level governance, documented change control — but expectations are now explicitly scaled to materiality and to each institution\'s own model risk profile.',
 		],
@@ -346,7 +346,7 @@ export const markets: Record<string, MarketDeep> = {
 		objections: [
 			{
 				q: 'Changing our training architecture is a two-year programme.',
-				a: 'For the full deployment, that is a fair estimate and we will not pretend otherwise. It is also not where anyone starts. The entry point attaches to a model you have already trained, does not modify it, and runs on a sample you choose — which means the first engagement needs no change to your stack, no security review of a training pipeline, and no architecture decision.',
+				a: 'For the full deployment, that is a fair estimate and we will not pretend otherwise. It is also not where anyone starts. The entry point attaches to an already-trained model, does not modify it, and runs on a selected sample. The first engagement therefore needs no change to the stack, no security review of a training pipeline, and no architecture decision.',
 			},
 			{
 				q: 'SR 26-2 is more proportionate than SR 11-7. Does this still matter?',
@@ -354,18 +354,18 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				q: 'Our models are gradient-boosted trees, not neural networks.',
-				a: 'Then this is not for you today, and that is a straight answer rather than a soft one. The mechanism is a property of how a neural network trains. Where it becomes relevant is the part of your book that is moving to deep models — which in most institutions is the part with the least mature governance and the most supervisory attention.',
+				a: 'Then this is not relevant today, and that is a straight answer rather than a soft one. The mechanism is a property of how a neural network trains. Where it becomes relevant is the part of the book moving to deep models, which in most institutions is the part with the least mature governance and the most supervisory attention.',
 			},
 			{
 				q: 'Everything you have shown me is CIFAR-10.',
-				a: 'Yes. No market data has touched this system. The relevant point is that regime-change behaviour can be demonstrated on public price history without anyone\'s permission, which makes this the cheapest market in which to produce a non-benchmark result — and we would rather run that with you, on your definition of a regime, than assert it.',
+				a: 'Yes. No market data has touched this system. The relevant point is that regime-change behaviour can be demonstrated on public price history without anyone\'s permission, which makes this the cheapest market in which to produce a non-benchmark result. We would rather run that jointly, on the institution\'s own definition of a regime, than assert it.',
 			},
 		],
 		internalCase: [
 			{
 				role: 'Head of model risk',
 				needs: 'Something a validator can test',
-				line: 'A signed, per-modification record with a declared bound table, diffable against the version last approved. Not a memo about the process — the record of it.',
+				line: 'A signed, per-modification record with a declared bound table, diffable against the version last approved. Not a memo about the process, but the record of it.',
 			},
 			{
 				role: 'The validator',
@@ -380,15 +380,15 @@ export const markets: Record<string, MarketDeep> = {
 			{
 				role: 'Technology risk',
 				needs: 'Data residency',
-				line: 'On-premise or in your own environment. Position, client and trading data never move.',
+				line: 'On-premise or in the customer environment. Position, client and trading data never move.',
 			},
 		],
 		proof: [
 			'The bound table: eight modification types, individual ceilings, observed frequencies',
 			'A sample modification record, signed and hashed, with the diff format',
-			'The preprint and 383 reproducible experiment runs',
-			'A regime-change demonstration on public price history, run with your definition of a regime',
-			'The Artifact Survival Clause: your records outlive the contract, with a frozen reader you keep',
+			'The manuscript and 383 reproducible experiment runs',
+			'A regime-change demonstration on public price history, run on the institution\'s own definition of a regime',
+			'The Artifact Survival Clause: the records outlive the contract, with a frozen reader retained permanently',
 		],
 		notFor: [
 			'Institutions whose material models are entirely classical. The mechanism is specific to neural network training.',
@@ -406,9 +406,9 @@ export const markets: Record<string, MarketDeep> = {
 		thesis:
 			'Regulators opened a door for models that change after approval. Almost nobody can walk through it, because walking through it requires evidence of what the training did, and no clinical architecture produces any.',
 		situation: [
-			'A clinical model is a clinician who trained brilliantly and then had their memory frozen on graduation day. It will never learn anything from your institution, because teaching it something about your patients would cost it something it knows about everyone else\'s. That is not a policy choice. It is how the machinery works.',
+			'A clinical model is a clinician who trained brilliantly and then had their memory frozen on graduation day. It will never learn anything from the institution, because teaching it something about the local patient population would cost it something it knows about everyone else\'s. That is not a policy choice. It is how the machinery works.',
 			'The scale of the deployed population is now substantial: cumulative FDA authorisations of AI-enabled devices passed 1,250 by July 2025 and stood at 1,451 by the end of that year, up from 950 in August 2024. The scale of the population permitted to change after authorisation is not. Roughly 8% of new AI device authorisations in the 2024–25 window included an authorised Predetermined Change Control Plan. The overwhelming majority are locked models with no ability to learn after launch.',
-			'The FDA finalised its PCCP guidance in August 2025, and the mechanism is genuinely permissive: state in advance exactly what the algorithm may change, how you will validate it, and how the change will be controlled, and you may modify the device without a new marketing submission. The constraint is not regulatory appetite. It is that producing that evidence requires an architecture that knows what it changed, and standard architectures do not.',
+			'The FDA finalised its PCCP guidance in August 2025, and the mechanism is genuinely permissive: a sponsor states in advance exactly what the algorithm may change, how it will be validated, and how the change will be controlled, and may then modify the device without a new marketing submission. The constraint is not regulatory appetite. It is that producing that evidence requires an architecture that knows what it changed, and standard architectures do not.',
 		],
 		evidence: [
 			{
@@ -435,7 +435,7 @@ export const markets: Record<string, MarketDeep> = {
 		failures: [
 			{
 				title: 'The model is frozen because updating it is not safe',
-				body: 'Training on your population degrades what the model knew about the populations it was validated on. Without a mechanism that separates the two, any local update is a silent trade against the evidence base the authorisation rests on. Freezing is the conservative and correct response to that, and it is why deployed models decay.',
+				body: 'Training on the local population degrades what the model knew about the populations it was validated on. Without a mechanism that separates the two, any local update is a silent trade against the evidence base the authorisation rests on. Freezing is the conservative and correct response to that, and it is why deployed models decay.',
 			},
 			{
 				title: 'Site shift arrives with no instrument to measure it',
@@ -461,17 +461,17 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'Domain adaptation and harmonisation',
-				body: 'Real techniques that genuinely reduce site effects, and worth using. What they leave you holding is one model and a hope. Nothing is named, nothing is removable, and no reviewer can be shown which part of the model was the site.',
+				body: 'Real techniques that genuinely reduce site effects, and worth using. What they leave behind is one model and a hope. Nothing is named, nothing is removable, and no reviewer can be shown which part of the model was the site.',
 			},
 			{
 				title: 'A validation report asserting generalisation',
-				body: 'The current artefact. It holds until the scanner is replaced, the protocol changes, the population shifts, or a new site is added — and there is no instrument that says which of those happened.',
+				body: 'The current artefact. It holds until the scanner is replaced, the protocol changes, the population shifts, or a new site is added, and there is no instrument that says which of those happened.',
 			},
 		],
 		mechanism: [
 			{
-				title: 'Retraining inside a limit declared before you start',
-				body: 'A PCCP asks three questions: what types of modification may the algorithm undergo, how will you validate that it stayed inside them, and how is the change controlled. The bound table answers the first with eight named modification types and their individual ceilings. The record answers the second, per modification, as training happens. The diff against the approved version answers the third.',
+				title: 'Retraining inside a limit declared in advance',
+				body: 'A PCCP asks three questions: what types of modification may the algorithm undergo, how is it validated that it stayed inside them, and how is the change controlled. The bound table answers the first with eight named modification types and their individual ceilings. The record answers the second, per modification, as training happens. The diff against the approved version answers the third.',
 			},
 			{
 				title: 'The site becomes a named, removable object',
@@ -479,7 +479,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'Attribution before the averaging step',
-				body: 'In a federation, each participant runs the separation locally and only the shared component aggregates. Per-party attribution is recorded before the aggregation destroys it — so when round forty-one drops six points, the record says which site, and on what evidence.',
+				body: 'In a federation, each participant runs the separation locally and only the shared component aggregates. Per-party attribution is recorded before the aggregation destroys it, so when round forty-one drops six points, the record says which site, and on what evidence.',
 			},
 			{
 				title: 'Evidence of what training did, not a description of it',
@@ -515,20 +515,20 @@ export const markets: Record<string, MarketDeep> = {
 		],
 		reframe: {
 			claim: 'Access is granted on auditability, not on accuracy. It has never been granted on accuracy.',
-			body: 'The most common misreading in this market is that a better model opens the door. It does not. The gate is whether you can account, per decision and per change, for what the model did and why — and every current architecture answers that after the fact, by a separate procedure that can itself be wrong. Compare on what you can file, not on what you can score.',
+			body: 'The most common misreading in this market is that a better model opens the door. It does not. The gate is whether an institution can account, per decision and per change, for what the model did and why. Every current architecture answers that after the fact, by a separate procedure that can itself be wrong. The comparison that matters is what can be filed, not what can be scored.',
 		},
 		objections: [
 			{
 				q: 'Nobody replaces their training stack to get a report.',
-				a: 'Nobody should, and the entry point does not ask for it. The first engagement attaches to a checkpoint you have already trained, changes nothing about it, and runs on a sample you choose. What it returns — which labels are wrong, broken down by contributing site — is useful on its own and requires no architectural decision from you at all.',
+				a: 'Nobody should, and the entry point does not ask for it. The first engagement attaches to an existing checkpoint, changes nothing about it, and runs on a selected sample. What it returns, which labels are wrong broken down by contributing site, is useful on its own and requires no architectural decision at all.',
 			},
 			{
 				q: 'Has a regulator ever accepted this?',
-				a: 'No. Nobody has filed anything, and our mapping onto the PCCP framework is our own reading of published guidance made by people who have never submitted one. We would rather say that than have you discover it. What we can say is that the framework asks three questions — what may change, how will you validate it, how is it controlled — and that the bound table, the record and the diff are direct answers to those three.',
+				a: 'No. Nobody has filed anything, and our mapping onto the PCCP framework is our own reading of published guidance made by people who have never submitted one. We would rather state that than let it be discovered. What we can say is that the framework asks three questions, what may change, how it is validated and how it is controlled, and that the bound table, the record and the diff are direct answers to those three.',
 			},
 			{
 				q: 'Our data cannot leave the institution, and our IG office will ask about the telemetry.',
-				a: 'It runs inside your environment; there is no hosted tier and nothing egresses. The sharper question your information governance office will ask is whether the telemetry itself is non-identifying, and the honest answer is that a formal privacy analysis has not been completed. We would want that done before an engagement, not after.',
+				a: 'It runs inside the customer environment; there is no hosted tier and nothing egresses. The sharper question an information governance office will ask is whether the telemetry itself is non-identifying, and the honest answer is that a formal privacy analysis has not been completed. We would want that done before an engagement, not after.',
 			},
 			{
 				q: 'This has only ever been run on CIFAR-10.',
@@ -558,16 +558,16 @@ export const markets: Record<string, MarketDeep> = {
 			},
 		],
 		proof: [
-			'The preprint, the supplementary material and the reproducibility checklist',
+			'The manuscript, the supplementary material and the reproducibility checklist',
 			'The bound table: eight modification types, ceilings, and observed frequencies across 67 runs',
 			'A worked modification record, in the format a reviewer would receive',
-			'A label audit on a dataset you choose, returning results broken down by contributing site',
-			'Evaluation access for your own team, under a short agreement, before any contract exists',
+			'A label audit on a nominated dataset, returning results broken down by contributing site',
+			'Evaluation access for their own team, under a short agreement, before any contract exists',
 		],
 		notFor: [
 			'Anyone who needs a cleared reference deployment today. There is not one.',
-			'Programmes where the model is genuinely static and the population genuinely is not shifting. If freezing works for you, freezing is cheaper.',
-			'Discovery groups working at very small n. Every result is on tens of thousands of examples, and whether the signal survives at thirty compounds is untested — we would run that sweep before a meeting, not after.',
+			'Programmes where the model is genuinely static and the population genuinely is not shifting. Where freezing works, freezing is cheaper.',
+			'Discovery groups working at very small n. Every result is on tens of thousands of examples, and whether the signal survives at thirty compounds is untested, and we would run that sweep before a meeting, not after.',
 		],
 		sources: [
 			{ label: 'FDA · PCCP marketing submission recommendations', url: 'https://www.fda.gov/regulatory-information/search-fda-guidance-documents/marketing-submission-recommendations-predetermined-change-control-plan-artificial-intelligence' },
@@ -589,7 +589,7 @@ export const markets: Record<string, MarketDeep> = {
 			{
 				figure: '$100k–$500k+',
 				unit: 'to retrain a custom domain model from scratch',
-				note: 'The only exactly compliant remedy. Plus service downtime, plus revalidation — and at frontier scale it is not done at all.',
+				note: 'The only exactly compliant remedy. Plus service downtime, plus revalidation, and at frontier scale it is not done at all.',
 			},
 			{
 				figure: '6–21%',
@@ -649,11 +649,11 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'Delete the structure, sign what left',
-				body: 'Removal takes out the source-specific capacity and produces a signed record of precisely what was removed, together with a bounded statement of what changed in the remaining model. No retraining. The cost stops scaling with the size of your model and starts scaling with the size of the request.',
+				body: 'Removal takes out the source-specific capacity and produces a signed record of precisely what was removed, together with a bounded statement of what changed in the remaining model. No retraining. The cost stops scaling with the size of the model and starts scaling with the size of the request.',
 			},
 			{
 				title: 'The claim stays narrow, deliberately and permanently',
-				body: 'We route the memorisable portion of the training signal into named, bounded, deletable structures; deleting the structure removes the source-specific capacity; and we hand you a signed record of what was removed plus a bounded statement of what changed. We do not say your data is gone, we do not claim no trace remains, and we do not call it exact unlearning.',
+				body: 'We route the memorisable portion of the training signal into named, bounded, deletable structures; deleting the structure removes the source-specific capacity; and a signed record of what was removed is issued, plus a bounded statement of what changed. We do not say the data is gone, we do not claim no trace remains, and we do not call it exact unlearning.',
 			},
 		],
 		regulatory: [
@@ -684,13 +684,13 @@ export const markets: Record<string, MarketDeep> = {
 			'No data-protection lawyer has yet told us what may be certified, and in what words. Until that answer exists this is a strong story rather than a certifiable product.',
 		],
 		reframe: {
-			claim: 'Stop asking whether a vendor can delete your data. Ask what they will put in writing, and what happens if it is tested.',
-			body: 'Every answer in this category is approximate, and most of them say so in their own documentation. The useful comparison is not which approximation is closest, but which supplier will sign a statement about what was removed and stand behind the wording. That question narrows the field faster than any technical evaluation, and it is the question your counsel is actually asking.',
+			claim: 'Stop asking whether a vendor can delete the data. Ask what they will put in writing, and what happens if it is tested.',
+			body: 'Every answer in this category is approximate, and most of them say so in their own documentation. The useful comparison is not which approximation is closest, but which supplier will sign a statement about what was removed and stand behind the wording. That question narrows the field faster than any technical evaluation, and it is the question counsel is actually asking.',
 		},
 		objections: [
 			{
 				q: 'Our lawyers will not accept anything short of deletion.',
-				a: 'Then they are right, and they should not accept what is currently on the market either, because none of it is deletion. What we would put in writing is narrower and harder to attack: the memorisable portion of a source\'s signal is routed into a named, bounded structure; removing that structure removes the source-specific capacity; and we hand you a signed record of what was removed with a bounded statement of what changed. We do not say your data is gone.',
+				a: 'Then they are right, and they should not accept what is currently on the market either, because none of it is deletion. What we would put in writing is narrower and harder to attack: the memorisable portion of a source\'s signal is routed into a named, bounded structure; removing that structure removes the source-specific capacity; and a signed record of what was removed is issued, with a bounded statement of what changed. We do not say the data is gone.',
 			},
 			{
 				q: 'How is this different from the approximate unlearning methods already published?',
@@ -698,7 +698,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				q: 'What happens to data that was not memorised?',
-				a: 'It stays, and that is the argument rather than an evasion. Data redundant with the rest of the corpus was never the exposure — the model would have learned the same thing from a thousand other examples, and nobody\'s privacy is violated by a fact learned everywhere. What creates exposure is data unique enough that the model had to memorise it, and that is exactly the population the detector fires on.',
+				a: 'It stays, and that is the argument rather than an evasion. Data redundant with the rest of the corpus was never the exposure, because the model would have learned the same thing from a thousand other examples, and nobody\'s privacy is violated by a fact learned everywhere. What creates exposure is data unique enough that the model had to memorise it, and that is exactly the population the detector fires on.',
 			},
 			{
 				q: 'Has a data protection authority signed off on this wording?',
@@ -709,7 +709,7 @@ export const markets: Record<string, MarketDeep> = {
 			{
 				role: 'General counsel',
 				needs: 'Wording they can defend',
-				line: 'A narrow, specific statement about what was removed, with a bounded statement of residual effect — rather than a claim that will not survive being tested.',
+				line: 'A narrow, specific statement about what was removed, with a bounded statement of residual effect, rather than a claim that will not survive being tested.',
 			},
 			{
 				role: 'The data protection officer',
@@ -719,7 +719,7 @@ export const markets: Record<string, MarketDeep> = {
 			{
 				role: 'The CFO or commercial owner',
 				needs: 'The cost comparison',
-				line: 'Retraining from scratch is $100,000–$500,000 per request and the obligation recurs. The cost stops scaling with your model and starts scaling with the request.',
+				line: 'Retraining from scratch is $100,000–$500,000 per request and the obligation recurs. The cost stops scaling with the model and starts scaling with the request.',
 			},
 			{
 				role: 'Sales',
@@ -728,14 +728,14 @@ export const markets: Record<string, MarketDeep> = {
 			},
 		],
 		proof: [
-			'The exact wording we would put in a certificate, before you engage',
+			'The exact wording we would put in a certificate, before any engagement',
 			'The scope statement: what is claimed, and the four things we explicitly will not say',
-			'The binding record format — a hash of the sample set that justified each removable structure',
-			'The preprint and the reproducible experiment programme',
+			'The binding record format: a hash of the sample set that justified each removable structure',
+			'The manuscript and the reproducible experiment programme',
 			'A written position on residual influence, including the parts that are argument rather than proof',
 		],
 		notFor: [
-			'Anyone who wants to be told their data is gone. We will not say it, and a supplier who does is selling you a liability.',
+			'Anyone who wants to be told their data is gone. We will not say it, and a supplier who does is selling a liability.',
 			'Organisations that train only on data they own outright. The obligation does not attach, and this is a cost with no matching risk.',
 			'Deployments that need a certificate this quarter. The legal opinion that governs the wording has not been obtained yet, and we would not issue one before it is.',
 		],
@@ -798,7 +798,7 @@ export const markets: Record<string, MarketDeep> = {
 		incumbents: [
 			{
 				title: 'Simulated corruption during training',
-				body: 'Augmentation with synthetic jamming, noise and sensor faults. It improves robustness to the corruptions you thought of, and the operational problem is the ones you did not.',
+				body: 'Augmentation with synthetic jamming, noise and sensor faults. It improves robustness to the corruptions anticipated, and the operational problem is the ones that were not.',
 			},
 			{
 				title: 'Redundancy and voting',
@@ -877,14 +877,14 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				q: 'Who has accredited this?',
-				a: 'Nobody. No defence or classified data has touched it, no clearance is held, and the company is not US-domiciled — a real constraint on direct programme work rather than a detail to work around. The realistic shapes here are a research partnership with a national laboratory or university group, or an IP licence to an integrator who holds the clearance.',
+				a: 'Nobody. No defence or classified data has touched it, no clearance is held, and the company is not US-domiciled, which is a real constraint on direct programme work rather than a detail to work around. The realistic shapes here are a research partnership with a national laboratory or university group, or an IP licence to an integrator who holds the clearance.',
 			},
 		],
 		internalCase: [
 			{
 				role: 'The assurance lead',
 				needs: 'An artefact that closes a case',
-				line: 'A bounded, timestamped record of every self-modification — which is the artefact the community is currently going to industry to procure.',
+				line: 'A bounded, timestamped record of every self-modification, which is the artefact the community is currently going to industry to procure.',
 			},
 			{
 				role: 'Test and evaluation',

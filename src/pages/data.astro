@@ -1,7 +1,7 @@
 ---
 // DATA HANDLING — full rewrite 2026-09-07, and promoted into the primary navigation.
 //
-// WHAT WAS WRONG. The page treated every engagement as "we receive your data, we run a
+// WHAT WAS WRONG. The page treated every engagement as "we receive the data, we run a
 // diagnostic, we delete it" — which is the shape of a SaaS trust page and is not what this
 // company does. It also still enumerated data requirements per named application, which is the
 // superseded seven-products framing.
@@ -69,7 +69,7 @@ const modes = [
 	{
 		tag: 'MODE A',
 		name: 'Licensed deployment',
-		when: 'The product, running in your environment.',
+		when: 'The product, running in the customer environment.',
 		receive: 'Nothing. No model, no data, no telemetry, no logs.',
 		role: 'We are not a processor of anything the software handles.',
 		agreement: 'The licence. No DPA is required for data we never receive.',
@@ -79,8 +79,8 @@ const modes = [
 		tag: 'MODE B',
 		name: 'Evaluation engagement',
 		when: 'You ask us to run an assessment and the data is permitted to move.',
-		receive: 'A model checkpoint and a sample of labelled data, both of which you choose.',
-		role: 'We are a processor, acting only on your documented instructions.',
+		receive: 'A model checkpoint and a sample of labelled data, both of which the customer selects.',
+		role: 'We are a processor, acting only on the customer\'s documented instructions.',
 		agreement: 'A signed DPA before anything is transferred. No exceptions.',
 		lit: false,
 	},
@@ -88,7 +88,7 @@ const modes = [
 		tag: 'MODE C',
 		name: 'This website',
 		when: 'You send a message through a form or by email.',
-		receive: 'What you type: a name, an address, an organisation, a message.',
+		receive: 'What is typed into the form: a name, an address, an organisation, a message.',
 		role: 'We are the controller of that correspondence.',
 		agreement: 'None. Ask and it is deleted.',
 		lit: false,
@@ -96,18 +96,18 @@ const modes = [
 ];
 
 const neverDo = [
-	'Train any model on your data, including our own.',
-	'Transfer, sell, license or share your data with a third party for any commercial purpose.',
-	'Publish a result that identifies your organisation, your model or your dataset without your written permission.',
+	'Train any model on the data, including our own.',
+	'Transfer, sell, license or share the data with a third party for any commercial purpose.',
+	'Publish a result that identifies the organisation, the model or the dataset without the organisation\'s written permission.',
 	'Retain a model checkpoint, a dataset or a run log beyond the window stated below.',
-	'Require any connection outward from your network in order for the software to run.',
+	'Require any connection outward from the network in order for the software to run.',
 ];
 
 const subprocessors = [
-	{ name: 'Form relay', purpose: 'Delivering contact form submissions to us as email', data: 'Whatever you type into the form: name, address, organisation, message body', where: 'FormSubmit, operating under its own privacy terms. Disclosed because it handles your submission before we see it — it is the only third party in that path, and it is removed once the form runs on our own infrastructure. If you would rather no third party touched your message, write to us directly instead' },
-	{ name: 'Email and correspondence', purpose: 'Receiving and replying to messages once delivered', data: 'Name, address, organisation, message body', where: 'The founder’s own mailbox. Not a shared inbox, not a CRM, not a ticketing system' },
+	{ name: 'Form relay', purpose: 'Delivering contact form submissions to us as email', data: 'Whatever is typed into the form: name, address, organisation, message body', where: 'FormSubmit, operating under its own privacy terms. Disclosed because it handles the submission before we see it. It is the only third party in that path, and it is removed once the form runs on our own infrastructure. Where no third party should touch a message, the direct route is available instead' },
+	{ name: 'Email and correspondence', purpose: 'Receiving and replying to messages once delivered', data: 'Name, address, organisation, message body', where: 'A mailbox read directly. Not a shared inbox, not a CRM, not a ticketing system' },
 	{ name: 'Website hosting', purpose: 'Serving these pages', data: 'Request logs only. No account, no analytics, no cookies set by us', where: 'To be named before any engagement begins' },
-	{ name: 'Evaluation compute', purpose: 'Mode B only — running an assessment on data you have sent us', data: 'The checkpoint and sample you provide', where: 'Named to you in writing before any transfer, with region confirmed' },
+	{ name: 'Evaluation compute', purpose: 'Mode B only: running an assessment on data sent to us', data: 'The checkpoint and sample provided', where: 'Named in writing before any transfer, with region confirmed' },
 ];
 
 const certifications = [
@@ -125,7 +125,7 @@ const certifications = [
 const sectors = [
 	{
 		name: 'Clinical and healthcare',
-		body: 'In Mode A no PHI is created, received, maintained or transmitted by us, so no business associate relationship arises and no BAA is required — the four verbs in the definition are the whole test, and none of them applies. Where an evaluation involves PHI, we execute a BAA before any transfer and we would expect your data use agreement and any relevant ethics approval to govern the sample you send.',
+		body: 'In Mode A no PHI is created, received, maintained or transmitted by us, so no business associate relationship arises and no BAA is required. The four verbs in the definition are the whole test, and none of them applies. Where an evaluation involves PHI, we execute a BAA before any transfer and we would expect the data use agreement and any relevant ethics approval to govern the sample sent.',
 	},
 	{
 		name: 'Financial services',
@@ -145,7 +145,7 @@ const sectors = [
 <Page title="Data handling" description={"Three modes with distinct legal shapes. Under a deployment licence we receive nothing, so no Article 28 relationship arises and no BAA is required."}>
 	<PageBanner
 		eyebrow="DATA HANDLING"
-		title="In the ordinary case we never receive your data at all."
+		title="In the ordinary case we never receive the data at all."
 		trail={[{ label: 'Home', href: '/' }, { label: 'Data handling' }]}
 	/>
 
@@ -154,8 +154,8 @@ const sectors = [
 			<div>
 				<p class="dh-lede">
 					Most data policies describe what a company does with data it has collected. This one has
-					to start somewhere else, because the product is deployed inside your own environment and
-					in that mode there is no collection to describe. The software runs where your data
+					to start somewhere else, because the product is deployed inside the customer environment and
+					in that mode there is no collection to describe. The software runs where the data
 					already is. Nothing is sent to us, nothing checks in, and nothing stops working if we
 					disappear.
 				</p>
@@ -182,7 +182,7 @@ const sectors = [
 			<Eyebrow>THE THREE MODES</Eyebrow>
 			<h2 class="section-title">What we receive, what we are in law, and what has to be signed.</h2>
 			<p class="section-lede">
-				Almost every question a security review asks is answered by working out which of these you
+				Almost every question a security review asks is answered by working out which of these three modes
 				are in. Most engagements are Mode A, and Mode A is the one with nothing in it.
 			</p>
 			<div class="dh-modes">
@@ -209,15 +209,15 @@ const sectors = [
 			<div>
 				<h3 class="dh-h3">What runs where</h3>
 				<p>
-					The software is installed and operated by you, on your infrastructure or in your own
+					The software is installed and operated by the licensee, on customer infrastructure or in their own
 					cloud tenancy. Model weights, training data, telemetry, records and logs are created in
-					your environment and stay there. There is no hosted tier, no usage meter, no licence
+					the customer environment and stay there. There is no hosted tier, no usage meter, no licence
 					server, no crash reporter and no update check.
 				</p>
 				<h3 class="dh-h3">Support access</h3>
 				<p>
-					None by default. Where a support engagement requires us to see something, you decide
-					what to share, you share it deliberately, and that transfer is Mode B with Mode B's
+					None by default. Where a support engagement requires us to see something, the customer decides
+					what to share, shares it deliberately, and that transfer is Mode B with Mode B's
 					terms. We do not hold standing credentials to any customer environment.
 				</p>
 			</div>
@@ -246,7 +246,7 @@ const sectors = [
 		<div class="dh-terms">
 			<div class="dh-term">
 				<p class="dh-term-k">What we ask for</p>
-				<p>A model checkpoint, read-only, and a sample of labelled data that you select. Source or site columns if your data carries them and you choose to include them.</p>
+				<p>A model checkpoint, read-only, and a sample of labelled data selected by the customer. Source or site columns if the data carries them and they are deliberately included.</p>
 			</div>
 			<div class="dh-term">
 				<p class="dh-term-k">What we never ask for</p>
@@ -254,15 +254,15 @@ const sectors = [
 			</div>
 			<div class="dh-term">
 				<p class="dh-term-k">In transit and at rest</p>
-				<p>TLS 1.3 in transit. AES-256 at rest. Region agreed with you in writing before transfer, and EU-resident by default for EU customers.</p>
+				<p>TLS 1.3 in transit. AES-256 at rest. Region agreed in writing before transfer, and EU-resident by default for EU customers.</p>
 			</div>
 			<div class="dh-term">
 				<p class="dh-term-k">Who can access it</p>
-				<p>Only the people running your assessment, named to you before the engagement begins. No general access, no analytics, no internal sharing.</p>
+				<p>Only the people running the assessment, named before the engagement begins. No general access, no analytics, no internal sharing.</p>
 			</div>
 			<div class="dh-term">
 				<p class="dh-term-k">Retention</p>
-				<p>Deleted within 30 days of the report being delivered, or immediately on your written request at any point before that.</p>
+				<p>Deleted within 30 days of the report being delivered, or immediately on written request at any point before that.</p>
 			</div>
 			<div class="dh-term">
 				<p class="dh-term-k">Certification of deletion</p>
@@ -274,7 +274,7 @@ const sectors = [
 			</div>
 			<div class="dh-term">
 				<p class="dh-term-k">Breach notification</p>
-				<p>Without undue delay and within 72 hours of becoming aware, to you directly, with what is known and what is not yet known stated separately.</p>
+				<p>Without undue delay and within 72 hours of becoming aware, direct to the customer, with what is known and what is not yet known stated separately.</p>
 			</div>
 		</div>
 		<p class="dh-terms-note">
@@ -319,7 +319,7 @@ const sectors = [
 				<h2 class="section-title dh-split-title">Named, with purpose and location.</h2>
 				<p class="dh-split-lede">
 					No sub-processor touches anything in Mode A, because nothing reaches us. This list
-					covers the website and any evaluation you commission.
+					covers the website and any commissioned evaluation.
 				</p>
 				<div class="dh-subs">
 					{subprocessors.map((sp) => (
@@ -338,7 +338,7 @@ const sectors = [
 				<Eyebrow>CERTIFICATIONS</Eyebrow>
 				<h2 class="section-title dh-split-title">What we hold, and what we do not.</h2>
 				<p class="dh-split-lede">
-					Listed so you do not have to ask, and so a security review does not discover an absence
+					Listed so nobody has to ask, and so a security review does not discover an absence
 					halfway through.
 				</p>
 				<ul class="dh-certs">
@@ -361,7 +361,7 @@ const sectors = [
 			<Accordion id="dh-where" question="Where is our data stored, and in which region?">
 				<p>
 					In Mode A, where it already is. We do not store it, so there is no region to choose and
-					no residency question to answer. In Mode B the region is agreed with you in writing
+					no residency question to answer. In Mode B the region is agreed in writing
 					before any transfer, and defaults to the EU for EU customers.
 				</p>
 			</Accordion>
@@ -378,13 +378,13 @@ const sectors = [
 					For Mode A, not for the data the software handles, because no processing occurs on our
 					behalf. Many organisations execute one regardless as a matter of policy and we are happy
 					to sign. For Mode B it is mandatory and precedes any transfer. A template is available
-					on request before you commit to anything.
+					on request, before any commitment.
 				</p>
 			</Accordion>
 			<Accordion id="dh-train" question="Will you train on our data?">
 				<p>
 					No, in any mode, under any circumstance, including for our own research. If we want to
-					publish something learned from an engagement, we ask, we show you the exact wording, and
+					publish something learned from an engagement, we ask, we show the exact wording, and
 					we accept no as an answer.
 				</p>
 			</Accordion>
@@ -392,25 +392,24 @@ const sectors = [
 				<p>
 					By assessing what actually applies. A SOC 2 report attests to controls over data a
 					vendor holds, and in Mode A we hold none — the review question becomes software supply
-					chain rather than data custody. We provide reproducible hash-pinned builds so you can
-					verify the binary you run, and the licence carries a reproducible build attestation. For
+					chain rather than data custody. We provide reproducible hash-pinned builds, so the running binary can be verified independently, and the licence carries a reproducible build attestation. For
 					Mode B, SOC 2 is a fair thing to want and we do not have it.
 				</p>
 			</Accordion>
 			<Accordion id="dh-subpoena" question="What happens if you are compelled to disclose our data?">
 				<p>
 					In Mode A there is nothing to compel: we cannot produce what we do not hold. In Mode B,
-					where lawfully permitted, we notify you before responding to any legal demand and give
-					you the opportunity to challenge it. Where we are prohibited from notifying you, we
+					where lawfully permitted, we notify the customer before responding to any legal demand and give
+					them the opportunity to challenge it. Where we are prohibited from notifying, we
 					challenge that prohibition.
 				</p>
 			</Accordion>
 			<Accordion id="dh-exit" question="If we stop working with you, what happens to what you hold?">
 				<p>
 					Mode B material is deleted on the schedule above and certified on request. Records the
-					software generated in your own environment are yours and were always yours — the licence
-					carries a perpetual right to read and reproduce them, plus a frozen reader binary you
-					keep, precisely so that ending the relationship does not endanger your own audit trail.
+					software generated in the customer environment belong to the customer and always did. The licence
+					carries a perpetual right to read and reproduce them, plus a frozen reader binary the
+					customer keeps, precisely so that ending the relationship does not endanger their own audit trail.
 				</p>
 			</Accordion>
 		</div>
@@ -426,9 +425,8 @@ const sectors = [
 					immediately and confirmed in writing.
 				</p>
 				<p class="dh-contact-note">
-					Data protection requests have their own route on the contact form. It reaches the founder
-					directly rather than a shared inbox, a ticketing system or a privacy team that does not
-					exist.
+					Data protection requests have their own route on the contact form. It reaches the people who wrote these terms
+					rather than a shared inbox or a ticketing queue.
 				</p>
 				<div class="dh-cta">
 					<Button variant="primary" href="/contact">Request the DPA template</Button>
@@ -439,8 +437,8 @@ const sectors = [
 				<p class="dh-scope-label">What this page does not cover</p>
 				<p>
 					The commercial terms of an engagement, which are in the licence and the engagement
-					contract. Your own obligations as controller of the data the software processes in your
-					environment, which remain yours throughout.
+					contract. The customer's own obligations as controller of the data the software processes in
+					the customer environment also sit outside it, and remain the customer’s throughout.
 				</p>
 				<p>
 					This site sets no cookies and runs no analytics. The contact form holds a submitting IP

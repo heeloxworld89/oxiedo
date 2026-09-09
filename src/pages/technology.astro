@@ -45,7 +45,7 @@ const headline = [
 const unlocks = [
 	{
 		domain: 'Medicine',
-		body: 'A clinical model is frozen at authorisation, because updating it on your population degrades what it knew about everyone else and because nobody can evidence what an update changed. Roughly 8% of authorised AI devices are permitted to change at all. The rest decay from the day they ship.',
+		body: 'A clinical model is frozen at authorisation, because updating it on the local population degrades what it knew about everyone else and because nobody can evidence what an update changed. Roughly 8% of authorised AI devices are permitted to change at all. The rest decay from the day they ship.',
 	},
 	{
 		domain: 'Finance',
@@ -56,7 +56,7 @@ const unlocks = [
 		body: 'Software entering a controlled environment must be able to account for its own behaviour. "It modified itself and we cannot say how" is not a finding that gets remediated. It ends the programme, and correctly so.',
 	},
 	{
-		domain: 'Any use of data you do not own',
+		domain: 'Any use of data the trainer does not own',
 		body: 'Contracts increasingly require deletion of training data from model weights, with written attestation. The only exactly compliant method is retraining from scratch, and prevailing practice is to disclose that deletion is not feasible.',
 	},
 ];
@@ -94,8 +94,8 @@ const CH_H = CH.top + chart.length * CH.rowH + 26;
 // The architecture's own vocabulary, as a specification. Three signals and five telemetry layers,
 // named the way the paper names them.
 const signals = [
-	{ id: 'SIGNAL 1', name: 'Global backpropagation', body: 'Standard cross-entropy over the full network. Unmodified — the ordinary learning signal is left exactly as it is.' },
-	{ id: 'SIGNAL 2', name: 'Per-node local loss', body: 'Each node carries its own bounded chain — LayerNorm, Linear, PReLU, Linear — anchored through one shared low-rank bottleneck of 4,715 parameters. This is the health baseline.' },
+	{ id: 'SIGNAL 1', name: 'Global backpropagation', body: 'Standard cross-entropy over the full network. Unmodified: the ordinary learning signal is left exactly as it is.' },
+	{ id: 'SIGNAL 2', name: 'Per-node local loss', body: 'Each node carries its own bounded chain of LayerNorm, Linear, PReLU and Linear, anchored through one shared low-rank bottleneck of 4,715 parameters. This is the health baseline.' },
 	{ id: 'SIGNAL 3', name: 'Health-gated self-correction', body: 'Eight diagnoses, each routed to its own treatment, each capped as a fraction of the component\'s own weight, mean-centred and logged.' },
 ];
 
@@ -122,7 +122,7 @@ const fieldState = [
 	},
 	{
 		title: 'There is no agreed way to tell a true explanation from a plausible one',
-		body: 'With no unified evaluation, results rest on human interpretation — which leaves open the question of whether an explanation reflects the computation or is an artefact of the narrative imposed on it.',
+		body: 'With no unified evaluation, results rest on human interpretation, which leaves open the question of whether an explanation reflects the computation or is an artefact of the narrative imposed on it.',
 	},
 	{
 		title: 'And the substrate resists the question',
@@ -135,7 +135,7 @@ const results = [
 		n: '01',
 		name: 'Recovery from catastrophic structural collapse',
 		condition: 'A layer surgically zeroed at epoch 101, on a network that had reached 85.1%.',
-		outcome: 'Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections — 94% of lost performance reclaimed.',
+		outcome: 'Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance reclaimed.',
 		baseline: 'Parameter-matched standard CNN: 10.0% ± 0.0%, permanently, on every seed.',
 		gap: '+70.3 pp',
 	},
@@ -144,14 +144,14 @@ const results = [
 		name: 'Recovery from simultaneous full-hierarchy collapse',
 		condition: 'Every convolutional stage zeroed at once, rather than a single layer.',
 		outcome: 'Recovered to 70.8% ± 2.2%.',
-		baseline: 'Baseline: 10.0% ± 0.0%, permanent.',
+		baseline: 'Parameter-matched standard network: 10.0% ± 0.0%, permanent.',
 		gap: '+60.8 pp',
 	},
 	{
 		n: '03',
 		name: 'Retention through sequential task shift',
 		condition: 'Task A then Task B, with no replay buffer, no task identifier and no modularity constraint.',
-		outcome: '94.6% of Task A retained across 3/3 seeds. Zero-shot 4-way compositional accuracy of 58.8% against 25% chance — the factorisation was not designed, it emerged from gradient conflict.',
+		outcome: '94.6% of Task A retained across 3/3 seeds. Zero-shot 4-way compositional accuracy of 58.8% against 25% chance. The factorisation was not designed, it emerged from gradient conflict.',
 		baseline: 'Standard ResNet-18 retained 47.3%.',
 		gap: '+47.3 pp',
 	},
@@ -206,7 +206,7 @@ const open = [
 	'The architecture is demonstrated on fully-connected, convolutional and residual families. Transformers are a stated generalisation target, not a demonstrated result.',
 	'Test-time distribution shift is named in the paper as an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.',
 	'Under adversarial weight injection the architecture measures 1.0 pp worse than a standard baseline. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors. Published rather than omitted, and unmitigated.',
-	'Whether the signal survives at small n — tens of examples rather than tens of thousands — is untested.',
+	'Whether the signal survives at small n, meaning tens of examples rather than tens of thousands, is untested.',
 ];
 ---
 
@@ -234,14 +234,14 @@ const open = [
 				<p class="tech-lede">
 					Neural networks fail opaquely, and not because anybody built them carelessly. Global
 					backpropagation diffuses every error signal across every parameter simultaneously, so
-					precise fault localisation is not difficult — it is mathematically unavailable. When a
+					precise fault localisation is not difficult; it is mathematically unavailable. When a
 					layer dies mid-training, what a practitioner observes is a collapsed loss curve and no
 					mechanism whatsoever for identifying which component failed, when, or why.
 				</p>
 				<p class="tech-lede">
 					It is worth being precise about the size of this. Opacity is the single property
 					standing between deep learning and every domain that requires an account of a decision
-					before it will accept the decision. Not a performance ceiling — an admissibility one.
+					before it will accept the decision. Not a performance ceiling, but an admissibility one.
 					And those domains are not small: medicine, finance, safety-critical autonomy, and every
 					use of data belonging to somebody else.
 				</p>
@@ -258,8 +258,8 @@ const open = [
 					build into how the network trains.
 				</p>
 				<p class="tech-bet-body">
-					One architectural decision — bounding each node's local gradient chain to exactly four
-					operations — makes per-component attribution something the network computes on its way
+					One architectural decision, bounding each node's local gradient chain to exactly four
+					operations, makes per-component attribution something the network computes on its way
 					past, rather than something a second procedure estimates afterwards.
 				</p>
 			</div>
@@ -328,7 +328,7 @@ const open = [
 				<p class="tech-telemetry-note">
 					Gradient conflict between the signals is resolved by PCGrad projection. Every continuous
 					correction satisfies a mean-centring conservation constraint and is bounded by an
-					Input-to-State Stability argument under local strong convexity — and the observed
+					Input-to-State Stability argument under local strong convexity, and the observed
 					correction rate settles exactly as that bound predicts, which is the part that matters:
 					the stability argument is testable, and it was tested.
 				</p>
@@ -444,7 +444,7 @@ const open = [
 				The current system's diagnostic vocabulary has one subject: the component. Every treatment
 				it applies answers the question <em>what is wrong with this part?</em> But the most common
 				thing that goes wrong in real training is not a broken part. It is data actively damaging
-				a part that is working correctly — and there is no verb for that yet.
+				a part that is working correctly, and there is no verb for that yet.
 			</p>
 			<p class="tech-next-lede">
 				The programme underway supplies it. What follows is stated as objectives and constraints
@@ -494,7 +494,7 @@ const open = [
 		<div class="tech-ip">
 			<p class="tech-ip-label">The intellectual property position</p>
 			<p>
-				The completed architecture is released in full on acceptance of the manuscript — reproducible,
+				The completed architecture is released in full on acceptance of the manuscript: reproducible,
 				free for research and teaching, permanently. That commitment is written into the licence
 				rather than promised. It is the credential, and it is deliberately not the moat.
 			</p>
@@ -526,7 +526,7 @@ const open = [
 				state-of-the-art accuracy on clean benchmarks, and we do not claim to replace specialised
 				noisy-label algorithms. The claim is that a single-network architecture can achieve
 				competitive accuracy while providing mechanistically logged, per-component causal
-				attribution that no prior single-network method offers — and that this structural
+				attribution that no prior single-network method offers, and that this structural
 				transparency is what enables recovery from failures standard architectures cannot detect.
 			</p>
 			<p class="tech-scope-line">The claim is transparency. The accuracy gap is its evidence.</p>

@@ -159,11 +159,11 @@ export const features: Feature[] = [
 		buyerNote: 'Funded via governance and risk budgets.',
 		capabilities: ['ACCOUNT', 'DETECT', 'ISOLATE', 'SUPPRESS'],
 		industryNouns: [
-			{ industry: 'Medical', noun: 'site — the hospital' },
+			{ industry: 'Medical', noun: 'site: the hospital' },
 			{ industry: 'Finance', noun: 'region or desk' },
-			{ industry: 'Biotech', noun: 'batch — the assay run' },
-			{ industry: 'AI lab', noun: 'source — the corpus' },
-			{ industry: 'SaaS', noun: 'tenant — the customer' },
+			{ industry: 'Biotech', noun: 'batch: the assay run' },
+			{ industry: 'AI lab', noun: 'source: the corpus' },
+			{ industry: 'SaaS', noun: 'tenant: the customer' },
 		],
 	},
 	{

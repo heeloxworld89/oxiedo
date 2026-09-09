@@ -50,12 +50,12 @@ const surface = [
 		body: 'Full diagnostics, zero modification. Most institutions want to watch a system for a year before they let it touch a model, and this is the mode that lets them.',
 	},
 	{
-		title: 'A record you can diff',
-		body: 'Hashed, exportable, and comparable line by line against the version you last approved. Reviewers rarely ask what your model is. They ask what changed.',
+		title: 'A record that can be diffed',
+		body: 'Hashed, exportable, and comparable line by line against the version last approved. Reviewers rarely ask what the model is. They ask what changed.',
 	},
 	{
-		title: 'Runs where your data already is',
-		body: 'No hosted service, no metering, nothing leaving your network. Inside a hospital enclave or a bank, this is what decides whether the conversation happens at all.',
+		title: 'Runs where the data already is',
+		body: 'No hosted service, no metering, nothing leaving the network. Inside a hospital enclave or a bank, this is what decides whether the conversation happens at all.',
 	},
 ];
 
@@ -79,9 +79,9 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 		<ChainDiagram />
 		<div class="prod-intro">
 			<p>
-				Train a model the ordinary way and the process erases itself. You finish with weights, a
+				Train a model the ordinary way and the process erases itself. What survives is weights, a
 				loss curve, and whatever the team still remembers. Six months on, a regulator asks what
-				changed between the version you validated and the version you shipped, and every available
+				changed between the version validated and the version shipped, and every available
 				answer is a reconstruction.
 			</p>
 			<p>
@@ -92,13 +92,13 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 			</p>
 			<p>
 				ORMAS bounds each component's learning path so the component stays individually
-				addressable throughout the run. Your data does not change. Your objective does not change.
-				The model you deploy is the one you would have deployed anyway. You also finish with a
-				record of what happened inside it, and with parts you can point at by name.
+				addressable throughout the run. The data does not change. The objective does not change.
+				The model that ships is the one that would have shipped anyway. What is added is a
+				record of what happened inside it, and parts that can be pointed at by name.
 			</p>
 			<p class="prod-intro-turn">
 				Naming is the whole thing. A part that has a name can be watched while it trains,
-				protected when it starts to fail, corrected inside a limit you set in advance, tied back
+				protected when it starts to fail, corrected inside a limit declared in advance, tied back
 				to the data that produced it, and taken out when a contract says it has to go.
 			</p>
 		</div>
@@ -138,7 +138,7 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 			Six operations on a named part — protect, repair, account, detect, isolate, remove — combine
 			into a large number of useful things. We have not proven all of them and will not claim to
 			have. Seven are finished, aimed at a market that is already paying for their absence, and
-			backed by evidence we will show you. They appear in the order of what each one asks of you.
+			backed by evidence available on request. They appear in the order of what each one asks for.
 		</p>
 
 		<ol class="applications">
@@ -165,7 +165,7 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 									</dd>
 								</div>
 								<div>
-									<dt>Asks of you</dt>
+									<dt>What it asks for</dt>
 									<dd>{f.requires}</dd>
 								</div>
 								<div>
@@ -201,12 +201,12 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 				<p>
 					One deployment licence covers the architecture and everything it can be asked to do.
 					A licensee enables what the deployment requires, and the scope goes into the contract rather than
-					onto a meter. Annual, per institution, running inside your own environment.
+					onto a meter. Annual, per institution, running inside the customer environment.
 				</p>
 				<p>
 					Beyond the software, the licence carries the parts that actually decide a regulated
-					deployment: integration into your stack, limits calibrated for your domain, builds
-					pinned to a version you can reproduce yourself, support, and indemnity. The research
+					deployment: integration into the customer stack, limits calibrated for the domain, builds
+					pinned to a version anyone can reproduce, support, and indemnity. The research
 					and its experiments stay published, so the mechanism can be checked by anyone who
 					cares to.
 				</p>
@@ -215,5 +215,5 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 		</div>
 	</section>
 
-	<GetInTouch variant="pre-book" heading="Start with the problem you already have." />
+	<GetInTouch variant="pre-book" heading="Start with the problem already on the table." />
 </Page>

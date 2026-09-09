@@ -39,7 +39,7 @@ import GetInTouch from '../components/GetInTouch.astro';
 // what the deployment licence adds. The rows are ordered so the free column runs out first — the
 // point of the table is where it stops.
 const matrix = [
-	{ item: 'The training architecture itself', published: true, note: 'The mechanism, in full. Run it, modify it, ship what you build with it.' },
+	{ item: 'The training architecture itself', published: true, note: 'The mechanism, in full. Run it, modify it, ship what is built with it.' },
 	{ item: 'The telemetry channels', published: true, note: 'All five layers, emitted natively, exactly as the paper describes them.' },
 	{ item: 'The correction mechanism and its bounds', published: true, note: 'Eight diagnoses, their triggers, and the per-diagnosis ceilings.' },
 	{ item: 'The paper and every experiment behind it', published: true, note: '383 controlled runs, each regenerating from seed, with the reproducibility checklist.' },
@@ -47,10 +47,10 @@ const matrix = [
 
 	{ item: 'Submission-grade record generation', published: false, note: 'The record in the shape a reviewer expects to receive, rather than a research log.' },
 	{ item: 'The diff engine', published: false, note: 'Two records compared line by line. The only question a reviewer actually asks.' },
-	{ item: 'Cryptographic signing and a frozen reader', published: false, note: 'A hash over a canonical body, a detached signature, and a reader binary you keep.' },
-	{ item: 'The bound, calibrated for your domain', published: false, note: 'Derived against your data and your risk profile, then validated. Not a default.' },
-	{ item: 'Integration into your stack', published: false, note: 'Bindings for your training infrastructure, your federation, your imaging pipeline.' },
-	{ item: 'Version-pinned reproducible builds', published: false, note: 'Hash-pinned, with the means to verify the binary you run is the one validated.' },
+	{ item: 'Cryptographic signing and a frozen reader', published: false, note: 'A hash over a canonical body, a detached signature, and a reader binary the licensee keeps.' },
+	{ item: 'The bound, calibrated for the domain', published: false, note: 'Derived against the data and the institution\'s risk profile, then validated. Not a default.' },
+	{ item: 'Integration into the customer stack', published: false, note: 'Bindings for the training infrastructure, the federation, the imaging pipeline.' },
+	{ item: 'Version-pinned reproducible builds', published: false, note: 'Hash-pinned, with the means to verify that the running binary is the one validated.' },
 	{ item: 'Support against an agreed response time', published: false, note: 'With the person who built the architecture, not a tier-one queue.' },
 	{ item: 'Indemnity', published: false, note: 'Contractual liability, which is the thing an open licence structurally cannot offer.' },
 	{ item: 'A counterparty who signs the bound', published: false, note: 'Somebody who will stand behind the declaration under questioning.' },
@@ -61,7 +61,7 @@ const layers = [
 		tag: 'RESEARCH LICENCE',
 		name: 'The research release',
 		terms: 'Free for research, teaching and evaluation. Permanent.',
-		body: 'The architecture, the telemetry, the correction mechanism and every experiment behind them, released in full on publication. The manuscript is under peer review and the release follows acceptance — a commitment written into the licence rather than an intention. From that day a researcher, a student, a model-risk validator or a regulator can run it, reproduce our results, teach from it and publish about it without asking us and without paying us. Evaluation access is available before then under agreement. Production use sits under the deployment licence.',
+		body: 'The architecture, the telemetry, the correction mechanism and every experiment behind them, released in full on publication. The manuscript is under peer review and the release follows acceptance, a commitment written into the licence rather than an intention. From that day a researcher, a student, a model-risk validator or a regulator can run it, reproduce our results, teach from it and publish about it without asking us and without paying us. Evaluation access is available before then under agreement. Production use sits under the deployment licence.',
 		revenue: 'Purpose: the mechanism can be checked.',
 	},
 	{
@@ -74,8 +74,8 @@ const layers = [
 	{
 		tag: 'COMMERCIAL',
 		name: 'The deployment licence',
-		terms: 'Annual, per institution, on your infrastructure.',
-		body: 'Integration into your environment, the bound calibrated and validated for your domain, reproducible builds, support, and indemnity. This is the licence, and essentially all revenue is here.',
+		terms: 'Annual, per institution, on customer infrastructure.',
+		body: 'Integration into the customer environment, the bound calibrated and validated for the domain, reproducible builds, support, and indemnity. This is the licence, and essentially all revenue is here.',
 		revenue: 'Where the commercial relationship lives.',
 	},
 	{
@@ -90,7 +90,7 @@ const layers = [
 const clauses = [
 	{
 		name: 'Artefact survival',
-		what: 'On termination you keep a perpetual, irrevocable right to read, retain and reproduce every record generated during the term, together with a frozen reader binary.',
+		what: 'On termination the licensee keeps a perpetual, irrevocable right to read, retain and reproduce every record generated during the term, together with a frozen reader binary.',
 		why: 'Your obligations outlive our commercial relationship. A customer who suspects they could lose their audit trail by not renewing will never sign in the first place, so this clause costs us nothing and makes the contract signable.',
 	},
 	{
@@ -100,17 +100,17 @@ const clauses = [
 	},
 	{
 		name: 'Reproducible build attestation',
-		what: 'You receive hash-pinned builds and the means to verify that the binary running in your environment is the exact artefact that was validated.',
+		what: 'You receive hash-pinned builds and the means to verify that the binary running in the customer environment is the exact artefact that was validated.',
 		why: 'Technical documentation requirements and software provenance expectations both point here. It costs us a build pipeline and it removes an entire class of question from a security review.',
 	},
 ];
 
 const never = [
 	{ rule: 'No per-seat pricing', why: 'The buyer is an institution carrying an obligation, not a team with users. Charging per seat would price the wrong thing and cap the deal at headcount.' },
-	{ rule: 'No metering that phones home', why: 'In a hospital enclave or a bank network, outbound telemetry is a security review we would not pass — and should not.' },
+	{ rule: 'No metering that phones home', why: 'In a hospital enclave or a bank network, outbound telemetry is a security review we would not pass, and should not.' },
 	{ rule: 'No free tier touching regulated data', why: 'Unbounded support exposure and real liability, in exchange for a lead. The research release is free; a free production tier is not the same thing.' },
 	{ rule: 'No relicensing of the research core', why: 'Publishing and then closing after adoption would destroy the credibility every commercial claim here rests on. The research release is permanent once made, and that is a commitment written into the licence rather than a default.' },
-	{ rule: 'No delivery-date commitments', why: 'We will tell you what is built, what is being built, and what is not started. We will not put a date on the third category.' },
+	{ rule: 'No delivery-date commitments', why: 'We state what is built, what is being built, and what is not started. We will not put a date on the third category.' },
 ];
 ---
 
@@ -134,7 +134,7 @@ const never = [
 					this is checkable rather than merely asserted.
 				</p>
 				<p class="lic-licence-link">
-					<a href="/LICENCE.txt">Read the full licence text</a> — a working draft, published now
+					<a href="/LICENCE.txt">Read the full licence text</a>. It is a working draft, published now
 					so a university or an enterprise legal team can clear it before the release lands rather
 					than after.
 				</p>
@@ -146,12 +146,12 @@ const never = [
 			</div>
 			<div class="lic-turn">
 				<p>
-					Published code has no counterparty. You cannot put it in a filing, you cannot ask it to
-					stand behind a declaration, and there is nobody to hold to it.
+					Published code has no counterparty. It cannot be named in a filing, it cannot stand behind
+					a declaration, and there is nobody to hold to it.
 				</p>
 				<p class="lic-turn-sub">
-					A licence gives you the thing the repository structurally cannot: a named party who
-					calibrated the bound, validated it against your domain, and signed it. In markets that
+					A licence supplies what the repository structurally cannot: a named party that
+					calibrated the bound, validated it against the domain, and signed it. In markets that
 					buy on auditability, that is what is actually being purchased.
 				</p>
 			</div>
@@ -219,7 +219,7 @@ const never = [
 	<section class="band band--dark section reveal">
 		<div class="container">
 			<Eyebrow>WHAT THE FIGURE IS BUILT FROM</Eyebrow>
-			<h2 class="lic-dark-title">Priced against your exposure, not against a feature list.</h2>
+			<h2 class="lic-dark-title">Priced against exposure, not against a feature list.</h2>
 			<p class="lic-dark-lede">
 				A rate card would price the software. What an institution is buying here is the removal of
 				a specific, quantified risk, and that is worth a different amount to a consortium than to
@@ -227,10 +227,10 @@ const never = [
 				determine it.
 			</p>
 			<ol class="lic-price">
-				<li><span class="tabular">01</span><div><p>What the problem currently costs you, which is the only anchor that means anything.</p></div></li>
-				<li><span class="tabular">02</span><div><p>Which applications you turn on, and how much of your model portfolio is in scope.</p></div></li>
-				<li><span class="tabular">03</span><div><p>Whether the bound for your domain already exists or has to be calibrated and validated from nothing.</p></div></li>
-				<li><span class="tabular">04</span><div><p>What you need us to sign, and therefore what we are carrying.</p></div></li>
+				<li><span class="tabular">01</span><div><p>What the problem currently costs, which is the only anchor that means anything.</p></div></li>
+				<li><span class="tabular">02</span><div><p>Which applications are turned on, and how much of the model portfolio is in scope.</p></div></li>
+				<li><span class="tabular">03</span><div><p>Whether the bound for the domain already exists or has to be calibrated and validated from nothing.</p></div></li>
+				<li><span class="tabular">04</span><div><p>What we are asked to sign, and therefore what we are carrying.</p></div></li>
 			</ol>
 			<p class="lic-dark-note">
 				Annual, per institution, on-premise. No per-seat component and no consumption meter.
@@ -256,16 +256,16 @@ const never = [
 	<section class="band band--surface section reveal">
 		<div class="container">
 			<Eyebrow>DEPLOYMENT</Eyebrow>
-			<h2 class="section-title">It runs where your data already is, and there is no other option.</h2>
+			<h2 class="section-title">It runs where the data already is, and there is no other option.</h2>
 			<div class="lic-deploy">
 				<p>
-					Every commercial deployment is on-premise or inside your own cloud environment. There
+					Every commercial deployment is on-premise or inside their own cloud environment. There
 					is no hosted tier and there will not be one. Model weights and training telemetry
 					leaving a controlled network is a disqualifying finding in a hospital enclave, a bank,
 					or a classified environment, and those are the markets this exists for.
 				</p>
 				<p>
-					The practical consequence is that you hold the artefact. Nothing checks in, nothing
+					The practical consequence is that the licensee holds the artefact. Nothing checks in, nothing
 					reports usage, and nothing stops working if we do. That is a constraint we designed
 					around rather than a feature we chose, and it shapes every commercial term above.
 				</p>
@@ -288,23 +288,23 @@ const never = [
 
 	<section class="section container reveal">
 		<Eyebrow>LICENSING QUESTIONS</Eyebrow>
-		<h2 class="section-title">The ones that decide whether this is workable for you.</h2>
+		<h2 class="section-title">The ones that decide whether this is workable.</h2>
 		<div class="faq-group lic-faq">
 			<Accordion id="lic-fork" question="Why publish the mechanism at all?">
 				<p>
 					Because a claim nobody can check is worth nothing to the people who buy this. A
 					validator, an assurance lab or a regulator can take the published release, run all 383
 					experiments, and confirm every number on this site independently. A closed
-					reimplementation of a published method is worth less to that audience, not more — which
+					reimplementation of a published method is worth less to that audience, not more, which
 					is why publishing is a commercial decision rather than a generous one.
 				</p>
 			</Accordion>
 			<Accordion id="lic-commercial-free" question="Can we use the published release in production?">
 				<p>
 					Research, teaching, benchmarking and independent evaluation are free and always will
-					be. Production is licensed. If you are a university group, a student, or a validator
-					checking our claims, take it and go — you owe us nothing and you need no permission.
-					If it is going into something your institution operates, that is a licence, and the
+					be. Production is licensed. A university group, a student or a validator checking our claims
+					owes us nothing and needs no permission.
+					Where it goes into something the institution operates, that is a licence, and the
 					licence is where the calibrated bound, the reproducible builds, the support and the
 					indemnity live.
 				</p>
@@ -321,38 +321,38 @@ const never = [
 			<Accordion id="lic-when-public" question="When does the code become public?">
 				<p>
 					When the review period on the paper closes. Peer review sets that timing, not us, so
-					there is no date on this page. If you want the mechanism before then, ask — we send
-					the preprint and the supplementary material to serious evaluators on request.
+					there is no date on this page. The mechanism is available before then on request: the manuscript and the supplementary
+					material go to serious evaluators who ask.
 				</p>
 			</Accordion>
 			<Accordion id="lic-end" question="If we stop paying, do we lose our records?">
 				<p>
-					No, and the licence says so explicitly. You keep a perpetual, irrevocable right to
-					read, retain and reproduce every record generated during the term, plus a frozen
-					reader binary you keep permanently. Your regulatory obligations outlive our commercial
-					relationship and your access to your own audit trail has to outlive it too.
+					No, and the licence says so explicitly. A perpetual, irrevocable right to read, retain
+					and reproduce every record generated during the term survives termination, together
+					with a frozen reader binary held permanently. Regulatory obligations outlive commercial
+					relationships, so access to the audit trail has to outlive them too.
 				</p>
 			</Accordion>
 			<Accordion id="lic-audit" question="Does anything phone home for licence compliance?">
 				<p>
 					Nothing. No telemetry, no usage meter, no licence server, no call-out of any kind. In a
 					hospital enclave, a bank network or a classified environment, anything that reaches
-					outward fails the security review before anyone opens the commercial terms — so the
+					outward fails the security review before anyone opens the commercial terms. The
 					product is built for the environment it is sold into rather than for our convenience.
 				</p>
 			</Accordion>
-			<Accordion id="lic-oss-policy" question="Our software policy requires review of every dependency. What is your counsel reviewing?">
+			<Accordion id="lic-oss-policy" question="Our software policy requires review of every dependency. What does our counsel review?">
 				<p>
-					Two documents, and you get both before you engage rather than after. The research
+					Two documents, and both arrive before engagement rather than after. The research
 					licence, which permits reading, running, reproducing and teaching, and reserves
 					production use. And the deployment licence, an ordinary commercial agreement carrying
 					the three clauses set out above. Neither is a copyleft licence and neither imposes any
-					obligation on code you write alongside it.
+					obligation on code written alongside it.
 				</p>
 			</Accordion>
 			<Accordion id="lic-indemnity" question="What exactly is indemnified?">
 				<p>
-					Scope is set with your counsel, because a consortium and a bank are not carrying the
+					Scope is set with the customer’s counsel, because a consortium and a bank are not carrying the
 					same exposure and a single template would serve neither well. What does not vary: the
 					bound we declare is one we will defend under questioning, and we do not sign
 					declarations we are not prepared to stand behind.
@@ -366,5 +366,5 @@ const never = [
 		</div>
 	</section>
 
-	<GetInTouch variant="pre-book" heading="Licensing conversations start with what you have to be able to prove." />
+	<GetInTouch variant="pre-book" heading="Licensing conversations start with what an institution has to be able to prove." />
 </Page>

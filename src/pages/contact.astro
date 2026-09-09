@@ -84,15 +84,15 @@ const intents: Intent[] = [
 		label: 'Pre-book a deployment',
 		eyebrow: 'PRE-BOOK',
 		heading: 'Reserve a deployment',
-		blurb: 'Pre-booking agrees your terms now, ahead of general availability, and shapes the integration around your environment while that is still open. Early partners influence what the production system prioritises, because the requirements are not yet fixed.',
+		blurb: 'Pre-booking agrees terms now, ahead of general availability, and shapes the integration around the customer environment while that is still open. Early partners influence what the production system prioritises, because the requirements are not yet fixed.',
 		submit: 'Send',
 		fields: [
 			{ id: 'prebook-org', label: 'Name, role and organisation', required: true },
 			{ id: 'prebook-email', label: 'Email', type: 'email', required: true },
 			{ id: 'prebook-regulation', label: 'What obligation is driving this?', required: true,
 			  hint: 'SR 26-2, EU AI Act, GDPR Article 17, FDA PCCP, an internal model risk policy, or something else.' },
-			{ id: 'prebook-context', label: 'What do you train, and what does a failure currently cost you to diagnose?', required: true, multiline: true,
-			  hint: 'Rough numbers are fine. This is the answer that decides whether we can help you, so it is the one worth two sentences.' },
+			{ id: 'prebook-context', label: 'What is being trained, and what does a failure currently cost to diagnose?', required: true, multiline: true,
+			  hint: 'Rough numbers are fine. This is the answer that decides whether we can help, so it is the one worth two sentences.' },
 		],
 	},
 	{
@@ -100,14 +100,14 @@ const intents: Intent[] = [
 		label: 'Investment conversation',
 		eyebrow: 'INVESTMENT',
 		heading: 'Investment conversation',
-		blurb: 'Tell us what you invest in and we will say whether this is a fit before sending anything — faster for both of us than a document that was never relevant. What is not on the site: the falsification specification, the full archive of 67 seeded runs including the four the first architecture failed, the adversarial suite, the manuscript, and the round terms.',
+		blurb: 'Send a thesis and we will say whether this is a fit before sending anything, which is faster for both sides than a document that was never relevant. What is not on the site: the falsification specification, the full archive of 67 seeded runs including the four the first architecture failed, the adversarial suite, the manuscript, and the round terms.',
 		submit: 'Send',
 		fields: [
 			{ id: 'invest-name', label: 'Name', required: true },
 			{ id: 'invest-email', label: 'Email', type: 'email', required: true },
 			{ id: 'invest-org', label: 'Fund or organisation', required: true },
-			{ id: 'invest-thesis', label: 'What do you invest in?', multiline: true, rows: 4,
-			  hint: 'Stage, sector and check size are enough. If you lead, say so — we are looking for a lead rather than a party round.' },
+			{ id: 'invest-thesis', label: 'What does the fund invest in?', multiline: true, rows: 4,
+			  hint: 'Stage, sector and check size are enough. Say so if the fund leads; we are looking for a lead rather than a party round.' },
 		],
 	},
 	{
@@ -115,14 +115,14 @@ const intents: Intent[] = [
 		label: 'Press enquiry',
 		eyebrow: 'PRESS',
 		heading: 'Press enquiry',
-		blurb: 'Replies come from the founder — there is no agency. If you are writing a sceptical piece, say so and ask for the falsification specification: it is the fastest route to checking whether any of this holds. Interviews are available, including on the parts that are not working yet.',
+		blurb: 'Replies come from the people who built the architecture, not an agency. For a sceptical piece, ask for the falsification specification: it is the fastest route to checking whether any of this holds. Interviews are available, including on the parts that are not working yet.',
 		submit: 'Send',
 		fields: [
 			{ id: 'press-name', label: 'Name', required: true },
 			{ id: 'press-email', label: 'Email', type: 'email', required: true },
 			{ id: 'press-outlet', label: 'Outlet', required: true },
-			{ id: 'press-message', label: 'What are you working on, and when do you need it?', required: true, multiline: true,
-			  hint: 'A deadline gets you a faster answer. Say if you want the asset pack, the brief, or a correction.' },
+			{ id: 'press-message', label: 'What is the story, and when is the deadline?', required: true, multiline: true,
+			  hint: 'A stated deadline gets a faster answer. Say whether the request is the asset pack, the brief, or a correction.' },
 		],
 	},
 	{
@@ -130,13 +130,13 @@ const intents: Intent[] = [
 		label: 'Data protection request',
 		eyebrow: 'DATA PROTECTION',
 		heading: 'Data protection request',
-		blurb: 'Access, rectification, erasure, portability, objection, or a question about how we handle something. Requests are answered within five working days; a deletion request is acted on immediately and confirmed in writing. This route is read by the founder rather than a shared inbox.',
+		blurb: 'Access, rectification, erasure, portability, objection, or a question about how we handle something. Requests are answered within five working days; a deletion request is acted on immediately and confirmed in writing. This route is read by the people who wrote the data terms rather than a shared inbox.',
 		submit: 'Send request',
 		fields: [
 			{ id: 'data-name', label: 'Name', required: true },
 			{ id: 'data-email', label: 'Email', type: 'email', required: true,
-			  hint: 'The address you contacted us from, so we can identify what we hold.' },
-			{ id: 'data-request', label: 'What are you asking for?', required: true, multiline: true,
+			  hint: 'The address originally used to contact us, so we can identify what we hold.' },
+			{ id: 'data-request', label: 'What is the request?', required: true, multiline: true,
 			  hint: 'Naming the right helps, but plain English is fine — we will work out which it is.' },
 		],
 	},
@@ -157,7 +157,7 @@ const intents: Intent[] = [
 
 const facts = [
 	{ k: 'Reply time', v: 'Within a few days, usually less.' },
-	{ k: 'Who reads it', v: 'A person, every message, without exception. The first reply comes from whoever built the thing you are asking about.' },
+	{ k: 'Who reads it', v: 'A person, every message, without exception. The first reply comes from whoever built the part being asked about.' },
 	{ k: 'If it does not fit', v: 'We say so directly rather than sending a non-answer.' },
 	{ k: 'What we do with it', v: 'Answer it. Nothing submitted here is sold, shared or added to a marketing list.' },
 ];
@@ -166,7 +166,7 @@ const facts = [
 <Page title="Contact" description={"Three ways in: pre-book a deployment, an investment conversation, or anything else. Every message is read by a person and answered within a few days."}>
 	<PageBanner
 		eyebrow="CONTACT"
-		title="Tell us what you are working on."
+		title="Start with the problem, not the introduction."
 		trail={[{ label: 'Home', href: '/' }, { label: 'Contact' }]}
 	/>
 
@@ -174,8 +174,8 @@ const facts = [
 		<div class="contact-intro">
 			<Eyebrow as="h2">GET IN TOUCH</Eyebrow>
 			<p class="contact-lede">
-				Five ways in. Pick the one that fits and the form changes to match — we would rather ask
-				you four useful questions than take a name and an empty message box.
+				Five ways in. Pick the one that fits and the form changes to match. Four useful questions are worth
+				more than a name and an empty message box.
 			</p>
 
 			<dl class="contact-facts">
@@ -238,7 +238,7 @@ const facts = [
 			))}
 
 			<p class="contact-privacy">
-				What you send here is held by us as controller, used to answer you and for nothing else.
+				Anything submitted here is held by us as controller, used to answer the message and for nothing else.
 				No analytics, no cookies set by us, no marketing list.
 				<a href="/data">How we handle data</a>
 			</p>
@@ -250,20 +250,20 @@ const facts = [
 		<div class="faq-group">
 			<Accordion id="q-which-form" question="Which form should I use?">
 				<p>
-					If you want to run ORMAS, pre-book — that is the one route to the product, whichever
-					application you have in mind. If you invest, use the second. Everything else goes to the
-					third, and all three are read by the same person.
+					Pre-booking is the one route to the product, whichever application is in mind.
+					Investors use the second. Everything else goes to the third, and all three are read by
+					the same people.
 				</p>
 			</Accordion>
 			<Accordion id="q-reply-time" question="How long before someone replies?">
 				<p>
-					Within a few days, usually less. Every message is read by a person, and if your message
+					Within a few days, usually less. Every message is read by a person, and if the message
 					does not fit we will say so directly rather than sending a non-answer.
 				</p>
 			</Accordion>
 			<Accordion id="q-why-questions" question="Why does the form ask what a failure costs us?">
 				<p>
-					Because it is the question that decides whether this is worth your time. An organisation
+					Because it is the question that decides whether this is worth anyone's time. An organisation
 					that can already diagnose a failed run in an afternoon does not need this, and we would
 					rather establish that in the first message than in the third meeting.
 				</p>
@@ -272,7 +272,7 @@ const facts = [
 				<p>
 					Yes, and it is the expected path. Evaluation access is available now under a short
 					agreement, and free and unrestricted once the research release is out. Either way it runs
-					entirely in your environment with nothing reaching us.
+					entirely in the customer environment with nothing reaching us.
 				</p>
 			</Accordion>
 			<Accordion id="q-data-partner" question="We hold regulated data. Who do we talk to?">

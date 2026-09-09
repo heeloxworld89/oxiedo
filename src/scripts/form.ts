@@ -34,10 +34,10 @@ const INTENTS: Record<string, string> = {
 
 const CONFIRMATIONS: Record<string, string> = {
 	'pre-book': 'Received, and read personally. You will hear back within a few days, usually less.',
-	invest: 'Received. We will reply to say whether this is a fit for what you invest in — if it is, we send the material; if it is not, we will say so plainly.',
-	press: 'Received. Replies come from the founder, usually within a few days. Say if you are on a deadline and it will be faster.',
+	invest: 'Received. We will reply to say whether this is a fit for the thesis. If it is, the material follows; if it is not, we say so plainly.',
+	press: 'Received. Replies come from the people who built the architecture, usually within a few days. A stated deadline gets a faster answer.',
 	data: 'Received. Data requests are answered within five working days, and a deletion request is acted on immediately and confirmed in writing.',
-	apply: 'Received, and it goes straight to the founder. If it is not a fit you will be told directly rather than left to work it out from silence.',
+	apply: 'Received, and it reaches the people who built the architecture. A poor fit gets a direct answer rather than silence.',
 	other: 'Received. We read everything personally and reply within a few days, usually less.',
 };
 
@@ -145,7 +145,7 @@ document.querySelectorAll<HTMLFormElement>('form[action="/contact"]').forEach((f
 		} catch {
 			status.classList.add('contact-form-status--error');
 			status.textContent =
-				'That did not send. Nothing you typed has been lost — every field is exactly as you left it, so press send again. If it fails twice, give it a minute and retry; the form will not clear.';
+				'That did not send. Nothing typed has been lost: every field is exactly as it was, so press send again. If it fails twice, give it a minute and retry; the form will not clear.';
 			if (submitBtn) {
 				submitBtn.disabled = false;
 				submitBtn.textContent = originalLabel;

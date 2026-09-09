@@ -36,20 +36,20 @@ const roles = [
 		flag: 'Priority engagement',
 		lede: 'We are looking for an institution holding data it cannot currently vouch for.',
 		body: [
-			'You hold a labelled corpus you suspect is dirty, or you have had a training run degrade in a way nobody could account for afterwards. Those are the two conversations we most want to have.',
-			'We run the diagnostic and you receive the report. Your data does not leave your environment: the architecture has no outbound route, which is a property of how it is built rather than an undertaking we are asking you to trust. Findings are published jointly, or not at all, at your discretion.',
-			'What we require: authority to approve a research engagement, and a corpus with a real obligation attached to it — clinical, financial, or held under a deletion clause.',
+			'Two situations qualify: a labelled corpus suspected of being dirty, or a training run that degraded in a way nobody could account for afterwards. Those are the two conversations we most want to have.',
+			'We run the diagnostic and the institution receives the report. The data never leaves the customer environment, because the architecture has no outbound route. That is a property of how it is built rather than an undertaking anyone has to take on trust. Findings are published jointly, or not at all, at the institution\'s discretion.',
+			'What we require: authority to approve a research engagement, and a corpus with a real obligation attached to it: clinical, financial, or held under a deletion clause.',
 		],
 	},
 	{
-		id: 'co-founder',
-		title: 'Co-founder',
+		id: 'commercial-lead',
+		title: 'Commercial lead',
 		meta: 'Equity · full-time',
 		flag: null,
 		lede: 'Commercial leadership across the regulated markets this sells into.',
 		body: [
-			'You have stood on the buying side of the table in one regulated domain — inside a hospital’s AI group, a bank’s model risk function, a biotech’s data organisation, or coordinating a multi-site research consortium. You know how that budget is released and who has to sign.',
-			'You own the commercial side entirely: first engagements, partnership terms, and the relationships that decide which market opens first.',
+			'This role belongs to someone who has stood on the buying side of the table in one regulated domain: inside a hospital’s AI group, a bank’s model risk function, a biotech’s data organisation, or coordinating a multi-site research consortium. Knowing how that budget is released, and who has to sign, is the qualification.',
+			'The commercial side belongs to this role entirely: first engagements, partnership terms, and the relationships that decide which market opens first.',
 			'What we require: a network in one of the five markets that cannot be built from the outside, and enough technical fluency to hold a CTO’s questions without needing to be the architect.',
 		],
 	},
@@ -58,10 +58,10 @@ const roles = [
 		title: 'Research engineer',
 		meta: 'Equity or contract · full-time preferred',
 		flag: null,
-		lede: 'You own the experimental programme that extends the architecture.',
+		lede: 'Ownership of the experimental programme that extends the architecture.',
 		body: [
 			'Two questions sit at the centre of it. Does the per-component health signal lead the global loss curve, and by how much? And does inter-component disagreement separate mislabelled data from data that is merely hard?',
-			'The second decides how far the product reaches, which is why it is scheduled before the build rather than after it. You design the experiments capable of falsifying the thesis and co-author the result either way.',
+			'The second decides how far the product reaches, which is why it is scheduled before the build rather than after it. The role designs the experiments capable of falsifying the thesis, and co-authors the result either way.',
 			'What we require: published experimental work, fluency in PyTorch at the architecture level rather than the training-loop level, and the discipline to run a study that could return a negative.',
 		],
 	},
@@ -70,11 +70,11 @@ const roles = [
 		title: 'Regulatory consultant',
 		meta: 'Single engagement · months of lead time',
 		flag: null,
-		lede: 'You tell us whether the artefact we produce is the artefact a reviewer expects.',
+		lede: 'One judgement is needed: whether the artefact we produce is the artefact a reviewer expects.',
 		body: [
 			'The work is bounded: read a specification and say whether the record matches what a reviewer would accept, or whether it is something adjacent they would not recognise. Either answer is worth the fee.',
-			'It gates the largest application in the product, so it is scheduled early rather than late — a wrong format is cheaper to find now than after a submission is built on it.',
-			'What we require: you have filed a change-control plan for a machine learning system under the FDA’s PCCP framework, the EU AI Act, or an equivalent regime. Filed one, not advised on one.',
+			'It gates the largest application in the product, so it is scheduled early rather than late. A wrong format is cheaper to find now than after a submission is built on it.',
+			'What we require: a filed change-control plan for a machine learning system under the FDA’s PCCP framework, the EU AI Act, or an equivalent regime. Filed one, not advised on one.',
 		],
 	},
 	{
@@ -82,7 +82,7 @@ const roles = [
 		title: 'Data-protection counsel',
 		meta: 'Single consultation · no ongoing commitment',
 		flag: null,
-		lede: 'You define what may and may not be certified when data is removed from a trained model.',
+		lede: 'One question to settle: what may and may not be certified when data is removed from a trained model.',
 		body: [
 			'The question is specific. If a bounded structure trained on a named sample set is deleted, and a measured bound on the residual influence of that data can be stated — what may we certify, what may our customer certify onward, and does any of it constitute erasure under Article 17?',
 			'A certificate whose wording has not been tested creates liability rather than removing it, which is why this is answered before anything is issued.',
@@ -153,13 +153,13 @@ const roles = [
 			<h2 class="car-dark-title">No recruiters. No tracking system. No take-home.</h2>
 			<div class="car-apply">
 				<p>
-					Write to us and say which one, and what you have done that is relevant. A paragraph is
-					enough. A CV is fine if you have one to hand, and not required if you do not.
+					Name the engagement and the relevant work behind it. A paragraph is enough. A CV is
+					welcome if one is to hand, and not required.
 				</p>
 				<p>
 					If it is not a fit we say so directly rather than going quiet. If it is, the next
-					conversation is with the people who built the architecture — there is no screening
-					round in between.
+					conversation is with the people who built the architecture, with no screening round in
+					between.
 				</p>
 			</div>
 			<Button variant="primary" href="#apply">Apply</Button>
@@ -168,10 +168,10 @@ const roles = [
 
 	<section class="section container reveal" id="apply">
 		<Eyebrow>APPLY</Eyebrow>
-		<h2 class="car-apply-title">One form, and it goes straight to the founder.</h2>
+		<h2 class="car-apply-title">One form, and it reaches the people who built the architecture.</h2>
 		<p class="car-apply-lede">
 			No tracking system, no automated screen, no acknowledgement email written by somebody else.
-			If it is not a fit you will be told directly rather than left to work it out from silence.
+			A poor fit gets a direct answer rather than silence to interpret.
 		</p>
 
 		<form class="car-form" id="apply-form" method="POST" action="/contact">
@@ -185,13 +185,13 @@ const roles = [
 			<FormField id="apply-email" label="Email" type="email" required />
 			<FormField
 				id="apply-links"
-				label="Anything that shows your work"
-				hint="A repository, a paper, a filing you wrote, a system you built. One good link beats a CV. Optional, but it is the part we read first."
+				label="Anything that shows the work"
+				hint="A repository, a paper, a filing, a system that shipped. One good link beats a CV. Optional, and the part we read first."
 			/>
 			<FormField
 				id="apply-why"
-				label="Why this, and what would you want to own?"
-				hint="Two honest paragraphs are worth more than a page of qualifications. If you are bringing data rather than looking for a job, say what you hold and what would have to be true for you to release it."
+				label="Why this, and what is worth owning here?"
+				hint="Two honest paragraphs are worth more than a page of qualifications. For a dataset partnership rather than a job, say what the corpus is and what would have to be true to release it."
 				multiline
 				required
 			/>
