@@ -51,7 +51,7 @@ export interface Feature {
 	/** One sentence on what it actually does, in the buyer's language — used on the home page. */
 	summary: string;
 	/** What the customer has to provide or change. The ladder in Commercial Plan `04` is ordered by
-	 *  exactly this, from "send a file" to "agree a bound with your regulator". */
+	 *  exactly this, from "send a file" to "agree a bound with a regulator". */
 	requires: string;
 	problem: string;
 	delivers: string;
@@ -74,12 +74,12 @@ export const features: Feature[] = [
 		name: 'The Proofreader',
 		question: 'Which samples are damaging which component?',
 		summary:
-			'Attaches to a model you have already trained, without modifying it, and returns a ranked list of the labels it believes are wrong — kept separate from the ones that are merely difficult. Broken down by class, and by source where your data carries it.',
-		requires: 'A model file and a sample of your labels',
+			'Attaches to an already-trained model without modifying it and returns a ranked list of labels judged incorrect, held separate from those that are merely difficult. Broken down by class, and by source where the corpus carries one.',
+		requires: 'A model file and a labelled sample',
 		problem:
-			'Bad labels in training data cause silent model degradation. Retraining a model merely to find and fix those errors costs between $100,000 and $500,000. The Proofreader finds them before you retrain.',
+			'Mislabelled training data degrades a model silently. Retraining solely to locate and correct those errors costs between $100,000 and $500,000. The Proofreader identifies them before a retrain is commissioned.',
 		delivers:
-			'Attaches diagnostic readouts directly to a frozen model checkpoint. It returns a precise map of which labels in your dataset are objectively wrong and which are merely hard for the network to learn. The underlying model does not change; only the diagnostic insight is extracted.',
+			'Attaches diagnostic readouts to a frozen checkpoint and returns a map distinguishing labels that are objectively incorrect from those that are merely hard for the network to fit. The model itself is unaltered; only the diagnostic is extracted.',
 		buyer:
 			'Data leads, research informatics directors, and ML teams fine-tuning models on scraped, aggregated, or third-party data.',
 		buyerFor: ['Data leads', 'Research informatics directors', 'ML teams fine-tuning models on scraped, aggregated, or third-party data'],
@@ -99,10 +99,10 @@ export const features: Feature[] = [
 		name: 'The Warning Light',
 		question: 'Is this run failing, and where?',
 		summary:
-			'Watches every component of a model while it trains and raises an alarm when one crosses its own baseline — naming the component, not just the run. The operator rolls back hundreds of steps instead of thousands.',
-		requires: 'One line around your training loop',
+			'Watches every component of a model while it trains and raises an alarm when one crosses its own baseline, naming the component rather than the run. The operator rolls back hundreds of steps instead of thousands.',
+		requires: 'One line around the training loop',
 		problem:
-			'Silent mid-training collapse costs $16,000–$24,000 in recovery compute per incident. Standard monitoring tells you a run has failed. The Warning Light isolates the collapse to a named component — not just a failed run.',
+			'Silent mid-training collapse costs $16,000 to $24,000 in recovery compute per incident. Conventional monitoring reports that a run has failed. The Warning Light isolates the collapse to a named component.',
 		delivers:
 			'A precise, per-component health signal emitted continuously during training. It names which node is failing, not just that the run is failing. Measured: Node 1, oscillation severity 7.674, detected at step 39,553, within one epoch. When a divergence occurs, the operator rolls back 200 steps, not 20,000.',
 		buyer:
@@ -121,7 +121,7 @@ export const features: Feature[] = [
 		name: 'The Diary',
 		question: 'What did the model do to itself, and when?',
 		summary:
-			'Produces a signed, timestamped record of every modification made during training: the component, the diagnosis, the treatment, the step, and the limit it stayed inside. Diffable against the last version you approved.',
+			'Produces a signed, timestamped record of every modification made during training: the component, the diagnosis, the treatment, the step, and the limit it remained inside. Diffable against the last approved version.',
 		requires: 'Training on the architecture',
 		problem:
 			'Regulators and auditors now demand a per-component record of every modification a model made to itself during training. Writing that record after the fact is testimony, not evidence. It will not survive a hostile regulatory review.',
@@ -146,7 +146,7 @@ export const features: Feature[] = [
 		name: 'The Separator',
 		question: 'Which part of this is the source, not the signal?',
 		summary:
-			'Separates what a model learned about the world from what it learned about where the data came from. You ship one model that works anywhere, a named removable part for each source, and a record of which data justified each one.',
+			'Separates what a model learned about the world from what it learned about where the data came from. One model ships and works anywhere, carrying a named removable part for each source and a record of the data that justified each.',
 		requires: 'Training on the architecture, with source labels',
 		problem:
 			'Multi-source training creates a model no one can fully account for. A scanner hardware change, a new site protocol, or a divergent data batch shifts the model\'s behaviour, and no one can say by how much or trace it to which specific component.',
@@ -171,10 +171,10 @@ export const features: Feature[] = [
 		name: 'Certified Deletion',
 		question: 'What data is in here, and can I remove it?',
 		summary:
-			"Removes a named source's contribution and issues a signed certificate of exactly what was removed, with a bounded statement of what changed. No retraining.",
-		requires: 'The Separator, plus your deletion policy',
+			"Removes a named source's contribution and issues a signed certificate of exactly what was removed, with a bounded statement of what changed, and without retraining.",
+		requires: 'The Separator, plus a deletion policy',
 		problem:
-			'GDPR Article 17 is enforced. A data licence terminates. A contributor requests removal. A regulator asks exactly what data is in your model. Currently, the only legally compliant answer is to retrain the model from scratch, costing $100,000–$500,000 per incident.',
+			'GDPR Article 17 is enforced. A data licence terminates. A contributor requests removal. A supervisor asks precisely what data the model contains. The only exactly compliant answer available today is a retrain from scratch, at $100,000 to $500,000 per incident.',
 		delivers:
 			'Routes the memorisable portion of each source\'s training signal into named, bounded, deletable structures. Removing the specific structure cleanly removes the source-specific capacity. Hands the requester a cryptographically signed deletion certificate alongside a mathematically bounded statement of residual influence.',
 		buyer:
@@ -196,7 +196,7 @@ export const features: Feature[] = [
 		name: 'The Federated Node',
 		question: 'Can we train together without pooling the data?',
 		summary:
-			"Runs inside a federation you already have. Each party's contribution is recorded before the averaging step destroys it — so when a round drops six points, you can say which site.",
+			"Runs inside an existing federation. Each party's contribution is recorded before the averaging step destroys it, so a round that drops six points can be attributed to a site.",
 		requires: 'A federation that already exists',
 		problem:
 			'Federated training destroys attribution. By the time the shared model aggregates at the central server, no participating party can say what their specific data contributed to the global model — or prove they have the ability to remove it.',
@@ -221,7 +221,7 @@ export const features: Feature[] = [
 		question: 'What is this model allowed to change about itself?',
 		summary:
 			'Retrains a deployed model inside a limit declared and signed beforehand, and produces the evidence that every change stayed inside it. Built to the shape of a predetermined change control plan.',
-		requires: 'A limit agreed with your reviewer before you begin',
+		requires: 'A limit agreed with the reviewer in advance',
 		problem:
 			'A deployed medical AI model is actively decaying in the field. Reapproval of a new model costs more than the original development. So it stays deployed, degrading, until it fails an audit. The FDA\'s Predetermined Change Control Plan (PCCP) framework creates an approved path — but only if the model\'s changes can be declared, bounded, and evidenced in advance.',
 		delivers:
