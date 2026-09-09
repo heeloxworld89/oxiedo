@@ -47,6 +47,8 @@ const orgLd = {
 	description: 'Builds ORMAS, a neural network training architecture that produces a causal account of its own behaviour.',
 	foundingDate: '2023',
 	founder: { '@type': 'Person', name: 'Rokib Al Dhin Raadh' },
+	// sameAs is how a search engine ties the account to the company. One account, one entry.
+	sameAs: ['https://x.com/oxiedo_ai'],
 };
 ---
 
@@ -88,6 +90,7 @@ const orgLd = {
 		<meta property="og:image:height" content="630" />
 
 		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@oxiedo_ai" />
 		<meta name="twitter:title" content={pageTitle} />
 		<meta name="twitter:description" content={desc} />
 		<meta name="twitter:image" content={ogImage} />
