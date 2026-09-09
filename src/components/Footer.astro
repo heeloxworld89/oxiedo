@@ -18,11 +18,10 @@
 // NOT INVENTED, deliberately: the reference carries a call centre and a street address. Oxiedo
 // has neither — no phone line, no office to publish — and a fake number is worse than an absent
 // one, so those columns are simply not here.
-// SOCIAL, added 2026-09-10: there is now exactly one account, so exactly one link. A lone icon
-// in an icon row reads as a row with the others missing, and a bare text link in the legal bar
-// reads as an afterthought — so it is a labelled pill carrying the handle, which is complete on
-// its own terms. It sits under the primary CTA, secondary to it by weight rather than by size.
-// rel="me" is what lets X verify the account back to this domain.
+// SOCIAL, added 2026-09-10, revised the same day. First attempt was a labelled pill under the
+// primary CTA, which put two rounded shapes side by side on one line and read as two competing
+// buttons. The mark alone, last item in the legal bar, is the correct weight for one account:
+// site furniture, not a call to action. rel="me" is what lets X verify it back to this domain.
 import Button from './Button.astro';
 import Logo from './Logo.astro';
 import { features } from '../data/features';
@@ -80,20 +79,6 @@ const groups = [
 				added after.
 			</p>
 			<Button variant="primary" href="/contact">Pre-book ORMAS</Button>
-
-			<a
-				class="footer-social"
-				href="https://x.com/oxiedo_ai"
-				rel="me noopener"
-				target="_blank"
-				aria-label="Oxiedo on X, @oxiedo_ai (opens in a new tab)"
-			>
-				<span class="footer-social-mark" aria-hidden="true">
-					<svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-				</span>
-				<span class="footer-social-handle">@oxiedo_ai</span>
-				<span class="footer-social-go" aria-hidden="true">↗</span>
-			</a>
 		</div>
 
 		<nav class="footer-nav" aria-label="Footer">
@@ -128,6 +113,15 @@ const groups = [
 			<p>Oxiedo · A research company in formation · Incorporating in Delaware, headquarters relocating to San Francisco</p>
 			<nav class="footer-legal-links" aria-label="Legal">
 				<a href="/data">Data handling</a>
+				<a
+					class="footer-social"
+					href="https://x.com/oxiedo_ai"
+					rel="me noopener"
+					target="_blank"
+					aria-label="Oxiedo on X (opens in a new tab)"
+				>
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+				</a>
 			</nav>
 		</div>
 	</div>

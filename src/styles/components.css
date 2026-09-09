@@ -948,69 +948,51 @@ main > section:last-child.band--dark {
 	margin-top: var(--space-lg);
 }
 
-/* THE ONE SOCIAL LINK, 2026-09-10.
-   There is exactly one account. A lone icon in an icon row reads as a row with the others
-   missing, and a bare text link in the legal bar reads as an afterthought — so it is a pill
-   carrying the handle, which is complete on its own terms rather than the first of a set.
-   Sits under the primary CTA, secondary to it by weight (outline, mono, small) rather than by
-   size, so the CTA keeps the column's only filled shape.
+/* THE ONE SOCIAL LINK, 2026-09-10, revised the same day.
+   First attempt was a labelled pill under the primary CTA. That put two rounded shapes on one
+   line and read as two competing buttons, so it is now the mark alone, last item in the legal
+   bar — site furniture at the weight one account deserves, rather than a call to action.
 
-   SPECIFICITY. base.css carries `a:not(.btn):hover` at (0,2,1), which outranks a bare
-   `.footer-social:hover` at (0,2,0) and would repaint the label --accent-mid: 2.21:1 on the
-   ink, effectively invisible. Both rules are therefore scoped under .footer-brand for (0,3,0).
-   This is the same class of fault the buttons hit — see the note in base.css. */
-.footer-brand .footer-social {
+   TWO INHERITED RULES HAD TO BE OUTRANKED, both of the kind this file keeps getting caught by:
+     · `.footer-legal-links a` is (0,1,1) and sets a mono font, a line-height and opacity 0.7.
+       A bare `.footer-social` at (0,1,0) loses to it, so the base rule is scoped under
+       .footer-legal for (0,2,0).
+     · base.css `a:not(.btn):hover` is (0,2,1) and would repaint the mark --accent-mid, which is
+       2.21:1 on the ink. The hover rule is therefore (0,3,0).
+   ALIGNMENT: the legal bar is align-items:baseline, which has nothing to align on for a link
+   whose only child is an svg, so this one centres itself. */
+.footer-legal .footer-social {
 	display: inline-flex;
-	align-items: center;
-	gap: var(--space-sm);
-	margin-top: var(--space-md);
-	padding: 0.55rem 0.9rem;
-	border: 1px solid rgba(255, 255, 255, 0.22);
-	border-radius: 999px;
-	color: var(--text-on-dark);
-	text-decoration: none;
-	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-	font-size: var(--text-eyebrow);
-	letter-spacing: 0.06em;
-	transition:
-		background var(--duration-fast) var(--ease-out),
-		border-color var(--duration-fast) var(--ease-out);
-}
-
-.footer-brand .footer-social:hover {
-	background: rgba(255, 255, 255, 0.08);
-	border-color: rgba(255, 255, 255, 0.5);
-	color: var(--text-on-dark);
-}
-
-.footer-social-mark {
-	display: flex;
-	flex-shrink: 0;
-}
-
-.footer-social-mark svg {
-	width: 13px;
-	height: 13px;
-	fill: currentColor;
-	display: block;
-}
-
-.footer-social-handle {
-	line-height: 1;
-}
-
-/* The outbound arrow earns its place: this is the only link in the footer that leaves the site,
-   and it opens in a new tab. It reads at 0.55 opacity and comes up on hover, so it is available
-   without competing with the handle. */
-.footer-social-go {
+	align-self: center;
+	padding: var(--space-xs);
+	margin: calc(var(--space-xs) * -1);
+	border-radius: 4px;
 	opacity: 0.55;
-	font-size: 0.9em;
-	line-height: 1;
-	transition: opacity var(--duration-fast) var(--ease-out);
+	transition:
+		opacity var(--duration-fast) var(--ease-out),
+		background var(--duration-fast) var(--ease-out);
 }
 
-.footer-brand .footer-social:hover .footer-social-go {
+.footer-legal .footer-social svg {
+	width: 15px;
+	height: 15px;
+	display: block;
+	fill: var(--text-on-dark);
+}
+
+.footer-legal .footer-social:hover {
 	opacity: 1;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+/* 15px of art is under the 24px minimum target, and --space-xs is only 4px, so a touch device
+   gets --space-sm: 15 + 8 + 8 = 31px. The matching negative margin grows the target without
+   moving the mark or opening a gap in the flex row. */
+@media (pointer: coarse) {
+	.footer-legal .footer-social {
+		padding: var(--space-sm);
+		margin: calc(var(--space-sm) * -1);
+	}
 }
 
 .footer-nav {
