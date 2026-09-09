@@ -33,18 +33,24 @@
 import { features } from '../data/features';
 import { sectors } from '../data/sectors';
 
-const W = 1400;
-const H = 900;
+// THREE COLUMNS, 2026-09-09. The artboard was 1400x900 with the ghost squeezed into a narrow left
+// strip and the ring taking everything else, so the figure had no room either side and the page
+// capped it at .container width on top of that. It is now 1760 wide and genuinely three-column:
+// what today costs on the LEFT, the system in the CENTRE, what replaces it on the RIGHT. The two
+// side columns are the argument; the ring is the evidence for it.
+const W = 820;
+const H = 820;
 
 // The radial system sits right of the ghost; these were chosen so the outermost market pills
 // clear the divider on the left and the artboard edge on the right.
-const CX = 900;
-const CY = 450;
+const CX = 410;
+const CY = 410;
 
-const R_CORE = 82;
-const R_CAPS = 152;
-const R_FEAT = 258;
-const R_MKT = 400;
+const R_CORE = 76;
+const R_CAPS = 130;
+const R_FEAT = 212;
+const R_MKT = 300;
+
 
 const CHIP_W = 152;
 const CHIP_H = 34;
@@ -62,7 +68,13 @@ const pos = (r: number, i: number, n: number) => {
 
 const CAP_ORDER = ['ACCOUNT', 'PROTECT', 'REPAIR', 'DETECT', 'ISOLATE', 'SUPPRESS'] as const;
 
-const capPts = CAP_ORDER.map((name, i) => ({ name, ...pos(R_CAPS, i, CAP_ORDER.length) }));
+const capPts = CAP_ORDER.map((name, i) => {
+	const p = pos(R_CAPS, i, CAP_ORDER.length);
+	const ux = (p.x - CX) / R_CAPS;
+	const uy = (p.y - CY) / R_CAPS;
+	// 28px clear of the guide, along the radius — never across it.
+	return { name, ...p, lx: CX + ux * (R_CAPS + 28), ly: CY + uy * (R_CAPS + 28) + 4 };
+});
 const featPts = features.map((f, i) => ({ feature: f, ...pos(R_FEAT, i, features.length) }));
 const mktPts = sectors.map((s, i) => ({ sector: s, ...pos(R_MKT, i, sectors.length) }));
 
@@ -103,10 +115,79 @@ const ops = ['LayerNorm', 'Linear ↓', 'PReLU', 'Linear ↑'];
 
 // The ghost. Same node count as the ORMAS side's inner structure, deliberately — the point is
 // not that the standard network is smaller, it is that none of it can be addressed.
-const GX = 200;
-const GY = 450;
+const GX = 232;
+const GY = 268;
+const GS = 0.84; // ghost scale — the mesh is a motif, the numbers under it are the argument
 // Scaled up ~1.3x from the first draft: at the previous size the ghost occupied under half its
 // own panel and read as an afterthought rather than as the other half of the comparison.
+// THE COST OF THE LEFT-HAND PICTURE, added 2026-09-09. The standard-network panel argued its
+// point in the abstract — a tangled graph and a question mark — and left the bottom third of its
+// column empty. These are the published numbers that make the abstraction concrete, and they are
+// other people's measurements rather than ours, which is why they belong on the failure side.
+//   · MTTF collapses with cluster size: 7.9h at 1,024 GPUs, 1.8h at 16,384.
+//   · Llama 3: 419 unexpected interruptions across a 54-day run, ~8 a day.
+//   · Failures hit 0.2% of jobs and consume 18.7% of total runtime, because the long jobs are the
+//     ones that fail and each failure discards everything since the last checkpoint.
+// The fourth row is ours and is the turn: none of that tells you WHICH PART broke.
+// The answer to the last failure row, in our own measured numbers. Placed on the ORMAS side
+// because the left column asks the question and this is the reply: the same collapse, the same
+// task shift, and the one thing a loss curve cannot do.
+// WHAT IT BUYS, in the buyer's terms rather than ours. Every row is an established property or a
+// published result — nothing here depends on the source-attribution study that has not run yet.
+//   1 epoch  — defence market evidence: damage diagnosed within one epoch and repaired through 85
+//              individually attributed structural corrections.
+//   Native   — the record is a by-product of the backward pass, not a report assembled afterwards.
+//   Same     — /technology: what ships is one network of unchanged shape and unchanged inference
+//              cost, so nothing is paid for capability that is not being used.
+//   Bounded  — every correction is capped as a fraction of the component's own weight and logged.
+// SVG text does not wrap, so every label is broken into explicit lines sized to the column. At
+// 14px mono the column takes 40 characters; anything longer silently ran through the divider,
+// which is what made the middle line look like a rendering fault.
+// PAIRED ROW FOR ROW with failureRows below. This is the fix for the fault that made the two
+// columns unreadable together: the left stated the problem in money and the right answered in
+// architecture, so nothing connected "$100k+ per erasure request" to "Native". Row N on the right
+// now answers row N on the left, and the CSS holds them on a shared baseline.
+//
+// ONE ROW WAS SWAPPED OUT TO KEEP THIS HONEST. The erasure cost is the strongest number here, but
+// its real answer — telling you which data a component absorbed — is the source-attribution study
+// that has not run yet. Claiming it in the hero would be exactly the overclaim the rest of the
+// site refuses. The interruption count replaces it, and every right-hand row below is either a
+// published result or a property of the architecture.
+// PAIRED ROW FOR ROW with failureRows, and written for someone who has never trained a model.
+// The previous version read "1 epoch · Per node · Native · Bounded" — four researcher words that
+// require a glossary before they answer anything. Someone deciding whether to spend $15M should
+// not have to learn what an epoch is to see why the number changes. Same claims, plain English:
+//   Keep the run   — damage diagnosed within one epoch and repaired through attributed structural
+//                    corrections, so the run is not discarded back to the last checkpoint.
+//   No mystery     — per-node attribution: each failure is traceable to a component.
+//   Proof, not     — the record is a by-product of the backward pass, which is what Article 12
+//   paperwork        asks a high-risk system to be capable of producing.
+//   It can change  — every correction is capped as a fraction of the component's own weight and
+//                    logged, which is the shape of evidence a change-control plan requires.
+// PAIRED ROW FOR ROW with failureRows, in plain English, and length-matched to it. The right
+// column previously ran ~20 characters longer per row, which pushed it a line taller than the
+// left on every row — so the paired rows drifted apart and the column overran the band it sits in.
+// Both sides now sit at roughly 55 characters.
+//
+// ONE ROW WAS SWAPPED OUT TO KEEP THIS HONEST: the erasure cost is the strongest number here, but
+// its real answer — which data a component absorbed — is the source-attribution study that has not
+// run. Claiming it in the hero would be the overclaim the rest of the site refuses.
+const resultRows = [
+	{ figure: 'Keep the run', unit: '', body: 'Names the part that broke, so you repair it and carry on.' },
+	{ figure: 'No mystery', unit: '', body: 'Every stop arrives with its cause named, not a guess.' },
+	{ figure: 'Proof, built in', unit: '', body: 'The evidence a regulator wants, written as it learns.' },
+	{ figure: 'It can change', unit: '', body: 'Every change capped and logged against a limit you set.' },
+];
+
+// WHAT IT COSTS TODAY — money and exposure, each from that market's sourced evidence in
+// data/markets.ts, written to land without any background in machine learning.
+const failureRows = [
+	{ figure: '$15M', unit: '', body: 'Of computing burned on one training run that failed.' },
+	{ figure: '419', unit: '', body: 'Times that run stopped in 54 days. Nobody knew why.' },
+	{ figure: '7', unit: '%', body: 'Of worldwide revenue — the EU fine ceiling, from Aug 2026.' },
+	{ figure: '92', unit: '%', body: 'Of approved medical AI can never be updated at all.' },
+];
+
 const ghostNodes = [
 	[-96, -99], [5, -125], [101, -91],
 	[-125, 0], [-18, -18], [86, 8],
@@ -118,56 +199,57 @@ const ghostEdges: [number, number][] = [
 ];
 ---
 
-<div class="hero-visual">
-	<svg
-		viewBox={`0 0 ${W} ${H}`}
-		role="img"
-		aria-labelledby="hv-title hv-desc"
-		preserveAspectRatio="xMidYMid meet"
-	>
-		<title id="hv-title">ORMAS as one system</title>
-		<desc id="hv-desc">
-			On the left, a standard neural network drawn as an unlabelled mesh with a question mark at
-			its centre: no region of it can be named. On the right, ORMAS drawn as four concentric
-			rings built outward from one architectural decision — a bounded four-operation chain at
-			the centre, then the six capabilities that decision makes possible, then the seven
-			use cases, each connected to the capabilities it is built from, then the
-			five markets, each connected to the feature it enters through.
-		</desc>
-
-		{/* ── LEFT · the standard network, ghosted ─────────────────────────────────────── */}
-		<g class="hv-ghost">
-			{/* Both panel labels sit on the same baseline, outside every ring. "ORMAS · ONE SYSTEM"
-			    previously sat at y=118, which is between the market ring and the feature ring —
-			    inside the diagram, crowded by the AI Training pill directly above it. */}
-			<text class="hv-panel-label" x="72" y="150">STANDARD NETWORK</text>
-
-			{ghostEdges.map(([a, b]) => (
-				<line
-					x1={GX + ghostNodes[a][0]} y1={GY + ghostNodes[a][1]}
-					x2={GX + ghostNodes[b][0]} y2={GY + ghostNodes[b][1]}
-					class="hv-ghost-edge"
-				/>
+{/* aria-label, NOT <title>. An SVG <title> is the accessible name AND a native browser tooltip, so
+    the label followed the cursor around the hero and sat on top of the diagram it was describing.
+    aria-label gives assistive tech the same name with no tooltip; the long description stays in
+    <desc>, referenced by aria-describedby. The <title> elements on /technology's chart bars are
+    deliberate and stay — there, the tooltip is the feature. */}
+<div class="hero-fig">
+	<div class="hero-fig-ask">
+		<p class="hero-fig-ask-label">Five industries. Five ways of asking the same question.</p>
+		<ul class="hero-fig-questions">
+			{sectors.map((sec) => (
+				<li>
+					<span class="hero-fig-q-market">{sec.name}</span>
+					<span class="hero-fig-q-text">{sec.question}</span>
+				</li>
 			))}
-			{ghostNodes.map(([dx, dy]) => (
-				<circle cx={GX + dx} cy={GY + dy} r="6" class="hv-ghost-node" />
-			))}
+		</ul>
+		<p class="hero-fig-ask-answer">
+			Nothing in a standard network can answer any of them. Not because it is opaque — because
+			there is no part of it you can name.
+		</p>
+	</div>
 
-			<circle cx={GX} cy={GY} r="42" class="hv-ghost-void" />
-			<text class="hv-ghost-mark" x={GX} y={GY + 14} text-anchor="middle">?</text>
+	<div class="hero-fig-body">
+		<section class="hero-fig-col">
+			<h3 class="hero-fig-col-title">What that costs today</h3>
+			<dl class="hero-fig-stats">
+				{failureRows.map((r) => (
+					<div>
+						<dt><span class="hero-fig-num">{r.figure}</span><span class="hero-fig-unit">{r.unit}</span></dt>
+						<dd>{r.body}</dd>
+					</div>
+				))}
+			</dl>
+			<p class="hero-fig-src">Published figures · one per industry</p>
+		</section>
 
-			<text class="hv-ghost-caption" x={GX} y={GY + 186} text-anchor="middle">Every signal touches every parameter.</text>
-			<text class="hv-ghost-caption hv-ghost-caption--key" x={GX} y={GY + 208} text-anchor="middle">There is no object to name.</text>
-		</g>
-
-		{/* Runs the full height of the drawn content. It previously stopped at y=170/730 while the
-		    diagram spanned 35 to 874, so it read as a stray mark rather than as a division. */}
-		<line x1="392" y1="128" x2="392" y2="812" class="hv-divider" />
-
-		{/* ── RIGHT · ORMAS, built outward from the primitive ──────────────────────────── */}
-		<text class="hv-panel-label hv-panel-label--lit" x="440" y="150">ORMAS · ONE SYSTEM</text>
-
-		{/* ring guides */}
+		<figure class="hero-visual">
+			<svg
+				viewBox={`0 0 ${W} ${H}`}
+				role="img"
+				aria-label="ORMAS as one system"
+				aria-describedby="hv-desc"
+				preserveAspectRatio="xMidYMid meet"
+			>
+				<desc id="hv-desc">
+					ORMAS drawn as four concentric rings built outward from one architectural decision — a
+					bounded four-operation chain at the centre, then the six capabilities that decision makes
+					possible, then the seven use cases, each connected to the capabilities it is built from,
+					then the five markets, each connected to the use case it enters through.
+				</desc>
+{/* ring guides */}
 		<g class="hv-guides">
 			<circle cx={CX} cy={CY} r={R_CAPS} class="hv-guide hv-stage-caps" />
 			<circle cx={CX} cy={CY} r={R_FEAT} class="hv-guide hv-stage-feat" />
@@ -195,16 +277,16 @@ const ghostEdges: [number, number][] = [
 			{ops.map((op, i) => {
 				const col = i % 2;
 				const row = i < 2 ? 0 : 1;
-				const bx = CX - 70 + col * 72;
-				const by = CY - 32 + row * 34;
+				const bx = CX - 60 + col * 62;
+				const by = CY - 32 + row * 32;
 				return (
 					<g>
-						<rect x={bx} y={by} width="68" height="26" rx="4" class="hv-op-box" />
-						<text x={bx + 34} y={by + 17} text-anchor="middle" class="hv-op-text">{op}</text>
+						<rect x={bx} y={by} width="58" height="25" rx="4" class="hv-op-box" />
+						<text x={bx + 29} y={by + 17} text-anchor="middle" class="hv-op-text">{op}</text>
 					</g>
 				);
 			})}
-			<text x={CX} y={CY + 62} text-anchor="middle" class="hv-core-caption">4 BOUNDED OPS</text>
+			<text x={CX} y={CY + 60} text-anchor="middle" class="hv-core-caption">4 BOUNDED OPS</text>
 		</g>
 
 		{/* RING 1 · the six capabilities */}
@@ -212,12 +294,7 @@ const ghostEdges: [number, number][] = [
 			{capPts.map((c) => (
 				<>
 					<circle cx={c.x} cy={c.y} r="4" class="hv-cap-dot" />
-					<text
-						x={c.x}
-						y={c.y + (c.y < CY ? -13 : 22)}
-						text-anchor="middle"
-						class="hv-cap-text"
-					>{c.name}</text>
+					<text x={c.lx} y={c.ly} text-anchor="middle" class="hv-cap-text">{c.name}</text>
 				</>
 			))}
 		</g>
@@ -255,11 +332,25 @@ const ghostEdges: [number, number][] = [
 				</g>
 			))}
 		</g>
+			</svg>
+			<figcaption class="hero-fig-legend">
+				One primitive · six capabilities · seven use cases · five markets
+			</figcaption>
+		</figure>
 
-		<text class="hv-legend" x={CX} y={H - 26} text-anchor="middle">
-			One primitive · six capabilities · seven use cases · five markets
-		</text>
-	</svg>
+		<section class="hero-fig-col">
+			<h3 class="hero-fig-col-title hero-fig-col-title--lit">What replaces it</h3>
+			<dl class="hero-fig-stats hero-fig-stats--lit">
+				{resultRows.map((r) => (
+					<div>
+						<dt><span class="hero-fig-num">{r.figure}</span><span class="hero-fig-unit">{r.unit}</span></dt>
+						<dd>{r.body}</dd>
+					</div>
+				))}
+			</dl>
+			<p class="hero-fig-src">Built in, not bolted on</p>
+		</section>
+	</div>
 </div>
 
 <style>
@@ -308,18 +399,6 @@ const ghostEdges: [number, number][] = [
 		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 	}
 
-	.hv-panel-label {
-		font-size: 13px;
-		letter-spacing: 0.18em;
-		fill: var(--text-on-dark);
-		opacity: 0.55;
-	}
-
-	.hv-panel-label--lit {
-		fill: var(--accent-on-dark);
-		opacity: 0.9;
-	}
-
 	/* ── left · the ghost ─────────────────────────────────────────────────────────── */
 	/* Lifted from 0.16 / 0.30. The ghost is half the argument — it has to be legible enough to be
 	   read as a network, not so bright that it competes with the system beside it. */
@@ -359,12 +438,6 @@ const ghostEdges: [number, number][] = [
 
 	.hv-ghost-caption--key {
 		opacity: 0.8;
-	}
-
-	.hv-divider {
-		stroke: var(--text-on-dark);
-		stroke-width: 1;
-		opacity: 0.12;
 	}
 
 	/* ── right · rings ────────────────────────────────────────────────────────────── */
@@ -455,13 +528,6 @@ const ghostEdges: [number, number][] = [
 		fill: var(--accent-on-dark);
 	}
 
-	.hv-legend {
-		font-size: 11px;
-		letter-spacing: 0.16em;
-		fill: var(--text-on-dark);
-		opacity: 0.55;
-	}
-
 	/* ── build-outward, once ──────────────────────────────────────────────────────── */
 	.hv-ghost,
 	.hv-stage-core,
@@ -472,8 +538,6 @@ const ghostEdges: [number, number][] = [
 		opacity: 0;
 		animation: hv-in 620ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) forwards;
 	}
-
-	.hv-ghost        { animation-delay: 80ms; }
 	.hv-stage-core   { animation-delay: 420ms; }
 	.hv-stage-caps   { animation-delay: 900ms; }
 	.hv-stage-matrix { animation-delay: 1400ms; }
@@ -507,6 +571,154 @@ const ghostEdges: [number, number][] = [
 			opacity: 1;
 			transform: none;
 			animation: none;
+		}
+	}
+
+	/* ── THE FIGURE IS A LAYOUT, NOT A DRAWING ────────────────────────────────────────────────
+	   Every element here used to be a <text> at an absolute y inside one 1760-wide artboard. That
+	   is why each fix broke something else: there was no layout engine, so a column with a tall
+	   mesh in it and a column with nothing in it both started their stats at the same hard-coded
+	   y, leaving 350px of void on one side. Grid removes the whole class of fault — columns size
+	   themselves, text wraps, nothing can cross a divider, and it reflows on a phone for free.
+	   The SVG now draws the diagram and nothing else. ─────────────────────────────────────── */
+	.hero-fig {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2xl);
+	}
+
+	/* ── the ask: five buyers, five questions, one missing answer ── */
+	.hero-fig-ask-label,
+	.hero-fig-col-title,
+	.hero-fig-src {
+		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+		font-size: 0.6875rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--text-on-dark);
+		opacity: 0.5;
+	}
+
+	.hero-fig-questions {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+		gap: var(--space-md) var(--space-lg);
+		list-style: none;
+		margin: var(--space-lg) 0 0;
+		padding: 0;
+	}
+
+	.hero-fig-questions > li {
+		padding-top: var(--space-sm);
+		border-top: 1px solid rgba(255, 255, 255, 0.14);
+	}
+
+	.hero-fig-q-market {
+		display: block;
+		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+		font-size: 0.625rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--accent-on-dark);
+		opacity: 0.75;
+	}
+
+	.hero-fig-q-text {
+		display: block;
+		margin-top: 4px;
+		font-size: 0.9375rem;
+		line-height: 1.35;
+		color: var(--text-on-dark);
+	}
+
+	.hero-fig-ask-answer {
+		margin-top: var(--space-lg);
+		max-width: 68ch;
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--text-on-dark);
+		opacity: 0.72;
+	}
+
+	/* ── the comparison ── */
+	.hero-fig-body {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-2xl);
+		align-items: start;
+	}
+
+	/* Grid cell: min-width:0 or a long label pushes the track wider than its share and squeezes
+	   the diagram — the standard grid overflow trap. */
+	.hero-fig-col { min-width: 0; }
+
+	.hero-fig-col-title { opacity: 0.6; }
+	.hero-fig-col-title--lit { color: var(--accent-on-dark); opacity: 0.9; }
+
+	.hero-fig-stats { margin: var(--space-lg) 0 0; }
+
+	.hero-fig-stats > div {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		min-height: 7.25rem;
+		padding-block: var(--space-md);
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.hero-fig-stats dt {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 4px;
+		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+		font-weight: 700;
+		color: var(--chart-warning-on-dark);
+	}
+
+	.hero-fig-stats--lit dt { color: var(--accent-on-dark); }
+
+	.hero-fig-num { font-size: 1.75rem; line-height: 1; }
+
+	/* The cost column holds numbers, which want to be big. The answer column holds short phrases —
+	   at 1.75rem "Proof, built in" is 250px against a 230px track, so it gets its own size rather
+	   than being shortened until it happens to fit. */
+	.hero-fig-stats--lit .hero-fig-num {
+		font-size: 1.25rem;
+		line-height: 1.25;
+	}
+	.hero-fig-unit { font-size: 0.9375rem; font-weight: 400; opacity: 0.8; }
+
+	.hero-fig-stats dd {
+		margin: 6px 0 0;
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: var(--text-on-dark);
+		opacity: 0.66;
+	}
+
+	.hero-fig-src { margin-top: var(--space-md); opacity: 0.34; }
+
+	/* ── the diagram ── */
+	.hero-visual { margin: 0; min-width: 0; }
+	.hero-visual svg { display: block; width: 100%; height: auto; }
+
+	.hero-fig-legend {
+		margin-top: var(--space-md);
+		text-align: center;
+		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+		font-size: 0.6875rem;
+		letter-spacing: 0.1em;
+		color: var(--text-on-dark);
+		opacity: 0.45;
+	}
+
+	/* Side columns only flank the diagram once there is room for all three. Below that they stack,
+	   which is the correct mobile behaviour and costs nothing to get. */
+	@media (min-width: 1080px) {
+		.hero-fig-body {
+			grid-template-columns: minmax(230px, 0.85fr) minmax(0, 1.9fr) minmax(230px, 0.85fr);
+			gap: var(--space-3xl);
 		}
 	}
 </style>

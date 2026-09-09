@@ -522,17 +522,17 @@ export const faqs: FaqItem[] = [
 		cat: 'company',
 		q: 'Who is behind this?',
 		a: [
-			'Oxiedo is a research company in formation, founder-owned, incorporating as a Delaware C-corporation alongside a move to San Francisco. Until that completes it contracts through an existing UK-registered company, named in full in any agreement. The founder is a technical founder who has built and exited companies before this one.',
-			'The team is one person, and the second is the most consequential thing missing. That is stated on the about page rather than left for diligence to discover.',
+			'Oxiedo is a founder-led research company in formation, incorporating as a Delaware C-corporation alongside a move to San Francisco. Until that completes it contracts through an existing registered company, named in full in any agreement.',
+			'The founder is a technical founder who has built and exited companies before this one. Commercial, research and regulatory roles are open, and the full position on structure and funding is on the investor page rather than buried.',
 		],
 		link: { href: '/about', label: 'The company and the founder' },
 	},
 	{
-		id: 'one-person',
+		id: 'how-much-exists',
 		cat: 'company',
-		q: 'One person built all of this?',
+		q: 'How much of this actually exists?',
 		a: [
-			'Yes — 16,316 lines across 85 files, 383 controlled experiments and 67 archived runs reproducible from seed.',
+			'16,316 lines across 85 files, 383 controlled experiments across four architecture families, and 67 archived runs that regenerate from seed. The architecture is complete and the experimental programme is closed.',
 			'The right way to weigh that is not to take it on trust. Every run regenerates from seed, and the mechanism is released in full on acceptance — so the work becomes checkable in a way that a larger team behind a permanently closed implementation never is.',
 		],
 	},

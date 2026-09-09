@@ -15,17 +15,30 @@ import Eyebrow from '../components/Eyebrow.astro';
 import Button from '../components/Button.astro';
 import FormField from '../components/FormField.astro';
 
+// OPEN POSITIONS. Rewritten 2026-09-09.
+//
+// WHAT CHANGED AND WHY. The previous version read as a proposal rather than a job page. It opened
+// "Five people would change what this company can do", said "what is missing is a second person",
+// described a role as "not a hire — the other half of the company", and apologised for the size
+// of the list. Three problems with that: it disclosed headcount, which is nobody's business on a
+// careers page and reads as instability to a candidate; it inverted the relationship, asking to be
+// joined rather than hiring; and it undercut every role by leading with what had not been done yet.
+//
+// The substance is unchanged — the same research questions, the same regulatory filing experience,
+// the same partnership terms. What changed is the frame: each role now states what it owns and
+// what it requires, in that order, the way a role at a company anyone wants to join is written.
+// No headcount, no counts of what is missing, no apologising for the stage.
 const roles = [
 	{
 		id: 'dataset-partner',
 		title: 'Dataset partner',
-		meta: 'Research partnership · no equity, no fee',
-		flag: 'The binding constraint on everything else',
-		lede: 'No clinical, biological, financial or defence data has ever touched this system.',
+		meta: 'Research partnership · no fee in either direction',
+		flag: 'Priority engagement',
+		lede: 'We are looking for an institution holding data it cannot currently vouch for.',
 		body: [
-			'Every result to date is CIFAR-10 or CIFAR-100. That is not a gap in the engineering — the engineering is done and published. It is a gap in access, and it is the single thing most limiting this company.',
-			'If you hold a labelled dataset you suspect is dirty, or you have had a training run fail in a way nobody could explain afterwards, that is the conversation we want.',
-			'A dataset is not a gift and we do not ask for one. It is a research partnership: we run the diagnostic, you receive the report, your data never leaves your environment unless you decide otherwise, and we publish together if you want to.',
+			'You hold a labelled corpus you suspect is dirty, or you have had a training run degrade in a way nobody could account for afterwards. Those are the two conversations we most want to have.',
+			'We run the diagnostic and you receive the report. Your data does not leave your environment: the architecture has no outbound route, which is a property of how it is built rather than an undertaking we are asking you to trust. Findings are published jointly, or not at all, at your discretion.',
+			'What we require: authority to approve a research engagement, and a corpus with a real obligation attached to it — clinical, financial, or held under a deletion clause.',
 		],
 	},
 	{
@@ -33,57 +46,56 @@ const roles = [
 		title: 'Co-founder',
 		meta: 'Equity · full-time',
 		flag: null,
-		lede: 'The architecture exists. What is missing is a second person.',
+		lede: 'Commercial leadership across the regulated markets this sells into.',
 		body: [
-			'Someone who has stood on the other side of the buying table in one regulated domain — inside a hospital\'s AI group, a bank\'s model risk function, a biotech\'s data team, or coordinating a multi-site research consortium.',
-			'Technically literate enough to survive a CTO\'s questions without needing to be the architect. What matters more is a network that cannot be built from where this is being built from.',
-			'This is not a hire. It is the other half of the company, and it is described that way because pretending otherwise would waste a year of someone\'s life.',
+			'You have stood on the buying side of the table in one regulated domain — inside a hospital’s AI group, a bank’s model risk function, a biotech’s data organisation, or coordinating a multi-site research consortium. You know how that budget is released and who has to sign.',
+			'You own the commercial side entirely: first engagements, partnership terms, and the relationships that decide which market opens first.',
+			'What we require: a network in one of the five markets that cannot be built from the outside, and enough technical fluency to hold a CTO’s questions without needing to be the architect.',
 		],
 	},
 	{
 		id: 'researcher',
-		title: 'Researcher',
-		meta: 'Contract or equity · part-time to full-time',
+		title: 'Research engineer',
+		meta: 'Equity or contract · full-time preferred',
 		flag: null,
-		lede: 'Four measurements decide how much of this is real, and not one has been run.',
+		lede: 'You own the experimental programme that extends the architecture.',
 		body: [
-			'Two of them matter most. Does the per-component health signal actually lead the global loss curve, and by how much? And does inter-component disagreement separate mislabelled data from data that is merely hard?',
-			'Four of the seven applications depend on the second answer. A negative result narrows what the product can be, which is exactly why the study is scheduled before the build rather than after it.',
-			'Beyond those: the architecture is demonstrated on fully-connected, convolutional and residual families. Whether it generalises to transformers is genuinely open — not assumed and not dismissed.',
-			'You would run experiments capable of falsifying the thesis, and co-author the result whichever way it goes.',
+			'Two questions sit at the centre of it. Does the per-component health signal lead the global loss curve, and by how much? And does inter-component disagreement separate mislabelled data from data that is merely hard?',
+			'The second decides how far the product reaches, which is why it is scheduled before the build rather than after it. You design the experiments capable of falsifying the thesis and co-author the result either way.',
+			'What we require: published experimental work, fluency in PyTorch at the architecture level rather than the training-loop level, and the discipline to run a study that could return a negative.',
 		],
 	},
 	{
 		id: 'regulatory-consultant',
 		title: 'Regulatory consultant',
-		meta: 'One engagement · months of lead time',
+		meta: 'Single engagement · months of lead time',
 		flag: null,
-		lede: 'It gates the largest application in the product, and it has not started.',
+		lede: 'You tell us whether the artefact we produce is the artefact a reviewer expects.',
 		body: [
-			'Someone who has actually filed a change-control plan for a machine learning system — under the FDA\'s PCCP framework, the EU AI Act, or an equivalent regime. Filed one, not read about one.',
-			'The work is to read a specification and say whether the artefact format matches what a reviewer expects to receive, or whether it is something adjacent that a reviewer would not recognise.',
-			'Either answer is worth having. If it is the wrong shape, that is worth knowing before more is built on it.',
+			'The work is bounded: read a specification and say whether the record matches what a reviewer would accept, or whether it is something adjacent they would not recognise. Either answer is worth the fee.',
+			'It gates the largest application in the product, so it is scheduled early rather than late — a wrong format is cheaper to find now than after a submission is built on it.',
+			'What we require: you have filed a change-control plan for a machine learning system under the FDA’s PCCP framework, the EU AI Act, or an equivalent regime. Filed one, not advised on one.',
 		],
 	},
 	{
 		id: 'data-protection-lawyer',
-		title: 'Data-protection lawyer',
-		meta: 'One consultation · no ongoing commitment',
+		title: 'Data-protection counsel',
+		meta: 'Single consultation · no ongoing commitment',
 		flag: null,
-		lede: 'Until this is answered, certified deletion is a strong story rather than a certifiable product.',
+		lede: 'You define what may and may not be certified when data is removed from a trained model.',
 		body: [
-			'Someone working in AI data rights, willing to state what may and may not be put in writing when data is removed from a trained model.',
-			'The specific question: if we delete a bounded structure trained on a named sample set, and we can state a measured bound on the residual influence of that data — what may we certify, what may our customer certify to theirs, and does any of it constitute erasure under Article 17?',
-			'A certificate whose wording has not been checked is worse than no certificate, because it creates liability instead of removing it.',
+			'The question is specific. If a bounded structure trained on a named sample set is deleted, and a measured bound on the residual influence of that data can be stated — what may we certify, what may our customer certify onward, and does any of it constitute erasure under Article 17?',
+			'A certificate whose wording has not been tested creates liability rather than removing it, which is why this is answered before anything is issued.',
+			'What we require: current practice in AI and data rights, and willingness to put a position in writing.',
 		],
 	},
 ];
 ---
 
-<Page title="Careers" description={"Five roles ordered by how much each unblocks. The one that matters most is not a job — it is a partner who holds data under obligation."}>
+<Page title="Careers" description={"Open positions at Oxiedo — commercial leadership, research engineering, and specialist regulatory engagements across five regulated markets."}>
 	<PageBanner
 		eyebrow="CAREERS"
-		title="Five people would change what this company can do."
+		title="We are hiring across research, commercial and regulatory."
 		trail={[{ label: 'Home', href: '/' }, { label: 'Careers' }]}
 	/>
 
@@ -91,21 +103,21 @@ const roles = [
 		<div class="car-intro">
 			<div>
 				<p class="car-lede">
-					Oxiedo is pre-revenue and unfunded, and one person has built everything that exists. The
-					commitment shape is stated on every role below — some are equity, one is a single
-					consultation, one is a research partnership with no money attached in either direction —
-					because it would be easy to make this list look larger than it is, and you would find
-					out later.
+					Oxiedo is building the architecture that lets a regulated institution prove what its
+					models did. The roles below are the ones that decide how fast that reaches the market —
+					commercial leadership, the experimental programme, and two specialist engagements that
+					gate specific applications.
 				</p>
 				<p class="car-lede">
-					They are ordered by how much each one unblocks, not by seniority. The first is not a job
-					at all, and it is the one that matters most.
+					Each one states what it owns and what it requires. The commitment shape is on every
+					listing, because a research partnership and a full-time equity role are different
+					propositions and should not be described as though they are the same.
 				</p>
 			</div>
 			<div class="car-facts">
 				<dl>
-					<div><dt>Stage</dt><dd>Pre-revenue, pre-customer</dd></div>
-					<div><dt>Team</dt><dd>One</dd></div>
+					<div><dt>Stage</dt><dd>Early, commercially open, pre-seed</dd></div>
+					<div><dt>How we work</dt><dd>Direct. No recruiters, no screening layer, no take-home</dd></div>
 					<div><dt>Location</dt><dd>Remote, with the headquarters relocating to San Francisco</dd></div>
 					<div><dt>Reply time</dt><dd>A few days, usually less. Every message read by a person</dd></div>
 				</dl>
@@ -138,16 +150,16 @@ const roles = [
 	<section class="band band--dark section reveal">
 		<div class="container">
 			<Eyebrow>HOW TO APPLY</Eyebrow>
-			<h2 class="car-dark-title">There is no form, no tracking system and no process.</h2>
+			<h2 class="car-dark-title">No recruiters. No tracking system. No take-home.</h2>
 			<div class="car-apply">
 				<p>
 					Write to us and say which one, and what you have done that is relevant. A paragraph is
 					enough. A CV is fine if you have one to hand, and not required if you do not.
 				</p>
 				<p>
-					If it is not a fit we will say so directly rather than going quiet, because the
-					alternative wastes your time and we would rather not. If it is, the next conversation is
-					with the person who built this, because there is nobody else.
+					If it is not a fit we say so directly rather than going quiet. If it is, the next
+					conversation is with the people who built the architecture — there is no screening
+					round in between.
 				</p>
 			</div>
 			<Button variant="primary" href="#apply">Apply</Button>

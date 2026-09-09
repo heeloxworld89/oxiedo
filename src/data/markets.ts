@@ -877,7 +877,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				q: 'Who has accredited this?',
-				a: 'Nobody. No defense or classified data has touched it, no clearance is held, and the founder is a foreign national operating a UK company — which is a real constraint on direct programme work rather than a detail to work around. The realistic shapes here are a research partnership with a national laboratory or university group, or an IP licence to an integrator who holds the clearance.',
+				a: 'Nobody. No defence or classified data has touched it, no clearance is held, and the company is not US-domiciled — a real constraint on direct programme work rather than a detail to work around. The realistic shapes here are a research partnership with a national laboratory or university group, or an IP licence to an integrator who holds the clearance.',
 			},
 		],
 		internalCase: [

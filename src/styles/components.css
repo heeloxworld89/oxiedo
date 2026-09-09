@@ -1096,9 +1096,11 @@ main > section:last-child.band--dark {
    screen. 26ch keeps it to two lines on a desktop. */
 .hero-headline {
 	color: var(--text-on-dark);
-	font-size: clamp(2rem, 3.4vw + 0.5rem, 3.25rem);
-	max-width: 26ch;
-	margin-top: var(--space-sm);
+	/* Raised: with both columns top-aligned the headline has the room, and it is the first thing
+	   anyone reads. */
+	font-size: clamp(2.25rem, 4vw + 0.5rem, 4.25rem);
+	max-width: 20ch;
+	margin-top: var(--space-md);
 }
 
 /* The subhead was at --text-small against a display-size headline: the step between them was so
@@ -10095,3 +10097,31 @@ main > section:last-child.band--dark {
 
 /* (0,2,0) so it beats .nav-mobile-sub's own display:flex at (0,1,0). */
 .nav-mobile-sub[hidden] { display: none; }
+
+/* THE FIGURE SHARES THE HEADLINE'S CONTAINER. It was briefly taken full-bleed to kill the dead
+   ground either side of the old narrow diagram — but that made it start 230px left of the
+   headline above it, so the whole hero read as two unrelated blocks pasted together. The dead
+   ground is now solved by the figure being a three-column grid that actually fills its width,
+   not by breaking the page's alignment. Left edges line up: eyebrow, headline, figure. */
+.hero-art {
+	padding-bottom: var(--space-3xl);
+}
+
+/* A four-word line has to read as a statement, not as a caption that lost its sentence. It takes
+   the display face and sits at headline weight; the qualifying line beneath it carries the
+   precision, which is what lets the four words be absolute. */
+.hero-subhead {
+	font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+	font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+	line-height: 1.15;
+	color: var(--text-on-dark);
+}
+
+.hero-subclaim {
+	margin-top: var(--space-md);
+	max-width: 46ch;
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var(--text-on-dark);
+	opacity: 0.66;
+}

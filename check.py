@@ -23,7 +23,8 @@ WRAPPERS = {
  'licensing-band--l2','licensing-band--l3','surface-label','mk-section--lit',
  'detail-main','detail-rail','detail-layout','mk-intro',
  'get-in-touch','closing','proof','hv-core','tech-bar','dh-term',
- 'faq-body','faq-closing','iv-close','iv-thesis-body'}
+ 'faq-body','faq-closing','iv-close','iv-thesis-body',
+ 'hv-cost','hv-result','hero-fig-ask'}
 
 css = ''.join(open(f).read() for f in glob.glob('src/styles/*.css'))
 for f in glob.glob('src/**/*.astro', recursive=True):
