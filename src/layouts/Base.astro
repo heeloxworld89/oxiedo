@@ -61,6 +61,23 @@ const orgLd = {
 		<link rel="canonical" href={canonical} />
 		{!indexable && <meta name="robots" content="noindex, follow" />}
 
+{/* ICONS. There were none before this: favicon.svg was a 0-byte placeholder and /icons was
+		    empty, so every browser fell through to a 404 on /favicon.ico and drew a blank page.
+		    The mark is a raster render — brushed metal, bevelled edges — so there is no SVG icon:
+		    the material IS the mark, and vectorising it would discard the thing that identifies it.
+		    Cut from media/newfav-only-logo.png, which carries alpha, so the glyph sits on the
+		    browser's own tab colour rather than on a tile of ours.
+		    THE 16/32 SIZES ARE LIFTED. The metal averages 45/255; a dark tab bar is ~32/255, so at
+		    tab size the fill very nearly merges into it and only the bevel highlights hold the
+		    shape. Measured on both a light and a dark tab before setting the amount. */}
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="/icons/favicon-96.png" type="image/png" sizes="96x96" />
+		<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		{/* Tints the mobile browser chrome, so it tracks the page ground, not the icon. */}
+		<meta name="theme-color" content="#F3F1EA" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#16182B" media="(prefers-color-scheme: dark)" />
+
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="Oxiedo" />
 		<meta property="og:title" content={pageTitle} />

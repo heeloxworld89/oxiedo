@@ -78,9 +78,21 @@ const faqs = [
 		a: 'On customer infrastructure. The licence is on-premise and per-institution: nothing is sent to a third party, there is no hosted tier, and no usage metering phones home. In a hospital enclave or a controlled environment, that is a requirement rather than a preference.',
 	},
 ];
+
+// "The Diary — Oxiedo" is not a title anybody can search for. Each application is titled by
+// the job it does, with the product name kept because that is what the page is called.
+const seoTitle: Record<string, string> = {
+	'proofreader': 'The Proofreader: finding mislabelled training data',
+	'warning-light': 'The Warning Light: naming the component that failed',
+	'diary': 'The Diary: a causal record written during training',
+	'separator': 'The Separator: isolating what a data source taught',
+	'certified-deletion': 'Certified Deletion: signed removal from a model',
+	'federated-node': 'The Federated Node: per-party attribution',
+	'update-engine': 'The Update Engine: retraining inside a bound',
+};
 ---
 
-<Page title={feature.name} description={`${feature.summary} One architecture, one licence. ${feature.name} is how this capability is used, not a separate product.`}>
+<Page title={seoTitle[feature.id] ?? feature.name} description={`${feature.summary} One architecture, one licence. ${feature.name} is how this capability is used, not a separate product.`}>
 	<PageBanner
 		eyebrow="AN APPLICATION OF ORMAS"
 		title={feature.name}

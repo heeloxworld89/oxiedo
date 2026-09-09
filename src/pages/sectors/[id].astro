@@ -55,9 +55,20 @@ const toc = [
 	{ id: 'proof', label: 'What can be shown' },
 	{ id: 'limits', label: 'What we do not claim' },
 ];
+
+// A bare "Medical AI — Oxiedo" tells a searcher nothing about what is on the page, so each
+// market carries the obligation it is actually bought against. All land under 60 characters
+// once the brand suffix is appended.
+const seoTitle: Record<string, string> = {
+	'ai-training': 'AI training: diagnosing runs that fail silently',
+	'medical-ai': 'Medical AI: PCCP evidence for models that update',
+	'regulated-finance': 'Regulated finance: model risk under SR 26-2',
+	'data-obligation': 'Data obligation: deletion evidence for AI models',
+	'defense-safety-critical': 'Safety-critical AI: accounting for self-change',
+};
 ---
 
-<Page title={sector.name} description={`${sector.question} How ORMAS applies in ${sector.name.toLowerCase()}: the failures, the regulation, the buyer, and the limits.`}>
+<Page title={seoTitle[sector.id] ?? sector.name} description={`${sector.question} How ORMAS applies in ${sector.name.toLowerCase()}: the failures, the regulation, the buyer, and the limits.`}>
 	<PageBanner
 		eyebrow="MARKET"
 		title={sector.name}
