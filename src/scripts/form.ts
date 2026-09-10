@@ -33,7 +33,7 @@ const INTENTS: Record<string, string> = {
 };
 
 const CONFIRMATIONS: Record<string, string> = {
-	'pre-book': 'Received, and read personally. You will hear back within a few days, usually less.',
+	'pre-book': 'Received, and read personally. A reply follows within a few days, usually less.',
 	invest: 'Received. We will reply to say whether this is a fit for the thesis. If it is, the material follows; if it is not, we say so plainly.',
 	press: 'Received. Replies come from the people who built the architecture, usually within a few days. A stated deadline gets a faster answer.',
 	data: 'Received. Data requests are answered within five working days, and a deletion request is acted on immediately and confirmed in writing.',

@@ -209,7 +209,7 @@ A research partnership lead, not a procurement officer
 
 **MAKING THE CASE**
 
-### You are not the only person who has to say yes.
+### Nobody signs this alone.
 
 Nothing at this size is bought by one person. These are the lines for the other four, in the terms each of them is actually measured on.
 
@@ -237,7 +237,7 @@ A path that does not require clearance on day one
 
 Fundamental research needs none. The dual-use civilian route — industrial autonomy, robotics — builds the same evidence base without the overhead.
 
-**WHAT WE CAN SHOW YOU**
+**WHAT CAN BE SHOWN**
 
 ### No customer references. An unusual amount of everything else.
 

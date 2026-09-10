@@ -55,7 +55,7 @@ ORMAS bounds each component's learning path so the component stays individually 
 
 Naming is the whole thing. A part that has a name can be watched while it trains, protected when it starts to fail, corrected inside a limit declared in advance, tied back to the data that produced it, and taken out when a contract says it has to go.
 
-**WHAT THE ARCHITECTURE GIVES YOU**
+**WHAT THE ARCHITECTURE GIVES**
 
 ### All of it is produced while the model trains.
 
@@ -107,7 +107,7 @@ No hosted service, no metering, nothing leaving the network. Inside a hospital e
 
 ### Seven applications, worked out end to end.
 
-Six operations on a named part — protect, repair, account, detect, isolate, remove — combine into a large number of useful things. We have not proven all of them and will not claim to have. Seven are finished, aimed at a market that is already paying for their absence, and backed by evidence available on request. They appear in the order of what each one asks for.
+Six operations on a named part — protect, repair, account, detect, isolate, remove — combine into a large number of useful things. We have not proven all of them and will not claim to have. These are the seven being built, each aimed at a market already paying for its absence, and backed by evidence available on request. They appear in the order of what each one asks for.
 
 1. 01
 
@@ -117,7 +117,7 @@ Six operations on a named part — protect, repair, account, detect, isolate, re
 
   Attaches to an already-trained model without modifying it and returns a ranked list of labels judged incorrect, held separate from those that are merely difficult. Broken down by class, and by source where the corpus carries one.
 
-  - **Built from** — DETECT
+  - **Composed of** — DETECT
   - **What it asks for** — A model file and a labelled sample
   - **Serves** — All five markets
 
@@ -131,7 +131,7 @@ Six operations on a named part — protect, repair, account, detect, isolate, re
 
   Watches every component of a model while it trains and raises an alarm when one crosses its own baseline, naming the component rather than the run. The operator rolls back hundreds of steps instead of thousands.
 
-  - **Built from** — ACCOUNT
+  - **Composed of** — ACCOUNT
   - **What it asks for** — One line around the training loop
   - **Leads in** — AI Training
 
@@ -145,7 +145,7 @@ Six operations on a named part — protect, repair, account, detect, isolate, re
 
   Produces a signed, timestamped record of every modification made during training: the component, the diagnosis, the treatment, the step, and the limit it remained inside. Diffable against the last approved version.
 
-  - **Built from** — ACCOUNT PROTECT REPAIR
+  - **Composed of** — ACCOUNT PROTECT REPAIR
   - **What it asks for** — Training on the architecture
   - **Leads in** — Regulated Finance · and 3 more markets
 
@@ -159,7 +159,7 @@ Six operations on a named part — protect, repair, account, detect, isolate, re
 
   Separates what a model learned about the world from what it learned about where the data came from. One model ships and works anywhere, carrying a named removable part for each source and a record of the data that justified each.
 
-  - **Built from** — ACCOUNT DETECT ISOLATE SUPPRESS
+  - **Composed of** — ACCOUNT DETECT ISOLATE SUPPRESS
   - **What it asks for** — Training on the architecture, with source labels
   - **Serves** — All five markets
 
@@ -173,7 +173,7 @@ Six operations on a named part — protect, repair, account, detect, isolate, re
 
   Removes a named source's contribution and issues a signed certificate of exactly what was removed, with a bounded statement of what changed, and without retraining.
 
-  - **Built from** — ACCOUNT DETECT ISOLATE SUPPRESS
+  - **Composed of** — ACCOUNT DETECT ISOLATE SUPPRESS
   - **What it asks for** — The Separator, plus a deletion policy
   - **Leads in** — Data Obligation · and 2 more markets
 
@@ -187,7 +187,7 @@ Six operations on a named part — protect, repair, account, detect, isolate, re
 
   Runs inside an existing federation. Each party's contribution is recorded before the averaging step destroys it, so a round that drops six points can be attributed to a site.
 
-  - **Built from** — ACCOUNT DETECT ISOLATE SUPPRESS
+  - **Composed of** — ACCOUNT DETECT ISOLATE SUPPRESS
   - **What it asks for** — A federation that already exists
   - **Leads in** — Medical AI · and 2 more markets
 
@@ -201,7 +201,7 @@ Six operations on a named part — protect, repair, account, detect, isolate, re
 
   Retrains a deployed model inside a limit declared and signed beforehand, and produces the evidence that every change stayed inside it. Built to the shape of a predetermined change control plan.
 
-  - **Built from** — ACCOUNT PROTECT REPAIR
+  - **Composed of** — ACCOUNT PROTECT REPAIR
   - **What it asks for** — A limit agreed with the reviewer in advance
   - **Serves** — Regulated Finance · Medical AI · Defense & Safety-Critical
 
@@ -209,7 +209,7 @@ Six operations on a named part — protect, repair, account, detect, isolate, re
 
 Other combinations are possible and some of them are obvious. They are absent from this page because we would not yet sign a contract against them.
 
-**HOW YOU GET IT**
+**HOW IT IS DELIVERED**
 
 ### There is no menu, and no per-application price.
 

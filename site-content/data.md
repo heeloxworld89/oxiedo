@@ -38,7 +38,7 @@ MODE B
 
 #### Evaluation engagement
 
-You ask us to run an assessment and the data is permitted to move.
+We are asked to run an assessment and the data is permitted to move.
 
 - **We receive** — A model checkpoint and a sample of labelled data, both of which the customer selects.
 - **Our role** — We are a processor, acting only on the customer's documented instructions.
@@ -48,7 +48,7 @@ MODE C
 
 #### This website
 
-You send a message through a form or by email.
+A message is sent through a form or by email.
 
 - **We receive** — What is typed into the form: a name, an address, an organisation, a message.
 - **Our role** — We are the controller of that correspondence.
@@ -66,11 +66,11 @@ The software is installed and operated by the licensee, on customer infrastructu
 
 None by default. Where a support engagement requires us to see something, the customer decides what to share, shares it deliberately, and that transfer is Mode B with Mode B's terms. We do not hold standing credentials to any customer environment.
 
-#### Your position under UK and EU GDPR
+#### The customer position under UK and EU GDPR
 
-You remain the controller. A processor is a party that processes personal data on behalf of a controller; where we do not receive, store, transmit or access the data, no such processing occurs and no Article 28 relationship arises in respect of it. A DPA remains available and is required the moment any evaluation moves data to us.
+The customer remains the controller. A processor is a party that processes personal data on behalf of a controller; where we do not receive, store, transmit or access the data, no such processing occurs and no Article 28 relationship arises in respect of it. A DPA remains available and is required the moment any evaluation moves data to us.
 
-#### Your position under HIPAA
+#### The customer position under HIPAA
 
 A business associate is an entity that creates, receives, maintains or transmits protected health information on behalf of a covered entity. In Mode A we do none of those four things, so the relationship does not arise and no BAA is required. Where an evaluation involves PHI, we execute one first.
 

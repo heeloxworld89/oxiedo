@@ -135,7 +135,7 @@ Adaptive clipping methods reduce the incidence of spikes. They suppress the symp
 
   #### Read-only is a supported mode, and it is where most teams start
 
-  The diagnostics run with corrections switched off entirely. You get the full signal and the architecture touches nothing. Nobody sensible lets an unproven system modify weights inside a run costing hundreds of thousands of dollars, and the product does not ask them to.
+  The diagnostics run with corrections switched off entirely. The full signal is emitted and the architecture touches nothing. Nobody sensible lets an unproven system modify weights inside a run costing hundreds of thousands of dollars, and the product does not ask them to.
 
 **APPLICATIONS IN SCOPE**
 
@@ -191,7 +191,7 @@ The person who owns the training run
 
 **MAKING THE CASE**
 
-### You are not the only person who has to say yes.
+### Nobody signs this alone.
 
 Nothing at this size is bought by one person. These are the lines for the other four, in the terms each of them is actually measured on.
 
@@ -219,7 +219,7 @@ To know nothing leaves
 
 Runs inside the customer environment. No hosted tier, no metering, no telemetry egress.
 
-**WHAT WE CAN SHOW YOU**
+**WHAT CAN BE SHOWN**
 
 ### No customer references. An unusual amount of everything else.
 

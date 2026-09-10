@@ -226,11 +226,11 @@ const dashed = (s: [number, number][]) => line(s.filter(([x]) => x >= D_SPLIT - 
 				</linearGradient>
 			</defs>
 
-			{/* "What you see today" / "What ORMAS sees" rather than "training loss" / "gradient
+			{/* "What is seen today" / "What ORMAS sees" rather than "training loss" / "gradient
 			    norm per node". The panels are a before-and-after of the reader's own situation,
 			    which needs no ML vocabulary to follow; the exact terms live in the caption below
 			    the figure, where an expert still finds them. */}
-			<text x="40" y="16" class="sg-title">WHAT YOU SEE TODAY</text>
+			<text x="40" y="16" class="sg-title">WHAT IS SEEN TODAY</text>
 			<text x="300" y="16" text-anchor="end" class="sg-title sg-bad">the run breaks · step 40,200</text>
 
 			{[30, 50, 70, 90].map((y) => <line x1="40" y1={y} x2="300" y2={y} class="sg-grid" />)}

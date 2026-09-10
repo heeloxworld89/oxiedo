@@ -123,7 +123,7 @@ The current artefact. It holds until the scanner is replaced, the protocol chang
 
   #### The site becomes a named, removable object
 
-  What the model learned about each contributing institution is separated from what it learned about the disease, bound to a record of exactly which data justified it, and removable. You deploy a source-invariant model plus a named component per site plus the evidence tying each one to its data.
+  What the model learned about each contributing institution is separated from what it learned about the disease, bound to a record of exactly which data justified it, and removable. What deploys is a source-invariant model, plus a named component per site, plus the evidence tying each one to its data.
 
 3. 03
 
@@ -213,7 +213,7 @@ Three different people, in a deliberate order
 
 **MAKING THE CASE**
 
-### You are not the only person who has to say yes.
+### Nobody signs this alone.
 
 Nothing at this size is bought by one person. These are the lines for the other four, in the terms each of them is actually measured on.
 
@@ -241,7 +241,7 @@ Data residency and a privacy position
 
 On-premise, no egress. And we will say plainly that the formal privacy analysis of the telemetry is outstanding rather than claim it is done.
 
-**WHAT WE CAN SHOW YOU**
+**WHAT CAN BE SHOWN**
 
 ### No customer references. An unusual amount of everything else.
 

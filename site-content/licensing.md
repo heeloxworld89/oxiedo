@@ -219,7 +219,7 @@ Annual, per institution, on-premise. No per-seat component and no consumption me
 
 On termination the licensee keeps a perpetual, irrevocable right to read, retain and reproduce every record generated during the term, together with a frozen reader binary.
 
-Why Your obligations outlive our commercial relationship. A customer who suspects they could lose their audit trail by not renewing will never sign in the first place, so this clause costs us nothing and makes the contract signable.
+Why Regulatory obligations outlive a commercial relationship. A customer who suspects they could lose their audit trail by not renewing will never sign in the first place, so this clause costs us nothing and makes the contract signable.
 
 02
 
@@ -233,7 +233,7 @@ Why If we can quietly alter the bound, the bound is worth nothing and every fili
 
 #### Reproducible build attestation
 
-You receive hash-pinned builds and the means to verify that the binary running in the customer environment is the exact artefact that was validated.
+The licence carries hash-pinned builds and the means to verify that the binary running in the customer environment is the exact artefact that was validated.
 
 Why Technical documentation requirements and software provenance expectations both point here. It costs us a build pipeline and it removes an entire class of question from a security review.
 

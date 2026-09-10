@@ -153,7 +153,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'Read-only is a supported mode, and it is where most teams start',
-				body: 'The diagnostics run with corrections switched off entirely. You get the full signal and the architecture touches nothing. Nobody sensible lets an unproven system modify weights inside a run costing hundreds of thousands of dollars, and the product does not ask them to.',
+				body: 'The diagnostics run with corrections switched off entirely. The full signal is emitted and the architecture touches nothing. Nobody sensible lets an unproven system modify weights inside a run costing hundreds of thousands of dollars, and the product does not ask them to.',
 			},
 		],
 		regulatory: [],
@@ -475,7 +475,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'The site becomes a named, removable object',
-				body: 'What the model learned about each contributing institution is separated from what it learned about the disease, bound to a record of exactly which data justified it, and removable. You deploy a source-invariant model plus a named component per site plus the evidence tying each one to its data.',
+				body: 'What the model learned about each contributing institution is separated from what it learned about the disease, bound to a record of exactly which data justified it, and removable. What deploys is a source-invariant model, plus a named component per site, plus the evidence tying each one to its data.',
 			},
 			{
 				title: 'Attribution before the averaging step',

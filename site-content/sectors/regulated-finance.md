@@ -207,7 +207,7 @@ The validator, not the quant and not the CTO
 
 **MAKING THE CASE**
 
-### You are not the only person who has to say yes.
+### Nobody signs this alone.
 
 Nothing at this size is bought by one person. These are the lines for the other four, in the terms each of them is actually measured on.
 
@@ -235,7 +235,7 @@ Data residency
 
 On-premise or in the customer environment. Position, client and trading data never move.
 
-**WHAT WE CAN SHOW YOU**
+**WHAT CAN BE SHOWN**
 
 ### No customer references. An unusual amount of everything else.
 

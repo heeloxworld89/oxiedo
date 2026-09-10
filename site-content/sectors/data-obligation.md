@@ -205,7 +205,7 @@ General counsel, or the data protection officer
 
 **MAKING THE CASE**
 
-### You are not the only person who has to say yes.
+### Nobody signs this alone.
 
 Nothing at this size is bought by one person. These are the lines for the other four, in the terms each of them is actually measured on.
 
@@ -233,7 +233,7 @@ To stop losing deals on a clause
 
 An answer to the deletion-and-attestation clause that increasingly appears in enterprise contracts, at the point where a competitor has to disclose that they cannot comply.
 
-**WHAT WE CAN SHOW YOU**
+**WHAT CAN BE SHOWN**
 
 ### No customer references. An unusual amount of everything else.
 
