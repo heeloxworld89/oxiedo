@@ -757,8 +757,22 @@ main {
 	background: var(--text-secondary);
 }
 
+/* A <dialog>, so the UA sheet's own margin:auto, border, padding and max-width/max-height have
+   to be cleared or the panel is a small centred card with a border. See the note in Nav.astro
+   for why it is a dialog at all. */
 .nav-mobile {
 	display: none;
+	max-width: none;
+	max-height: none;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	border: 0;
+	color: var(--text-primary);
+}
+
+.nav-mobile::backdrop {
+	background: rgba(11, 11, 12, 0.6);
 }
 
 .nav-mobile-links {
@@ -846,7 +860,9 @@ main {
 		display: none;
 	}
 
-	.nav-mobile.open {
+	/* [open] is set by showModal(), so the panel's visibility and the top-layer promotion can
+	   never disagree — which a separate .open class could. */
+	.nav-mobile[open] {
 		display: flex;
 	}
 
@@ -8527,7 +8543,14 @@ main > section:last-child.band--dark {
 @media (min-width: 900px) { .ab-principles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2xl); } }
 
 /* ---- evidence + standing ---- */
+/* min-width: 0 is doing real work. A grid item defaults to min-width: auto, which means its
+   minimum size is its INTRINSIC CONTENT WIDTH — and this column holds a telemetry block whose
+   widest line is ~594px of 13px monospace. That minimum beat the 1fr track, widened the grid
+   past a 390px phone viewport, and the browser responded by scaling the whole page down: tiny
+   text, content squeezed to one side. The block's own overflow-x: auto could not prevent it,
+   because the item never got small enough to need scrolling. */
 .ab-evidence { display: grid; grid-template-columns: 1fr; gap: var(--space-xl); margin-top: var(--space-xl); align-items: start; }
+.ab-evidence > * { min-width: 0; }
 
 .ab-evidence p:not([class]) { color: var(--text-secondary); line-height: 1.65; max-width: 62ch; }
 .ab-evidence p + p { margin-top: var(--space-md); }
@@ -10171,4 +10194,40 @@ main > section:last-child.band--dark {
 	line-height: 1.6;
 	color: var(--text-on-dark);
 	opacity: 0.66;
+}
+
+/* ============================================================
+   /invest · use-of-funds row, phone layout
+   ============================================================
+   The row is four parts on one baseline: index, heading block, amount, risk pill. That works
+   while `amount` is a figure. Row 05's amount is "Within compute and team" — a sentence, not a
+   number — and .iv-use-amount carries white-space: nowrap at 1.375rem serif, so it became an
+   unbreakable ~250px block. .iv-use-heading has min-width: 0 and duly collapsed, wrapping
+   "Calibrating the bound" to one word per line underneath the sentence that had overlapped it.
+
+   Stacking is the fix rather than shrinking the type: four items on one line has no honest
+   phone layout even when every amount is short. Placed at the end of the file because the base
+   rules are equal specificity and source order is what decides. */
+@media (max-width: 759px) {
+	.iv-use-head {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+		column-gap: var(--space-sm);
+		row-gap: var(--space-sm);
+	}
+
+	.iv-use-n { grid-column: 1; grid-row: 1; line-height: 1.35; }
+	.iv-use-heading { grid-column: 2; grid-row: 1; }
+
+	/* normal, not nowrap: the whole reason the row broke. */
+	.iv-use-amount {
+		grid-column: 2;
+		grid-row: 2;
+		white-space: normal;
+		font-size: 1.25rem;
+	}
+
+	/* justify-self keeps the pill hugging its text instead of stretching the track. */
+	.iv-use-removes { grid-column: 2; grid-row: 3; justify-self: start; }
 }

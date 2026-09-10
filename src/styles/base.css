@@ -173,3 +173,14 @@ a:not(.btn):hover {
 .tabular {
 	font-variant-numeric: tabular-nums;
 }
+
+
+/* A LAST-RESORT GUARD, added after a 13px monospace block widened /about past a phone viewport
+   and the browser scaled the entire page down to fit. The real fix is always min-width: 0 on
+   the offending flex or grid item — this only stops one mistake from wrecking a whole page.
+   `clip` rather than `hidden` deliberately: `hidden` makes the element a scroll container, and
+   that silently kills `position: sticky` on the header. `clip` does not. */
+html,
+body {
+	overflow-x: clip;
+}

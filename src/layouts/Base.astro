@@ -118,16 +118,27 @@ const orgLd = {
 				var HTML = document.documentElement;
 				function panel() { return document.querySelector('.nav-mobile'); }
 				function burger() { return document.querySelector('.nav-hamburger'); }
+				function isOpen() { var p = panel(); return !!(p && p.hasAttribute('open')); }
 
 				function closeMenu() {
-					var p = panel(); if (p) p.classList.remove('open');
+					var p = panel();
+					if (p && p.hasAttribute('open')) {
+						if (typeof p.close === 'function') p.close(); else p.removeAttribute('open');
+					}
 					var b = burger(); if (b) b.setAttribute('aria-expanded', 'false');
 					HTML.classList.remove('nav-locked');
 				}
 
 				function openMenu() {
 					var p = panel(); if (!p) return;
-					p.classList.add('open');
+					// showModal() puts the panel in the top layer, clear of the header's
+					// backdrop-filter containing block. The fallbacks matter: showModal throws if
+					// the dialog is already open, and a browser without <dialog> still gets a
+					// usable panel from the open attribute.
+					try {
+						if (typeof p.showModal === 'function') p.showModal();
+						else p.setAttribute('open', '');
+					} catch (err) { p.setAttribute('open', ''); }
 					var b = burger(); if (b) b.setAttribute('aria-expanded', 'true');
 					HTML.classList.add('nav-locked');
 					var first = p.querySelector('a[href], button');
@@ -139,8 +150,7 @@ const orgLd = {
 					if (!t || !t.closest) return;
 					if (t.closest('.nav-hamburger')) {
 						e.preventDefault();
-						var p = panel();
-						if (p && p.classList.contains('open')) closeMenu(); else openMenu();
+						if (isOpen()) closeMenu(); else openMenu();
 						return;
 					}
 					if (t.closest('.nav-mobile-close')) { e.preventDefault(); closeMenu(); return; }
@@ -157,8 +167,23 @@ const orgLd = {
 					if (t.closest('.nav-mobile a')) closeMenu();
 				});
 
+				// Escape and the backdrop are handled by the dialog itself; this keeps the
+				// hamburger's aria-expanded and the scroll lock in step when the UA closes it.
+				document.addEventListener('close', function (e) {
+					if (e.target && e.target.classList && e.target.classList.contains('nav-mobile')) {
+						var b = burger(); if (b) b.setAttribute('aria-expanded', 'false');
+						HTML.classList.remove('nav-locked');
+					}
+				}, true);
+
+				// Tapping the backdrop closes. The dialog element's own box is the panel, so a
+				// click whose target IS the dialog landed outside it.
+				document.addEventListener('click', function (e) {
+					if (e.target && e.target.classList && e.target.classList.contains('nav-mobile')) closeMenu();
+				});
+
 				document.addEventListener('keydown', function (e) {
-					if (e.key === 'Escape') closeMenu();
+					if (e.key === 'Escape' && !isOpen()) closeMenu();
 				});
 
 				document.addEventListener('astro:after-swap', closeMenu);

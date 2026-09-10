@@ -129,9 +129,14 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 	<noscript>
 		<style>
 			@media (max-width: 1159px) {
+				/* A <dialog> is display:none in the UA sheet until it is opened, and without
+				   JavaScript it never will be — so it is forced back to an ordinary block and
+				   the sizing the modal panel needs is unwound with it. */
 				.nav-mobile {
 					position: static;
 					display: block;
+					width: auto;
+					height: auto;
 					padding: var(--space-xl) 20px;
 					overflow: visible;
 				}
@@ -143,7 +148,17 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 		</style>
 	</noscript>
 
-	<div class="nav-mobile" id="nav-mobile">
+	{/* A <dialog>, not a <div>, and this is load-bearing rather than semantic tidiness.
+	    The header above carries backdrop-filter for its glass effect, and backdrop-filter
+	    CREATES A CONTAINING BLOCK FOR FIXED-POSITION DESCENDANTS. So `position: fixed; inset: 0`
+	    on a child of this header resolved against the ~72px header strip instead of the
+	    viewport, and the menu was clipped to a sliver showing two items with no way to reach
+	    the rest. No z-index or height fixes that; the containing block is the bug.
+	    showModal() promotes the element to the TOP LAYER, which is rendered outside the
+	    ancestor chain entirely, so no ancestor transform, filter, backdrop-filter, contain or
+	    overflow can ever trap it again. Focus trapping, Escape-to-close and an inert
+	    background come with it rather than being hand-rolled. */}
+	<dialog class="nav-mobile" id="nav-mobile" aria-label="Menu">
 		<button type="button" class="nav-mobile-close" aria-label="Close menu">×</button>
 		<nav aria-label="Primary">
 			<ul class="nav-mobile-links">
@@ -179,5 +194,5 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 		<div class="nav-mobile-cta">
 			<Button variant="primary" fullWidth href="/contact">Contact Us</Button>
 		</div>
-	</div>
+	</dialog>
 </header>
