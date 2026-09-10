@@ -159,9 +159,14 @@ const orgLd = {
 					if (tog) {
 						e.preventDefault();
 						var sub = tog.parentElement && tog.parentElement.nextElementSibling;
-						var isOpen = tog.getAttribute('aria-expanded') === 'true';
-						tog.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-						if (sub) sub.hidden = isOpen;
+						// NOT `isOpen`. That name belongs to the panel helper in the enclosing
+						// scope, and `var` hoists to the top of THIS function — so declaring it
+						// here shadowed the helper with undefined for the whole handler, and the
+						// hamburger branch above threw "isOpen is not a function" on its first
+						// line. The listener died and the menu button did nothing at all.
+						var subExpanded = tog.getAttribute('aria-expanded') === 'true';
+						tog.setAttribute('aria-expanded', subExpanded ? 'false' : 'true');
+						if (sub) sub.hidden = subExpanded;
 						return;
 					}
 					if (t.closest('.nav-mobile a')) closeMenu();

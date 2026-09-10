@@ -10,7 +10,9 @@
     "dev": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:nav": "node scripts/test-nav.mjs",
+    "verify": "npm run build && python3 check.py && npm run test:nav"
   },
   "dependencies": {
     "astro": "7.3.1",
