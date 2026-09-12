@@ -2,16 +2,33 @@
 // design/12 §Disclosure Panel. Used for open questions and honest gaps — maximum two per
 // page. No box-shadow: inset — proposed and rejected, it reads as a rendering artifact on a
 // dark ground.
+//
+// IT IS NOW ACTUALLY A DISCLOSURE. It was a plain <div> with a label above an always-open body,
+// which produced two faults at once on /technology. The label read "Read the full technical
+// summary", styled in the accent colour with no caret, sitting directly on top of the summary it
+// was already showing — an instruction to open something that was open, rendered as a dead link.
+// And because nothing collapsed, a 300-word abstract at `max-width: 65ch` sat inside a
+// full-container card, leaving the whole right half of the panel empty.
+//
+// <details>/<summary> rather than a scripted toggle: it needs no JavaScript, so it cannot be
+// broken by the ClientRouter swapping the document, it is keyboard-operable and announced
+// correctly for free, and the open/closed state is a native attribute rather than a class
+// somebody has to remember to keep in sync.
 export interface Props {
 	label: string;
+	/** Render expanded on load. Default closed — the point of the panel is that the reader opts in. */
+	open?: boolean;
 }
 
-const { label } = Astro.props;
+const { label, open = false } = Astro.props;
 ---
 
-<div class="disclosure-panel">
-	<p class="disclosure-label">{label}</p>
+<details class="disclosure-panel" open={open}>
+	<summary class="disclosure-label">
+		<span class="disclosure-caret" aria-hidden="true"></span>
+		<span>{label}</span>
+	</summary>
 	<div class="disclosure-body">
 		<slot />
 	</div>
-</div>
+</details>

@@ -65,14 +65,59 @@
 	border-left: 3px solid var(--accent-mid);
 	padding: 20px var(--space-lg); /* 20px — no matching --space-* token; 24px = --space-lg */
 	border-radius: 0 12px 12px 0;
+	/* The card stops at its own measure instead of stretching to the 1280px container. The body
+	   inside is capped at 65ch, so a full-width card put roughly half its own area on screen as
+	   empty surface with a border drawn around it. */
+	max-width: 72ch;
 }
 
 .disclosure-label {
 	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 	font-size: var(--text-eyebrow);
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	color: var(--accent-mid);
-	margin: 0 0 var(--space-sm);
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	cursor: pointer;
+	list-style: none; /* kills the default triangle; the caret below replaces it */
+}
+
+/* Safari puts the marker in its own pseudo-element and ignores `list-style` on the summary. */
+.disclosure-label::-webkit-details-marker { display: none; }
+
+.disclosure-label:hover { color: var(--accent-dark); }
+
+.disclosure-label:focus-visible {
+	outline: 2px solid var(--accent-mid);
+	outline-offset: 4px;
+	border-radius: 2px;
+}
+
+/* The affordance the old panel had none of. A chevron, rotated on open, so the control says
+   which way it goes before it is clicked and what state it is in after. */
+.disclosure-caret {
+	flex: none;
+	width: 0.5em;
+	height: 0.5em;
+	border-right: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: rotate(-45deg);
+	transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.disclosure-panel[open] > .disclosure-label {
+	margin-bottom: var(--space-md);
+}
+
+.disclosure-panel[open] > .disclosure-label .disclosure-caret {
+	transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.disclosure-caret { transition: none; }
 }
 
 .disclosure-body {
@@ -1285,11 +1330,21 @@ main > section:last-child.band--dark {
 }
 
 @media (min-width: 1024px) {
-	/* Headline left, lede and CTAs right, baselines aligned at the foot so the two blocks read as
-	   one band rather than as two stacked things of different heights. */
+	/* Headline left, lede and CTAs right, TOP-ALIGNED.
+	
+	   This was `align-items: end`, which bottom-aligned the two columns. That only reads as one
+	   band while the two columns are close to the same height, and it silently breaks the moment
+	   either one changes length: the shorter column keeps its foot on the line and its head drops,
+	   opening a wedge of dead space at the top of the hero. With a three-line headline on the left
+	   and a subhead, a paragraph and a button row on the right, the right column became the taller
+	   of the two and overshot the headline by roughly a line and a half.
+	
+	   Top alignment has no such failure mode. Both columns start on the same line whatever either
+	   one grows into, which is the property this hero actually needs, because the copy in it gets
+	   rewritten far more often than the layout does. */
 	.hero-inner {
 		flex-direction: row;
-		align-items: end;
+		align-items: start;
 		justify-content: space-between;
 		gap: var(--space-3xl);
 		padding-block: var(--space-2xl) var(--space-md);
@@ -1299,9 +1354,13 @@ main > section:last-child.band--dark {
 		flex: 1 1 auto;
 	}
 
+	/* The left column opens on the eyebrow, a single line of small mono caps; the right opens on
+	   the serif subhead. Matching the boxes at the top would leave the subhead sitting level with
+	   a label rather than with the headline it belongs to. This offset drops it to the headline's
+	   first line: the eyebrow's own line box, plus the margin the headline already carries. */
 	.hero-lede {
 		flex: 0 0 34%;
-		padding-bottom: var(--space-sm);
+		padding-top: calc(var(--text-eyebrow) * 1.5 + var(--space-md));
 	}
 }
 
@@ -8415,7 +8474,6 @@ main > section:last-child.band--dark {
 .tech-abstract-body {
 	color: var(--text-secondary);
 	line-height: 1.75;
-	max-width: 76ch;
 }
 
 .tech-abstract-meta {
