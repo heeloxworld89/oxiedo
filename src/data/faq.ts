@@ -46,7 +46,7 @@ export interface FaqItem {
 // Ordered the way an evaluation runs: what is it, is it true, how does it run, what leaves the
 // building, what does it satisfy, what does it cost, who are you.
 export const faqCategories: FaqCategory[] = [
-	{ id: 'product', label: 'What it is', blurb: 'The architecture, the property it produces, and what it is not.' },
+	{ id: 'product', label: 'What it is', blurb: 'The one-line thesis, the architecture behind it, and what it is not.' },
 	{ id: 'evidence', label: 'Evidence & limits', blurb: 'The results, the benchmarks they were measured on, and where it loses.' },
 	{ id: 'deploy', label: 'Running it', blurb: 'Where it executes, what it costs to run, and what integration involves.' },
 	{ id: 'data', label: 'Data, IP & security', blurb: 'What we receive, who owns what, and what happens to the records.' },
@@ -57,6 +57,59 @@ export const faqCategories: FaqCategory[] = [
 
 export const faqs: FaqItem[] = [
 	// ---------------------------------------------------------------- WHAT IT IS
+	{
+		id: 'one-sentence',
+		cat: 'product',
+		q: 'What does Oxiedo do, in one sentence?',
+		a: [
+			'The most valuable data in the world is locked up, and ORMAS is the architecture that opens it.',
+			'The longer version runs like this. Data is the asset in every market that matters now, and the best of it sits unused behind regulation and contract. It sits there because training on it means handing it to a model that afterwards cannot say what it did with it, and no custodian signs that. ORMAS makes a network keep a true account of what it took from every source as it trains. The account is the thing a custodian needs in order to release anything.',
+			'Everything else on this site is a consequence of that sentence. The architecture is the mechanism. The seven features are jobs done with data. The five sectors are where locked data is worth the most.',
+		],
+		link: { href: '/', label: 'The thesis on one page' },
+	},
+	{
+		id: 'unlock-regulated-data',
+		cat: 'product',
+		q: 'How does transparency unlock data that regulation currently blocks?',
+		a: [
+			'Regulation rarely bans training outright. It requires that the holder of the data can say what happened to it, keep it inside a stated boundary, and remove it on request with something a third party can check. Standard architectures fail all three, so the safe answer for a custodian is no.',
+			'An ORMAS-trained model changes what can be answered. What the model took from a given source is a named part rather than a diffuse influence spread over every parameter. That part can be shown to an auditor, bounded, and removed on instruction with a signed certificate of what was removed. The refusal that follows from the honest answer stops following.',
+			'The consequence is commercial rather than academic. A data holder who can be given those answers can license data they will not license today, and the institution that can generate the answers is the one they license it to first.',
+		],
+		link: { href: '/sectors', label: 'Where that data sits' },
+	},
+	{
+		id: 'is-this-a-data-product',
+		cat: 'product',
+		q: 'Is ORMAS a data product or a machine learning product?',
+		a: [
+			'It is software that trains neural networks, so the delivery is machine learning. The commercial goal is data. Those are not in tension. The architecture exists because a data problem had no solution that did not start inside the training procedure.',
+			'No data is bought, sold, brokered or hosted here. ORMAS runs on customer infrastructure beside data that never moves. What is sold is the ability to use data that could not previously be used.',
+		],
+	},
+	{
+		id: 'seven-separate-products',
+		cat: 'product',
+		q: 'Are the seven applications seven separate products?',
+		a: [
+			'No. There is one product, one architecture and one licence. The seven are features of it, each being the same mechanism asked to do a different job with data.',
+			'They carry plain names such as The Proofreader and The Diary rather than mechanism names, because the person who signs for a deployment owns the data problem and not the mathematics that solves it. Naming a feature after the job makes it obvious which one answers a question already on the table.',
+			'Nothing is priced per feature. A licensee enables what the deployment requires, and the scope goes into the contract rather than onto a meter.',
+		],
+		link: { href: '/product', label: 'The seven features' },
+	},
+	{
+		id: 'why-five-sectors',
+		cat: 'product',
+		q: 'Why five sectors? Does that mean five different solutions?',
+		a: [
+			'It means the opposite. Every sector that holds data has this problem, and one mechanism answers it in all of them. The five are named because the cost of the missing account is already sitting on somebody\u2019s books there in figures that can be checked, not because five separate things are being built.',
+			'What differs between the five is the obligation driving the purchase, the person who signs, and how long the sale takes. The record, the architecture and the licence are identical.',
+			'Sectors outside the five are reached by the same licence on the same terms.',
+		],
+		link: { href: '/sectors', label: 'The five sectors' },
+	},
 	{
 		id: 'what-is-ormas',
 		cat: 'product',
@@ -100,12 +153,12 @@ export const faqs: FaqItem[] = [
 	{
 		id: 'seven-applications',
 		cat: 'product',
-		q: 'You list seven applications. Are those seven products?',
+		q: 'Which of the seven features should a first deployment start with?',
 		a: [
-			'No. There is one product and one licence. The seven are what the same mechanism is called by the people who buy it. A bank, a hospital and a training lab describe the identical capability using three different nouns, because each is solving the problem in front of them.',
-			'They are ordered on the product page by how hard it is to say yes to them, from sending us a file to agreeing a bound with the regulator. That order is the recommendation.',
+			'The order they appear in on the product page is the recommendation. They are ordered by how hard each one is to say yes to, from sending a single file through to agreeing a bound with a regulator before training begins.',
+			'The first, The Proofreader, attaches to a model already trained and never modifies it, which is why it is the usual place to start. The last, The Update Engine, asks for a limit signed off in advance. Most institutions want to watch the telemetry for a full cycle before letting anything touch a model, and the read-only mode exists for exactly that.',
 		],
-		link: { href: '/product', label: 'The seven applications' },
+		link: { href: '/product', label: 'The seven features' },
 	},
 	{
 		id: 'three-signals',
@@ -142,7 +195,7 @@ export const faqs: FaqItem[] = [
 		cat: 'evidence',
 		q: 'What is the evidence that this works?',
 		a: [
-			'383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, and 16,316 lines of instrumentation across 85 files. A manuscript is under peer review, and the architecture and every experiment behind it are published.',
+			'383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, and 16,316 lines of instrumentation across 85 files. The architecture and every experiment behind it are released in full on publication.',
 			'The headline result is recovery: +70.3 percentage points from catastrophic structural collapse, in conditions where a parameter-matched baseline is permanently dead rather than merely degraded.',
 			'Every run regenerates from seed. The claim is not that the numbers deserve belief on our word; it is that any reader with the seed can produce them independently.',
 		],
@@ -161,10 +214,10 @@ export const faqs: FaqItem[] = [
 	{
 		id: 'peer-review',
 		cat: 'evidence',
-		q: 'Has this been peer reviewed?',
+		q: 'Has this been independently verified?',
 		a: [
-			'A manuscript is under peer review. Until that concludes the architecture is not public, and the release is committed to acceptance rather than to a date we control.',
-			'What is available now, to an investor or an evaluating institution under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. Peer review is a meaningful signal and it is not yet held. Seeded reproducibility is the stronger one, and it does not wait for a reviewer.',
+			'Not yet by a third party, and that is stated plainly rather than left to be discovered. The architecture is not public today, and the commitment to release it in full is written into the licence rather than promised.',
+			'What is available now, to an investor or an evaluating institution under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. External verification is a meaningful signal and it is not yet held. Seeded reproducibility is the stronger one, because it does not depend on anyone taking our word for a number.',
 		],
 	},
 	{
@@ -326,7 +379,7 @@ export const faqs: FaqItem[] = [
 		cat: 'data',
 		q: 'Is source code escrow available?',
 		a: [
-			'Yes, and alongside it the licence carries a release commitment: the mechanism is published in full on acceptance of the manuscript, irrevocably. That is a stronger position than escrow, because the architecture cannot become unavailable to a licensee once released, and escrow covers the implementation until then.',
+			'Yes, and alongside it the licence carries a release commitment: the mechanism is published in full on release, irrevocably. That is a stronger position than escrow, because the architecture cannot become unavailable to a licensee once released, and escrow covers the implementation until then.',
 			'Escrow covers the production implementation and the assurance work around it, and is agreed in the contract.',
 		],
 	},
@@ -533,7 +586,7 @@ export const faqs: FaqItem[] = [
 		q: 'How much of this actually exists?',
 		a: [
 			'16,316 lines across 85 files, 383 controlled experiments across four architecture families, and 67 archived runs that regenerate from seed. The architecture is complete and the experimental programme is closed.',
-			'The right way to weigh that is not to take it on trust. Every run regenerates from seed, and the mechanism is released in full on acceptance, so the work becomes checkable in a way that a larger team behind a permanently closed implementation never is.',
+			'The right way to weigh that is not to take it on trust. Every run regenerates from seed, and the mechanism is released in full on publication, so the work becomes checkable in a way that a larger team behind a permanently closed implementation never is.',
 		],
 	},
 	{

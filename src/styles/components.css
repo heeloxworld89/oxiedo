@@ -2395,8 +2395,19 @@ main > section:last-child.band--dark {
 	max-width: 48ch;
 }
 
+/* TWO COLUMNS, VERY UNEQUAL HEIGHTS. The left column carries four paragraphs; .tech-bet is a
+   short box. With `align-items: start` inheriting from .tech-intro, the box pinned to the top of
+   its track and the whole lower half of the right column rendered as dead space — roughly half
+   the section blank at >=1024px only, which is why it was invisible at every other width. The box
+   is now sticky in its own track, the same treatment already used for the aside columns on
+   /product, /licensing and /invest, so it travels with the prose instead of leaving a hole. */
 @media (min-width: 1024px) {
 	.tech-intro { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--space-3xl); }
+
+	.tech-bet {
+		position: sticky;
+		top: calc(var(--nav-h) + var(--space-lg));
+	}
 }
 
 /* ---- where the field stands ---- */

@@ -42,7 +42,7 @@ const facts = [
 	{ k: 'Structure', v: 'Founder-led. Commercial, research and regulatory roles open; see /careers.' },
 	{ k: 'Customers', v: 'None. Zero customer conversations have taken place.' },
 	{ k: 'Licence', v: 'A research licence, free for research, teaching and evaluation from the moment the release lands. Production use is licensed. Not open source, and not described as one.' },
-	{ k: 'Evidence base', v: '383 controlled experiments, four architecture families, 67 archived runs each regenerating from seed. Manuscript under peer review; the architecture and the full archive are released on acceptance.' },
+	{ k: 'Evidence base', v: '383 controlled experiments, four architecture families, 67 archived runs each regenerating from seed. The architecture and the full archive are released on publication.' },
 	{ k: 'Data used', v: 'CIFAR-10 and CIFAR-100 only. No clinical, biological, financial or defence data has ever touched the system.' },
 ];
 
@@ -57,11 +57,11 @@ const results = [
 const releases = [
 	{
 		id: 'PR-001',
-		status: 'READY on formal acceptance of the manuscript',
-		headline: 'Oxiedo Publishes Research Architecture That Lets Neural Networks Keep a Record of What They Change',
+		status: 'READY on release of the architecture',
+		headline: 'Oxiedo Releases Training Architecture That Lets Neural Networks Keep a Record of What They Change',
 		sub: '383-experiment evidence base shows +70.3 pp recovery advantage over standard networks under mid-training structural collapse',
 		body: [
-			'Oxiedo today released the full research foundation for its training architecture, ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), via a submitted manuscript.',
+			'Oxiedo today released the full technical foundation for its training architecture, ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction).',
 			'The architecture bounds each node’s local gradient chain to four operations, producing per-node attribution as a physical property of the backward pass rather than as a reconstruction. Across 383 controlled experiments on CIFAR-10 and CIFAR-100, the system recovered to 80.3% from mid-training structural collapse against a permanent 10.0% for parameter-matched standard networks — a gap of +70.3 percentage points.',
 		],
 		note: 'Founder quote and assets added at release.',
@@ -149,10 +149,9 @@ const releases = [
 			))}
 		</ul>
 		<p class="press-prose">
-			All results on CIFAR-10 and CIFAR-100. Manuscript under peer review, with the architecture
-			and the full experimental archive released on acceptance. Every run regenerates from seed, so
-			every figure here is reproducible rather than asserted, and journalists who want to verify one
-			before then should ask.
+			All results on CIFAR-10 and CIFAR-100, with the architecture and the full experimental archive
+			released on publication. Every run regenerates from seed, so every figure here is reproducible
+			rather than asserted, and journalists who want to verify one before then should ask.
 		</p>
 		<Button variant="tertiary" href="/technology">The full technical account</Button>
 	</section>
@@ -170,7 +169,7 @@ const releases = [
 				time. No deployment exists.
 			</li>
 			<li>
-				The architecture will be released in full on acceptance, so a competitor can reimplement it.
+				The architecture will be released in full on publication, so a competitor can reimplement it.
 				That is deliberate and not a vulnerability we are downplaying.
 			</li>
 			<li>
@@ -210,8 +209,7 @@ const releases = [
 			<p class="press-prose">
 				Oxiedo builds ORMAS, a neural network training architecture that makes per-component
 				causal attribution a physical property of training rather than something reconstructed
-				afterwards. The mechanism is published on acceptance of the manuscript; production
-				deployment is licensed.
+				afterwards. The mechanism is released on publication; production deployment is licensed.
 			</p>
 		</div>
 		<div class="press-boiler">
@@ -221,11 +219,10 @@ const releases = [
 				Self-correction), a neural network architecture that makes per-node causal attribution a
 				physical property of the backward pass, enabling per-component diagnosis, bounded
 				structural repair, audit, and accounting for the contribution of data to a trained model.
-				Every correction is logged, bounded and human-reviewable. The architecture is submitted
-				for peer review and supported by 383 controlled experiments across four architecture
-				families, each regenerating from seed. The mechanism is released under a research licence
-				on acceptance of the manuscript, free for research, teaching and evaluation from that
-				day; production use is licensed separately. All experimental results are CIFAR-10 and CIFAR-100; no clinical, biological,
+				Every correction is logged, bounded and human-reviewable. The architecture is supported by
+				383 controlled experiments across four architecture families, each regenerating from seed.
+				The mechanism is released under a research licence on publication, free for research,
+				teaching and evaluation from that day; production use is licensed separately. All experimental results are CIFAR-10 and CIFAR-100; no clinical, biological,
 				financial or defence data has been used. Oxiedo is pre-revenue, has no customers, and is
 				raising a pre-seed round as of September 2026.
 			</p>

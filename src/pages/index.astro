@@ -202,15 +202,15 @@ const whyNow = [
 ];
 ---
 
-<Page title="Oxiedo — AI training that names its own broken part" description={"ORMAS makes per-component causal attribution a physical property of training. The account is produced as the model learns, not reconstructed afterwards."}>
+<Page title="Oxiedo — the architecture that unlocks locked data" description={"The most valuable data in the world cannot be trained on, because no model can account for what it did with it. ORMAS produces that account as the model learns."}>
 	<!-- 1. HERO. Capability-led: the headline states the thing nothing else can do, and the three
 	     figures beneath it are the evidence for that specific sentence, not general credentials. -->
 	<section class="hero">
 		<div class="hero-inner container">
 			<div class="hero-copy">
-				<Eyebrow>ORMAS · STRUCTURAL INTELLIGENCE FOR NEURAL NETWORKS</Eyebrow>
+				<Eyebrow>ORMAS · THE ARCHITECTURE THAT UNLOCKS LOCKED DATA</Eyebrow>
 				<h1 class="hero-headline">
-					A neural network that names its own broken part.
+					The most valuable data in the world is locked up. ORMAS opens it.
 				</h1>
 			</div>
 			<div class="hero-lede">
@@ -221,12 +221,15 @@ const whyNow = [
 				    sentence beneath it does that disambiguation, so the four words can be absolute. */}
 				<p class="hero-subhead">Machines that cannot lie.</p>
 				<p class="hero-subclaim">
-					Not about the world; about themselves. Every change this network makes to itself is
-					recorded as it happens, by arithmetic it cannot route around.
+					Not about the world. About themselves. Data stays locked because no model can say what
+					it did with it, and the custodian who holds that data is right not to release it on a
+					promise. ORMAS makes a network record every change it makes to itself, as it happens,
+					by arithmetic it cannot route around. That record is the account a custodian has been
+					waiting for.
 				</p>
 				<div class="hero-cta-row">
 					<Button variant="primary" href="/contact">Pre-book ORMAS</Button>
-					<Button variant="secondary" href="/technology">Read the paper</Button>
+					<Button variant="secondary" href="/technology">See the technology</Button>
 				</div>
 			</div>
 		</div>
@@ -245,7 +248,7 @@ const whyNow = [
 		    numbers moved down into the evidence section, which is what that section is for. */}
 		<div class="hero-trust">
 			<div class="hero-trust-inner container">
-				<p class="hero-trust-label">Deployed on customer infrastructure, in</p>
+				<p class="hero-trust-label">Five sectors where the data is locked and worth the most</p>
 				<ul class="hero-trust-list">
 					{sectors.map((s) => (
 						<li><a href={`/sectors/${s.id}`}>{s.name}</a></li>
@@ -260,11 +263,13 @@ const whyNow = [
 	     been put to them. Three failures, each with the cost already being paid for it. -->
 	<section class="section container reveal">
 		<Eyebrow>THE PRODUCT</Eyebrow>
-		<h2 class="section-title">ORMAS is a training architecture. The licensed asset is the record it leaves behind.</h2>
+		<h2 class="section-title">ORMAS is one product, and its job is to make data usable that cannot be used today.</h2>
 		<p class="section-lede">
-			Training procedure is unaffected. Data, objective and resulting model are unchanged. What changes is what exists alongside that model: named components, each
-			one separately protectable, repairable, auditable, attributable by source, and removable
-			on instruction.
+			Training procedure is unaffected. Data, objective and resulting model are unchanged. What
+			changes is the account that exists alongside the model. What the model took from each source
+			is held as a named part that can be watched, repaired, audited, traced back to the data that
+			produced it, and removed on instruction. That account is the condition on which data a
+			custodian will not release today becomes data they can release.
 		</p>
 
 		<div class="deliverables">
@@ -303,18 +308,19 @@ const whyNow = [
 			    reading "Seven features. One licence." — a second title competing with the section's
 			    own, saying less than it, and breaking the symmetry with "What is delivered" above.
 			    Both blocks are labelled the same way now; the section has one headline. */}
-			<p class="block-label">Where it lands hardest</p>
+			<p class="block-label">The seven features</p>
 			<p class="ftable-note">
-				Those six operations combine in many configurations. Seven carry almost all of the
-				commercial value, because each resolves a failure a specific market is already paying
-				for. They are ordered by what each one requires of the licensee. The first needs a file
-				and never touches the model. The last needs a
-				limit agreed with a reviewer in advance. <strong>Other combinations exist. These
-				are the seven worth naming.</strong>
+				ORMAS is one product. The seven below are its features, not seven separate products. Each
+				is the same architecture asked to do a different job with data, and each is named after
+				the job rather than the mechanism, because the person who buys it owns the data problem
+				and not the mathematics underneath it. They are ordered by what each one asks of the
+				licensee. The first needs a file and never touches the model. The last needs a limit
+				agreed with a reviewer in advance. <strong>Other combinations exist. These are the seven
+				worth naming.</strong>
 			</p>
 
 			<div class="ftable-head">
-				<span>The use case</span>
+				<span>The feature</span>
 				<span>What it does</span>
 				<span>What it requires</span>
 			</div>
@@ -339,9 +345,9 @@ const whyNow = [
 		</div>
 
 		<p class="product-closer">
-			ORMAS is licensed as a single architecture, deployed on customer infrastructure. Scope is set per institution and the licence covers what the deployment calls
-			for and the licence is scoped accordingly: one integration, one contract, and nothing priced per
-			use case.
+			ORMAS is licensed as a single architecture, deployed on customer infrastructure. Scope is
+			agreed per institution and written into the contract. One integration, one contract, and
+			nothing priced per feature.
 		</p>
 
 		<Button variant="secondary" href="/product">See the product in full</Button>
@@ -377,20 +383,22 @@ const whyNow = [
 			</div>
 		</div>
 		<p class="scenario-note">
-			The same record answers the auditor asking which data shaped a decision, and the supervisor
-			asking what changed between two approved versions. A single mechanism satisfies all three obligations.
+			The same record answers the auditor asking which data shaped a decision and the supervisor
+			asking what changed between two approved versions. It is also what a data owner reads before
+			deciding whether their data may be trained on at all.
 		</p>
 	</section>
 
 	<section class="band band--surface section reveal">
 		<div class="container">
-			<Eyebrow>THE COST OF THE CURRENT INSTRUMENT</Eyebrow>
-			<h2 class="section-title">An unbudgeted cost, incurred in every market that trains under obligation.</h2>
+			<Eyebrow>WHAT LOCKED DATA COSTS</Eyebrow>
+			<h2 class="section-title">Data is the asset. The bill arrives because nothing can account for what a model did with it.</h2>
 			<p class="section-lede">
 				Every error signal in a neural network touches every parameter at once. That property is
-				the source of their capability, and it is also why <em>which component caused this?</em>
-				has no available answer: the architecture provides nothing to point at. The cost surfaces
-				in a different currency in each market.
+				the source of a network's capability, and it is also why <em>which part of this model came
+				from that data?</em> has no available answer. Data enters the model and the trail ends
+				there. Below is what that costs, sector by sector, in the currency each one actually
+				pays.
 			</p>
 
 			<div class="ledger">
@@ -419,8 +427,9 @@ const whyNow = [
 			</div>
 
 			<p class="problem-closer">
-				One property is missing from every architecture on that list, and every figure above is a
-				consequence of its absence. ORMAS is the correction.
+				Every figure above has the same cause. Data goes into a model and stops being something
+				anyone can point at. ORMAS keeps it addressable from the first step to the last, and the
+				bill stops arriving.
 			</p>
 		</div>
 	</section>
@@ -433,10 +442,10 @@ const whyNow = [
 		<Eyebrow>THE COMPARISON</Eyebrow>
 		<h2 class="section-title">Every comparable method reconstructs what happened after the fact. ORMAS records it as it occurs.</h2>
 		<p class="section-lede">
-			When something goes wrong inside a model, every tool available today works the same way: it
-			examines a finished system and produces its best estimate of what must have occurred. The
-			estimate is frequently a good one. It is also unverifiable, and it cannot be entered into a
-			filing.
+			Ask a finished model what it learned from a particular source of data and every tool
+			available today works the same way. It examines the finished system and produces its best
+			estimate of what must have occurred. The estimate is frequently a good one. It is also
+			unverifiable, and an estimate is not something a data owner accepts or a regulator files.
 		</p>
 		<p class="proof-statement">
 			What follows is a different class of answer altogether, written while the work is happening,
@@ -490,11 +499,14 @@ const whyNow = [
 	     reader nothing; the tags on each row carry the same information where it means something. -->
 	<section class="section container reveal">
 		<Eyebrow>FIVE MARKETS · ONE PRODUCT</Eyebrow>
-		<h2 class="section-title">The mechanism does not change between markets. The vocabulary does.</h2>
+		<h2 class="section-title">Every sector that holds data has this problem. These five are where solving it is worth the most.</h2>
 		<p class="section-lede">
-			A hospital calls it the site. A bank calls it the region. A biotech calls it the batch. An
-			AI lab calls it the corpus. Every market below asks the same question in its own words,
-			and each is answered by one of the seven use cases.
+			Data is the common thread. A hospital calls it the site, a bank calls it the region, a
+			biotech calls it the batch, an AI lab calls it the corpus, and a data controller calls it
+			the licensed source. Underneath, the question is identical in all five. What did the model
+			take from this, and can that be proven? These are not five products and not five solutions.
+			They are the five sectors where the answer is worth the most money today. Every other sector
+			that holds data is reached by the same licence.
 		</p>
 		<div class="sector-rows">
 			{sectors.map((sector) => {
@@ -513,7 +525,7 @@ const whyNow = [
 							<p class="sector-row-hook">{sector.changes}</p>
 							<div class="sector-row-footer">
 								<p class="sector-row-stat">
-									Answered by <strong>{lead ? lead.name : ''}</strong> · {sector.features.length} of 7 use cases in scope
+									Answered by <strong>{lead ? lead.name : ''}</strong> · {sector.features.length} of 7 features in scope
 								</p>
 								<Button variant="secondary" size="small" href={`/sectors/${sector.id}`}>Read the market</Button>
 							</div>
@@ -530,12 +542,12 @@ const whyNow = [
 	     by somebody else. -->
 	<section class="section container reveal">
 		<Eyebrow>WHY NOW</Eyebrow>
-		<h2 class="section-title">Record-keeping is passing from good practice into statutory obligation.</h2>
+		<h2 class="section-title">Accounting for what a model did with its training data is becoming statutory, with dates attached.</h2>
 		<p class="section-lede">
-			Three separate regimes now require of a trained model something standard architectures
-			cannot produce: evidence of what changed inside it, attributable to a part. The
-			institutions able to generate that record set the format against which the rest of the market
-			will be measured.
+			Three separate regimes now require of a trained model something standard architectures cannot
+			produce. Each one asks for evidence of what the model did with its data, attributable to a
+			named part. The institutions able to generate that record set the format the rest of the
+			market gets measured against, and they are the ones data custodians will release to first.
 		</p>
 		<div class="whynow-grid">
 			{whyNow.map((w) => (
@@ -601,8 +613,8 @@ const whyNow = [
 
 		<p class="evidence-qualifier">
 			383 controlled experiments across four architecture families. All results on CIFAR-10 and
-			CIFAR-100. <a href="/technology">The paper</a> carries the full conditions, the error bars, and
-			the one result that went against us.
+			CIFAR-100. <a href="/technology">The technology page</a> carries the full conditions, the error
+			bars, and the one result that went against us.
 		</p>
 	</section>
 
@@ -633,9 +645,10 @@ const whyNow = [
 			<div class="closing-citation">
 				<div class="closing-citation-main">
 					<p class="closing-citation-title">
-						ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction
+						383 controlled experiments, across four architecture families, every run regenerating
+						from seed.
 					</p>
-					<p class="closing-citation-meta">Rokib Al Dhin Raadh</p>
+					<p class="closing-citation-meta">Conditions, error bars and the one adverse result, in full.</p>
 				</div>
 				<dl class="closing-citation-data">
 					<div>
@@ -643,11 +656,11 @@ const whyNow = [
 						<dd class="tabular">383</dd>
 					</div>
 					<div>
-						<dt>Status</dt>
-						<dd>Manuscript under review</dd>
+						<dt>Archived runs</dt>
+						<dd class="tabular">67</dd>
 					</div>
 				</dl>
-				<Button variant="tertiary" href="/technology">Read the paper</Button>
+				<Button variant="tertiary" href="/technology">See the evidence</Button>
 			</div>
 		</div>
 	</section>

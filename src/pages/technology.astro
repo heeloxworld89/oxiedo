@@ -67,7 +67,7 @@ const ladder = [
 	{ cost: 'Zero GPU', name: 'Archive analysis', what: 'The weak form of the central question, answered on a laptop against 67 archived run records. It costs nothing and nobody has done it.' },
 	{ cost: '8.4 GPU-hr', name: 'Monitoring lead time', what: 'How many steps before the global loss visibly degrades does per-component health cross its own threshold. Opens or closes an entire market.' },
 	{ cost: '~1 GPU-day', name: 'Wrapper viability', what: 'Whether a model we did not train retains enough component independence for the attachment to work. Decides the lowest-friction application.' },
-	{ cost: '~20 GPU-hr', name: 'The separation study', what: 'Whether inter-component disagreement separates mislabelled data from data that is merely hard. Gates four of the seven applications.' },
+	{ cost: '~20 GPU-hr', name: 'The separation study', what: 'Whether inter-component disagreement separates mislabelled data from data that is merely hard. Gates four of the seven features.' },
 ];
 
 // THE HEADLINE COMPARISON, AS A CHART.
@@ -204,16 +204,16 @@ const programme = [
 const open = [
 	'Every result on this page is CIFAR-10 or CIFAR-100. No clinical, financial, biological or production data has been used.',
 	'The architecture is demonstrated on fully-connected, convolutional and residual families. Transformers are a stated generalisation target, not a demonstrated result.',
-	'Test-time distribution shift is named in the paper as an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.',
+	'Test-time distribution shift is an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.',
 	'Under adversarial weight injection the architecture measures 1.0 pp worse than a standard baseline. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors. Published rather than omitted, and unmitigated.',
 	'Whether the signal survives at small n, meaning tens of examples rather than tens of thousands, is untested.',
 ];
 ---
 
-<Page title="The ORMAS architecture, and 383 experiments" description={"The architecture, the three signals, five telemetry layers, 383 controlled experiments, and a section on what is not yet established."}>
+<Page title="The ORMAS architecture, and 383 experiments" description={"How a bounded gradient chain makes a network account for what it took from each source of data. Three signals, five telemetry layers, 383 controlled experiments, and what is not yet established."}>
 	<PageBanner
 		eyebrow="THE TECHNOLOGY"
-		title="A different bet on the oldest open problem in machine learning."
+		title="Transparency is the mechanism. Unlocking data is the point."
 		trail={[{ label: 'Home', href: '/' }, { label: 'Technology' }]}
 	/>
 
@@ -232,11 +232,17 @@ const open = [
 		<div class="tech-intro">
 			<div>
 				<p class="tech-lede">
+					One line covers what this technology is for. Data that would be worth training on is
+					locked away, and it is locked away because a model cannot account for what it took
+					from it. Everything below is the work of building a network that can.
+				</p>
+				<p class="tech-lede">
 					Neural networks fail opaquely, and not because anybody built them carelessly. Global
 					backpropagation diffuses every error signal across every parameter simultaneously, so
 					precise fault localisation is not difficult; it is mathematically unavailable. When a
 					layer dies mid-training, what a practitioner observes is a collapsed loss curve and no
-					mechanism whatsoever for identifying which component failed, when, or why.
+					mechanism whatsoever for identifying which component failed, when, or why. The same
+					property is why no model can say which of its parts came from which source of data.
 				</p>
 				<p class="tech-lede">
 					It is worth being precise about the size of this. Opacity is the single property
@@ -385,9 +391,9 @@ const open = [
 		{/* Behind a disclosure. Verbatim it is a 300-word wall in the middle of the page, and the
 		    reader who wants it is a different reader from the one skimming the results. */}
 		<div class="tech-abstract">
-			<DisclosurePanel label="Read the abstract in full">
+			<DisclosurePanel label="Read the full technical summary">
 				<p class="tech-abstract-body">{abstract}</p>
-				<p class="tech-abstract-meta">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction · Rokib Al Dhin Raadh · Manuscript under review</p>
+				<p class="tech-abstract-meta">Written for a reader who works in this field. Every figure in it appears with its conditions above.</p>
 			</DisclosurePanel>
 		</div>
 
@@ -409,18 +415,19 @@ const open = [
 		</ol>
 		<p class="tech-results-note">
 			All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in
-			the manuscript, alongside the reproducibility checklist and the scripts that regenerate every
-			run.
+			the full technical record, alongside the reproducibility checklist and the scripts that
+			regenerate every run.
 		</p>
 	</section>
 
 	<section class="section container reveal">
-		<Eyebrow>WHAT THIS IS FOR</Eyebrow>
-		<h2 class="section-title">Four domains are closed to deep learning for one shared reason.</h2>
+		<Eyebrow>WHAT IT UNLOCKS</Eyebrow>
+		<h2 class="section-title">Four bodies of data are closed to deep learning for one shared reason.</h2>
 		<p class="section-lede">
 			Not one of them is closed because the models are insufficiently accurate. Each is closed
-			because a decision must be accountable before it is admissible, and no production
-			architecture can produce the account. One property gates all four.
+			because the data behind it cannot be handed to something that will not say what it did with
+			it. The gate is the same in all four, and it is an accounting gate rather than a capability
+			one.
 		</p>
 		<div class="tech-unlocks">
 			{unlocks.map((u) => (
@@ -432,14 +439,15 @@ const open = [
 		</div>
 		<p class="tech-unlocks-note">
 			A network that can account for itself structurally does not make a better prediction. It
-			makes the prediction admissible, and that is the thing which has been missing.
+			makes the prediction admissible, and it makes the data behind the prediction releasable.
+			That second consequence is the larger one.
 		</p>
 	</section>
 
 	<section class="band band--dark section reveal">
 		<div class="container">
 			<Eyebrow>WHAT WE ARE BUILDING</Eyebrow>
-			<h2 class="tech-next-title">The published result names a broken component. The next one names the data that broke it.</h2>
+			<h2 class="tech-next-title">The completed architecture names a broken component. The next result names the data that broke it.</h2>
 			<p class="tech-next-lede">
 				The current system's diagnostic vocabulary has one subject: the component. Every treatment
 				it applies answers the question <em>what is wrong with this part?</em> But the most common
@@ -449,7 +457,7 @@ const open = [
 			<p class="tech-next-lede">
 				The programme underway supplies it. What follows is stated as objectives and constraints
 				rather than as a method: the mechanism is the intellectual property, and it stays in the
-				building until it is published on our own terms.
+				building until it is released on our own terms.
 			</p>
 			<ol class="tech-programme">
 				{programme.map((p, i) => (
@@ -488,21 +496,21 @@ const open = [
 		</ol>
 		<p class="tech-ladder-note">
 			None has been run. A negative result on any of them narrows the programme rather than ending
-			it: the applications that ship on the published architecture depend on none of the four.
+			it: the features that ship on the completed architecture depend on none of the four.
 		</p>
 
 		<div class="tech-ip">
 			<p class="tech-ip-label">The intellectual property position</p>
 			<p>
-				The completed architecture is released in full on acceptance of the manuscript: reproducible,
-				free for research and teaching, permanently. That commitment is written into the licence
-				rather than promised. It is the credential, and it is deliberately not the moat.
+				The completed architecture is released in full on publication: reproducible, free for
+				research and teaching, permanently. That commitment is written into the licence rather
+				than promised. It is the credential, and it is deliberately not the moat.
 			</p>
 			<p>
 				What is held is the programme above: the mechanism by which attribution extends from
 				components to data, the artefact format, the calibration procedure that turns a general
 				bound into a validated one for a specific deployment, and the record a customer
-				accumulates by running it. The first is a trade secret until we publish it on our own
+				accumulates by running it. The first is a trade secret until we release it on our own
 				terms. The last cannot be transferred at all, because it belongs to them.
 			</p>
 		</div>
@@ -522,7 +530,7 @@ const open = [
 
 		<div class="tech-scope">
 			<p>
-				<strong>The scope of the claim, as the paper states it.</strong> We do not claim
+				<strong>The scope of the claim, stated exactly.</strong> We do not claim
 				state-of-the-art accuracy on clean benchmarks, and we do not claim to replace specialised
 				noisy-label algorithms. The claim is that a single-network architecture can achieve
 				competitive accuracy while providing mechanistically logged, per-component causal
@@ -533,7 +541,7 @@ const open = [
 		</div>
 
 		<div class="tech-cta">
-			<Button variant="primary" href="/contact">Request the manuscript</Button>
+			<Button variant="primary" href="/contact">Request the technical briefing</Button>
 			<Button variant="secondary" href="/product">See what is built on it</Button>
 		</div>
 	</section>

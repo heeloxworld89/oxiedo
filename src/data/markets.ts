@@ -180,7 +180,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				q: 'What does the instrumentation cost us in throughput?',
-				a: 'The honest answer is that the full system carries a measured overhead of 1.35× on a graph backbone, and that most of it is gradient surgery that monitoring does not need. The read-only path runs none of that. Its wall-clock cost has been characterised as negligible in the paper and has not been separately benchmarked, so it is a measurement we will run against the customer configuration rather than quote.',
+				a: 'The honest answer is that the full system carries a measured overhead of 1.35× on a graph backbone, and that most of it is gradient surgery that monitoring does not need. The read-only path runs none of that. Its wall-clock cost has been characterised as negligible in the technical account and has not been separately benchmarked, so it is a measurement we will run against the customer configuration rather than quote.',
 			},
 			{
 				q: 'This has never been run on a transformer.',
@@ -205,7 +205,7 @@ export const markets: Record<string, MarketDeep> = {
 			{
 				role: 'The research lead',
 				needs: 'To know the mechanism is real',
-				line: '383 controlled experiments across four architecture families, the manuscript, and 67 archived run records reproducible from seed. Send them the paper, not the deck.',
+				line: '383 controlled experiments across four architecture families, the full technical account, and 67 archived run records reproducible from seed. Send them the technical account, not the deck.',
 			},
 			{
 				role: 'Security',
@@ -214,7 +214,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 		],
 		proof: [
-			'The manuscript, in full, with the reproducibility checklist',
+			'The full technical account, with the reproducibility checklist',
 			'67 archived run records, each reproducible from seed',
 			'A worked example of the alarm output: component, diagnosis, step, magnitude',
 			'The read-only configuration, so the first engagement modifies nothing',
@@ -386,7 +386,7 @@ export const markets: Record<string, MarketDeep> = {
 		proof: [
 			'The bound table: eight modification types, individual ceilings, observed frequencies',
 			'A sample modification record, signed and hashed, with the diff format',
-			'The manuscript and 383 reproducible experiment runs',
+			'The full technical account and 383 reproducible experiment runs',
 			'A regime-change demonstration on public price history, run on the institution\'s own definition of a regime',
 			'The Artifact Survival Clause: the records outlive the contract, with a frozen reader retained permanently',
 		],
@@ -558,7 +558,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 		],
 		proof: [
-			'The manuscript, the supplementary material and the reproducibility checklist',
+			'The full technical account, the supplementary material and the reproducibility checklist',
 			'The bound table: eight modification types, ceilings, and observed frequencies across 67 runs',
 			'A worked modification record, in the format a reviewer would receive',
 			'A label audit on a nominated dataset, returning results broken down by contributing site',
@@ -731,7 +731,7 @@ export const markets: Record<string, MarketDeep> = {
 			'The exact wording we would put in a certificate, before any engagement',
 			'The scope statement: what is claimed, and the four things we explicitly will not say',
 			'The binding record format: a hash of the sample set that justified each removable structure',
-			'The manuscript and the reproducible experiment programme',
+			'The full technical account and the reproducible experiment programme',
 			'A written position on residual influence, including the parts that are argument rather than proof',
 		],
 		notFor: [
@@ -854,7 +854,7 @@ export const markets: Record<string, MarketDeep> = {
 		},
 		limits: [
 			'The measured evidence is for the wrong phase of the problem, and this must lead any conversation in this market. Failures are detected and repaired DURING TRAINING, where gradients and labels exist. This market\'s problem is at test time, in the field, where neither does.',
-			'Test-time distribution shift is named in the paper as an unrun extension. No experiment in the current programme addresses it.',
+			'Test-time distribution shift is an unrun extension. No experiment in the current programme addresses it.',
 			'Adversarial weight injection is a known blind spot where this architecture measures 1.0 pp worse than baseline, with no current mitigation. In a market whose defining concern is an adversary, this is the first thing a technical evaluator will find, and it should be the first thing they are told.',
 			'Nothing here has been run on sensor data, and no defense or classified data has ever touched this system.',
 		],
@@ -865,7 +865,7 @@ export const markets: Record<string, MarketDeep> = {
 		objections: [
 			{
 				q: 'Your evidence is training-time. Our problem is in the field.',
-				a: 'That is the correct objection and it should be the first thing said in the room, not extracted from us in the second meeting. Failures here are detected and repaired during training, where gradients and labels exist. At inference there are neither. Test-time distribution shift is named in the paper as an unrun extension, and no experiment in the current programme addresses it. What transfers today is the record and the graceful-degradation property; what does not is the detection mechanism at inference.',
+				a: 'That is the correct objection and it should be the first thing said in the room, not extracted from us in the second meeting. Failures here are detected and repaired during training, where gradients and labels exist. At inference there are neither. Test-time distribution shift is an unrun extension, and no experiment in the current programme addresses it. What transfers today is the record and the graceful-degradation property; what does not is the detection mechanism at inference.',
 			},
 			{
 				q: 'You are 1 percentage point worse under adversarial weight injection.',

@@ -65,19 +65,25 @@ const marketsFor = (id: string) => sectors.filter((s) => s.features.includes(id)
 const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 ---
 
-<Page title="ORMAS: seven applications, one licence" description={"One architecture, one licence, seven applications. Every model it trains arrives with the evidence of how it was made."}>
+<Page title="ORMAS: one product, seven features" description={"One architecture, one licence, seven features. Every model it trains arrives with a record of what it took from each source of data."}>
 	<PageBanner
 		eyebrow="THE PRODUCT"
-		title="Every model it trains arrives with the evidence of how it was made."
+		title="One product, with one job: make data usable that cannot be used today."
 		trail={[{ label: 'Home', href: '/' }, { label: 'Product' }]}
 	/>
 
 	<!-- 1. WHAT IT IS. The page had no such section: it went from a banner straight to a capability
 	     grid, which asks a reader to absorb a taxonomy before knowing what the thing is. -->
 	<section class="section container">
-		<h2 class="section-title">Each component stays addressable from the first step to the last.</h2>
+		<h2 class="section-title">Data goes into a model and stops being something anyone can point at. This is the correction.</h2>
 		<ChainDiagram />
 		<div class="prod-intro">
+			<p>
+				Data is the asset in every one of these markets, and most of the best of it is never
+				trained on. Not because it is secret, and not because anyone holding it is being
+				careless. It stays where it is because releasing it means putting it inside a model that
+				afterwards cannot say what it did with it, and no custodian signs that.
+			</p>
 			<p>
 				Train a model the ordinary way and the process erases itself. What survives is weights, a
 				loss curve, and whatever the team still remembers. Six months on, a regulator asks what
@@ -99,7 +105,10 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 			<p class="prod-intro-turn">
 				Naming is the whole thing. A part that has a name can be watched while it trains,
 				protected when it starts to fail, corrected inside a limit declared in advance, tied back
-				to the data that produced it, and taken out when a contract says it has to go.
+				to the data that produced it, and taken out when a contract says it has to go. That last
+				property is the one that opens a door. A data owner who can be shown exactly what a model
+				took from their data, and can have it removed on request with a certificate to prove it,
+				is a data owner who can say yes.
 			</p>
 		</div>
 	</section>
@@ -132,14 +141,17 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 
 	<!-- 3. THE SEVEN. Framed correctly: not what the product IS, but what it is proven at. -->
 	<section class="section container reveal">
-		<Eyebrow>WHERE WE LEAD</Eyebrow>
-		<h2 class="section-title">Seven applications, worked out end to end.</h2>
+		<Eyebrow>THE SEVEN FEATURES</Eyebrow>
+		<h2 class="section-title">Seven features of one product, worked out end to end.</h2>
 		<p class="section-lede">
-			Six operations on a named part — protect, repair, account, detect, isolate, remove — combine
-			into a large number of useful things. We have not proven all of them and will not claim to
-			have. These are the seven being built, each aimed at a market already paying for its
-			absence, and backed by evidence available on request. They appear in the order of what each
-			one asks for.
+			Six operations on a named part, being protect, repair, account, detect, isolate and remove,
+			combine into a large number of useful things. These are not seven products and there is no
+			seven-item price list. They are seven features of one architecture, and each is named after
+			the job it does with data rather than after the mathematics that does it, because the person
+			who signs for it owns the data problem. We have not proven every combination and will not
+			claim to have. These seven are the ones being built, each aimed at a sector already paying
+			for its absence, and each backed by evidence available on request. They appear in the order
+			of what each one asks for.
 		</p>
 
 		<ol class="applications">
@@ -189,7 +201,8 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 
 		<p class="applications-note">
 			Other combinations are possible and some of them are obvious. They are absent from this page
-			because we would not yet sign a contract against them.
+			because we would not yet sign a contract against them. Adding one costs a configuration
+			change rather than a second licence.
 		</p>
 	</section>
 
@@ -197,18 +210,19 @@ const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 	<section class="band band--dark section reveal">
 		<div class="container">
 			<Eyebrow>HOW IT IS DELIVERED</Eyebrow>
-			<h2 class="licence-title">There is no menu, and no per-application price.</h2>
+			<h2 class="licence-title">There is no menu, and no per-feature price.</h2>
 			<div class="licence-cols">
 				<p>
-					One deployment licence covers the architecture and everything it can be asked to do.
-					A licensee enables what the deployment requires, and the scope goes into the contract rather than
-					onto a meter. Annual, per institution, running inside the customer environment.
+					One deployment licence covers the architecture and every feature it can be asked to
+					run. A licensee enables what the deployment requires, and the scope goes into the
+					contract rather than onto a meter. Annual, per institution, running inside the
+					customer environment, beside the data rather than anywhere near ours.
 				</p>
 				<p>
 					Beyond the software, the licence carries the parts that actually decide a regulated
 					deployment: integration into the customer stack, limits calibrated for the domain, builds
 					pinned to a version anyone can reproduce, support, and indemnity. The research
-					and its experiments stay published, so the mechanism can be checked by anyone who
+					and its experiments are released in full, so the mechanism can be checked by anyone who
 					cares to.
 				</p>
 			</div>
