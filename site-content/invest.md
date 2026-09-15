@@ -12,7 +12,7 @@ INVEST
 The whole thing, in one screen
 
 - **The insight** — Every interpretability and monitoring tool estimates a model from outside it, and an estimate is an opinion. ORMAS bounds each node’s gradient chain to four operations, so attribution stops being an estimate and becomes a measurement taken during training. If that is right, every regulated training run eventually has to be built this way, and the layer the market is currently funding is the wrong layer.
-- **What exists** — 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.
+- **What exists** — An architecture that reached maturity on 1 August 2026, after three years in which the earlier versions failed their own destruction suite. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.
 - **Why now** — The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.
 - **The moat** — The mechanism publishes on release, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.
 - **The ask** — $4.5M pre-seed, 24 months, six milestones with acceptance criteria. Team $1.8M · compute $1.6M · data partnerships $550K · assurance $350K · operating $200K.
@@ -57,6 +57,10 @@ Two of these have already happened. An institution that begins the architecture 
 ### The moat is time nobody can buy.
 
 The mechanism is published on release, so defensibility does not rest on secrecy and this page will not pretend it does. It rests on the things capital cannot compress.
+
+#### The dead ends are the barrier to entry
+
+A competitor does not start where this is now. They start where this was in 2023, and the route runs through the same failures: an architecture that lost to a plain CNN at every noise level tested, a correction mechanism that never triggered once across 42 runs, and ablation arms indistinguishable from the full system. Those runs are logged and kept. Three years separated the question from the first version that worked, and the reason the rest of the field does not have this is that the path to it is not visible from the outside.
 
 #### Regulatory acceptance is not compressible
 
@@ -266,7 +270,7 @@ None of this is disclosed reluctantly. An investor who finds these in week three
 
 #### No revenue, no customers, no pilot.
 
-Zero customer conversations have taken place. Nothing on this site claims otherwise, and any diligence process will confirm it quickly.
+Zero customer conversations have taken place. Nothing on this site claims otherwise, and any diligence process will confirm it quickly. The reason is a date rather than a reluctance: the architecture reached maturity on 1 August 2026, and before that there was no product an institution could have been sold. Starting those conversations earlier would have meant selling a system that had not yet cleared its own destruction suite.
 
 #### One adverse published result.
 

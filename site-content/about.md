@@ -41,9 +41,9 @@ Nothing here was planned from the beginning. The company went where the problem 
 
 2. 2024
 
-  #### The black box stops being an abstraction
+  #### The black box stops being an abstraction, and the first attempts fail
 
-  The field had priced opacity as the cost of capability and moved on. Looked at closely, that trade was not a law of the method. It was the consequence of one early decision, reasonable when it was made and never revisited since.
+  The field had priced opacity as the cost of capability and moved on. Looked at closely, that trade was not a law of the method. It was the consequence of one early decision, reasonable when it was made and never revisited since. Acting on that took several attempts, and the early ones did not work. An architecture was built, put through a destruction suite written in advance, and lost to a plain CNN at every noise level tested. The correction mechanism never triggered once across 42 runs. Those logs were kept rather than deleted, and they are on this page further down.
 
 3. 2025
 
@@ -51,13 +51,19 @@ Nothing here was planned from the beginning. The company went where the problem 
 
   The research reaches the point of needing a legal person behind it, something that can hold an agreement, take a payment and issue a licence, so it gets one, through an existing registered company while the permanent structure is decided. The work then went to the people who hold regulated data to ask what a custodian actually needs before releasing any: a calibrated bound, a record that survives an audit, a named counterparty who will stand behind both. Those answers shaped the architecture more than any benchmark did. No custodian has yet released data to us, and that remains the largest single thing standing between the result and the field it was built for.
 
-4. 2026
+4. 11 July 2026
 
-  #### The programme closes
+  #### The first version that works
 
-  383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, and 16,316 lines of instrumentation. The result held.
+  The trainer rewritten and the architecture reconstructed, the suite that destroyed the previous version is cleared for the first time. Not a refinement of the earlier attempts. A different construction, arrived at after the earlier ones had been taken as far as they went and abandoned.
 
-5. Now
+5. 1 August 2026
+
+  #### The architecture reaches maturity
+
+  The complete system: 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, and 16,316 lines of instrumentation. Every result on this site was measured on or after this date. It is worth being exact about the timing, because it explains the rest of the position. Before that date there was nothing here an institution could have been sold, and selling it anyway would have broken the operating principle below that says nothing ships while a known defect is open.
+
+6. Now
 
   #### Commercially open, and moving to San Francisco
 

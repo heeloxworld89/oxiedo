@@ -311,7 +311,8 @@ export const faqs: FaqItem[] = [
 		cat: 'deploy',
 		q: 'What does the instrumentation cost in compute?',
 		a: [
-			'The bottleneck is 4,715 shared parameters and the local chain is fixed at four operations, so the overhead is a bounded constant rather than a proportion of the model.',
+			'Two different numbers, and conflating them would flatter the answer. In parameters the cost is a bounded constant: the bottleneck is 4,715 shared parameters and the local chain is fixed at four operations, so it does not scale with the model. In wall-clock throughput it is not a constant. The full system has been measured at 1.35\u00d7 on a graph backbone.',
+			'Most of that 1.35\u00d7 is gradient surgery, which monitoring does not need. The read-only path runs none of it, and its wall-clock cost has been characterised as negligible but not separately benchmarked, so it is a measurement we will run against the customer configuration rather than quote. Anyone sizing a frontier run should assume the full figure until that measurement exists.',
 			'Set against it is the cost of the failure it prevents. A frontier run that dies at 60 percent and is restarted blind burns thousands of GPU-hours to reach the same checkpoint twice. The telemetry is not a tax on training; it is what stops an organisation paying for the same training more than once.',
 		],
 	},
