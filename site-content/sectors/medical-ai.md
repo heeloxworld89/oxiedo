@@ -5,7 +5,7 @@
 - **Meta description:** Which site caused this, and can we show it? How ORMAS applies in medical ai: the failures, the regulation, the buyer, and the limits.
 
 ---
-MARKET
+SECTOR
 
 ## Medical AI
 
@@ -153,9 +153,9 @@ Medical devices are high-risk AI systems embedded in regulated products. Automat
 
 Secondary-use provisions apply from 25 March 2029, extending to genetic and clinical-trial data in March 2031. Results of secondary use must be published in anonymised form within eighteen months, and non-compliance can mean exclusion from data access for up to five years.
 
-**APPLICATIONS IN SCOPE**
+**FEATURES IN SCOPE**
 
-### 6 of the seven apply here. This is the one to start with.
+### 6 of the seven features apply here. This is the one to start with.
 
 Lead application
 
@@ -247,7 +247,7 @@ On-premise, no egress. And we will say plainly that the formal privacy analysis 
 
 Nobody has deployed this, and we are not going to imply otherwise. What we can put in front of an evaluation is the following, and most of it needs no contract first.
 
-- The manuscript, the supplementary material and the reproducibility checklist
+- The full technical account, the supplementary material and the reproducibility checklist
 
 - The bound table: eight modification types, ceilings, and observed frequencies across 67 runs
 
@@ -289,7 +289,7 @@ Sources
 
 - [European Health Data Space · Regulation (EU) 2025/327](https://www.ey.com/en_gr/technical/tax/tax-alerts/regulation-2025-327-establishing-ehds)
 
-Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The paper](/technology) carries the conditions for each.
+Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The technology page](/technology) carries the conditions for each.
 
 [Talk to us about this market](/contact)
 

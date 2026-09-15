@@ -7,7 +7,7 @@
 ---
 FAQ
 
-## 55 questions, answered without hedging.
+## 60 questions, answered without hedging.
 
 These are the questions that actually get asked in a technical evaluation, a security review and a procurement process — including the ones with uncomfortable answers. Where something is not established, it says so and says why.
 
@@ -15,11 +15,57 @@ These are the questions that actually get asked in a technical evaluation, a sec
 
 ⌕
 
-Showing all 55 questions
+Showing all 60 questions
 
 ### What it is
 
-The architecture, the property it produces, and what it is not.
+The one-line thesis, the architecture behind it, and what it is not.
+
+#### What does Oxiedo do, in one sentence?
+
+The most valuable data in the world is locked up, and ORMAS is the architecture that opens it.
+
+The longer version runs like this. Data is the asset in every market that matters now, and the best of it sits unused behind regulation and contract. It sits there because training on it means handing it to a model that afterwards cannot say what it did with it, and no custodian signs that. ORMAS makes a network keep a true account of what it took from every source as it trains. The account is the thing a custodian needs in order to release anything.
+
+Everything else on this site is a consequence of that sentence. The architecture is the mechanism. The seven features are jobs done with data. The five sectors are where locked data is worth the most.
+
+[The thesis on one page →](/)
+
+#### How does transparency unlock data that regulation currently blocks?
+
+Regulation rarely bans training outright. It requires that the holder of the data can say what happened to it, keep it inside a stated boundary, and remove it on request with something a third party can check. Standard architectures fail all three, so the safe answer for a custodian is no.
+
+An ORMAS-trained model changes what can be answered. What the model took from a given source is a named part rather than a diffuse influence spread over every parameter. That part can be shown to an auditor, bounded, and removed on instruction with a signed certificate of what was removed. The refusal that follows from the honest answer stops following.
+
+The consequence is commercial rather than academic. A data holder who can be given those answers can license data they will not license today, and the institution that can generate the answers is the one they license it to first.
+
+[Where that data sits →](/sectors)
+
+#### Is ORMAS a data product or a machine learning product?
+
+It is software that trains neural networks, so the delivery is machine learning. The commercial goal is data. Those are not in tension. The architecture exists because a data problem had no solution that did not start inside the training procedure.
+
+No data is bought, sold, brokered or hosted here. ORMAS runs on customer infrastructure beside data that never moves. What is sold is the ability to use data that could not previously be used.
+
+#### Are the seven applications seven separate products?
+
+No. There is one product, one architecture and one licence. The seven are features of it, each being the same mechanism asked to do a different job with data.
+
+They carry plain names such as The Proofreader and The Diary rather than mechanism names, because the person who signs for a deployment owns the data problem and not the mathematics that solves it. Naming a feature after the job makes it obvious which one answers a question already on the table.
+
+Nothing is priced per feature. A licensee enables what the deployment requires, and the scope goes into the contract rather than onto a meter.
+
+[The seven features →](/product)
+
+#### Why five sectors? Does that mean five different solutions?
+
+It means the opposite. Every sector that holds data has this problem, and one mechanism answers it in all of them. The five are named because the cost of the missing account is already sitting on somebody’s books there in figures that can be checked, not because five separate things are being built.
+
+What differs between the five is the obligation driving the purchase, the person who signs, and how long the sale takes. The record, the architecture and the licence are identical.
+
+Sectors outside the five are reached by the same licence on the same terms.
+
+[The five sectors →](/sectors)
 
 #### What is ORMAS?
 
@@ -53,13 +99,13 @@ A training architecture, delivered as software that runs in the customer environ
 
 It is not a pre-trained model, and it is not a monitoring layer bolted onto one. The property it delivers cannot be added to a network after training, which is the entire reason it has to sit at the architecture level.
 
-#### You list seven applications. Are those seven products?
+#### Which of the seven features should a first deployment start with?
 
-No. There is one product and one licence. The seven are what the same mechanism is called by the people who buy it. A bank, a hospital and a training lab describe the identical capability using three different nouns, because each is solving the problem in front of them.
+The order they appear in on the product page is the recommendation. They are ordered by how hard each one is to say yes to, from sending a single file through to agreeing a bound with a regulator before training begins.
 
-They are ordered on the product page by how hard it is to say yes to them, from sending us a file to agreeing a bound with the regulator. That order is the recommendation.
+The first, The Proofreader, attaches to a model already trained and never modifies it, which is why it is the usual place to start. The last, The Update Engine, asks for a limit signed off in advance. Most institutions want to watch the telemetry for a full cycle before letting anything touch a model, and the read-only mode exists for exactly that.
 
-[The seven applications →](/product)
+[The seven features →](/product)
 
 #### What are the three signals?
 
@@ -87,7 +133,7 @@ The results, the benchmarks they were measured on, and where it loses.
 
 #### What is the evidence that this works?
 
-383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, and 16,316 lines of instrumentation across 85 files. A manuscript is under peer review, and the architecture and every experiment behind it are published.
+383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, and 16,316 lines of instrumentation across 85 files. The architecture and every experiment behind it are released in full on publication.
 
 The headline result is recovery: +70.3 percentage points from catastrophic structural collapse, in conditions where a parameter-matched baseline is permanently dead rather than merely degraded.
 
@@ -103,11 +149,11 @@ No clinical, biological, financial or defence data has ever touched this system.
 
 Closing that gap is what the dataset partnership on the careers page exists to do, and it is the single largest thing standing between the result and the fields it was built for.
 
-#### Has this been peer reviewed?
+#### Has this been independently verified?
 
-A manuscript is under peer review. Until that concludes the architecture is not public, and the release is committed to acceptance rather than to a date we control.
+Not yet by a third party, and that is stated plainly rather than left to be discovered. The architecture is not public today, and the commitment to release it in full is written into the licence rather than promised.
 
-What is available now, to an investor or an evaluating institution under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. Peer review is a meaningful signal and it is not yet held. Seeded reproducibility is the stronger one, and it does not wait for a reviewer.
+What is available now, to an investor or an evaluating institution under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. External verification is a meaningful signal and it is not yet held. Seeded reproducibility is the stronger one, because it does not depend on anyone taking our word for a number.
 
 #### Where does ORMAS lose?
 
@@ -227,7 +273,7 @@ A compliance record that becomes unreadable when a commercial relationship ends 
 
 #### Is source code escrow available?
 
-Yes, and alongside it the licence carries a release commitment: the mechanism is published in full on acceptance of the manuscript, irrevocably. That is a stronger position than escrow, because the architecture cannot become unavailable to a licensee once released, and escrow covers the implementation until then.
+Yes, and alongside it the licence carries a release commitment: the mechanism is published in full on release, irrevocably. That is a stronger position than escrow, because the architecture cannot become unavailable to a licensee once released, and escrow covers the implementation until then.
 
 Escrow covers the production implementation and the assurance work around it, and is agreed in the contract.
 
@@ -389,7 +435,7 @@ The founder is a technical founder who has built and exited companies before thi
 
 16,316 lines across 85 files, 383 controlled experiments across four architecture families, and 67 archived runs that regenerate from seed. The architecture is complete and the experimental programme is closed.
 
-The right way to weigh that is not to take it on trust. Every run regenerates from seed, and the mechanism is released in full on acceptance, so the work becomes checkable in a way that a larger team behind a permanently closed implementation never is.
+The right way to weigh that is not to take it on trust. Every run regenerates from seed, and the mechanism is released in full on publication, so the work becomes checkable in a way that a larger team behind a permanently closed implementation never is.
 
 #### Are you raising?
 

@@ -5,7 +5,7 @@
 - **Meta description:** What data is in here, and can I remove it? How ORMAS applies in data obligation: the failures, the regulation, the buyer, and the limits.
 
 ---
-MARKET
+SECTOR
 
 ## Data Obligation
 
@@ -147,9 +147,9 @@ Increasingly explicit about scope: models, model weights, embeddings, training a
 
 The compliance industry named this category and forecast it becoming a requirement before any supply side existed. A named category with anticipated regulation and nothing to buy is a rarer situation than a large addressable market.
 
-**APPLICATIONS IN SCOPE**
+**FEATURES IN SCOPE**
 
-### 5 of the seven apply here. This is the one to start with.
+### 5 of the seven features apply here. This is the one to start with.
 
 Lead application
 
@@ -245,7 +245,7 @@ Nobody has deployed this, and we are not going to imply otherwise. What we can p
 
 - The binding record format: a hash of the sample set that justified each removable structure
 
-- The manuscript and the reproducible experiment programme
+- The full technical account and the reproducible experiment programme
 
 - A written position on residual influence, including the parts that are argument rather than proof
 
@@ -281,7 +281,7 @@ Sources
 
 - [Pervasive label errors in test sets destabilize ML benchmarks](https://arxiv.org/abs/2103.14749)
 
-Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The paper](/technology) carries the conditions for each.
+Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The technology page](/technology) carries the conditions for each.
 
 [Talk to us about this market](/contact)
 

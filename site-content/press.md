@@ -32,7 +32,7 @@ Available, including on the parts of this that are not working yet. For a scepti
 - **Structure** — Founder-led. Commercial, research and regulatory roles open; see /careers.
 - **Customers** — None. Zero customer conversations have taken place.
 - **Licence** — A research licence, free for research, teaching and evaluation from the moment the release lands. Production use is licensed. Not open source, and not described as one.
-- **Evidence base** — 383 controlled experiments, four architecture families, 67 archived runs each regenerating from seed. Manuscript under peer review; the architecture and the full archive are released on acceptance.
+- **Evidence base** — 383 controlled experiments, four architecture families, 67 archived runs each regenerating from seed. The architecture and the full archive are released on publication.
 - **Data used** — CIFAR-10 and CIFAR-100 only. No clinical, biological, financial or defence data has ever touched the system.
 
 **THE RESULTS**
@@ -49,7 +49,7 @@ Available, including on the parts of this that are not working yet. For a scepti
 
 - −1.0 pp — Under adversarial weight injection, ORMAS performs worse than baseline. This is the one adverse result in the programme and is published alongside the others.
 
-All results on CIFAR-10 and CIFAR-100. Manuscript under peer review, with the architecture and the full experimental archive released on acceptance. Every run regenerates from seed, so every figure here is reproducible rather than asserted, and journalists who want to verify one before then should ask.
+All results on CIFAR-10 and CIFAR-100, with the architecture and the full experimental archive released on publication. Every run regenerates from seed, so every figure here is reproducible rather than asserted, and journalists who want to verify one before then should ask.
 
 [The full technical account →](/technology)
 
@@ -61,7 +61,7 @@ All results on CIFAR-10 and CIFAR-100. Manuscript under peer review, with the ar
 
 - Nothing here has been tested at frontier scale, on regulated data, or in production over time. No deployment exists.
 
-- The architecture will be released in full on acceptance, so a competitor can reimplement it. That is deliberate and not a vulnerability we are downplaying.
+- The architecture will be released in full on publication, so a competitor can reimplement it. That is deliberate and not a vulnerability we are downplaying.
 
 - There is a programme extending this work. Its objectives and constraints are public; its mechanism is not, and will not be until it is protected. We will not discuss it on background either.
 
@@ -71,13 +71,13 @@ All results on CIFAR-10 and CIFAR-100. Manuscript under peer review, with the ar
 
 These are drafted and held. They are on this page rather than in a folder because a company willing to publish the release it would issue for its own failure can be checked against later.
 
-PR-001 · READY on formal acceptance of the manuscript
+PR-001 · READY on release of the architecture
 
-Oxiedo Publishes Research Architecture That Lets Neural Networks Keep a Record of What They Change
+Oxiedo Releases Training Architecture That Lets Neural Networks Keep a Record of What They Change
 
 383-experiment evidence base shows +70.3 pp recovery advantage over standard networks under mid-training structural collapse
 
-Oxiedo today released the full research foundation for its training architecture, ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), via a submitted manuscript.
+Oxiedo today released the full technical foundation for its training architecture, ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction).
 
 The architecture bounds each node’s local gradient chain to four operations, producing per-node attribution as a physical property of the backward pass rather than as a reconstruction. Across 383 controlled experiments on CIFAR-10 and CIFAR-100, the system recovered to 80.3% from mid-training structural collapse against a permanent 10.0% for parameter-matched standard networks — a gap of +70.3 percentage points.
 
@@ -113,11 +113,11 @@ That PR-004 exists at all is the point. A company with a press release already w
 
 Short
 
-Oxiedo builds ORMAS, a neural network training architecture that makes per-component causal attribution a physical property of training rather than something reconstructed afterwards. The mechanism is published on acceptance of the manuscript; production deployment is licensed.
+Oxiedo builds ORMAS, a neural network training architecture that makes per-component causal attribution a physical property of training rather than something reconstructed afterwards. The mechanism is released on publication; production deployment is licensed.
 
 Full
 
-Oxiedo builds ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), a neural network architecture that makes per-node causal attribution a physical property of the backward pass, enabling per-component diagnosis, bounded structural repair, audit, and accounting for the contribution of data to a trained model. Every correction is logged, bounded and human-reviewable. The architecture is submitted for peer review and supported by 383 controlled experiments across four architecture families, each regenerating from seed. The mechanism is released under a research licence on acceptance of the manuscript, free for research, teaching and evaluation from that day; production use is licensed separately. All experimental results are CIFAR-10 and CIFAR-100; no clinical, biological, financial or defence data has been used. Oxiedo is pre-revenue, has no customers, and is raising a pre-seed round as of September 2026.
+Oxiedo builds ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), a neural network architecture that makes per-node causal attribution a physical property of the backward pass, enabling per-component diagnosis, bounded structural repair, audit, and accounting for the contribution of data to a trained model. Every correction is logged, bounded and human-reviewable. The architecture is supported by 383 controlled experiments across four architecture families, each regenerating from seed. The mechanism is released under a research licence on publication, free for research, teaching and evaluation from that day; production use is licensed separately. All experimental results are CIFAR-10 and CIFAR-100; no clinical, biological, financial or defence data has been used. Oxiedo is pre-revenue, has no customers, and is raising a pre-seed round as of September 2026.
 
 **ASSETS**
 

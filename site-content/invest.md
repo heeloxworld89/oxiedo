@@ -12,9 +12,9 @@ INVEST
 The whole thing, in one screen
 
 - **The insight** — Every interpretability and monitoring tool estimates a model from outside it, and an estimate is an opinion. ORMAS bounds each node’s gradient chain to four operations, so attribution stops being an estimate and becomes a measurement taken during training. If that is right, every regulated training run eventually has to be built this way, and the layer the market is currently funding is the wrong layer.
-- **What exists** — 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Manuscript under peer review.
+- **What exists** — 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.
 - **Why now** — The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.
-- **The moat** — The mechanism publishes on acceptance, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.
+- **The moat** — The mechanism publishes on release, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.
 - **The ask** — $4.5M pre-seed, 24 months, six milestones with acceptance criteria. Team $1.8M · compute $1.6M · data partnerships $550K · assurance $350K · operating $200K.
 - **The risk** — No revenue, no customers, zero customer conversations. One person. Every result on CIFAR-10 and CIFAR-100. The whole remaining programme is falsifiable for under 30 GPU-hours, which is the fastest way to find out if we are wrong.
 
@@ -56,7 +56,7 @@ Two of these have already happened. An institution that begins the architecture 
 
 ### The moat is time nobody can buy.
 
-The mechanism is published on acceptance, so defensibility does not rest on secrecy and this page will not pretend it does. It rests on the things capital cannot compress.
+The mechanism is published on release, so defensibility does not rest on secrecy and this page will not pretend it does. It rests on the things capital cannot compress.
 
 #### Regulatory acceptance is not compressible
 
@@ -278,7 +278,7 @@ One person wrote all of it. That is the first thing this round is spent on, and 
 
 #### You are giving the mechanism away.
 
-Deliberately, and on acceptance rather than now. A result nobody can check is worth nothing to a regulator, and the defensibility was never intended to rest on secrecy. What is not published is the programme extending it, which stays unpublished until it is protected.
+Deliberately, and on release rather than now. A result nobody can check is worth nothing to a regulator, and the defensibility was never intended to rest on secrecy. What is not published is the programme extending it, which stays unpublished until it is protected.
 
 #### The evidence base is CIFAR-10 and CIFAR-100.
 
@@ -298,7 +298,7 @@ The entire remaining research programme can be falsified for under 30 GPU-hours,
 
 That is not a claim about how confident we are. It is a statement about how cheap the experiment is. What a quarter of waiting would establish is available this week, for roughly the cost of a business lunch, and it can be run by their own technical partner on customer hardware without us in the room.
 
-Everything else is checkable now, under a short agreement: the mechanism, all 383 seeded runs including the ones that failed, the adversarial suite, and the manuscript in full. The one adverse result is already on the technology page. The data room does not contain a better story than this page does. It contains the same story with the workings attached.
+Everything else is checkable now, under a short agreement: the mechanism, all 383 seeded runs including the ones that failed, the adversarial suite, and the full technical account. The one adverse result is already on the technology page. The data room does not contain a better story than this page does. It contains the same story with the workings attached.
 
 What goes in front of an investor
 
@@ -308,7 +308,7 @@ What goes in front of an investor
 
 - The adversarial suite, written before the results, with its pass/fail list intact.
 
-- The manuscript under review, in full.
+- The full technical account of the architecture.
 
 - A demonstration on their own workload, run in the customer environment.
 

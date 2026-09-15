@@ -5,7 +5,7 @@
 - **Meta description:** What did the system do to itself in the field? How ORMAS applies in defense & safety-critical: the failures, the regulation, the buyer, and the limits.
 
 ---
-MARKET
+SECTOR
 
 ## Defense & Safety-Critical
 
@@ -153,9 +153,9 @@ Programmes now require assessment of resilience in denied, degraded, intermitten
 
 Software entering a classified or controlled environment must be accountable for its own behaviour and auditable after the fact. The record is not a feature in this market. It is the condition of being allowed in the building.
 
-**APPLICATIONS IN SCOPE**
+**FEATURES IN SCOPE**
 
-### 4 of the seven apply here. This is the one to start with.
+### 4 of the seven features apply here. This is the one to start with.
 
 Lead application
 
@@ -181,7 +181,7 @@ A repeated objection is a gap in what we have explained, not a nuisance. These a
 
 01 — Your evidence is training-time. Our problem is in the field.
 
-That is the correct objection and it should be the first thing said in the room, not extracted from us in the second meeting. Failures here are detected and repaired during training, where gradients and labels exist. At inference there are neither. Test-time distribution shift is named in the paper as an unrun extension, and no experiment in the current programme addresses it. What transfers today is the record and the graceful-degradation property; what does not is the detection mechanism at inference.
+That is the correct objection and it should be the first thing said in the room, not extracted from us in the second meeting. Failures here are detected and repaired during training, where gradients and labels exist. At inference there are neither. Test-time distribution shift is an unrun extension, and no experiment in the current programme addresses it. What transfers today is the record and the graceful-degradation property; what does not is the detection mechanism at inference.
 
 02 — You are 1 percentage point worse under adversarial weight injection.
 
@@ -269,7 +269,7 @@ In markets whose central complaint is that vendors overstate their approximation
 
 - The measured evidence is for the wrong phase of the problem, and this must lead any conversation in this market. Failures are detected and repaired DURING TRAINING, where gradients and labels exist. This market's problem is at test time, in the field, where neither does.
 
-- Test-time distribution shift is named in the paper as an unrun extension. No experiment in the current programme addresses it.
+- Test-time distribution shift is an unrun extension. No experiment in the current programme addresses it.
 
 - Adversarial weight injection is a known blind spot where this architecture measures 1.0 pp worse than baseline, with no current mitigation. In a market whose defining concern is an adversary, this is the first thing a technical evaluator will find, and it should be the first thing they are told.
 
@@ -285,7 +285,7 @@ Sources
 
 - [Test & evaluation of AI-enabled and autonomous systems](https://testscience.org/wp-content/uploads/formidable/20/Autonomy-Lit-Review.pdf)
 
-Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The paper](/technology) carries the conditions for each.
+Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The technology page](/technology) carries the conditions for each.
 
 [Talk to us about this market](/contact)
 

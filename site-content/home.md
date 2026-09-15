@@ -1,23 +1,23 @@
 # Oxiedo
 
 - **URL:** `/`
-- **Page title:** Oxiedo — AI training that names its own broken part
-- **Meta description:** ORMAS makes per-component causal attribution a physical property of training. The account is produced as the model learns, not reconstructed afterwards.
+- **Page title:** Oxiedo — the architecture that unlocks locked data
+- **Meta description:** The most valuable data in the world cannot be trained on, because no model can account for what it did with it. ORMAS produces that account as the model learns.
 
 ---
-**ORMAS · STRUCTURAL INTELLIGENCE FOR NEURAL NETWORKS**
+**ORMAS · THE ARCHITECTURE THAT UNLOCKS LOCKED DATA**
 
-## A neural network that names its own broken part.
+## The most valuable data in the world is locked up. ORMAS opens it.
 
 Machines that cannot lie.
 
-Not about the world; about themselves. Every change this network makes to itself is recorded as it happens, by arithmetic it cannot route around.
+Not about the world. About themselves. Data stays locked because no model can say what it did with it, and the custodian who holds that data is right not to release it on a promise. ORMAS makes a network record every change it makes to itself, as it happens, by arithmetic it cannot route around. That record is the account a custodian has been waiting for.
 
 [Pre-book ORMAS](/contact)
 
-[Read the paper](/technology)
+[See the technology](/technology)
 
-Five industries. Five ways of asking the same question.
+Five sectors. One question about data, asked five ways.
 
 - AI Training — Is this run failing, and where?
 
@@ -40,7 +40,7 @@ Nothing in a standard network can answer any of them. Not because a standard net
 
 Published figures · one per industry
 
-> One primitive · six capabilities · seven use cases · five markets
+> One primitive · six capabilities · seven features · five sectors
 
 #### What replaces it
 
@@ -51,7 +51,7 @@ Published figures · one per industry
 
 Built in, not bolted on
 
-Deployed on customer infrastructure, in
+Five sectors where the data is locked and worth the most
 
 - [AI Training](/sectors/ai-training)
 
@@ -65,9 +65,9 @@ Deployed on customer infrastructure, in
 
 **THE PRODUCT**
 
-### ORMAS is a training architecture. The licensed asset is the record it leaves behind.
+### ORMAS is one product, and its job is to make data usable that cannot be used today.
 
-Training procedure is unaffected. Data, objective and resulting model are unchanged. What changes is what exists alongside that model: named components, each one separately protectable, repairable, auditable, attributable by source, and removable on instruction.
+Training procedure is unaffected. Data, objective and resulting model are unchanged. What changes is the account that exists alongside the model. What the model took from each source is held as a named part that can be watched, repaired, audited, traced back to the data that produced it, and removed on instruction. That account is the condition on which data a custodian will not release today becomes data they can release.
 
 What is delivered
 
@@ -89,11 +89,11 @@ What the model learned from each source, held as a discrete addressable object, 
 
 Every change training made: which component, at which step, under which diagnosis, by how much, and inside what declared limit. Signed, and diffable against the last approved version.
 
-Where it lands hardest
+The seven features
 
-Those six operations combine in many configurations. Seven carry almost all of the commercial value, because each resolves a failure a specific market is already paying for. They are ordered by what each one requires of the licensee. The first needs a file and never touches the model. The last needs a limit agreed with a reviewer in advance. **Other combinations exist. These are the seven worth naming.**
+ORMAS is one product. The seven below are its features, not seven separate products. Each is the same architecture asked to do a different job with data, and each is named after the job rather than the mechanism, because the person who buys it owns the data problem and not the mathematics underneath it. They are ordered by what each one asks of the licensee. The first needs a file and never touches the model. The last needs a limit agreed with a reviewer in advance. **Other combinations exist. These are the seven worth naming.**
 
-The use case
+The feature
 
 What it does
 
@@ -223,7 +223,7 @@ Retrains a deployed model inside a limit declared and signed beforehand, and pro
 
 A limit agreed with the reviewer in advance
 
-ORMAS is licensed as a single architecture, deployed on customer infrastructure. Scope is set per institution and the licence covers what the deployment calls for and the licence is scoped accordingly: one integration, one contract, and nothing priced per use case.
+ORMAS is licensed as a single architecture, deployed on customer infrastructure. Scope is agreed per institution and written into the contract. One integration, one contract, and nothing priced per feature.
 
 [See the product in full](/product)
 
@@ -235,13 +235,13 @@ The same run, trained under ORMAS
 
 The network reports the component, the step at which it failed, the magnitude of the change, and the declared bound it remained inside. No second system estimates this after the fact. It is a quantity the network computed about itself during training, and reading it back carries no additional cost.
 
-The same record answers the auditor asking which data shaped a decision, and the supervisor asking what changed between two approved versions. A single mechanism satisfies all three obligations.
+The same record answers the auditor asking which data shaped a decision and the supervisor asking what changed between two approved versions. It is also what a data owner reads before deciding whether their data may be trained on at all.
 
-**THE COST OF THE CURRENT INSTRUMENT**
+**WHAT LOCKED DATA COSTS**
 
-### An unbudgeted cost, incurred in every market that trains under obligation.
+### Data is the asset. The bill arrives because nothing can account for what a model did with it.
 
-Every error signal in a neural network touches every parameter at once. That property is the source of their capability, and it is also why *which component caused this?*has no available answer: the architecture provides nothing to point at. The cost surfaces in a different currency in each market.
+Every error signal in a neural network touches every parameter at once. That property is the source of a network's capability, and it is also why *which part of this model came from that data?* has no available answer. Data enters the model and the trail ends there. Below is what that costs, sector by sector, in the currency each one actually pays.
 
 Market
 
@@ -289,13 +289,13 @@ The deployment
 
 ended, not remediated
 
-One property is missing from every architecture on that list, and every figure above is a consequence of its absence. ORMAS is the correction.
+Every figure above has the same cause. Data goes into a model and stops being something anyone can point at. ORMAS keeps it addressable from the first step to the last, and the bill stops arriving.
 
 **THE COMPARISON**
 
 ### Every comparable method reconstructs what happened after the fact. ORMAS records it as it occurs.
 
-When something goes wrong inside a model, every tool available today works the same way: it examines a finished system and produces its best estimate of what must have occurred. The estimate is frequently a good one. It is also unverifiable, and it cannot be entered into a filing.
+Ask a finished model what it learned from a particular source of data and every tool available today works the same way. It examines the finished system and produces its best estimate of what must have occurred. The estimate is frequently a good one. It is also unverifiable, and an estimate is not something a data owner accepts or a regulator files.
 
 What follows is a different class of answer altogether, written while the work is happening, by the system doing the work.
 
@@ -363,9 +363,9 @@ None of this is a report assembled afterwards. The system writes it while the wo
 
 **FIVE MARKETS · ONE PRODUCT**
 
-### The mechanism does not change between markets. The vocabulary does.
+### Every sector that holds data has this problem. These five are where solving it is worth the most.
 
-A hospital calls it the site. A bank calls it the region. A biotech calls it the batch. An AI lab calls it the corpus. Every market below asks the same question in its own words, and each is answered by one of the seven use cases.
+Data is the common thread. A hospital calls it the site, a bank calls it the region, a biotech calls it the batch, an AI lab calls it the corpus, and a data controller calls it the licensed source. Underneath, the question is identical in all five. What did the model take from this, and can that be proven? These are not five products and not five solutions. They are the five sectors where the answer is worth the most money today. Every other sector that holds data is reached by the same licence.
 
 #### AI Training
 
@@ -375,7 +375,7 @@ Is this run failing, and where?
 
 The Warning Light supplies that signal: per component, every step, while the run is still recoverable.
 
-Answered by **The Warning Light** · 3 of 7 use cases in scope
+Answered by **The Warning Light** · 3 of 7 features in scope
 
 [Read the market](/sectors/ai-training)
 
@@ -387,7 +387,7 @@ What changed, and can a validator verify it?
 
 Where attribution is available per component, validation can be conducted the same way. The record answers SR 26-2's validation and change-control expectations with evidence rather than with a memo.
 
-Answered by **The Diary** · 6 of 7 use cases in scope
+Answered by **The Diary** · 6 of 7 features in scope
 
 [Read the market](/sectors/regulated-finance)
 
@@ -399,7 +399,7 @@ Which site caused this, and can we show it?
 
 Each site's contribution is recorded before the averaging step destroys it. When a round drops six points, the record says which site, and on what evidence.
 
-Answered by **The Federated Node** · 6 of 7 use cases in scope
+Answered by **The Federated Node** · 6 of 7 features in scope
 
 [Read the market](/sectors/medical-ai)
 
@@ -411,7 +411,7 @@ What data is in here, and can I remove it?
 
 Certified Deletion routes the memorisable contribution into a named, removable structure, and hands the requester a signed certificate.
 
-Answered by **Certified Deletion** · 5 of 7 use cases in scope
+Answered by **Certified Deletion** · 5 of 7 features in scope
 
 [Read the market](/sectors/data-obligation)
 
@@ -423,7 +423,7 @@ What did the system do to itself in the field?
 
 Degrading to 80.3% rather than collapsing permanently to 10% is a different safety category, and every modification the system made to itself is bounded, timestamped and reviewable afterwards.
 
-Answered by **The Diary** · 4 of 7 use cases in scope
+Answered by **The Diary** · 4 of 7 features in scope
 
 [Read the market](/sectors/defense-safety-critical)
 
@@ -431,9 +431,9 @@ Answered by **The Diary** · 4 of 7 use cases in scope
 
 **WHY NOW**
 
-### Record-keeping is passing from good practice into statutory obligation.
+### Accounting for what a model did with its training data is becoming statutory, with dates attached.
 
-Three separate regimes now require of a trained model something standard architectures cannot produce: evidence of what changed inside it, attributable to a part. The institutions able to generate that record set the format against which the rest of the market will be measured.
+Three separate regimes now require of a trained model something standard architectures cannot produce. Each one asks for evidence of what the model did with its data, attributable to a named part. The institutions able to generate that record set the format the rest of the market gets measured against, and they are the ones data custodians will release to first.
 
 EU AI Act · Article 12
 
@@ -473,7 +473,7 @@ Trained on one task, then another, with no replay buffer and no task identifier.
 
 A fifty-node network at 30% label noise across 200 epochs. Standard training returned NaN and stopped. ORMAS stayed stable, and every one of those corrections is on the record with its component, magnitude and limit.
 
-383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The paper](/technology) carries the full conditions, the error bars, and the one result that went against us.
+383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and the one result that went against us.
 
 **PRE-BOOKING**
 
@@ -485,11 +485,11 @@ Early partners get flat-rate, enterprise-wide terms, their own compliance workfl
 
 [Pre-book a deployment](/contact?intent=pre-book#pre-book)
 
-ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction
+383 controlled experiments, across four architecture families, every run regenerating from seed.
 
-Rokib Al Dhin Raadh
+Conditions, error bars and the one adverse result, in full.
 
 - **Experiments** — 383
-- **Status** — Manuscript under review
+- **Archived runs** — 67
 
-[Read the paper →](/technology)
+[See the evidence →](/technology)

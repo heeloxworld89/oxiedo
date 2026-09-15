@@ -46,7 +46,7 @@ INVESTMENT
 
 #### Investment conversation
 
-Send a thesis and we will say whether this is a fit before sending anything, which is faster for both sides than a document that was never relevant. What is not on the site: the falsification specification, the full archive of 67 seeded runs including the four the first architecture failed, the adversarial suite, the manuscript, and the round terms.
+Send a thesis and we will say whether this is a fit before sending anything, which is faster for both sides than a document that was never relevant. What is not on the site: the falsification specification, the full archive of 67 seeded runs including the four the first architecture failed, the adversarial suite, the full technical account, and the round terms.
 
 - Field: Name *
 

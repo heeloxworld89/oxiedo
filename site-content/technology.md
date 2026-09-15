@@ -2,12 +2,12 @@
 
 - **URL:** `/technology`
 - **Page title:** The ORMAS architecture, and 383 experiments — Oxiedo
-- **Meta description:** The architecture, the three signals, five telemetry layers, 383 controlled experiments, and a section on what is not yet established.
+- **Meta description:** How a bounded gradient chain makes a network account for what it took from each source of data. Three signals, five telemetry layers, 383 controlled experiments, and what is not yet established.
 
 ---
 THE TECHNOLOGY
 
-## A different bet on the oldest open problem in machine learning.
+## Transparency is the mechanism. Unlocking data is the point.
 
 +70.3 pp
 
@@ -25,7 +25,9 @@ Layers of causal telemetry emitted natively, from system health to per-parameter
 
 GPU-hours to falsify the entire remaining research programme, on one card
 
-Neural networks fail opaquely, and not because anybody built them carelessly. Global backpropagation diffuses every error signal across every parameter simultaneously, so precise fault localisation is not difficult; it is mathematically unavailable. When a layer dies mid-training, what a practitioner observes is a collapsed loss curve and no mechanism whatsoever for identifying which component failed, when, or why.
+One line covers what this technology is for. Data that would be worth training on is locked away, and it is locked away because a model cannot account for what it took from it. Everything below is the work of building a network that can.
+
+Neural networks fail opaquely, and not because anybody built them carelessly. Global backpropagation diffuses every error signal across every parameter simultaneously, so precise fault localisation is not difficult; it is mathematically unavailable. When a layer dies mid-training, what a practitioner observes is a collapsed loss curve and no mechanism whatsoever for identifying which component failed, when, or why. The same property is why no model can say which of its parts came from which source of data.
 
 It is worth being precise about the size of this. Opacity is the single property standing between deep learning and every domain that requires an account of a decision before it will accept the decision. Not a performance ceiling, but an admissibility one. And those domains are not small: medicine, finance, safety-critical autonomy, and every use of data belonging to somebody else.
 
@@ -171,11 +173,11 @@ Gradient conflict between the signals is resolved by PCGrad projection. Every co
 
 Two further results do not share this scale and are not forced onto it. Under 40% label noise the architecture decayed 2.5 pp from peak against 7.8 pp for standard training. On a 50-node graph at 30% noise it stayed stable through 22,014 attributed corrections, where standard training returned NaN and stopped.
 
-Read the abstract in full
+#### Read the full technical summary
 
 The neural network black box is not an inherent property of deep learning—it is a mathematical consequence of global backpropagation, where a single entangled error signal renders mid-training structural collapse invisible. We show that structurally isolating gradient chains to bounded 4-operation local paths transforms a standard neural network into a transparent, self-correcting system. Our protocol, ORMAS, extends backpropagation with a per-node local loss anchored through a capacity-constrained shared bottleneck and a health-gated self-correction mechanism that autonomously diagnoses and repairs structural pathologies in real time. Gradient conflicts between signals are resolved via PCGrad projection, and all continuous corrections satisfy a mean-centering conservation constraint, bounded by an Input-to-State Stability (ISS) convergence analysis under local strong convexity. The architecture natively emits five layers of causal telemetry—from system-level health to exact per-parameter attribution—as physical properties of the forward and backward pass, not post-hoc approximations. Empirically, correction frequency decays from 4.2 to 0.05 per epoch as the network stabilizes, consistent with the predicted ISS bound. Across 383 controlled experiments on four architectures (FC-DAG, CNN, Fat CNN, ResNet-18), ORMAS matches standard baselines on clean data while limiting accuracy decay under 40% label noise to 2.5 percentage points versus 7.8 for standard training. Under catastrophic mid-training structural collapse, ORMAS autonomously recovers to 80.3 ± 1.6% accuracy where parameter-matched baselines permanently collapse to 10.0% across all independent initializations. Under sequential task shift with no replay buffer or modularity constraint, the network self-organizes into partially factorized internal representations, achieving 58.8% mean zero-shot compositional accuracy on novel combinations versus 25% chance. These results establish architectural transparency as a structural prerequisite for autonomous robustness.
 
-ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction · Rokib Al Dhin Raadh · Manuscript under review
+Written for a reader who works in this field. Every figure in it appears with its conditions above.
 
 1. 01
 
@@ -237,13 +239,13 @@ ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction · R
   - **Result** — Accuracy variance below 0.8%. The correction mechanism compensates for capacity imbalance rather than requiring it to be tuned away.
   - **Baseline** — —
 
-All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in the manuscript, alongside the reproducibility checklist and the scripts that regenerate every run.
+All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in the full technical record, alongside the reproducibility checklist and the scripts that regenerate every run.
 
-**WHAT THIS IS FOR**
+**WHAT IT UNLOCKS**
 
-### Four domains are closed to deep learning for one shared reason.
+### Four bodies of data are closed to deep learning for one shared reason.
 
-Not one of them is closed because the models are insufficiently accurate. Each is closed because a decision must be accountable before it is admissible, and no production architecture can produce the account. One property gates all four.
+Not one of them is closed because the models are insufficiently accurate. Each is closed because the data behind it cannot be handed to something that will not say what it did with it. The gate is the same in all four, and it is an accounting gate rather than a capability one.
 
 #### Medicine
 
@@ -261,15 +263,15 @@ Software entering a controlled environment must be able to account for its own b
 
 Contracts increasingly require deletion of training data from model weights, with written attestation. The only exactly compliant method is retraining from scratch, and prevailing practice is to disclose that deletion is not feasible.
 
-A network that can account for itself structurally does not make a better prediction. It makes the prediction admissible, and that is the thing which has been missing.
+A network that can account for itself structurally does not make a better prediction. It makes the prediction admissible, and it makes the data behind the prediction releasable. That second consequence is the larger one.
 
 **WHAT WE ARE BUILDING**
 
-### The published result names a broken component. The next one names the data that broke it.
+### The completed architecture names a broken component. The next result names the data that broke it.
 
 The current system's diagnostic vocabulary has one subject: the component. Every treatment it applies answers the question *what is wrong with this part?* But the most common thing that goes wrong in real training is not a broken part. It is data actively damaging a part that is working correctly, and there is no verb for that yet.
 
-The programme underway supplies it. What follows is stated as objectives and constraints rather than as a method: the mechanism is the intellectual property, and it stays in the building until it is published on our own terms.
+The programme underway supplies it. What follows is stated as objectives and constraints rather than as a method: the mechanism is the intellectual property, and it stays in the building until it is released on our own terms.
 
 1. 01
 
@@ -329,17 +331,17 @@ Each is falsifiable, each carries a written prediction against it, and each runs
 
   The separation study
 
-  Whether inter-component disagreement separates mislabelled data from data that is merely hard. Gates four of the seven applications.
+  Whether inter-component disagreement separates mislabelled data from data that is merely hard. Gates four of the seven features.
 
   ~20 GPU-hr
 
-None has been run. A negative result on any of them narrows the programme rather than ending it: the applications that ship on the published architecture depend on none of the four.
+None has been run. A negative result on any of them narrows the programme rather than ending it: the features that ship on the completed architecture depend on none of the four.
 
 The intellectual property position
 
-The completed architecture is released in full on acceptance of the manuscript: reproducible, free for research and teaching, permanently. That commitment is written into the licence rather than promised. It is the credential, and it is deliberately not the moat.
+The completed architecture is released in full on publication: reproducible, free for research and teaching, permanently. That commitment is written into the licence rather than promised. It is the credential, and it is deliberately not the moat.
 
-What is held is the programme above: the mechanism by which attribution extends from components to data, the artefact format, the calibration procedure that turns a general bound into a validated one for a specific deployment, and the record a customer accumulates by running it. The first is a trade secret until we publish it on our own terms. The last cannot be transferred at all, because it belongs to them.
+What is held is the programme above: the mechanism by which attribution extends from components to data, the artefact format, the calibration procedure that turns a general bound into a validated one for a specific deployment, and the record a customer accumulates by running it. The first is a trade secret until we release it on our own terms. The last cannot be transferred at all, because it belongs to them.
 
 **WHAT IS NOT ESTABLISHED**
 
@@ -351,17 +353,17 @@ A research page that lists only what worked is a marketing page wearing a lab co
 
 - The architecture is demonstrated on fully-connected, convolutional and residual families. Transformers are a stated generalisation target, not a demonstrated result.
 
-- Test-time distribution shift is named in the paper as an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.
+- Test-time distribution shift is an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.
 
 - Under adversarial weight injection the architecture measures 1.0 pp worse than a standard baseline. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors. Published rather than omitted, and unmitigated.
 
 - Whether the signal survives at small n, meaning tens of examples rather than tens of thousands, is untested.
 
-**The scope of the claim, as the paper states it.** We do not claim state-of-the-art accuracy on clean benchmarks, and we do not claim to replace specialised noisy-label algorithms. The claim is that a single-network architecture can achieve competitive accuracy while providing mechanistically logged, per-component causal attribution that no prior single-network method offers, and that this structural transparency is what enables recovery from failures standard architectures cannot detect.
+**The scope of the claim, stated exactly.** We do not claim state-of-the-art accuracy on clean benchmarks, and we do not claim to replace specialised noisy-label algorithms. The claim is that a single-network architecture can achieve competitive accuracy while providing mechanistically logged, per-component causal attribution that no prior single-network method offers, and that this structural transparency is what enables recovery from failures standard architectures cannot detect.
 
 The claim is transparency. The accuracy gap is its evidence.
 
-[Request the manuscript](/contact)
+[Request the technical briefing](/contact)
 
 [See what is built on it](/product)
 

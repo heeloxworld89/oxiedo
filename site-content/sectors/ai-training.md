@@ -5,7 +5,7 @@
 - **Meta description:** Is this run failing, and where? How ORMAS applies in ai training: the failures, the regulation, the buyer, and the limits.
 
 ---
-MARKET
+SECTOR
 
 ## AI Training
 
@@ -137,9 +137,9 @@ Adaptive clipping methods reduce the incidence of spikes. They suppress the symp
 
   The diagnostics run with corrections switched off entirely. The full signal is emitted and the architecture touches nothing. Nobody sensible lets an unproven system modify weights inside a run costing hundreds of thousands of dollars, and the product does not ask them to.
 
-**APPLICATIONS IN SCOPE**
+**FEATURES IN SCOPE**
 
-### 3 of the seven apply here. This is the one to start with.
+### 3 of the seven features apply here. This is the one to start with.
 
 Lead application
 
@@ -167,7 +167,7 @@ Nobody should, and we do not ship one. The alarm exports to wherever the team al
 
 02 — What does the instrumentation cost us in throughput?
 
-The honest answer is that the full system carries a measured overhead of 1.35× on a graph backbone, and that most of it is gradient surgery that monitoring does not need. The read-only path runs none of that. Its wall-clock cost has been characterised as negligible in the paper and has not been separately benchmarked, so it is a measurement we will run against the customer configuration rather than quote.
+The honest answer is that the full system carries a measured overhead of 1.35× on a graph backbone, and that most of it is gradient surgery that monitoring does not need. The read-only path runs none of that. Its wall-clock cost has been characterised as negligible in the technical account and has not been separately benchmarked, so it is a measurement we will run against the customer configuration rather than quote.
 
 03 — This has never been run on a transformer.
 
@@ -211,7 +211,7 @@ The research lead
 
 To know the mechanism is real
 
-383 controlled experiments across four architecture families, the manuscript, and 67 archived run records reproducible from seed. Send them the paper, not the deck.
+383 controlled experiments across four architecture families, the full technical account, and 67 archived run records reproducible from seed. Send them the technical account, not the deck.
 
 Security
 
@@ -225,7 +225,7 @@ Runs inside the customer environment. No hosted tier, no metering, no telemetry 
 
 Nobody has deployed this, and we are not going to imply otherwise. What we can put in front of an evaluation is the following, and most of it needs no contract first.
 
-- The manuscript, in full, with the reproducibility checklist
+- The full technical account, with the reproducibility checklist
 
 - 67 archived run records, each reproducible from seed
 
@@ -267,7 +267,7 @@ Sources
 
 - [Characterization of LLM development in the datacenter](https://arxiv.org/pdf/2403.07648)
 
-Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The paper](/technology) carries the conditions for each.
+Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The technology page](/technology) carries the conditions for each.
 
 [Talk to us about this market](/contact)
 

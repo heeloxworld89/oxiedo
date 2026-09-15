@@ -5,7 +5,7 @@
 - **Meta description:** What changed, and can a validator verify it? How ORMAS applies in regulated finance: the failures, the regulation, the buyer, and the limits.
 
 ---
-MARKET
+SECTOR
 
 ## Regulated Finance
 
@@ -147,9 +147,9 @@ The UK model risk management principles for banks, covering identification, gove
 
 Requires high-risk systems to allow automatic recording of events across their lifetime, with deployers retaining logs for at least six months under Article 26. Credit scoring and creditworthiness assessment fall within Annex III. Under the AI Omnibus, in force 27 July 2026, Annex III obligations apply from 2 December 2027.
 
-**APPLICATIONS IN SCOPE**
+**FEATURES IN SCOPE**
 
-### 6 of the seven apply here. This is the one to start with.
+### 6 of the seven features apply here. This is the one to start with.
 
 Lead application
 
@@ -245,7 +245,7 @@ Nobody has deployed this, and we are not going to imply otherwise. What we can p
 
 - A sample modification record, signed and hashed, with the diff format
 
-- The manuscript and 383 reproducible experiment runs
+- The full technical account and 383 reproducible experiment runs
 
 - A regime-change demonstration on public price history, run on the institution's own definition of a regime
 
@@ -279,7 +279,7 @@ Sources
 
 - [EU AI Act · Article 12, record-keeping](https://artificialintelligenceact.eu/article/12/)
 
-Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The paper](/technology) carries the conditions for each.
+Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.[The technology page](/technology) carries the conditions for each.
 
 [Talk to us about this market](/contact)
 

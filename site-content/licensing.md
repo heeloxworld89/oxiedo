@@ -9,7 +9,7 @@ LICENSING
 
 ## We publish the mechanism. We license the accountability.
 
-Everything that makes the architecture work is released on publication and stays released: the mechanism, the telemetry, the correction system, the paper and all 383 experiments behind it. The manuscript is under peer review; the release follows acceptance and the terms are already fixed. From that day a researcher, a student, a model-risk validator or a regulator can read it, run it, reproduce every result and publish about it, permanently and without asking us. That commitment is why any of this is checkable rather than merely asserted.
+Everything that makes the architecture work is released on publication and stays released: the mechanism, the telemetry, the correction system and all 383 experiments behind it. The terms are already fixed. From that day a researcher, a student, a model-risk validator or a regulator can read it, run it, reproduce every result and publish about it, permanently and without asking us. That commitment is why any of this is checkable rather than merely asserted.
 
 [Read the full licence text](/LICENCE.txt). It is a working draft, published now so a university or an enterprise legal team can clear it before the release lands rather than after.
 
@@ -39,7 +39,7 @@ Deployment
 
 The telemetry channels
 
-All five layers, emitted natively, exactly as the paper describes them.
+All five layers, emitted natively, exactly as the technical record describes them.
 
 Research
 
@@ -53,7 +53,7 @@ Research
 
 Deployment
 
-The paper and every experiment behind it
+The full technical account and every experiment behind it
 
 383 controlled runs, each regenerating from seed, with the reproducibility checklist.
 
@@ -63,7 +63,7 @@ Deployment
 
 Teaching, publishing and independent evaluation
 
-Use it in a course, cite it in a paper, or evaluate our claims against it. No permission needed, and no notification to us.
+Use it in a course, cite it in published work, or evaluate our claims against it. No permission needed, and no notification to us.
 
 Research
 
@@ -151,7 +151,7 @@ Deployment
 
   Free for research, teaching and evaluation. Permanent.
 
-  The architecture, the telemetry, the correction mechanism and every experiment behind them, released in full on publication. The manuscript is under peer review and the release follows acceptance, a commitment written into the licence rather than an intention. From that day a researcher, a student, a model-risk validator or a regulator can run it, reproduce our results, teach from it and publish about it without asking us and without paying us. Evaluation access is available before then under agreement. Production use sits under the deployment licence.
+  The architecture, the telemetry, the correction mechanism and every experiment behind them, released in full on publication, a commitment written into the licence rather than an intention. From that day a researcher, a student, a model-risk validator or a regulator can run it, reproduce our results, teach from it and publish about it without asking us and without paying us. Evaluation access is available before then under agreement. Production use sits under the deployment licence.
 
   Purpose: the mechanism can be checked.
 
@@ -287,7 +287,7 @@ No, and the licence text says so. Free research and teaching access is permanent
 
 #### When does the code become public?
 
-When the review period on the paper closes. Peer review sets that timing, not us, so there is no date on this page. The mechanism is available before then on request: the manuscript and the supplementary material go to serious evaluators who ask.
+Not yet, and there is no date on this page, because the timing is not entirely ours to set. The commitment is in the licence rather than in a blog post. Until then the mechanism is available on request: the full technical account and the supplementary material go to serious evaluators who ask.
 
 #### If we stop paying, do we lose our records?
 

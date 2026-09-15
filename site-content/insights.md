@@ -19,6 +19,6 @@ The substance is not hidden. It is on these three pages.
 
 - [**The technology**The architecture, 383 experiments, the results, and a section on what is not established](/technology)
 
-- [**The markets**Five industries, the regulation driving each, and the sources behind every figure](/sectors)
+- [**The markets**Five sectors, the regulation driving each, and the sources behind every figure](/sectors)
 
 - [**The FAQ**The questions an evaluation actually asks, answered without hedging](/faq)
