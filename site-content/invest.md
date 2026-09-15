@@ -2,7 +2,7 @@
 
 - **URL:** `/invest`
 - **Page title:** Pre-seed: the round and the risks — Oxiedo
-- **Meta description:** Pre-seed, $4.5M, six named milestones. Every regulated training run will soon have to account for itself, and almost none of them can.
+- **Meta description:** Pre-seed, $1.5M, 18 months, six named milestones. Every regulated training run will soon have to account for itself, and almost none of them can.
 
 ---
 INVEST
@@ -15,7 +15,7 @@ The whole thing, in one screen
 - **What exists** — An architecture that reached maturity on 1 August 2026, after three years in which the earlier versions failed their own destruction suite. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.
 - **Why now** — The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.
 - **The moat** — The mechanism publishes on release, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.
-- **The ask** — $4.5M pre-seed, 24 months, six milestones with acceptance criteria. Team $1.8M · compute $1.6M · data partnerships $550K · assurance $350K · operating $200K.
+- **The ask** — $1.5M pre-seed, 18 months, six milestones with acceptance criteria. Team $650K · compute $250K · one dataset partnership $150K · structure and filings $100K · operating $200K · buffer $150K. Sized to the next result rather than to the whole plan, and deliberately below the deep tech band.
 - **The risk** — No revenue, no customers, zero customer conversations. One person. Every result on CIFAR-10 and CIFAR-100. The whole remaining programme is falsifiable for under 30 GPU-hours, which is the fastest way to find out if we are wrong.
 
 The entire field treats attribution as something reconstructed after training. It is not. It is something a network either computes about itself, or does not.
@@ -80,9 +80,9 @@ Every interpretability and observability vendor is built on the premise that att
 
 **THE NUMBER**
 
-### $4.5M, and here is the arithmetic behind it.
+### $1.5M, and here is the arithmetic behind it.
 
-Priced against the market rather than picked. The published H1 2026 benchmarks are below, and every line of the round is costed underneath them at rates anyone can check.
+Priced against the market rather than picked, and priced below it on purpose. The published H1 2026 benchmarks are below, and every line of the round is costed underneath them at rates anyone can check.
 
 Broad pre-seed median
 
@@ -94,7 +94,7 @@ Deep tech and AI infrastructure
 
 $2M–$5M
 
-Raised above the median specifically to cover compute and research.
+Raised above the median, specifically to cover compute.
 
 AI seed median
 
@@ -104,101 +104,103 @@ A 1.3x premium on the broader seed market.
 
 This round
 
-$4.5M
+$1.5M
 
-Top of the deep tech pre-seed band, costed line by line below.
+Deliberately below the deep tech band. The reason is the paragraph under this table.
 
-The pre-seed market in 2026 is a barbell: sub-$250K party rounds at one end, $2.5M+ lead-led rounds at the other. A figure in between is the one position with no natural buyer, and it would also not cover the compute.
+The deep tech band would support a larger number and an earlier version of this page asked for one. It was the wrong ask. A round is sized to the next result, not to the whole plan, and the next result here is a scaling study and one dataset partnership rather than frontier-scale validation. Asking for the frontier figure on a pre-seed track record prices this company against companies that already have customers, which is a comparison it loses.
+
+What comes after, meaning frontier scale, several sectors and the first commercial hires, is a seed round. It should be priced against evidence that exists by then rather than against this page. The consequence is that every milestone below has a cheque size attached to it, so a fellowship, a first institutional cheque and a lead all have somewhere to sit.
 
 **USE OF FUNDS**
 
 ### Six line items. Each one buys down a named risk.
 
-Deep tech is funded against de-risking rather than revenue, so this is set out as risks removed rather than categories of spend. Every item carries an acceptance criterion, because a milestone without acceptance criteria is an intention. Runway is 24 months.
+Deep tech is funded against de-risking rather than revenue, so this is set out as risks removed rather than categories of spend. Every item carries an acceptance criterion, because a milestone without acceptance criteria is an intention. Runway is 18 months.
 
 1. 01
 
-  #### Team
+  #### The second and third person
 
-  Five people, 24 months, fully loaded
+  A co-founder and one research engineer, 18 months, fully loaded
 
-  $1.8M
+  ~$650K
 
   Key-person risk
 
-  A co-founder, two research engineers, a systems engineer to take a research codebase to something an institution can deploy, and an assurance lead who owns the bound. The company is one person. That is not modesty — there is more validated work available right now than one person can execute, and every month of it is being lost.
+  The company is one person. That is the largest single risk on this page and it is the first thing the round removes. A co-founder to carry the commercial and institutional side, which is the half this founder has not done, and one research engineer able to extend the architecture independently rather than execute instructions. Two hires rather than five, because three people who can each work unsupervised is a company, and five people managed by a first-time manager during a scaling study is a different and worse problem.
 
-  Done when — Three people who can independently extend the architecture, and one production implementation with the modification record unified across every code path.
+  Done when — Two people, beyond the founder, each able to extend the architecture or close an institutional conversation without supervision.
 
 2. 02
 
-  #### Compute
+  #### Bounded compute
 
-  800 NVIDIA SXM accelerators, 100 nodes of 8, with NVLink intra-node, 400G InfiniBand fabric, all-flash NVMe. Reserved, not owned. A bounded 4–6 week campaign.
+  32–64 accelerators, a 3–4 week campaign, run twice
 
-  $1.6M
+  ~$250K
 
   Scale risk
 
-  Every result to date runs on CIFAR because that is what one person could afford. The first question any technical evaluator asks is whether the property holds at scale, and it is answerable with hardware and not answerable without it. The requirement is a genuine training fabric rather than a pile of cards: 100 eight-GPU nodes on NVLink, joined by 400G InfiniBand, with flash on the same fabric — the bottleneck in a bounded-attribution run is interconnect, not FLOPs. It is rented and released. Buying 800 accelerators is roughly $30M of hardware before power, and holding them idle is the most common way a round this size disappears with nothing attached to it.
+  Every result to date runs on CIFAR, because that is what one person could afford. This does not buy frontier scale and the page will not pretend otherwise. It buys the answer to whether bounded attribution survives well beyond the regime it was demonstrated in, on real model sizes and a transformer backbone, with the adversarial suite the current architecture was hardened against. Two campaigns rather than one: the first returns a result, the second answers what the first raises. Reserved and released, never standing, because idle accelerators are the most common way a round this size disappears with nothing attached to it.
 
-  Done when — Bounded attribution demonstrated at frontier parameter counts, on the same adversarial suite the current architecture was hardened against, with every run reproducible from seed.
+  Done when — Bounded attribution demonstrated on a transformer backbone at a model size well beyond CIFAR, every run reproducible from seed, and the overhead figure measured rather than estimated.
 
 3. 03
 
-  #### Data partnerships
+  #### One dataset partnership
 
-  Three to five non-exclusive regulated datasets, $50K–$500K each, plus the legal work around them
+  A single non-exclusive regulated corpus, plus the legal work around it
 
-  $550K
+  ~$150K
 
   Domain risk
 
-  No clinical, biological, financial or defence data has ever touched this system, and one partnership does not fix that. A property demonstrated on a single dataset is a coincidence until it holds across sectors. This funds several in parallel, plus the data use agreements, ethics approvals and custodian assurance work that gate each one. Healthcare AI developers spend an average of $2.4M a year on licensed data; the ask here is deliberately at the non-exclusive end.
+  No clinical, biological, financial or defence data has ever touched this system, and that is the binding constraint on the entire thesis. One partnership, not three. A property demonstrated on one regulated corpus is not yet proof it generalises across sectors, and claiming otherwise would be the same overreach this page exists to avoid. What it does establish is that a custodian released data to this architecture, which is the single fact no amount of further CIFAR work can produce.
 
-  Done when — Three signed dataset partnerships across at least two regulated sectors, and the property demonstrated on data carrying a real obligation.
+  Done when — One signed partnership with a custodian holding data under a real obligation, and the property demonstrated on that data.
 
 4. 04
 
-  #### Assurance, certification and IP
+  #### Structure and filings
 
-  Delaware C-corp conversion, SOC 2 Type II, ISO 27001, EU Article 27 representation, patent filings
+  Delaware conversion, EU Article 27 representation, priority patent filings
 
-  $350K
+  ~$100K
 
-  Procurement and structural risk
+  Structural risk
 
-  Every one of these is a gate rather than an ornament. The Delaware conversion has to complete before a US institutional round can close into it. SOC 2 is a procurement baseline in 2026 rather than a differentiator. An EU Article 27 representative is a legal requirement for a UK company offering services to EU data subjects. And the programme extending the architecture cannot be published until it is protected. None of this is optional and all of it has a lead time measured in months.
+  Gates rather than ornaments. The Delaware conversion has to complete before a US institutional round can close into the company at all. An EU Article 27 representative is a legal requirement for a UK entity offering services to EU data subjects. And the programme extending the architecture cannot be published until it is protected. SOC 2 and ISO 27001 are deliberately not in this round: they are procurement gates for a company with customers, and this one does not have customers yet.
 
-  Done when — Delaware C-corporation incorporated and the round able to close into it, SOC 2 Type II held, EU representation appointed, and priority filings made.
+  Done when — Delaware C-corporation incorporated and able to receive institutional capital, EU representation appointed, priority filings made.
 
 5. 05
 
-  #### Calibrating the bound
-
-  The asset a reimplementation does not come with
-
-  Within compute and team
-
-  Commercial risk
-
-  What an institution licenses is not the architecture, which is released on publication and free to copy from that day. It is a calibrated bound and a counterparty who will stand behind it in a filing. Calibration is accumulated runs, adversarial testing and failure history — it is bought with the compute and the people above, and it is the single line on this page that compounds.
-
-  Done when — A published calibration methodology and a bound an external validator can independently verify.
-
-6. 06
-
   #### Operating
 
-  24 months of everything else
+  18 months of everything else, including the relocation
 
-  $200K
+  ~$200K
 
   Runway risk
 
-  Insurance, tooling, accounting, the San Francisco relocation, and the contingency any honest budget carries. Listed rather than folded into another line, because a use-of-funds with no operating line has simply hidden it somewhere else.
+  Insurance, tooling, accounting, legal outside the filings above, and the San Francisco relocation. Listed rather than folded into another line, because a use-of-funds with no operating line has simply hidden it somewhere else.
 
-  Done when — 24 months of runway with the milestones above met inside it.
+  Done when — 18 months of runway with every milestone above met inside it.
+
+6. 06
+
+  #### Buffer
+
+  Ten percent, unallocated and named as such
+
+  ~$150K
+
+  Estimation risk
+
+  Held against the thing that has not been thought of. A scaling study that returns an unexpected result costs a third campaign; a dataset partner whose legal process runs six months longer than planned costs runway. Naming the buffer is the alternative to padding every line above it by ten percent and calling the total a budget.
+
+  Done when — Unspent, or spent against a decision written down at the time.
 
 **CAPITAL DISCIPLINE**
 
@@ -220,7 +222,11 @@ The buyers are a few hundred institutions worldwide and they are reachable by na
 
 #### Exclusive data deals
 
-Exclusive refreshed regulated data runs $500K–$5M a year and would consume the round. Non-exclusive datasets prove the same property at a tenth of the price.
+Exclusive refreshed regulated data runs $500K–$5M a year and would consume the round several times over. One non-exclusive corpus proves the property that matters.
+
+#### Certification before customers
+
+SOC 2 Type II and ISO 27001 are procurement gates for a company with a pipeline. Buying them now would be spending a fifth of the round to pass an exam nobody has set yet.
 
 **THE LADDER**
 
@@ -246,15 +252,21 @@ Exclusive refreshed regulated data runs $500K–$5M a year and would consume the
 
 - LIVE
 
-  #### Does it hold at scale
+  #### Does it hold beyond CIFAR
 
-  Live. This is what the compute in this round buys, and it is falsifiable for under 30 GPU-hours.
+  Live. This is what the compute in this round buys, on a transformer backbone, and the weak form of it is falsifiable for under 30 GPU-hours.
+
+- LIVE
+
+  #### Does it hold at frontier scale
+
+  Open, and not what this round claims to answer. That is the result the round after this one is priced against.
 
 - LIVE
 
   #### Does it hold on regulated data
 
-  Live. Requires a dataset partner, which is the first line item after compute.
+  Live. Requires one dataset partner, which is the third line item in this round.
 
 - LIVE
 
@@ -278,7 +290,7 @@ Under adversarial weight injection the architecture is 1.0 pp worse than a param
 
 #### Key-person risk is total.
 
-One person wrote all of it. That is the first thing this round is spent on, and it is the reason the round exists at this size rather than a smaller one.
+One person wrote all of it. It is the first line item in the round and the largest, at roughly 43 percent, and it buys two people rather than five because three who can each work unsupervised is a company.
 
 #### You are giving the mechanism away.
 
@@ -318,9 +330,9 @@ What goes in front of an investor
 
 **THE ASK**
 
-### $4.5M pre-seed, 24 months of runway, six named milestones.
+### $1.5M pre-seed, 18 months of runway, six named milestones.
 
-Oxiedo is founder-owned and incorporating as a Delaware C-corporation alongside the move to San Francisco, so the round closes into the structure US institutional investors require rather than one they would ask us to change first. The conversion is the first line of the assurance budget above for exactly that reason. We are open to conversations ahead of a priced round and are looking for a lead rather than a party round, because the milestones above need someone still in the room at the next one.
+Oxiedo is founder-owned and incorporating as a Delaware C-corporation alongside the move to San Francisco, so the round closes into the structure US institutional investors require rather than one they would ask us to change first. The conversion is the first thing the structure and filings line above pays for, for exactly that reason. We are open to conversations ahead of a priced round and are looking for a lead rather than a party round, because the milestones above need someone still in the room at the next one.
 
 The investor this suits backs technical risk that has already been measured rather than technical risk that is still a hypothesis, and is unbothered by a regulated go-to-market where the timetable is legislated and the sales cycle is long. The window is not closing because we say so. It closes on 2 December 2027, when the first obligations apply, and an architecture cannot be retrofitted into a model that has already been trained.
 
