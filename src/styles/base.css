@@ -117,8 +117,15 @@ a {
 
 /* Buttons are excluded. .btn--primary sets its label colour at (0,1,0) and its own :hover rule
    only sets `filter`, so a bare `a:hover` at (0,1,1) outranked it and repainted the label
-   --accent-mid on the indigo fill: 1.17:1, effectively invisible. Buttons own their colours. */
-a:not(.btn):hover {
+   --accent-mid on the indigo fill: 1.17:1, effectively invisible. Buttons own their colours.
+
+   .nav-link is excluded for exactly the same reason, found 2026-09-18. The current page's nav
+   item is a dark pill with --text-on-dark at 15.49:1. This rule is (0,2,1) and
+   .nav-link[aria-current='page'] is (0,2,0), so hovering the page you are already on repainted
+   the label --accent-mid on --bg-dark: 1.90:1, effectively invisible. The note above predicted
+   this class of failure for buttons and the nav was missed; the nav sets its own hover colour
+   and must own it, as the comment at the top of this block already says it does. */
+a:not(.btn):not(.nav-link):hover {
 	color: var(--accent-mid);
 }
 

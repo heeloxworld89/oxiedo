@@ -10339,14 +10339,6 @@ main > section:last-child.band--dark {
 
 /* THE REPLAY SECTION on the home page. Added 2026-09-17.
    ------------------------------------------------------------ */
-.replay-home-intro {
-	max-width: 62ch;
-	font-size: var(--text-body);
-	line-height: var(--lh-body);
-	color: var(--text-secondary);
-	margin-bottom: var(--space-lg);
-}
-
 .replay-home-note {
 	margin-top: var(--space-md);
 	font-size: var(--text-small);

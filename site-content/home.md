@@ -227,6 +227,34 @@ ORMAS is licensed as a single architecture, deployed on customer infrastructure.
 
 [See the product in full](/product)
 
+**SEE IT**
+
+### What that account looks like while it is being written.
+
+Two networks of identical shape, trained on the same data with the same objective. At epoch 101 two convolutional stages are destroyed in both. One sits at chance level for the rest of the run and cannot say why; the other names both damaged components two steps later and recovers. Nothing computes here — every figure is read from the run's own telemetry, and the run identifier and seed are on screen.
+
+The same network, twice. One sealed, one open.
+
+Loading the archived run…
+
+- Field: Epoch
+
+epoch 0 / 199
+
+Test accuracy · both arms, one axis
+
+Correction ledger · written during training
+
+What each one can answer, at this epoch
+
+The question Standard CNN ORMAS
+
+##### The record
+
+Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
+
+[Why the black box is not a law of deep learning](/demo) — the argument in full, with three further scenarios including the one where this architecture measures worse than the baseline.
+
 A frontier run fails at 60 percent · current practice
 
 The loss curve reports degradation around step 40,000. It cannot identify the component responsible, because no such quantity was ever computed. The run therefore restarts from the last clean checkpoint without a diagnosis, and the same compute is purchased twice. At frontier scale that is thousands of GPU-hours spent returning to a position already held.
@@ -474,34 +502,6 @@ Trained on one task, then another, with no replay buffer and no task identifier.
 A fifty-node network at 30% label noise across 200 epochs. Standard training returned NaN and stopped. ORMAS stayed stable, and every one of those corrections is on the record with its component, magnitude and limit.
 
 383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and the one result that went against us.
-
-**THE RECORD, REPLAYED**
-
-### The first of those results, as it was recorded.
-
-Two parameter-matched networks, trained identically. At epoch 101 two convolutional stages are destroyed. One sits at chance level for the rest of the run and cannot say why; the other names both damaged components two steps later and recovers. Nothing is computed here — every value is the value recorded during that run.
-
-The same network, twice. One sealed, one open.
-
-Loading the archived run…
-
-- Field: Epoch
-
-epoch 0 / 199
-
-Test accuracy · both arms, one axis
-
-Correction ledger · written during training
-
-What each one can answer, at this epoch
-
-The question Standard CNN ORMAS
-
-##### The record
-
-Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
-
-[The full replay](/demo) carries three further scenarios, including the one where this architecture measures worse than the baseline.
 
 **PRE-BOOKING**
 
