@@ -2,7 +2,7 @@
 
 - **URL:** `/product/separator`
 - **Page title:** The Separator: isolating what a data source taught — Oxiedo
-- **Meta description:** Separates what a model learned about the world from what it learned about where the data came from. One model ships and works anywhere, carrying a named removable part for each source and a record of the data that justified each. One architecture, one licence. The Separator is how this capability is used, not a separate product.
+- **Meta description:** Which part of this is the source, not the signal? The Separator is one of the seven features of ORMAS, under one architecture and one licence.
 
 ---
 AN APPLICATION OF ORMAS

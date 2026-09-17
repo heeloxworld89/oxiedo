@@ -2,7 +2,7 @@
 
 - **URL:** `/sectors/regulated-finance`
 - **Page title:** Regulated finance: model risk under SR 26-2 — Oxiedo
-- **Meta description:** What changed, and can a validator verify it? How ORMAS applies in regulated finance: the failures, the regulation, the buyer, and the limits.
+- **Meta description:** What changed, and can a validator verify it? How ORMAS applies in regulated finance: the failures, the regulation, and the limits.
 
 ---
 SECTOR

@@ -2,7 +2,7 @@
 
 - **URL:** `/sectors/medical-ai`
 - **Page title:** Medical AI: PCCP evidence for models that update — Oxiedo
-- **Meta description:** Which site caused this, and can we show it? How ORMAS applies in medical ai: the failures, the regulation, the buyer, and the limits.
+- **Meta description:** Which site caused this, and can we show it? How ORMAS applies in medical ai: the failures, the regulation, and the limits.
 
 ---
 SECTOR

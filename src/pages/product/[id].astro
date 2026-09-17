@@ -92,7 +92,11 @@ const seoTitle: Record<string, string> = {
 };
 ---
 
-<Page title={seoTitle[feature.id] ?? feature.name} description={`${feature.summary} One architecture, one licence. ${feature.name} is how this capability is used, not a separate product.`}>
+<Page
+	title={seoTitle[feature.id] ?? feature.name}
+	description={`${feature.question} ${feature.name} is one of the seven features of ORMAS, under one architecture and one licence.`.slice(0, 155)}
+	breadcrumbs={[{ name: 'Product', path: '/product' }, { name: feature.name, path: `/product/${feature.id}` }]}
+>
 	<PageBanner
 		eyebrow="AN APPLICATION OF ORMAS"
 		title={feature.name}

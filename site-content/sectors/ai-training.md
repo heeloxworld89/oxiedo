@@ -2,7 +2,7 @@
 
 - **URL:** `/sectors/ai-training`
 - **Page title:** AI training: diagnosing runs that fail silently — Oxiedo
-- **Meta description:** Is this run failing, and where? How ORMAS applies in ai training: the failures, the regulation, the buyer, and the limits.
+- **Meta description:** Is this run failing, and where? How ORMAS applies in ai training: the failures, the regulation, and the limits.
 
 ---
 SECTOR

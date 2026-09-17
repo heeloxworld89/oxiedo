@@ -2,9 +2,18 @@
 User-agent: *
 Allow: /
 
-# Kept out of the index deliberately, and matched by a noindex tag on the pages themselves:
-# /press until outreach begins, /404 because a soft-404 in search results helps nobody.
-Disallow: /press
-Disallow: /404
+# NOTHING IS DISALLOWED HERE, DELIBERATELY.
+#
+# /404 is kept out of the index by the meta noindex tag on the page itself plus the 404 status
+# code it is served with. It is NOT listed below, because a path blocked in robots.txt is never
+# crawled, so its noindex tag is never read, and Google can still surface a bare URL for it.
+# One mechanism or the other, never both.
+#
+# The `Noindex:` robots.txt directive is not an option: Google stopped honouring it in
+# September 2019 and it has been a no-op ever since.
+#
+# /press was Disallow-ed until 2026-09-17 and is now open. It carries the fast facts a
+# journalist, a grant reviewer or an accelerator looks for, and keeping it out of search
+# served nobody.
 
 Sitemap: https://oxiedo.com/sitemap.xml

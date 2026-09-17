@@ -2,7 +2,7 @@
 
 - **URL:** `/technology`
 - **Page title:** The ORMAS architecture, and 383 experiments — Oxiedo
-- **Meta description:** How a bounded gradient chain makes a network account for what it took from each source of data. Three signals, five telemetry layers, 383 controlled experiments, and what is not yet established.
+- **Meta description:** How a bounded gradient chain makes a network account for what it took from each source of data. 383 controlled experiments, and what is not yet established.
 
 ---
 THE TECHNOLOGY

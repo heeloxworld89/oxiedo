@@ -2,7 +2,7 @@
 
 - **URL:** `/sectors/defense-safety-critical`
 - **Page title:** Safety-critical AI: accounting for self-change — Oxiedo
-- **Meta description:** What did the system do to itself in the field? How ORMAS applies in defense & safety-critical: the failures, the regulation, the buyer, and the limits.
+- **Meta description:** What did the system do to itself in the field? How ORMAS applies in defense & safety-critical: the failures, the regulation, and the limits.
 
 ---
 SECTOR

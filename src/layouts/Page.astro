@@ -8,12 +8,14 @@ export interface Props {
 	title: string;
 	description?: string;
 	indexable?: boolean;
+	breadcrumbs?: Array<{ name: string; path: string }>;
+	schema?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
 
-const { title, description, indexable } = Astro.props;
+const { title, description, indexable, breadcrumbs, schema } = Astro.props;
 ---
 
-<Base title={title} description={description} indexable={indexable}>
+<Base title={title} description={description} indexable={indexable} breadcrumbs={breadcrumbs} schema={schema}>
 	<a href="#main-content" class="skip-link">Skip to content</a>
 	<Nav />
 	<main id="main-content">

@@ -19,11 +19,15 @@ export interface Props {
 	title: string;
 	/** One sentence, 50–160 chars. Shown in search results and on every shared link. */
 	description?: string;
-	/** Set false on /press and /404 so they stay out of the index. */
+	/** Set false on /404 so it stays out of the index. */
 	indexable?: boolean;
+	/** Trail for BreadcrumbList schema. Mirror whatever PageBanner renders visually, minus Home. */
+	breadcrumbs?: Array<{ name: string; path: string }>;
+	/** Any additional JSON-LD entity for this page. Merged into the same @graph. */
+	schema?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
 
-const { title, description, indexable = true } = Astro.props;
+const { title, description, indexable = true, breadcrumbs, schema } = Astro.props;
 
 // SITE — confirmed by the founder 2026-09-08: oxiedo.com is owned. Canonicals, Open Graph URLs
 // and the sitemap are all built from this, and src/pages/sitemap.xml.ts holds the same constant —
@@ -50,6 +54,26 @@ const orgLd = {
 	// sameAs is how a search engine ties the account to the company. One account, one entry.
 	sameAs: ['https://x.com/oxiedo_ai'],
 };
+
+// EVERY JSON-LD ENTITY GOES IN ONE @graph, not in several <script> blocks. Separate blocks are
+// parsed as unrelated entities, so a crawler has no way to know the breadcrumb belongs to the
+// same page as the organisation. A graph with @id references states the relationship outright.
+const breadcrumbLd = breadcrumbs?.length
+	? {
+			'@type': 'BreadcrumbList',
+			itemListElement: [{ name: 'Home', path: '/' }, ...breadcrumbs].map((b, i) => ({
+				'@type': 'ListItem',
+				position: i + 1,
+				name: b.name,
+				item: new URL(b.path, SITE).href,
+			})),
+		}
+	: null;
+
+const graph = [orgLd, breadcrumbLd, ...(Array.isArray(schema) ? schema : schema ? [schema] : [])]
+	.filter(Boolean)
+	.map((e) => ({ ...(e as Record<string, unknown>) }));
+const pageLd = { '@context': 'https://schema.org', '@graph': graph };
 ---
 
 <!doctype html>
@@ -95,7 +119,7 @@ const orgLd = {
 		<meta name="twitter:description" content={desc} />
 		<meta name="twitter:image" content={ogImage} />
 
-		<script type="application/ld+json" set:html={JSON.stringify(orgLd)} is:inline />
+		<script type="application/ld+json" set:html={JSON.stringify(pageLd)} is:inline />
 		<ClientRouter />
 		<link rel="preload" href="/fonts/Fraunces-Variable.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/PlusJakartaSans-Regular.woff2" as="font" type="font/woff2" crossorigin />

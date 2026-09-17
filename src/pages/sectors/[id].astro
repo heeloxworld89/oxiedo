@@ -68,7 +68,11 @@ const seoTitle: Record<string, string> = {
 };
 ---
 
-<Page title={seoTitle[sector.id] ?? sector.name} description={`${sector.question} How ORMAS applies in ${sector.name.toLowerCase()}: the failures, the regulation, the buyer, and the limits.`}>
+<Page
+	title={seoTitle[sector.id] ?? sector.name}
+	description={`${sector.question} How ORMAS applies in ${sector.name.toLowerCase()}: the failures, the regulation, and the limits.`.slice(0, 155)}
+	breadcrumbs={[{ name: 'Sectors', path: '/sectors' }, { name: sector.name, path: `/sectors/${sector.id}` }]}
+>
 	<PageBanner
 		eyebrow="SECTOR"
 		title={sector.name}

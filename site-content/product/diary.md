@@ -2,7 +2,7 @@
 
 - **URL:** `/product/diary`
 - **Page title:** The Diary: a causal record written during training — Oxiedo
-- **Meta description:** Produces a signed, timestamped record of every modification made during training: the component, the diagnosis, the treatment, the step, and the limit it remained inside. Diffable against the last approved version. One architecture, one licence. The Diary is how this capability is used, not a separate product.
+- **Meta description:** What did the model do to itself, and when? The Diary is one of the seven features of ORMAS, under one architecture and one licence.
 
 ---
 AN APPLICATION OF ORMAS

@@ -2,7 +2,7 @@
 
 - **URL:** `/product/update-engine`
 - **Page title:** The Update Engine: retraining inside a bound — Oxiedo
-- **Meta description:** Retrains a deployed model inside a limit declared and signed beforehand, and produces the evidence that every change stayed inside it. Built to the shape of a predetermined change control plan. One architecture, one licence. The Update Engine is how this capability is used, not a separate product.
+- **Meta description:** What is this model allowed to change about itself? The Update Engine is one of the seven features of ORMAS, under one architecture and one licence.
 
 ---
 AN APPLICATION OF ORMAS

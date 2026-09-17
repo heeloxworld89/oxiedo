@@ -31,7 +31,7 @@ Five sectors. One question about data, asked five ways.
 
 Nothing in a standard network can answer any of them. Not because a standard network is opaque, but because no part of it can be named.
 
-#### What that costs today
+What that costs today
 
 - **$15M** — Of computing burned on one training run that failed.
 - **419** — Times that run stopped in 54 days. Nobody knew why.
@@ -42,7 +42,7 @@ Published figures · one per industry
 
 > One primitive · six capabilities · seven features · five sectors
 
-#### What replaces it
+What replaces it
 
 - **Keep the run** — Names the component that failed, so it is repaired rather than the run rerun.
 - **No mystery** — Every stop arrives with its cause named, not a guess.

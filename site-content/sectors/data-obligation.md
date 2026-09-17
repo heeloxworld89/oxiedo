@@ -2,7 +2,7 @@
 
 - **URL:** `/sectors/data-obligation`
 - **Page title:** Data obligation: deletion evidence for AI models — Oxiedo
-- **Meta description:** What data is in here, and can I remove it? How ORMAS applies in data obligation: the failures, the regulation, the buyer, and the limits.
+- **Meta description:** What data is in here, and can I remove it? How ORMAS applies in data obligation: the failures, the regulation, and the limits.
 
 ---
 SECTOR

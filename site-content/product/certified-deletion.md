@@ -2,7 +2,7 @@
 
 - **URL:** `/product/certified-deletion`
 - **Page title:** Certified Deletion: signed removal from a model — Oxiedo
-- **Meta description:** Removes a named source's contribution and issues a signed certificate of exactly what was removed, with a bounded statement of what changed, and without retraining. One architecture, one licence. Certified Deletion is how this capability is used, not a separate product.
+- **Meta description:** What data is in here, and can I remove it? Certified Deletion is one of the seven features of ORMAS, under one architecture and one licence.
 
 ---
 AN APPLICATION OF ORMAS

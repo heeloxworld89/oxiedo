@@ -2,7 +2,7 @@
 
 - **URL:** `/product/proofreader`
 - **Page title:** The Proofreader: finding mislabelled training data — Oxiedo
-- **Meta description:** Attaches to an already-trained model without modifying it and returns a ranked list of labels judged incorrect, held separate from those that are merely difficult. Broken down by class, and by source where the corpus carries one. One architecture, one licence. The Proofreader is how this capability is used, not a separate product.
+- **Meta description:** Which samples are damaging which component? The Proofreader is one of the seven features of ORMAS, under one architecture and one licence.
 
 ---
 AN APPLICATION OF ORMAS

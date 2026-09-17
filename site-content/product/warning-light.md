@@ -2,7 +2,7 @@
 
 - **URL:** `/product/warning-light`
 - **Page title:** The Warning Light: naming the component that failed — Oxiedo
-- **Meta description:** Watches every component of a model while it trains and raises an alarm when one crosses its own baseline, naming the component rather than the run. The operator rolls back hundreds of steps instead of thousands. One architecture, one licence. The Warning Light is how this capability is used, not a separate product.
+- **Meta description:** Is this run failing, and where? The Warning Light is one of the seven features of ORMAS, under one architecture and one licence.
 
 ---
 AN APPLICATION OF ORMAS

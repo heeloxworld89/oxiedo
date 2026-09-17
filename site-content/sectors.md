@@ -2,7 +2,7 @@
 
 - **URL:** `/sectors`
 - **Page title:** Five sectors, one architecture — Oxiedo
-- **Meta description:** Every sector that holds data asks the same question in its own vocabulary: what did this model take from it, and can that be proven? These five are where the answer is worth the most.
+- **Meta description:** Every sector holding data asks one question: what did this model take from it, and can that be proven? These five are where the answer is worth the most.
 
 ---
 FIVE MARKETS

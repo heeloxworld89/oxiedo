@@ -2,7 +2,7 @@
 
 - **URL:** `/product/federated-node`
 - **Page title:** The Federated Node: per-party attribution — Oxiedo
-- **Meta description:** Runs inside an existing federation. Each party's contribution is recorded before the averaging step destroys it, so a round that drops six points can be attributed to a site. One architecture, one licence. The Federated Node is how this capability is used, not a separate product.
+- **Meta description:** Can we train together without pooling the data? The Federated Node is one of the seven features of ORMAS, under one architecture and one licence.
 
 ---
 AN APPLICATION OF ORMAS

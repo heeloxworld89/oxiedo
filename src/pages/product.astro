@@ -25,6 +25,28 @@ import ChainDiagram from '../components/ChainDiagram.astro';
 import { features } from '../data/features';
 import { sectors } from '../data/sectors';
 
+const ormasLd = {
+	'@type': 'SoftwareApplication',
+	name: 'ORMAS',
+	alternateName: 'Orchestrated Repair and Monitoring with Architectural Self-correction',
+	applicationCategory: 'DeveloperApplication',
+	applicationSubCategory: 'Machine learning training architecture',
+	operatingSystem: 'Linux',
+	description:
+		'A neural network training architecture that records what a model took from each source of data as it trains, so data locked by regulation and contract becomes data an institution can defensibly train on.',
+	url: 'https://oxiedo.com/product',
+	author: { '@type': 'Organization', name: 'Oxiedo' },
+	offers: {
+		'@type': 'Offer',
+		category: 'Annual deployment licence, per institution',
+		priceSpecification: {
+			'@type': 'PriceSpecification',
+			description: 'Agreed per institution and written into the contract. No price list.',
+		},
+	},
+};
+
+
 // The breadth of the product, as concrete capabilities rather than abstractions. Every line is a
 // property the architecture has today, stated in the register of somebody who has to deploy and
 // answer for it rather than build it.
@@ -65,7 +87,12 @@ const marketsFor = (id: string) => sectors.filter((s) => s.features.includes(id)
 const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
 ---
 
-<Page title="ORMAS: one product, seven features" description={"One architecture, one licence, seven features. Every model it trains arrives with a record of what it took from each source of data."}>
+<Page
+	title="ORMAS: one product, seven features"
+	description="One architecture, one licence, seven features. Every model it trains arrives with a record of what it took from each source of data."
+	breadcrumbs={[{ name: 'Product', path: '/product' }]}
+	schema={ormasLd}
+>
 	<PageBanner
 		eyebrow="THE PRODUCT"
 		title="One product, with one job: make data usable that cannot be used today."
