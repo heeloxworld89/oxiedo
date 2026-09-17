@@ -87,6 +87,16 @@ const pageLd = { '@context': 'https://schema.org', '@graph': graph };
 		<link rel="canonical" href={canonical} />
 		{!indexable && <meta name="robots" content="noindex, follow" />}
 
+		{/* SEARCH ENGINE OWNERSHIP VERIFICATION. These prove control of the domain to a webmaster
+		    console; they are not ranking signals and they carry no script. They sit in the shared
+		    layout rather than on index.astro alone because a console re-checks periodically and
+		    will re-verify against any page it happens to crawl.
+
+		    Google is verified by DNS TXT on the apex instead, which covers www, non-www, http and
+		    https in one property. Do not remove these once verified: the console drops the
+		    property when the token disappears. */}
+		<meta name="msvalidate.01" content="FBC421207EE5371613CEF15DCE90B7F7" />
+
 {/* ICONS. There were none before this: favicon.svg was a 0-byte placeholder and /icons was
 		    empty, so every browser fell through to a 404 on /favicon.ico and drew a blank page.
 		    The mark is a raster render — brushed metal, bevelled edges — so there is no SVG icon:
