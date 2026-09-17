@@ -5,7 +5,7 @@
 - **Meta description:** Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running.
 
 ---
-**THE BLACK BOX**
+THE BLACK BOX
 
 ## Opacity is not a law of deep learning. It is a consequence of one decision.
 

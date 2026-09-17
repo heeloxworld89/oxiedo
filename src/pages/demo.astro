@@ -34,6 +34,7 @@
 // the first five minutes, answered before they are asked, with the two limits
 // first.
 import Page from '../layouts/Page.astro';
+import PageBanner from '../components/PageBanner.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Accordion from '../components/Accordion.astro';
 import ReplayDemo from '../components/ReplayDemo.astro';
@@ -171,9 +172,13 @@ const obligations = [
 	breadcrumbs={[{ name: 'The black box', path: '/demo' }]}
 	ogImagePath={cardPath}
 >
+	<PageBanner
+		eyebrow="THE BLACK BOX"
+		title="Opacity is not a law of deep learning. It is a consequence of one decision."
+		trail={[{ label: 'Home', href: '/' }, { label: 'The black box' }]}
+	/>
+
 	<section class="section container">
-		<Eyebrow>THE BLACK BOX</Eyebrow>
-		<h1>Opacity is not a law of deep learning. It is a consequence of one decision.</h1>
 		<p class="demo-lede">
 			Every error signal in a standard neural network reaches every parameter on every step.
 			That property is the source of a network's capability, and it is also why nothing inside

@@ -425,6 +425,7 @@ const SCENARIOS = [
 				engine.seekEpoch(0);
 			}
 			setPlayLabel();
+			maybeAutoStart();   // the observer may already have fired
 		}
 
 		btnPlay.addEventListener('click', () => { engine?.toggle(); setPlayLabel(); });
@@ -458,6 +459,7 @@ const SCENARIOS = [
 		});
 		select?.addEventListener('change', () => {
 			root.dataset.openRecord = 'false';
+			autoStarted = false;   // a chosen scenario should run, not wait
 			load(select.value);
 			const u = new URL(location.href);
 			u.searchParams.set('scenario', select.value);
@@ -498,9 +500,36 @@ const SCENARIOS = [
 			panel.hidden = false;
 		});
 
+		// The replay starts itself the first time it is properly on screen. A demo
+		// that waits to be pressed is a demo most readers scroll past: on the home
+		// page especially, this section IS the argument and the play button is one
+		// more thing to not do.
+		//
+		// Once only, so scrolling back up does not restart a run mid-way and lose
+		// the reader's place; never under reduced motion; and never in the mode
+		// that opens straight on the record, where the run is already over.
+		// The observer fires once on observe(), which can be BEFORE the bundle has
+		// finished loading and the engine exists. So intersection is recorded as
+		// state and the decision is taken from two places — whichever of the two
+		// happens second wins, and neither can miss the other.
+		let autoStarted = false;
+		let inView = false;
+
+		function maybeAutoStart() {
+			if (autoStarted || reduced) return;
+			if (root.dataset.openRecord === 'true') return;
+			if (!inView || !engine || engine.isPlaying) return;
+			autoStarted = true;
+			engine.seekEpoch(0);
+			engine.play();
+			setPlayLabel();
+		}
+
 		const io = new IntersectionObserver((entries) => {
-			if (!(entries[0]?.isIntersecting ?? true)) { engine?.pause(); setPlayLabel(); }
-		}, { threshold: 0.15 });
+			inView = entries[0]?.isIntersecting ?? true;
+			if (!inView) { engine?.pause(); setPlayLabel(); return; }
+			maybeAutoStart();
+		}, { threshold: 0.4 });
 		io.observe(root);
 
 		const onVisibility = () => {
