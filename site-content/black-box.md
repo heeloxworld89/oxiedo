@@ -1,6 +1,6 @@
 # The black box is not a law of nature
 
-- **URL:** `/demo`
+- **URL:** `/black-box`
 - **Page title:** The black box is not a law of nature — Oxiedo
 - **Meta description:** Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running.
 

@@ -18,7 +18,7 @@ const routes: Array<{ path: string; priority: number }> = [
 	{ path: '/', priority: 1.0 },
 	{ path: '/product', priority: 0.9 },
 	{ path: '/technology', priority: 0.9 },
-	{ path: '/demo', priority: 0.8 },
+	{ path: '/black-box', priority: 0.8 },
 	{ path: '/sectors', priority: 0.8 },
 	{ path: '/licensing', priority: 0.8 },
 	{ path: '/invest', priority: 0.8 },

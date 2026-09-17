@@ -253,7 +253,7 @@ Nobody has deployed this, and we are not going to imply otherwise. What we can p
 
 - Evaluation access to the mechanism itself, inspectable without a contract or a clearance
 
-The first two of those are on the page now, from an archived run:[the alarm output and the record it writes](/demo?scenario=adversarial), with the run identifier and seed on screen.
+The first two of those are on the page now, from an archived run:[the alarm output and the record it writes](/black-box?scenario=adversarial), with the run identifier and seed on screen.
 
 Not a fit where
 

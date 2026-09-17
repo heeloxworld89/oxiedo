@@ -44,9 +44,9 @@ import ReplayDemo from '../components/ReplayDemo.astro';
 // og:image at it only once the PNG actually exists: a card URL that 404s is
 // worse than the site default, because the link then previews as nothing at all.
 // Resolved at build time by Vite, so no filesystem types are needed.
-const cards = import.meta.glob('/public/demo/cards/*.png');
+const cards = import.meta.glob('/public/black-box/cards/*.png');
 const cardPath = Object.keys(cards).some((k) => k.endsWith('dead-layer-lesion.png'))
-	? '/demo/cards/dead-layer-lesion.png'
+	? '/black-box/cards/dead-layer-lesion.png'
 	: undefined;
 
 const objections = [
@@ -169,7 +169,7 @@ const obligations = [
 <Page
 	title="The black box is not a law of nature"
 	description="Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running."
-	breadcrumbs={[{ name: 'The black box', path: '/demo' }]}
+	breadcrumbs={[{ name: 'The black box', path: '/black-box' }]}
 	ogImagePath={cardPath}
 >
 	<PageBanner

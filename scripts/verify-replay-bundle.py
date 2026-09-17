@@ -13,7 +13,7 @@ import json
 import sys
 from pathlib import Path
 
-RUNS = Path(__file__).resolve().parent.parent / "public" / "demo" / "runs"
+RUNS = Path(__file__).resolve().parent.parent / "public" / "black-box" / "runs"
 
 failures: list[str] = []
 checks = 0

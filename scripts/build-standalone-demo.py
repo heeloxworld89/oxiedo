@@ -8,7 +8,7 @@ no access to anything of ours.
 
     npm run build && python3 scripts/build-standalone-demo.py
 
-Writes  dist/demo-standalone.html
+Writes  dist/black-box-standalone.html
 
 Why a separate artefact rather than a link to the site: the people this is sent
 to — an investor, a journalist, a model-risk function — frequently cannot reach
@@ -24,8 +24,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
-SRC = DIST / "demo" / "index.html"
-OUT = DIST / "demo-standalone.html"
+SRC = DIST / "black-box" / "index.html"
+OUT = DIST / "black-box-standalone.html"
 SITE = "https://oxiedo.com"
 
 
@@ -100,7 +100,7 @@ def strip_head_noise(html: str) -> str:
 
 
 def embed_bundles(html: str) -> str:
-    runs = sorted((DIST / "demo" / "runs").glob("*.json"))
+    runs = sorted((DIST / "black-box" / "runs").glob("*.json"))
     data = {p.stem: json.loads(p.read_text()) for p in runs}
     payload = json.dumps(data, separators=(",", ":"))
     tag = (
@@ -111,7 +111,7 @@ def embed_bundles(html: str) -> str:
 
 def main() -> int:
     if not SRC.exists():
-        print("dist/demo/index.html not found — run `npm run build` first")
+        print("dist/black-box/index.html not found — run `npm run build` first")
         return 1
 
     html = SRC.read_text()
@@ -125,7 +125,7 @@ def main() -> int:
         '<div style="background:#16182B;color:#F3F1EA;padding:10px 16px;'
         'font:14px/1.5 system-ui,sans-serif;text-align:center">'
         'Self-contained copy of the replay at '
-        f'<a href="{SITE}/demo" style="color:#A5A0FF">oxiedo.com/demo</a>. '
+        f'<a href="{SITE}/black-box" style="color:#A5A0FF">oxiedo.com/demo</a>. '
         'Every figure is read from an archived run embedded in this file.'
         "</div>"
     )
@@ -134,7 +134,7 @@ def main() -> int:
 
     OUT.write_text(html)
     kb = OUT.stat().st_size / 1024
-    print(f"  dist/demo-standalone.html   {kb:.0f} KB")
+    print(f"  dist/black-box-standalone.html   {kb:.0f} KB")
 
     # A leftover absolute asset path means something did not inline, and the file
     # would silently render unstyled on a machine with no network.

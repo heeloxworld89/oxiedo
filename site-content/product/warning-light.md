@@ -49,7 +49,7 @@ The question Standard CNN ORMAS
 
 Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
 
-[The full replay page](/demo) carries three further scenarios, including the adversarial injection where this architecture measures worse than the baseline.
+[The full replay page](/black-box) carries three further scenarios, including the adversarial injection where this architecture measures worse than the baseline.
 
 03
 

@@ -15,7 +15,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-CARDS="public/demo/cards"
+CARDS="public/black-box/cards"
 
 if ! command -v rsvg-convert >/dev/null 2>&1; then
 	echo "rsvg-convert not found."

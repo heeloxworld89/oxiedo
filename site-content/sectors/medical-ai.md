@@ -257,7 +257,7 @@ Nobody has deployed this, and we are not going to imply otherwise. What we can p
 
 - Evaluation access for their own team, under a short agreement, before any contract exists
 
-The first two of those are on the page now, from an archived run:[the alarm output and the record it writes](/demo?scenario=dead-layer-lesion), with the run identifier and seed on screen.
+The first two of those are on the page now, from an archived run:[the alarm output and the record it writes](/black-box?scenario=dead-layer-lesion), with the run identifier and seed on screen.
 
 Not a fit where
 

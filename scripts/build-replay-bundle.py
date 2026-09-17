@@ -7,7 +7,7 @@ here, so no number is ever typed by hand into a component or a page.
     python3 scripts/build-replay-bundle.py
 
 Reads   /Users/raad/Desktop/oxido/results   (the raw archive, 7.4 GB)
-Writes  public/demo/runs/<key>.json          (four bundles, ~100 KB each)
+Writes  public/black-box/runs/<key>.json          (four bundles, ~100 KB each)
 
 Verified against the archive on 2026-09-17: see
 "Replay Demo Plan/01_DATA_TRUTH.md" for the claim-by-claim reconciliation.
@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 
 ARCHIVE = Path("/Users/raad/Desktop/oxido/results")
-OUT = Path(__file__).resolve().parent.parent / "public" / "demo" / "runs"
+OUT = Path(__file__).resolve().parent.parent / "public" / "black-box" / "runs"
 
 # Per-diagnosis correction ceilings, as a fraction of the node's own weight norm.
 # Source: config.safety_fraction_* in every ORMAS run record.

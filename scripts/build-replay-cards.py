@@ -13,10 +13,10 @@ it, and the correction costs more than the share was worth.
 
     python3 scripts/build-replay-cards.py
 
-Writes  public/demo/cards/<key>.svg   (1200x630)
+Writes  public/black-box/cards/<key>.svg   (1200x630)
 
 PNG: og:image needs a raster format. With a rasteriser installed:
-    rsvg-convert -w 1200 -h 630 public/demo/cards/<key>.svg -o public/demo/cards/<key>.png
+    rsvg-convert -w 1200 -h 630 public/black-box/cards/<key>.svg -o public/black-box/cards/<key>.png
     (brew install librsvg)
 """
 from __future__ import annotations
@@ -25,8 +25,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RUNS = ROOT / "public" / "demo" / "runs"
-OUT = ROOT / "public" / "demo" / "cards"
+RUNS = ROOT / "public" / "black-box" / "runs"
+OUT = ROOT / "public" / "black-box" / "cards"
 
 W, H = 1200, 630
 PLOT = {"x": 64, "y": 188, "w": 900, "h": 300}

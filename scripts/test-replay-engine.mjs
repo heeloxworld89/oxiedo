@@ -32,14 +32,14 @@ const ok = (c, m) => { if (!c) { console.log('  FAIL', m); fail++; } else consol
 // Derived from the directory, never hardcoded: a fixed list silently diverged
 // from the bundles the moment a scenario was swapped, and the failure was a
 // thrown ENOENT rather than a readable assertion.
-const runsDir = new URL('../public/demo/runs/', import.meta.url);
+const runsDir = new URL('../public/black-box/runs/', import.meta.url);
 const keys = readdirSync(runsDir).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5)).sort();
 if (!keys.length) { console.log('  FAIL no bundles found'); process.exit(1); }
 console.log(`scenarios: ${keys.join(', ')}`);
 
 for (const key of keys) {
 	const b = JSON.parse(readFileSync(
-		new URL(`../public/demo/runs/${key}.json`, import.meta.url), 'utf8'));
+		new URL(`../public/black-box/runs/${key}.json`, import.meta.url), 'utf8'));
 	const e = new ReplayEngine(b);
 	console.log(`\n${key}  lastEpoch=${e.lastEpoch} total=${e.totalSeconds}s segments=${e.segments.length}`);
 

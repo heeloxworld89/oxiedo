@@ -253,7 +253,7 @@ The question Standard CNN ORMAS
 
 Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
 
-[Why the black box is not a law of deep learning](/demo) — the argument in full, with three further scenarios including the one where this architecture measures worse than the baseline.
+[Why the black box is not a law of deep learning](/black-box) — the argument in full, with three further scenarios including the one where this architecture measures worse than the baseline.
 
 A frontier run fails at 60 percent · current practice
 

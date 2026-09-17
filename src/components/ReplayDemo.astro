@@ -391,7 +391,7 @@ const SCENARIOS = [
 			if (embedded && embedded[key]) {
 				bundle = embedded[key];
 			} else {
-				const res = await fetch(`/demo/runs/${key}.json`);
+				const res = await fetch(`/black-box/runs/${key}.json`);
 				if (!res.ok) { elRun.textContent = 'The archived run could not be loaded.'; return; }
 				bundle = await res.json();
 			}
