@@ -5855,13 +5855,16 @@ main > section:last-child.band--dark {
    it leads to is the reason the rest of the site is believable, and a reader who never opens it
    leaves with the product description and none of the proof.
 
-   IT WAS A DOT, briefly, and a dot before a label reads as a list bullet or a status LED, not as
-   emphasis. A badge is the standard pattern for this job, and here the badge word does the work
-   the label cannot fit: "Black Box" names the problem, "OPEN" names what happened to it. The two
-   together say in four words what the page argues in two thousand.
+   TWO TREATMENTS WERE TRIED AND BOTH WERE WRONG. A dot before the label reads as a list bullet
+   or a status LED, not as emphasis. Then a badge: "Black Box · OPEN" — but a badge is
+   conventionally a STATUS (NEW, BETA, LIVE), so OPEN parsed as "this section is available"
+   rather than "this was opened". It read like a shop sign.
 
-   Label at 6.99:1 on the bar, badge at 7.90:1, and 7.56:1 when it inverts onto the current-page
-   pill. One item only: a second badge would be no badge. */
+   The label itself now carries the claim, which is what the label is for. It only became
+   affordable when "Data Handling" shortened to "Data": at the 1159px breakpoint the bar has
+   832px, seven fixed items take 622px, and "Open the Black Box" needs 165px — 45px of headroom
+   where before there were none. Emphasis is colour and weight and nothing else: 6.99:1 on the
+   bar, and the current-page pill still takes precedence on its own page. */
 .nav-link--mark {
 	color: var(--accent-dark);
 	font-weight: 600;
@@ -5874,25 +5877,7 @@ main > section:last-child.band--dark {
 	color: var(--accent-mid);
 }
 
-.nav-badge {
-	display: inline-block;
-	margin-left: 7px;
-	padding: 1px 6px 2px;
-	border-radius: 999px;
-	background: var(--accent-dark);
-	color: #fff;
-	font-size: 9px;
-	font-weight: 700;
-	letter-spacing: 0.07em;
-	line-height: 1.5;
-	vertical-align: 0.1em;
-}
 
-/* On its own page the dark pill takes the label; the badge inverts so it stays legible on ink. */
-.nav-link[aria-current='page'] .nav-badge {
-	background: var(--accent-on-dark);
-	color: var(--bg-dark);
-}
 
 /* The bar is measured against the shipped font's own advance widths: seven fixed labels, the
    marked one, the logo and the CTA need almost all of the 1159px breakpoint's width. Trimming
