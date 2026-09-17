@@ -5851,6 +5851,37 @@ main > section:last-child.band--dark {
 	margin-top: var(--space-md);
 }
 
+/* "Black Box" is the one nav item that has to be clicked rather than merely found: the argument
+   it leads to is the reason the rest of the site is believable, and a reader who never opens it
+   leaves with the product description and none of the proof. It gets a single accent dot — the
+   smallest mark that reads as "something is here" in a row of eight labels — and nothing else.
+   A second visual treatment in the bar would fight the current-page pill. */
+.nav-link--mark::before {
+	content: '';
+	display: inline-block;
+	width: 5px;
+	height: 5px;
+	margin-right: 7px;
+	vertical-align: 0.12em;
+	border-radius: 999px;
+	background: var(--accent-dark);
+}
+
+/* The bar is measured against the shipped font's own advance widths: seven fixed labels, the
+   marked one, the logo and the CTA need almost all of the 1159px breakpoint's width. Trimming
+   the link padding and the gap in that band buys 37px, so "Black Box" fits with real headroom
+   rather than the four pixels the note at the breakpoint warns a font fallback erases.
+   Applied only in the band where it is needed; above 1340px the bar has 152px spare. */
+@media (min-width: 1160px) and (max-width: 1339px) {
+	.nav-link {
+		padding-inline: 13px;
+	}
+
+	.nav-links {
+		gap: 2px;
+	}
+}
+
 /* Nav link indicator — the current page keeps its pill, but hover now gets an accent underline
    that grows from the centre, so pointer feedback is visible before you commit to a click. */
 .nav-link {
