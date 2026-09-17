@@ -38,12 +38,18 @@ export interface Props {
 	fixed?: boolean;
 	/** Open on the record — used on /product/diary. */
 	openRecord?: boolean;
+	/** Restart when the run finishes, instead of ending on the record.
+	 *  True where the replay is ambient — an embed inside a page about
+	 *  something else. False on /demo, where the run IS the subject and the
+	 *  record is the payoff a reader came for. */
+	loop?: boolean;
 	compact?: boolean;
 }
 const {
 	scenario = 'dead-layer-lesion',
 	fixed = false,
 	openRecord = false,
+	loop = false,
 	compact = false,
 } = Astro.props;
 
@@ -61,6 +67,7 @@ const SCENARIOS = [
 	data-replay
 	data-scenario={scenario}
 	data-open-record={openRecord ? 'true' : 'false'}
+	data-loop={loop ? 'true' : 'false'}
 >
 	<header class="rp-bar">
 		<div class="rp-bar-left">
@@ -393,7 +400,23 @@ const SCENARIOS = [
 			engine?.destroy();
 			engine = new ReplayEngine(bundle);
 			engine.onFrame = (e) => render(e);
-			engine.onEnd = () => { setPlayLabel(); showRecord(); };
+			engine.onEnd = () => {
+				setPlayLabel();
+				// An ambient embed loops; the run holds on its final frame for a
+				// beat first, so the recovered figure and the finished record
+				// register before it starts over.
+				if (root.dataset.loop === 'true' && !reduced) {
+					clearTimeout(loopTimer);
+					loopTimer = window.setTimeout(() => {
+						if (!inView || !engine) return;
+						engine.seekEpoch(0);
+						engine.play();
+						setPlayLabel();
+					}, 2200);
+					return;
+				}
+				showRecord();
+			};
 
 			anaBase.load(bundle);
 			anaOrmas.load(bundle);
@@ -428,7 +451,11 @@ const SCENARIOS = [
 			maybeAutoStart();   // the observer may already have fired
 		}
 
-		btnPlay.addEventListener('click', () => { engine?.toggle(); setPlayLabel(); });
+		btnPlay.addEventListener('click', () => {
+			clearTimeout(loopTimer);
+			engine?.toggle();
+			setPlayLabel();
+		});
 		btnEvent.addEventListener('click', () => {
 			if (!engine || !bundle) return;
 			if (bundle.event) {
@@ -448,6 +475,7 @@ const SCENARIOS = [
 			setPlayLabel();
 		});
 		elScrub.addEventListener('input', () => {
+			clearTimeout(loopTimer);
 			engine?.pause(); engine?.seekEpoch(Number(elScrub.value)); setPlayLabel();
 		});
 		root.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((btn) => {
@@ -514,6 +542,7 @@ const SCENARIOS = [
 		// happens second wins, and neither can miss the other.
 		let autoStarted = false;
 		let inView = false;
+		let loopTimer = 0;
 
 		function maybeAutoStart() {
 			if (autoStarted || reduced) return;
@@ -527,7 +556,7 @@ const SCENARIOS = [
 
 		const io = new IntersectionObserver((entries) => {
 			inView = entries[0]?.isIntersecting ?? true;
-			if (!inView) { engine?.pause(); setPlayLabel(); return; }
+			if (!inView) { clearTimeout(loopTimer); engine?.pause(); setPlayLabel(); return; }
 			maybeAutoStart();
 		}, { threshold: 0.4 });
 		io.observe(root);
@@ -549,6 +578,7 @@ const SCENARIOS = [
 		window.addEventListener('resize', onResize);
 
 		teardown.push(() => {
+			clearTimeout(loopTimer);
 			engine?.destroy(); engine = null;
 			anaBase.destroy(); anaOrmas.destroy();
 			io.disconnect();

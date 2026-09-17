@@ -191,7 +191,7 @@ const seoTitle: Record<string, string> = {
 				{replay && (
 					<div class="feature-replay">
 						<p class="feature-replay-lede">{replay.lede}</p>
-						<ReplayDemo scenario={replay.scenario} openRecord={replay.openRecord} fixed />
+						<ReplayDemo scenario={replay.scenario} openRecord={replay.openRecord} loop={!replay.openRecord} fixed />
 						<p class="feature-replay-note">
 							<a href="/demo">The full replay page</a> carries three further scenarios,
 							including the adversarial injection where this architecture measures worse
