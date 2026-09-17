@@ -5853,18 +5853,45 @@ main > section:last-child.band--dark {
 
 /* "Black Box" is the one nav item that has to be clicked rather than merely found: the argument
    it leads to is the reason the rest of the site is believable, and a reader who never opens it
-   leaves with the product description and none of the proof. It gets a single accent dot — the
-   smallest mark that reads as "something is here" in a row of eight labels — and nothing else.
-   A second visual treatment in the bar would fight the current-page pill. */
-.nav-link--mark::before {
-	content: '';
+   leaves with the product description and none of the proof.
+
+   IT WAS A DOT, briefly, and a dot before a label reads as a list bullet or a status LED, not as
+   emphasis. A badge is the standard pattern for this job, and here the badge word does the work
+   the label cannot fit: "Black Box" names the problem, "OPEN" names what happened to it. The two
+   together say in four words what the page argues in two thousand.
+
+   Label at 6.99:1 on the bar, badge at 7.90:1, and 7.56:1 when it inverts onto the current-page
+   pill. One item only: a second badge would be no badge. */
+.nav-link--mark {
+	color: var(--accent-dark);
+	font-weight: 600;
+}
+
+/* Guarded against [aria-current]. The generic anchor hover already broke the current-page pill
+   once by outranking it; a bare .nav-link--mark:hover at (0,2,0) would tie with the pill and win
+   on order, repainting the label onto the ink. */
+.nav-link--mark:not([aria-current='page']):hover {
+	color: var(--accent-mid);
+}
+
+.nav-badge {
 	display: inline-block;
-	width: 5px;
-	height: 5px;
-	margin-right: 7px;
-	vertical-align: 0.12em;
+	margin-left: 7px;
+	padding: 1px 6px 2px;
 	border-radius: 999px;
 	background: var(--accent-dark);
+	color: #fff;
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: 0.07em;
+	line-height: 1.5;
+	vertical-align: 0.1em;
+}
+
+/* On its own page the dark pill takes the label; the badge inverts so it stays legible on ink. */
+.nav-link[aria-current='page'] .nav-badge {
+	background: var(--accent-on-dark);
+	color: var(--bg-dark);
 }
 
 /* The bar is measured against the shipped font's own advance widths: seven fixed labels, the

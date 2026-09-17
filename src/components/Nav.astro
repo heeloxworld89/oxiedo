@@ -25,9 +25,10 @@ import { sectors } from '../data/sectors';
 const links: Array<{
 	href: string;
 	label: string;
-	/** Carries a single accent dot in the desktop bar. One item only — see the
-	 *  note on .nav-link--mark. A second marked item would be no mark at all. */
-	mark?: boolean;
+	/** Renders a badge after the label and lifts the label to the accent colour.
+	 *  One item only — see the note on .nav-link--mark. A second marked item
+	 *  would be no mark at all. */
+	badge?: string;
 	children?: Array<{ href: string; label: string; meta?: string }>;
 }> = [
 	// PRODUCT HAS NO SUBMENU, deliberately. It had one, and it was wrong: a dropdown of seven names
@@ -48,12 +49,12 @@ const links: Array<{
 	},
 	{ href: '/licensing', label: 'Licensing' },
 	{ href: '/technology', label: 'Technology' },
-	{ href: '/demo', label: 'Black Box', mark: true },
+	{ href: '/demo', label: 'Black Box', badge: 'OPEN' },
 	// Data handling takes the primary slot rather than Insights. In these markets the first
 	// question after "what does it do" is "what happens to our data", and a policy page that is
 	// only reachable from a footer legal bar answers it too late. Insights stays reachable from
 	// the footer until there is something published on it.
-	{ href: '/data', label: 'Data Handling' },
+	{ href: '/data', label: 'Data' },
 	// FAQ is top level. It answers the questions that stop a deal, and burying it one level down
 	// meant the readers who most needed it never found it. Careers takes its place in the menu.
 	{ href: '/faq', label: 'FAQ' },
@@ -83,10 +84,11 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 					<li class={link.children ? 'nav-item nav-item--has-menu' : 'nav-item'}>
 						<a
 							href={link.href}
-							class={link.mark ? 'nav-link nav-link--mark' : 'nav-link'}
+							class={link.badge ? 'nav-link nav-link--mark' : 'nav-link'}
 							aria-current={isCurrent(link.href) ? 'page' : undefined}
 						>
 							{link.label}
+							{link.badge && <span class="nav-badge">{link.badge}</span>}
 							{link.children && <span class="nav-caret" aria-hidden="true">▾</span>}
 						</a>
 
@@ -172,7 +174,10 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 						    so tapping "Sectors" goes to /sectors and tapping the caret reveals the five
 						    markets. One tap target cannot do both jobs. */}
 						<div class="nav-mobile-row">
-							<a href={link.href} class="nav-mobile-link">{link.label}</a>
+							<a href={link.href} class="nav-mobile-link">
+								{link.label}
+								{link.badge && <span class="nav-badge">{link.badge}</span>}
+							</a>
 							{link.children && (
 								<button
 									type="button"
