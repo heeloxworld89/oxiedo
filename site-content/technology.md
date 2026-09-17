@@ -171,25 +171,21 @@ Gradient conflict between the signals is resolved by PCGrad projection. Every co
 
 The first of the six results below, played back from its archived run. Two parameter-matched networks, trained identically; at epoch 101 two convolutional stages are destroyed. Nothing is computed here — every value is the value recorded during that run, and the run identifier and seed are on screen.
 
+The same network, twice. One sealed, one open.
+
 Loading the archived run…
-
-##### Standard CNN
-
-parameter-matched
-
-Component telemetry
-
-No such quantity is computed by this architecture.
-
-##### ORMAS
-
-same data, same objective
-
-Component telemetry
 
 - Field: Epoch
 
-epoch 0
+epoch 0 / 199
+
+Test accuracy · both arms, one axis
+
+Correction ledger · written during training
+
+What each one can answer, at this epoch
+
+The question Standard CNN ORMAS
 
 ##### The record
 

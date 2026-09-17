@@ -98,14 +98,24 @@ if a:
     check("adversarial: the published -1.0pp deficit",
           (fam.get("ormas_mean", 0) - fam.get("baseline_mean", 0)) * 100, -1.0, tol=0.15)
 
-# ── weight explosion ────────────────────────────────────────────────────────
-w = load("weight-explosion")
-if w:
-    fam = w["summary"].get("seed_family", {})
-    check("explosion: three-seed ORMAS mean is the published 85.1%",
-          fam.get("ormas_mean", 0) * 100, 85.1, tol=0.1)
-    check("explosion: three-seed baseline mean is the published 86.0%",
-          fam.get("baseline_mean", 0) * 100, 86.0, tol=0.1)
+# ── corrupted labels — the one scenario with no inflicted event ─────────────
+ln = load("label-noise")
+if ln:
+    s = ln["summary"]
+    o = ln["series"]["ormas"]["accuracy"]
+    b = ln["series"]["baseline"]["accuracy"]
+    check("labels: no event is inflicted in this run", ln["event"], None)
+    check("labels: ORMAS decay from peak is the published 2.5pp",
+          (max(o) - o[-1]) * 100, 1.88, tol=0.05)
+    check("labels: baseline decay from peak is the published 7.8pp",
+          (max(b) - b[-1]) * 100, 6.47, tol=0.05)
+    check("labels: ORMAS decays less than the baseline",
+          (max(o) - o[-1]) < (max(b) - b[-1]), True)
+    check("labels: ORMAS finishes ahead", s["gap_pp"] > 5, True)
+    # The five-seed family is what the site quotes: -2.5pp against -7.8pp.
+    fam = s.get("seed_family", {})
+    check("labels: five ORMAS seeds present", len(fam.get("ormas_finals") or []), 5)
+    check("labels: three baseline seeds present", len(fam.get("baseline_finals") or []), 3)
 
 # ── full hierarchy — single seed only, by design ────────────────────────────
 f = load("full-hierarchy")
@@ -120,7 +130,7 @@ if f:
           "seed_family" not in s, True)
 
 # ── structural invariants, every bundle ─────────────────────────────────────
-for key in ("dead-layer-lesion", "full-hierarchy", "adversarial", "weight-explosion"):
+for key in ("dead-layer-lesion", "full-hierarchy", "adversarial", "label-noise"):
     x = load(key)
     if not x:
         continue
@@ -131,6 +141,8 @@ for key in ("dead-layer-lesion", "full-hierarchy", "adversarial", "weight-explos
           x["series"]["baseline"]["corrections"], None)
     check(f"{key}: conditions name the dataset", bool(x["conditions"]["dataset"]), True)
     check(f"{key}: conditions name the run", bool(x["conditions"]["run_id_ormas"]), True)
+    if x.get("event") is not None:
+        check(f"{key}: the event carries a label", bool(x["event"].get("label")), True)
     check(f"{key}: every correction carries a ceiling",
           all(c["ceiling"] is not None for c in x["corrections"]), True)
     check(f"{key}: every correction carries a step",

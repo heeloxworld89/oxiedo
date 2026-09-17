@@ -86,20 +86,30 @@ SCENARIOS = [
         "archive_index": "38 of 67",
     },
     {
-        "key": "weight-explosion",
-        "title": "Weight explosion",
-        "subtitle": "Parameters scaled by one hundred",
-        "dir": "mass upload of all/layer_a/extreme/EX",
-        "ormas": "extreme_explode_ormas_cnn_s0",
-        "baseline": "extreme_explode_standard_cnn_s0",
-        "glassbox": "extreme_explode_ormas_cnn_s0_glassbox/glassbox.jsonl",
-        "seeds_ormas": ["extreme_explode_ormas_cnn_s0", "extreme_explode_ormas_cnn_s1",
-                        "extreme_explode_ormas_cnn_s2"],
-        "seeds_baseline": ["extreme_explode_standard_cnn_s0", "extreme_explode_standard_cnn_s1",
-                           "extreme_explode_standard_cnn_s2"],
-        "event_label": "Weights exploded",
-        "event_description": "Node parameters scaled by a factor of one hundred.",
-        "archive_index": "44 of 67",
+        # Replaces the 100x weight-explosion run, which was dropped after its
+        # curves were plotted: both arms are flat and identical end to end, so a
+        # viewer pressing play watched nothing happen for forty seconds. It is a
+        # real published result and it stays on /technology; it is not a
+        # scenario.
+        #
+        # This one earns the slot by being a different KIND of failure. Every
+        # other scenario is an injury inflicted at a single step. Here the
+        # corruption is in the data from the first step, nothing is ever
+        # destroyed, and no alarm fires for a catastrophe — the baseline simply
+        # decays through the second half of training while ORMAS holds. That is
+        # the failure most buyers actually have.
+        "key": "label-noise",
+        "title": "Corrupted labels",
+        "subtitle": "Two in five training labels are wrong, from the first step",
+        "dir": "mass upload of all/NeurIPS_2026_results/results",
+        "ormas": "exp003_ormas_cnn_cifar10_symmetric40_s0",
+        "baseline": "st400_standard_cnn_cifar10_symmetric40_s0",
+        "glassbox": "exp003_ormas_cnn_cifar10_symmetric40_s0_glassbox/glassbox.jsonl",
+        "seeds_ormas": [f"exp003_ormas_cnn_cifar10_symmetric40_s{i}" for i in range(5)],
+        "seeds_baseline": [f"st400_standard_cnn_cifar10_symmetric40_s{i}" for i in range(3)],
+        "event_label": None,
+        "event_description": None,
+        "archive_index": "12 of 67",
     },
 ]
 

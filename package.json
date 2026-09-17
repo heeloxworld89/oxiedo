@@ -12,7 +12,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test:nav": "node scripts/test-nav.mjs",
-    "verify": "npm run build && python3 check.py && python3 scripts/verify-replay-bundle.py && node scripts/test-replay-engine.mjs && npm run test:nav",
+    "verify": "npm run build && python3 check.py && python3 scripts/verify-replay-bundle.py && node scripts/check-replay-scoping.mjs && node scripts/test-replay-engine.mjs && npm run test:nav",
     "build:bundles": "python3 scripts/build-replay-bundle.py && python3 scripts/verify-replay-bundle.py",
     "test:replay": "node scripts/test-replay-engine.mjs"
   },

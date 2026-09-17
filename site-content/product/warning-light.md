@@ -29,25 +29,21 @@ A precise, per-component health signal emitted continuously during training. It 
 
 An archived run in which two convolutional stages are destroyed at epoch 101. The alarm names both damaged components at step 39,493 — two steps after the damage — while the parameter-matched baseline sits at chance level for the rest of the run with nothing to report.
 
+The same network, twice. One sealed, one open.
+
 Loading the archived run…
-
-##### Standard CNN
-
-parameter-matched
-
-Component telemetry
-
-No such quantity is computed by this architecture.
-
-##### ORMAS
-
-same data, same objective
-
-Component telemetry
 
 - Field: Epoch
 
-epoch 0
+epoch 0 / 199
+
+Test accuracy · both arms, one axis
+
+Correction ledger · written during training
+
+What each one can answer, at this epoch
+
+The question Standard CNN ORMAS
 
 ##### The record
 

@@ -481,25 +481,21 @@ A fifty-node network at 30% label noise across 200 epochs. Standard training ret
 
 Two parameter-matched networks, trained identically. At epoch 101 two convolutional stages are destroyed. One sits at chance level for the rest of the run and cannot say why; the other names both damaged components two steps later and recovers. Nothing is computed here — every value is the value recorded during that run.
 
+The same network, twice. One sealed, one open.
+
 Loading the archived run…
-
-##### Standard CNN
-
-parameter-matched
-
-Component telemetry
-
-No such quantity is computed by this architecture.
-
-##### ORMAS
-
-same data, same objective
-
-Component telemetry
 
 - Field: Epoch
 
-epoch 0
+epoch 0 / 199
+
+Test accuracy · both arms, one axis
+
+Correction ledger · written during training
+
+What each one can answer, at this epoch
+
+The question Standard CNN ORMAS
 
 ##### The record
 

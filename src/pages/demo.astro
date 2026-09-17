@@ -1,15 +1,38 @@
 ---
-// THE REPLAY DEMO PAGE. Added 2026-09-17.
+// THE BLACK BOX. Added 2026-09-17, rewritten 2026-09-18.
 //
-// Four of the five sector pages already promise an evaluator a worked alarm
-// output and a worked modification record. Both existed only as sentences. This
-// page is those two, shown, from an archived run that regenerates from its seed.
+// WHAT CHANGED AND WHY. The first version was written as a demo page: here is a
+// replay, here are the controls. That undersold it. Four sector pages already
+// promise this artefact, the mechanism behind it is the company's entire claim,
+// and a page that opens with a play button asks the reader to work out its
+// significance for themselves.
 //
-// The objections below are not a FAQ. They are the ten things a technical
-// evaluator raises in the first five minutes, answered before they are asked,
-// because an objection raised first is a credential and the same objection raised
-// by a reader is a wound. Two of them are the limits — the CIFAR-only evidence
-// base and the one adverse result — and both are above the others deliberately.
+// THE FRAMING, AND THE TRAP IN IT. The obvious headline — "the black box is
+// open, see inside the neural network" — is the one sentence that would lose a
+// technical reader on the first screen. The full technical account draws the
+// line itself: structural telemetry, which component failed and when and under
+// what bound, is NOT semantic interpretability, what a given unit encodes. This
+// page never claims the second. Claiming it would be the same overreach every
+// other page here exists to avoid, and it is unnecessary, because there is a
+// larger true claim available.
+//
+// THE CLAIM THIS PAGE MAKES. The black box was never one problem; it is two
+// questions that were given one name. What does this model KNOW is semantic,
+// genuinely hard, and open. What did this model DO to itself, and which part did
+// what, is an accounting question — and it is the one that gates audits,
+// validation, deletion and change control. For a decade both were attacked the
+// same way, by reverse-engineering a finished network. For the second question
+// that was the wrong instrument, because an account that was never written
+// cannot be recovered. Change how the network trains and it writes one.
+//
+// So the page argues: the opacity is not a law of deep learning, it is a
+// consequence of one design decision. Split the problem in two. One half is
+// still open and this page says so plainly. The other half is closed, and the
+// replay is that half running.
+//
+// The objections are not a FAQ. They are what a technical evaluator raises in
+// the first five minutes, answered before they are asked, with the two limits
+// first.
 import Page from '../layouts/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Accordion from '../components/Accordion.astro';
@@ -31,7 +54,7 @@ const objections = [
 		q: 'Where does it lose?',
 		a: [
 			'Under adversarial weight injection the architecture measures 1.0 percentage point worse than a parameter-matched baseline, and there is no current mitigation. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors.',
-			'That run is in the scenario selector above. It plays, and it loses.',
+			'That run is in the scenario selector. It plays, and it loses.',
 		],
 	},
 	{
@@ -84,7 +107,7 @@ const objections = [
 		q: 'Why not checkpoint and roll back instead?',
 		a: [
 			'Rollback recovers the accuracy and discards every step of legitimate learning since the last checkpoint, and it arrives with no account of what failed. The cost of the remedy is set by the checkpoint interval rather than by the size of the fault, and the same failure remains available to happen again unexplained.',
-			'The replay above is not an argument that repair beats rollback on accuracy. It is an argument that a named component, a step and a magnitude is a different class of object from a collapsed curve.',
+			'The replay is not an argument that repair beats rollback on accuracy. It is an argument that a named component, a step and a magnitude is a different class of object from a collapsed curve.',
 		],
 	},
 	{
@@ -105,6 +128,35 @@ const objections = [
 	},
 ];
 
+// Two questions that were given one name. Splitting them is the page's
+// argument, and the left column has to be written with real respect: it is a
+// serious research programme that is honest about its own difficulty, and
+// sneering at it would be both wrong and transparently self-serving.
+const halves = [
+	{
+		id: 'semantic',
+		state: 'OPEN',
+		question: 'What does this model know?',
+		gloss: 'What a given component encodes. Which concepts live where. Why this input produced that output.',
+		body: [
+			'This is the question mechanistic interpretability works on, and it is a serious programme — named a breakthrough technology of 2026 and producing real results.',
+			'It is also honest about its own difficulty. Published surveys record that current work remains largely confined to toy models or to small fragments of larger networks, and that there is no agreed way to tell a true explanation from a merely plausible one. The substrate resists the question: a single unit routinely encodes several unrelated features at once, so there is no clean correspondence between the parts of a network and the concepts anyone wants to ask about.',
+			'Nothing on this page closes this question, and nothing on this site claims to.',
+		],
+	},
+	{
+		id: 'structural',
+		state: 'CLOSED',
+		question: 'What did this model do to itself?',
+		gloss: 'Which component failed. At which step. By how much. Inside what declared limit. Traceable to the data that caused it.',
+		body: [
+			'This is not a question about meaning. It is a question about accounting, and it is the one that decides whether a model can be validated, audited, updated under a change-control plan, or have a data source removed from it on request.',
+			'It was attacked with the same instrument as the question above — examine the finished network, estimate what must have happened — and that instrument cannot answer it. An account that was never written during training cannot be recovered from the weights afterwards. The information was not hidden. It was never separable.',
+			'Bound each component\u2019s learning path and it becomes separable, so the network writes the account as it goes. The replay below is that account being written.',
+		],
+	},
+];
+
 const obligations = [
 	{ date: '17 April 2026', what: 'SR 26-2 supersedes SR 11-7. In force.', past: true },
 	{ date: '2 December 2027', what: 'EU AI Act, Annex III obligations apply.', past: false },
@@ -114,23 +166,86 @@ const obligations = [
 ---
 
 <Page
-	title="The record, replayed: a network diagnosing its own failure"
-	description="Two parameter-matched networks, trained identically. One is destroyed mid-training and cannot say why. The other names both damaged components two steps later. An archived run, replayed."
-	breadcrumbs={[{ name: 'Demo', path: '/demo' }]}
+	title="The black box is not a law of nature"
+	description="Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running."
+	breadcrumbs={[{ name: 'The black box', path: '/demo' }]}
 	ogImagePath={cardPath}
 >
 	<section class="section container">
-		<Eyebrow>THE RECORD, REPLAYED</Eyebrow>
-		<h1>What the record looks like when a model breaks.</h1>
+		<Eyebrow>THE BLACK BOX</Eyebrow>
+		<h1>Opacity is not a law of deep learning. It is a consequence of one decision.</h1>
+		<p class="demo-lede">
+			Every error signal in a standard neural network reaches every parameter on every step.
+			That property is the source of a network's capability, and it is also why nothing inside
+			one can be named afterwards. The trail does not go cold. It was never laid.
+		</p>
+		<p class="demo-lede">
+			That decision was reasonable when it was made and has not been revisited since. Change it
+			— bound each component's learning path so the component stays individually addressable —
+			and one half of the black box stops existing. Not because a better tool was pointed at a
+			finished model, but because the model now keeps the account as it goes.
+		</p>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>THE SPLIT</Eyebrow>
+		<h2>The black box was never one problem. It is two questions that were given one name.</h2>
 		<p class="demo-intro">
-			Two networks, parameter-matched, trained identically on CIFAR-10. At epoch 101 two
-			convolutional stages are destroyed. One network sits at chance level for the remaining
-			ninety-nine epochs and cannot say why. The other names both damaged components and
+			The distinction is not academic. One of these is a question about meaning and it is
+			genuinely hard. The other is a question about accounting, and it is the one that decides
+			whether a regulated institution can use a model at all. For a decade both were attacked
+			with the same instrument.
+		</p>
+		<div class="demo-halves">
+			{halves.map((h) => (
+				<article class={`demo-half demo-half--${h.id}`}>
+					<p class="demo-half-state">{h.state}</p>
+					<h3>{h.question}</h3>
+					<p class="demo-half-gloss">{h.gloss}</p>
+					{h.body.map((para) => <p>{para}</p>)}
+				</article>
+			))}
+		</div>
+		<p class="demo-note">
+			Only the right-hand question is closed here, and only within the limits set out below.
+			A page that claimed both would be worth less, not more, to the people who have to file
+			against it.
+		</p>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>WHY THE OLD INSTRUMENT COULD NOT DO IT</Eyebrow>
+		<h2>An account that was never written cannot be recovered from the weights.</h2>
+		<p class="demo-intro">
+			Ask a finished model what it took from a particular source and every available tool works
+			the same way: examine the trained system, produce a best estimate of what must have
+			occurred. The estimate is frequently a good one. It is also unverifiable, two tools
+			disagree on the same input, and an estimate is not something a data owner accepts or a
+			supervisor files.
+		</p>
+		<p class="demo-intro">
+			This was never a tooling failure. The quantity was not being withheld. In a network where
+			every gradient touches every parameter, there is no component whose behaviour can be
+			isolated from the aggregate, so there is nothing for a question to be put to. Reverse
+			engineering is the right instrument for the left-hand question and the wrong one for the
+			right-hand question, and the field spent a decade using it for both.
+		</p>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>THE ACCOUNT, BEING WRITTEN</Eyebrow>
+		<h2>Two networks of identical shape. One sealed, one open.</h2>
+		<p class="demo-intro">
+			Below is an archived training run, replayed. Both networks have the same three
+			convolutional stages, the same data and the same objective. At epoch 101 two of those
+			stages are destroyed. One network sits at chance level for the remaining ninety-nine
+			epochs and cannot say why. The other names both damaged components two steps later and
 			recovers.
 		</p>
 		<p class="demo-intro demo-intro--muted">
-			This is a replay of an archived run, not a simulation. The run identifier and the seed are
-			on screen, and every figure regenerates from that seed.
+			Nothing computes in the browser. Every figure is read from the run's own telemetry, the
+			run identifier and seed are on screen, and each of the four scenarios regenerates from
+			that seed.
 		</p>
 	</section>
 
@@ -140,9 +255,44 @@ const obligations = [
 
 	<section class="section container">
 		<p class="demo-note">
-			Nothing in the panel on the left was withheld. A standard network does not compute a
-			per-component health signal at any point in training, so there is no quantity to display.
-			That absence is the problem ORMAS was built to remove.
+			Nothing in the sealed pane was withheld. A standard network does not compute a
+			per-component health signal at any point in training, so there is no quantity to display
+			and no setting that would reveal one. That absence is the problem, drawn.
+		</p>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>WHAT THAT RECORD IS FOR</Eyebrow>
+		<h2>The same record answers four different people.</h2>
+		<p class="demo-intro">
+			It is one artefact, generated once, during training. What changes between these readers is
+			the obligation that makes them ask.
+		</p>
+		<ul class="demo-readers">
+			<li>
+				<strong>The engineer whose run died.</strong> A component, a step and a magnitude, while
+				the run is still recoverable — instead of a loss curve that moved once the damage was
+				thousands of steps old.
+			</li>
+			<li>
+				<strong>The validator who cannot verify a memo.</strong> A signed, per-modification
+				record with a declared bound, diffable against the version last approved. Evidence of
+				what training did rather than a written account of what the team intended.
+			</li>
+			<li>
+				<strong>The reviewer assessing a model allowed to update.</strong> A declared set of
+				modification types with individual ceilings, the record of each one as it happened, and
+				the diff. Those are the three things a change-control plan asks for.
+			</li>
+			<li>
+				<strong>The counsel holding a deletion clause.</strong> What the model took from a named
+				source, held as an addressable part rather than spread across every parameter — the
+				precondition for removing it and certifying what was removed.
+			</li>
+		</ul>
+		<p class="demo-note demo-note--tight">
+			Transparency is the mechanism. The product is that data a custodian will not release today
+			becomes data they can release, because the account they have been waiting for now exists.
 		</p>
 	</section>
 
@@ -150,9 +300,9 @@ const obligations = [
 		<Eyebrow>BEFORE THE QUESTIONS</Eyebrow>
 		<h2>Ten objections, answered before they are raised.</h2>
 		<p class="demo-intro">
-			These are the questions a technical evaluation asks in its first five minutes. The limits
-			come first, because a page that lists only what worked is a marketing page wearing a lab
-			coat.
+			These are the questions a technical evaluation asks in its first five minutes, in the words
+			a reader actually uses. The limits come first, because a page that lists only what worked
+			is a marketing page wearing a lab coat.
 		</p>
 		<div class="demo-objections">
 			{objections.map((o) => (
@@ -161,6 +311,46 @@ const obligations = [
 				</Accordion>
 			))}
 		</div>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>THE BOUNDARY OF THE CLAIM</Eyebrow>
+		<h2>Stated here, in the same place as the claim.</h2>
+		<p class="demo-intro">
+			A page arguing that half of a decade-old problem is closed has to say exactly which half
+			and exactly how far, in the same breath. These are the boundaries of the evidence.
+		</p>
+		<ul class="demo-limits">
+			<li>
+				<strong>This is structural transparency, not semantic interpretability.</strong> The
+				record names which component failed, when, by how much and inside what limit. It does
+				not say what that component encodes, and no claim here should be read as saying it does.
+			</li>
+			<li>
+				<strong>Every result is CIFAR-10 or CIFAR-100.</strong> No clinical, biological,
+				financial or defence data has ever touched this system. That is the binding constraint
+				on the whole programme rather than a detail.
+			</li>
+			<li>
+				<strong>Transformers are a stated target, not a demonstrated result.</strong>
+				Demonstrated on fully-connected, convolutional and residual families.
+			</li>
+			<li>
+				<strong>Under adversarial weight injection the architecture measures 1.0 percentage
+				point worse</strong> than a parameter-matched baseline, with no current mitigation. That
+				run is in the scenario selector above, and it plays, and it loses.
+			</li>
+			<li>
+				<strong>Behaviour at frontier scale, on regulated data, and in production over time has
+				not been observed</strong>, because no deployment exists.
+			</li>
+		</ul>
+		<p class="demo-note demo-note--tight">
+			The claim is not that a network can now be read. It is that a single-network architecture
+			can produce mechanistically logged, per-component causal attribution that no prior
+			single-network method offers, and that this is what makes recovery from failures possible
+			that standard architectures cannot even detect.
+		</p>
 	</section>
 
 	<section class="section container">
@@ -216,6 +406,15 @@ const obligations = [
 	</section>
 
 	<section class="section container">
+		<p class="demo-sources-label">Sources for the state of the field</p>
+		<ul class="demo-sources">
+			<li><a href="https://arxiv.org/pdf/2501.16496">Open problems in mechanistic interpretability</a></li>
+			<li><a href="https://arxiv.org/pdf/2404.14082">Mechanistic interpretability for AI safety — a review</a></li>
+			<li><a href="https://arxiv.org/html/2511.19265v1">Unboxing the black box — algorithmic understanding of neural networks</a></li>
+		</ul>
+	</section>
+
+	<section class="section container">
 		<p class="demo-foot">
 			Every figure on this page is measured on CIFAR-10 across the controlled experiment
 			programme, and is labelled as such wherever it appears.
@@ -233,6 +432,85 @@ const obligations = [
 		color: var(--text-secondary);
 	}
 	.demo-intro--muted { font-size: var(--text-small); color: var(--text-muted); }
+
+	.demo-lede {
+		max-width: 64ch;
+		font-size: var(--text-body);
+		line-height: var(--lh-body);
+		color: var(--text-primary);
+		margin-bottom: var(--space-md);
+	}
+
+	/* THE SPLIT. The two halves are given identical weight on purpose: the
+	   left-hand question is a serious programme, and a layout that made it look
+	   like the loser of a comparison would be both wrong and transparently
+	   self-serving. Only the state chip differs. */
+	.demo-halves {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: var(--space-lg);
+		margin: var(--space-xl) 0 var(--space-lg);
+	}
+	.demo-half {
+		border: 1px solid var(--border-hairline);
+		border-radius: 4px;
+		padding: var(--space-lg);
+		background: var(--bg-surface);
+	}
+	.demo-half h3 { margin: var(--space-sm) 0; font-size: var(--text-h3); }
+	.demo-half p {
+		font-size: var(--text-small);
+		line-height: var(--lh-body);
+		color: var(--text-secondary);
+		margin-bottom: var(--space-sm);
+	}
+	.demo-half-state {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: var(--text-eyebrow);
+		letter-spacing: 0.12em;
+		color: var(--text-muted);
+	}
+	.demo-half-gloss {
+		font-weight: 600;
+		color: var(--text-primary) !important;
+	}
+	.demo-half--structural { border-color: color-mix(in srgb, var(--chart-ormas) 40%, transparent); }
+	.demo-half--structural .demo-half-state { color: var(--chart-ormas); font-weight: 700; }
+
+	.demo-readers, .demo-limits {
+		list-style: none;
+		padding: 0;
+		margin: var(--space-lg) 0 0;
+		max-width: 76ch;
+	}
+	.demo-readers li, .demo-limits li {
+		padding: var(--space-md) 0;
+		border-bottom: 1px solid var(--border-hairline);
+		font-size: var(--text-small);
+		line-height: var(--lh-body);
+		color: var(--text-secondary);
+	}
+	.demo-readers li strong, .demo-limits li strong { color: var(--text-primary); }
+
+	.demo-sources-label {
+		font-size: var(--text-eyebrow);
+		letter-spacing: 0.09em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		margin: 0;
+	}
+
+	/* The open half carries no accent: identical weight to its neighbour is the
+	   point, and only the state chip distinguishes them. */
+	.demo-half--semantic { }
+
+	.demo-sources {
+		list-style: none;
+		padding: 0;
+		margin: var(--space-sm) 0 0;
+		font-size: var(--text-small);
+	}
+	.demo-sources li { padding: 3px 0; }
 
 	.demo-note {
 		max-width: 68ch;

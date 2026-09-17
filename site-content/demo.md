@@ -1,57 +1,117 @@
-# The record, replayed: a network diagnosing its own failure
+# The black box is not a law of nature
 
 - **URL:** `/demo`
-- **Page title:** The record, replayed: a network diagnosing its own failure — Oxiedo
-- **Meta description:** Two parameter-matched networks, trained identically. One is destroyed mid-training and cannot say why. The other names both damaged components two steps later. An archived run, replayed.
+- **Page title:** The black box is not a law of nature — Oxiedo
+- **Meta description:** Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running.
 
 ---
-**THE RECORD, REPLAYED**
+**THE BLACK BOX**
 
-## What the record looks like when a model breaks.
+## Opacity is not a law of deep learning. It is a consequence of one decision.
 
-Two networks, parameter-matched, trained identically on CIFAR-10. At epoch 101 two convolutional stages are destroyed. One network sits at chance level for the remaining ninety-nine epochs and cannot say why. The other names both damaged components and recovers.
+Every error signal in a standard neural network reaches every parameter on every step. That property is the source of a network's capability, and it is also why nothing inside one can be named afterwards. The trail does not go cold. It was never laid.
 
-This is a replay of an archived run, not a simulation. The run identifier and the seed are on screen, and every figure regenerates from that seed.
+That decision was reasonable when it was made and has not been revisited since. Change it — bound each component's learning path so the component stays individually addressable — and one half of the black box stops existing. Not because a better tool was pointed at a finished model, but because the model now keeps the account as it goes.
 
-- Field: Scenario — Dead-layer lesion Full-hierarchy lesion Adversarial weight injection Weight explosion
+**THE SPLIT**
+
+### The black box was never one problem. It is two questions that were given one name.
+
+The distinction is not academic. One of these is a question about meaning and it is genuinely hard. The other is a question about accounting, and it is the one that decides whether a regulated institution can use a model at all. For a decade both were attacked with the same instrument.
+
+OPEN
+
+#### What does this model know?
+
+What a given component encodes. Which concepts live where. Why this input produced that output.
+
+This is the question mechanistic interpretability works on, and it is a serious programme — named a breakthrough technology of 2026 and producing real results.
+
+It is also honest about its own difficulty. Published surveys record that current work remains largely confined to toy models or to small fragments of larger networks, and that there is no agreed way to tell a true explanation from a merely plausible one. The substrate resists the question: a single unit routinely encodes several unrelated features at once, so there is no clean correspondence between the parts of a network and the concepts anyone wants to ask about.
+
+Nothing on this page closes this question, and nothing on this site claims to.
+
+CLOSED
+
+#### What did this model do to itself?
+
+Which component failed. At which step. By how much. Inside what declared limit. Traceable to the data that caused it.
+
+This is not a question about meaning. It is a question about accounting, and it is the one that decides whether a model can be validated, audited, updated under a change-control plan, or have a data source removed from it on request.
+
+It was attacked with the same instrument as the question above — examine the finished network, estimate what must have happened — and that instrument cannot answer it. An account that was never written during training cannot be recovered from the weights afterwards. The information was not hidden. It was never separable.
+
+Bound each component’s learning path and it becomes separable, so the network writes the account as it goes. The replay below is that account being written.
+
+Only the right-hand question is closed here, and only within the limits set out below. A page that claimed both would be worth less, not more, to the people who have to file against it.
+
+**WHY THE OLD INSTRUMENT COULD NOT DO IT**
+
+### An account that was never written cannot be recovered from the weights.
+
+Ask a finished model what it took from a particular source and every available tool works the same way: examine the trained system, produce a best estimate of what must have occurred. The estimate is frequently a good one. It is also unverifiable, two tools disagree on the same input, and an estimate is not something a data owner accepts or a supervisor files.
+
+This was never a tooling failure. The quantity was not being withheld. In a network where every gradient touches every parameter, there is no component whose behaviour can be isolated from the aggregate, so there is nothing for a question to be put to. Reverse engineering is the right instrument for the left-hand question and the wrong one for the right-hand question, and the field spent a decade using it for both.
+
+**THE ACCOUNT, BEING WRITTEN**
+
+### Two networks of identical shape. One sealed, one open.
+
+Below is an archived training run, replayed. Both networks have the same three convolutional stages, the same data and the same objective. At epoch 101 two of those stages are destroyed. One network sits at chance level for the remaining ninety-nine epochs and cannot say why. The other names both damaged components two steps later and recovers.
+
+Nothing computes in the browser. Every figure is read from the run's own telemetry, the run identifier and seed are on screen, and each of the four scenarios regenerates from that seed.
+
+The same network, twice. One sealed, one open.
+
+- Field: Scenario — Dead-layer lesion Full-hierarchy lesion Corrupted labels Adversarial weight injection
 
 Loading the archived run…
 
-##### Standard CNN
-
-parameter-matched
-
-Component telemetry
-
-No such quantity is computed by this architecture.
-
-##### ORMAS
-
-same data, same objective
-
-Component telemetry
-
 - Field: Epoch
 
-epoch 0
+epoch 0 / 199
+
+Test accuracy · both arms, one axis
+
+Correction ledger · written during training
+
+What each one can answer, at this epoch
+
+The question Standard CNN ORMAS
 
 ##### The record
 
 Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
 
-Nothing in the panel on the left was withheld. A standard network does not compute a per-component health signal at any point in training, so there is no quantity to display. That absence is the problem ORMAS was built to remove.
+Nothing in the sealed pane was withheld. A standard network does not compute a per-component health signal at any point in training, so there is no quantity to display and no setting that would reveal one. That absence is the problem, drawn.
+
+**WHAT THAT RECORD IS FOR**
+
+### The same record answers four different people.
+
+It is one artefact, generated once, during training. What changes between these readers is the obligation that makes them ask.
+
+- **The engineer whose run died.** A component, a step and a magnitude, while the run is still recoverable — instead of a loss curve that moved once the damage was thousands of steps old.
+
+- **The validator who cannot verify a memo.** A signed, per-modification record with a declared bound, diffable against the version last approved. Evidence of what training did rather than a written account of what the team intended.
+
+- **The reviewer assessing a model allowed to update.** A declared set of modification types with individual ceilings, the record of each one as it happened, and the diff. Those are the three things a change-control plan asks for.
+
+- **The counsel holding a deletion clause.** What the model took from a named source, held as an addressable part rather than spread across every parameter — the precondition for removing it and certifying what was removed.
+
+Transparency is the mechanism. The product is that data a custodian will not release today becomes data they can release, because the account they have been waiting for now exists.
 
 **BEFORE THE QUESTIONS**
 
 ### Ten objections, answered before they are raised.
 
-These are the questions a technical evaluation asks in its first five minutes. The limits come first, because a page that lists only what worked is a marketing page wearing a lab coat.
+These are the questions a technical evaluation asks in its first five minutes, in the words a reader actually uses. The limits come first, because a page that lists only what worked is a marketing page wearing a lab coat.
 
 #### Where does it lose?
 
 Under adversarial weight injection the architecture measures 1.0 percentage point worse than a parameter-matched baseline, and there is no current mitigation. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors.
 
-That run is in the scenario selector above. It plays, and it loses.
+That run is in the scenario selector. It plays, and it loses.
 
 #### Is this deep supervision with extra steps?
 
@@ -87,7 +147,7 @@ No. It shows one 200-epoch run on a network of 636,677 parameters. Behaviour at 
 
 Rollback recovers the accuracy and discards every step of legitimate learning since the last checkpoint, and it arrives with no account of what failed. The cost of the remedy is set by the checkpoint interval rather than by the size of the fault, and the same failure remains available to happen again unexplained.
 
-The replay above is not an argument that repair beats rollback on accuracy. It is an argument that a named component, a step and a magnitude is a different class of object from a collapsed curve.
+The replay is not an argument that repair beats rollback on accuracy. It is an argument that a named component, a step and a magnitude is a different class of object from a collapsed curve.
 
 #### Where is the code?
 
@@ -100,6 +160,24 @@ Until then, evaluation access is available under a short agreement, every archiv
 One product, one licence. The mechanism publishes free for research, teaching and evaluation, permanently. Production deployment is licensed: annual, per institution, running on customer infrastructure, with the bound calibrated for the domain, reproducible builds, support and indemnity.
 
 Nothing is priced per feature and there is no price list. Terms are agreed per institution and written into the contract.
+
+**THE BOUNDARY OF THE CLAIM**
+
+### Stated here, in the same place as the claim.
+
+A page arguing that half of a decade-old problem is closed has to say exactly which half and exactly how far, in the same breath. These are the boundaries of the evidence.
+
+- **This is structural transparency, not semantic interpretability.** The record names which component failed, when, by how much and inside what limit. It does not say what that component encodes, and no claim here should be read as saying it does.
+
+- **Every result is CIFAR-10 or CIFAR-100.** No clinical, biological, financial or defence data has ever touched this system. That is the binding constraint on the whole programme rather than a detail.
+
+- **Transformers are a stated target, not a demonstrated result.**Demonstrated on fully-connected, convolutional and residual families.
+
+- **Under adversarial weight injection the architecture measures 1.0 percentage point worse** than a parameter-matched baseline, with no current mitigation. That run is in the scenario selector above, and it plays, and it loses.
+
+- **Behaviour at frontier scale, on regulated data, and in production over time has not been observed**, because no deployment exists.
+
+The claim is not that a network can now be read. It is that a single-network architecture can produce mechanistically logged, per-component causal attribution that no prior single-network method offers, and that this is what makes recovery from failures possible that standard architectures cannot even detect.
 
 **WHY THE TIMING MATTERS**
 
@@ -136,5 +214,13 @@ Evaluation access is available now under a short agreement, and free and unrestr
 Terms are agreed per institution and written into the contract, and pre-booking fixes them ahead of general availability. Early partners shape the baseline architecture while the requirements are still open.
 
 [Pre-book a deployment](/contact?intent=pre-book#pre-book)
+
+Sources for the state of the field
+
+- [Open problems in mechanistic interpretability](https://arxiv.org/pdf/2501.16496)
+
+- [Mechanistic interpretability for AI safety — a review](https://arxiv.org/pdf/2404.14082)
+
+- [Unboxing the black box — algorithmic understanding of neural networks](https://arxiv.org/html/2511.19265v1)
 
 Every figure on this page is measured on CIFAR-10 across the controlled experiment programme, and is labelled as such wherever it appears.[The technology page](/technology) carries the conditions for each, the error bars, and the one result that went against us.

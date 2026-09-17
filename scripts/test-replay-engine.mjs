@@ -10,7 +10,7 @@
 // bundle moved the lesion, the beat would silently play at act-1 speed and the
 // whole demo would lose its point without anything failing to build.
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 
@@ -29,7 +29,15 @@ globalThis.cancelAnimationFrame = () => {};
 let fail = 0;
 const ok = (c, m) => { if (!c) { console.log('  FAIL', m); fail++; } else console.log('  pass', m); };
 
-for (const key of ['dead-layer-lesion','full-hierarchy','adversarial','weight-explosion']) {
+// Derived from the directory, never hardcoded: a fixed list silently diverged
+// from the bundles the moment a scenario was swapped, and the failure was a
+// thrown ENOENT rather than a readable assertion.
+const runsDir = new URL('../public/demo/runs/', import.meta.url);
+const keys = readdirSync(runsDir).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5)).sort();
+if (!keys.length) { console.log('  FAIL no bundles found'); process.exit(1); }
+console.log(`scenarios: ${keys.join(', ')}`);
+
+for (const key of keys) {
 	const b = JSON.parse(readFileSync(
 		new URL(`../public/demo/runs/${key}.json`, import.meta.url), 'utf8'));
 	const e = new ReplayEngine(b);
@@ -52,7 +60,14 @@ for (const key of ['dead-layer-lesion','full-hierarchy','adversarial','weight-ex
 	ok(mono, 'timeAt is monotonic');
 
 	// The event must land inside the slow segment, or the beat is missed.
+	// A scenario with no inflicted event (corrupted labels) skips this block
+	// and is checked for the single-segment shape instead.
 	const ev = b.event;
+	if (!ev) {
+		ok(e.segments.length === 1, 'an event-free run plays as one continuous segment');
+		ok(e.actAt(e.lastEpoch) === 'repair' || e.actAt(e.lastEpoch) === 'record',
+		   'an event-free run still resolves an act at the end');
+	}
 	if (ev) {
 		const seg = e.segments.find(s => ev.epoch > s.fromEpoch && ev.epoch <= s.toEpoch);
 		ok(seg?.act === 'event', `event epoch ${ev.epoch} falls in the slowed segment`);

@@ -1,36 +1,43 @@
 ---
-// THE REPLAY DEMO. Added 2026-09-17.
+// THE REPLAY INSTRUMENT. Added 2026-09-17, rebuilt the same day.
 //
-// WHY IT EXISTS. Four of the five sector pages already promise an evaluator two
-// artefacts — "a worked example of the alarm output: component, diagnosis, step,
-// magnitude" and "a worked modification record, in the format a reviewer would
-// receive". Both existed only as sentences. This is those two, shown.
+// WHY IT EXISTS. Four of the five sector pages already promised an evaluator a
+// worked alarm output and a worked modification record. Both existed only as
+// sentences. This is those two, shown, from an archived run.
 //
-// WHAT IT IS. A replay of one archived training run. Nothing computes in the
-// browser: every value comes from public/demo/runs/<key>.json, generated from the
-// experiment archive by scripts/build-replay-bundle.py and asserted against every
-// published figure by scripts/verify-replay-bundle.py. The run identifier and the
-// seed are on screen at every frame, so a reader can regenerate what they watched.
+// WHY IT WAS REBUILT. The first version drew two accuracy charts side by side:
+// a page whose thesis is "the black box is opened" rendering two boxes with a
+// number written on the outside of each. A reader who had never seen a neural
+// network learned only that one line ended higher than the other. The network
+// itself — the thing the whole argument is about — was never drawn.
 //
-// WHY A REPLAY AND NOT A LIVE TRAINER. A network small enough to train in a
-// browser is a network small enough to dismiss, and the first objection would be
-// that it only works on toy models. Replaying a real 200-epoch run at real scale
-// is cheaper to build and harder to attack.
+// WHAT IT DRAWS NOW. The network. Three convolutional stages at their real
+// shapes, the signal passing through them, each stage's health as a level you
+// can watch fall and recover, and the bounded four-operation chain descending
+// into the shared bottleneck. The accuracy curve is one strip underneath, with
+// both arms on a single axis — evidence that the repair worked, not the exhibit.
 //
-// THE MOST IMPORTANT ELEMENT IS THE EMPTY PANEL. The baseline's telemetry column
-// renders one sentence and nothing else, driven off `series.baseline.corrections
-// === null`. It is not a placeholder and must never be styled as one — no
-// spinner, no skeleton, no dashes. A standard architecture does not compute a
-// per-component health signal at any point in training, so there is no quantity
-// to display. That absence is the argument.
+// BOTH PANES DRAW THE SAME ANATOMY. Same stages, same heights, same positions,
+// because it is the same network. The left one is sealed; the right one is cut
+// open. That is the honest form of the claim: nothing was withheld from the
+// baseline, the quantity was never computed.
+//
+// IT RUNS ON A DARK GROUND, alone on a light site. Telemetry reads as emitted
+// signal against dark, which is why every instrument console is dark, and it
+// separates the exhibit from the page's prose. This is equipment, not a figure.
+//
+// NOTHING COMPUTES IN THE BROWSER. Every value is read from a bundle generated
+// from the experiment archive by scripts/build-replay-bundle.py and asserted
+// against every published figure by scripts/verify-replay-bundle.py. Stage fill
+// is `goodness`; an emptied stage is `weight_norm == 0`, which is literally what
+// the archive records at the lesion; strikes are real correction events at their
+// real steps. There is no decorative data on this page.
 export interface Props {
-	/** Bundle key under public/demo/runs. */
 	scenario?: string;
 	/** Hide the scenario selector when embedded on a page about one feature. */
 	fixed?: boolean;
-	/** Open on the record panel — used on /product/diary. */
+	/** Open on the record — used on /product/diary. */
 	openRecord?: boolean;
-	/** Heading level for the block label, so embeds nest correctly. */
 	compact?: boolean;
 }
 const {
@@ -43,106 +50,119 @@ const {
 const SCENARIOS = [
 	{ key: 'dead-layer-lesion', label: 'Dead-layer lesion' },
 	{ key: 'full-hierarchy', label: 'Full-hierarchy lesion' },
+	{ key: 'label-noise', label: 'Corrupted labels' },
 	{ key: 'adversarial', label: 'Adversarial weight injection' },
-	{ key: 'weight-explosion', label: 'Weight explosion' },
+
 ];
 ---
 
 <section
-	class={`replay${compact ? ' replay--compact' : ''}`}
+	class={`rp${compact ? ' rp--compact' : ''}`}
 	data-replay
 	data-scenario={scenario}
 	data-open-record={openRecord ? 'true' : 'false'}
 >
-	<header class="replay-head">
-		<div class="replay-head-main">
-			{!fixed && (
-				<label class="replay-pick">
-					<span class="replay-pick-label">Scenario</span>
-					<select class="replay-select" data-select>
+	<header class="rp-bar">
+		<div class="rp-bar-left">
+			<p class="rp-legend-item">The same network, twice. One sealed, one open.</p>
+			{!fixed ? (
+				<label class="rp-pick">
+					<span class="rp-pick-label">Scenario</span>
+					<select class="rp-select" data-select>
 						{SCENARIOS.map((s) => (
 							<option value={s.key} selected={s.key === scenario}>{s.label}</option>
 						))}
 					</select>
 				</label>
+			) : (
+				<p class="rp-title" data-title>—</p>
 			)}
-			{fixed && <p class="replay-title" data-title>—</p>}
 		</div>
-		<p class="replay-conditions" data-conditions>Loading the archived run…</p>
+		<p class="rp-run" data-conditions>Loading the archived run…</p>
 	</header>
 
-	<div class="replay-panes">
-		<article class="replay-pane replay-pane--baseline">
-			<header class="replay-pane-head">
-				<h4 class="replay-pane-name">Standard CNN</h4>
-				<p class="replay-pane-sub" data-baseline-sub>parameter-matched</p>
-			</header>
-			<div class="replay-plot"><canvas data-canvas-baseline aria-label="Accuracy of the standard network across training"></canvas></div>
-			<div class="replay-telemetry">
-				<p class="replay-telemetry-label">Component telemetry</p>
-				<div class="replay-empty" data-baseline-telemetry>
-					<p class="replay-empty-text">No such quantity is computed by this architecture.</p>
-				</div>
-			</div>
-		</article>
-
-		<article class="replay-pane replay-pane--ormas">
-			<header class="replay-pane-head">
-				<h4 class="replay-pane-name">ORMAS</h4>
-				<p class="replay-pane-sub" data-ormas-sub>same data, same objective</p>
-			</header>
-			<div class="replay-plot"><canvas data-canvas-ormas aria-label="Accuracy of the ORMAS network across training"></canvas></div>
-			<div class="replay-telemetry">
-				<p class="replay-telemetry-label">Component telemetry</p>
-				<ul class="replay-nodes" data-nodes></ul>
-				<div class="replay-alarms" data-alarms></div>
-			</div>
-		</article>
+	<div class="rp-stageband">
+		<div class="rp-panes">
+			<article class="rp-pane rp-pane--sealed">
+				<div class="rp-anatomy" data-anatomy-baseline></div>
+			</article>
+			<article class="rp-pane rp-pane--open">
+				<div class="rp-anatomy" data-anatomy-ormas></div>
+			</article>
+		</div>
 	</div>
 
-	<p class="replay-beat" data-beat hidden></p>
+	<p class="rp-beat" data-beat hidden></p>
 
-	<div class="replay-controls">
-		<button type="button" class="replay-btn replay-btn--play" data-play aria-label="Play">
+	<div class="rp-controls">
+		<button type="button" class="rp-btn rp-btn--play" data-play aria-label="Play">
 			<span data-play-label>Play</span>
 		</button>
-		<label class="replay-scrub">
-			<span class="replay-sr">Epoch</span>
+		<label class="rp-scrub">
+			<span class="rp-sr">Epoch</span>
 			<input type="range" data-scrub min="0" max="199" value="0" step="1" />
 		</label>
-		<output class="replay-epoch" data-epoch>epoch 0</output>
-		<div class="replay-rates" role="group" aria-label="Playback speed">
+		<output class="rp-epoch" data-epoch>epoch 0 / 199</output>
+		<div class="rp-rates" role="group" aria-label="Playback speed">
 			{[1, 4, 16].map((r) => (
-				<button type="button" class="replay-rate" data-rate={r} aria-pressed={r === 1}>{r}×</button>
+				<button type="button" class="rp-rate" data-rate={r} aria-pressed={r === 1}>{r}×</button>
 			))}
 		</div>
-		<button type="button" class="replay-btn" data-replay-event>Replay from the event</button>
+		<button type="button" class="rp-btn" data-replay-event>Replay from the event</button>
+		<p class="rp-nature" data-nature></p>
 	</div>
 
-	<div class="replay-record" data-record hidden>
-		<header class="replay-record-head">
-			<h4 class="replay-record-title">The record</h4>
-			<p class="replay-record-sub" data-record-sub></p>
+	<div class="rp-readout">
+		<div class="rp-chart">
+			<p class="rp-chart-label">Test accuracy · both arms, one axis</p>
+			<div class="rp-chart-box">
+				<canvas data-canvas aria-label="Test accuracy across training for both networks on one axis"></canvas>
+			</div>
+		</div>
+		<div class="rp-ledger">
+			<p class="rp-chart-label">Correction ledger · written during training</p>
+			<div class="rp-alarms" data-alarms></div>
+		</div>
+	</div>
+
+	<div class="rp-verdict">
+		<p class="rp-chart-label">What each one can answer, at this epoch</p>
+		<table class="rp-verdict-table">
+			<thead>
+				<tr>
+					<th scope="col">The question</th>
+					<th scope="col">Standard CNN</th>
+					<th scope="col">ORMAS</th>
+				</tr>
+			</thead>
+			<tbody data-verdict></tbody>
+		</table>
+	</div>
+
+	<div class="rp-record" data-record hidden>
+		<header class="rp-record-head">
+			<h4 class="rp-record-title">The record</h4>
+			<p class="rp-record-sub" data-record-sub></p>
 		</header>
-		<dl class="replay-record-grid" data-record-grid></dl>
-		<div class="replay-record-table-wrap">
-			<table class="replay-record-table">
-				<caption class="replay-sr">Every correction, with its component, diagnosis, step, magnitude and declared ceiling</caption>
+		<dl class="rp-record-grid" data-record-grid></dl>
+		<div class="rp-table-wrap">
+			<table class="rp-table">
+				<caption class="rp-sr">Every correction, with its component, diagnosis, step, magnitude and declared ceiling</caption>
 				<thead>
 					<tr><th scope="col">Step</th><th scope="col">Component</th><th scope="col">Diagnosis</th><th scope="col">Magnitude</th><th scope="col">Ceiling</th></tr>
 				</thead>
 				<tbody data-record-rows></tbody>
 			</table>
 		</div>
-		<div class="replay-record-actions">
-			<button type="button" class="replay-btn replay-btn--primary" data-download>Download the record</button>
-			<button type="button" class="replay-btn" data-diff>Diff against the pre-event version</button>
+		<div class="rp-record-actions">
+			<button type="button" class="rp-btn rp-btn--primary" data-download>Download the record</button>
+			<button type="button" class="rp-btn" data-diff>Diff against the pre-event version</button>
 		</div>
-		<div class="replay-diff" data-diff-panel hidden></div>
+		<div class="rp-diff" data-diff-panel hidden></div>
 	</div>
 
 	<noscript>
-		<p class="replay-noscript">
+		<p class="rp-noscript">
 			This replay needs JavaScript. The underlying figures are on the technology
 			page, with the conditions each was measured under.
 		</p>
@@ -152,35 +172,28 @@ const SCENARIOS = [
 <script>
 	import { ReplayEngine } from '../scripts/replay/engine';
 	import { draw, readTheme, sizeCanvas } from '../scripts/replay/render';
+	import { Anatomy } from '../scripts/replay/anatomy';
 	import type { Bundle, Correction } from '../scripts/replay/types';
 
-	const DIAGNOSIS_LABEL: Record<string, string> = {
-		dead: 'dead',
-		oscillating: 'oscillating',
-		saturated: 'saturated',
-		loss_stagnant: 'loss stagnant',
-		gradient_dead: 'gradient dead',
-		low_confidence: 'low confidence',
-		exploded: 'exploded',
+	const DIAGNOSIS: Record<string, string> = {
+		dead: 'dead', oscillating: 'oscillating', saturated: 'saturated',
+		loss_stagnant: 'loss stagnant', gradient_dead: 'gradient dead',
+		low_confidence: 'low confidence', exploded: 'exploded',
 	};
 
 	const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-	const fmtPct = (v: number) => `${(v * 100).toFixed(1)}%`;
-	const fmtInt = (v: number) => v.toLocaleString('en-GB');
-
+	const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
+	const num = (v: number) => v.toLocaleString('en-GB');
 	const teardown: Array<() => void> = [];
 
 	function init(root: HTMLElement) {
-		// Idempotent: astro:page-load fires on the first load and again after every
-		// client-side navigation, and the same element can be handed to us twice.
 		if (root.dataset.replayReady === 'true') return;
 		root.dataset.replayReady = 'true';
-		const q = <T extends HTMLElement>(sel: string) => root.querySelector(sel) as T | null;
-		const cvBase = q<HTMLCanvasElement>('[data-canvas-baseline]')!;
-		const cvOrmas = q<HTMLCanvasElement>('[data-canvas-ormas]')!;
-		const elConditions = q('[data-conditions]')!;
+
+		const q = <T extends HTMLElement>(s: string) => root.querySelector(s) as T | null;
+		const canvas = q<HTMLCanvasElement>('[data-canvas]')!;
+		const elRun = q('[data-conditions]')!;
 		const elTitle = q('[data-title]');
-		const elNodes = q('[data-nodes]')!;
 		const elAlarms = q('[data-alarms]')!;
 		const elBeat = q('[data-beat]')!;
 		const elEpoch = q('[data-epoch]')!;
@@ -190,94 +203,131 @@ const SCENARIOS = [
 		const btnEvent = q<HTMLButtonElement>('[data-replay-event]')!;
 		const select = q<HTMLSelectElement>('[data-select]');
 		const elRecord = q('[data-record]')!;
-		const elBaseSub = q('[data-baseline-sub]')!;
-		const elOrmasSub = q('[data-ormas-sub]')!;
+
+		const anaBase = new Anatomy(q('[data-anatomy-baseline]')!, { instrumented: false, reduced });
+		const anaOrmas = new Anatomy(q('[data-anatomy-ormas]')!, { instrumented: true, reduced });
 
 		let engine: ReplayEngine | null = null;
 		let bundle: Bundle | null = null;
 		let theme = readTheme(root);
 
-		const ormasColour = () =>
-			getComputedStyle(root).getPropertyValue('--chart-ormas').trim() || '#A5600C';
-		const baseColour = () =>
-			getComputedStyle(root).getPropertyValue('--chart-baseline').trim() || '#4E6FA8';
-
 		function render(epoch: number) {
 			if (!bundle || !engine) return;
 			const e = Math.round(epoch);
 
-			draw(cvBase, {
-				bundle, series: bundle.series.baseline.accuracy,
-				corrections: bundle.series.baseline.corrections,
-				upto: epoch, colour: baseColour(), dashed: true, theme,
-			});
-			draw(cvOrmas, {
-				bundle, series: bundle.series.ormas.accuracy,
-				corrections: bundle.series.ormas.corrections,
-				upto: epoch, colour: ormasColour(), dashed: false, theme,
-			});
+			draw(canvas, bundle, epoch, theme);
+
+			const frame = bundle.health.find((f) => f.epoch === e)
+				?? bundle.health.filter((f) => f.epoch <= e).pop()
+				?? bundle.health[0] ?? null;
+
+			// A correction pulses on the stage it names, for the epoch it fired in.
+			const striking = new Set<number>();
+			for (const c of bundle.corrections) {
+				if (c.epoch === e) striking.add(c.node);
+			}
+			anaOrmas.update(frame, striking, engine.isPlaying);
+			anaBase.update(null, new Set(), engine.isPlaying);
 
 			elEpoch.textContent = `epoch ${e} / ${engine.lastEpoch}`;
 			if (document.activeElement !== elScrub) elScrub.value = String(e);
-
-			renderNodes(e);
 			renderAlarms(e);
 			renderBeat(e);
+			renderVerdict(e, frame);
 		}
 
-		function renderNodes(epoch: number) {
-			if (!bundle) return;
-			const frame = bundle.health.find((h) => h.epoch === epoch)
-				?? bundle.health.filter((h) => h.epoch <= epoch).pop()
-				?? bundle.health[0];
-			if (!frame) return;
-			elNodes.innerHTML = frame.nodes.map((n) => {
-				const g = n.goodness ?? 0;
-				const zeroed = (n.weight_norm ?? 0) === 0;
-				const pct = Math.max(0, Math.min(100, g * 100));
-				const state = zeroed ? 'destroyed' : (n.state ?? '—');
-				return `<li class="replay-node${zeroed ? ' is-zero' : ''}">
-					<span class="replay-node-id">node ${n.id}</span>
-					<span class="replay-node-bar"><i style="width:${pct.toFixed(0)}%"></i></span>
-					<span class="replay-node-state">${state}</span>
-					<span class="replay-node-wn">wn ${(n.weight_norm ?? 0).toFixed(2)}</span>
-				</li>`;
-			}).join('');
+		/* The comparison, stated rather than implied. Every row is answered from
+		   the frame on screen. The last row is the important one: the aggregate
+		   IS available to both, and saying so is what keeps the other four
+		   rows credible — the baseline is not blind to everything, it is blind
+		   to everything beneath the aggregate. */
+		function renderVerdict(epoch: number, frame: ReturnType<typeof Object> | null) {
+			if (!bundle || !engine) return;
+			const ev = bundle.event;
+			const fired = ev != null && epoch >= ev.epoch;
+			const f = frame as { nodes: Array<{ id: number; weight_norm: number | null }> } | null;
+
+			const down = f ? f.nodes.filter((n) => (n.weight_norm ?? 0) === 0).map((n) => n.id) : [];
+			const seen = bundle.corrections.filter((c) => c.epoch !== null && c.epoch <= epoch);
+			const last = seen[seen.length - 1];
+
+			const oAcc = bundle.series.ormas.accuracy[Math.min(epoch, engine.lastEpoch)];
+            const bAcc = bundle.series.baseline.accuracy[Math.min(epoch, engine.lastEpoch)];
+
+			const none = '<span class="rp-v-none">no such quantity exists</span>';
+			const rows: Array<[string, string, string]> = [
+				[
+					'Which component is failing?',
+					none,
+					down.length
+						? `<span class="rp-v-hit">${down.map((i) => `stage ${i}`).join(', ')} — dead</span>`
+						: (last ? `stage ${last.node} — ${DIAGNOSIS[last.diagnosis] ?? last.diagnosis}` : 'none flagged'),
+				],
+				[
+					'At which step?',
+					ev ? (fired ? '<span class="rp-v-none">not until the loss moves</span>' : none)
+					   : '<span class="rp-v-none">not until the curve turns down</span>',
+					last ? `<span class="rp-v-hit">${num(last.step)}</span>` : '—',
+				],
+				[
+					'By how much?',
+					none,
+					last?.magnitude != null
+						? `magnitude ${last.magnitude.toFixed(4)}${last.ceiling != null ? `, ceiling ${last.ceiling.toFixed(2)} w` : ''}`
+						: '—',
+				],
+				[
+					ev ? 'What was done about it?' : 'What was done about the bad labels?',
+					'<span class="rp-v-none">nothing — the run continues</span>',
+					seen.length
+						? `<span class="rp-v-hit">${seen.length} bounded correction${seen.length === 1 ? '' : 's'}</span>, each inside its declared ceiling`
+						: 'nothing yet',
+				],
+				[
+					'Test accuracy right now',
+					`<span class="rp-v-both">${pct(bAcc)}</span>`,
+					`<span class="rp-v-both">${pct(oAcc)}</span>`,
+				],
+			];
+
+			const tb = q('[data-verdict]');
+			if (tb) {
+				tb.innerHTML = rows.map(([qn, a, b]) =>
+					`<tr><th scope="row">${qn}</th><td>${a}</td><td>${b}</td></tr>`).join('');
+			}
 		}
 
 		function renderAlarms(epoch: number) {
 			if (!bundle) return;
-			const recent = bundle.corrections
-				.filter((c) => c.epoch !== null && c.epoch <= epoch)
-				.slice(-4);
+			const seen = bundle.corrections.filter((c) => c.epoch !== null && c.epoch <= epoch);
+			const recent = seen.slice(-5).reverse();
 			if (!recent.length) {
-				elAlarms.innerHTML = '<p class="replay-alarms-idle">No component has crossed its own baseline.</p>';
+				elAlarms.innerHTML =
+					'<p class="rp-alarms-idle">No component has crossed its own baseline.</p>';
 				return;
 			}
-			elAlarms.innerHTML = recent.map((c) => `
-				<p class="replay-alarm">
-					<span class="replay-alarm-step">step ${fmtInt(c.step)}</span>
-					<span class="replay-alarm-node">node ${c.node}</span>
-					<span class="replay-alarm-diag">${DIAGNOSIS_LABEL[c.diagnosis] ?? c.diagnosis}</span>
-					${c.ceiling != null ? `<span class="replay-alarm-cap">ceiling ${c.ceiling.toFixed(2)} of weight</span>` : ''}
+			const rows = recent.map((c, i) => `
+				<p class="rp-alarm${i === 0 ? ' is-latest' : ''}">
+					<span class="rp-alarm-step">${num(c.step)}</span>
+					<span class="rp-alarm-node">stage ${c.node}</span>
+					<span class="rp-alarm-diag rp-alarm-diag--${c.diagnosis}">${DIAGNOSIS[c.diagnosis] ?? c.diagnosis}</span>
+					<span class="rp-alarm-cap">${c.ceiling != null ? `≤ ${c.ceiling.toFixed(2)} w` : ''}</span>
 				</p>`).join('');
+			elAlarms.innerHTML =
+				`<p class="rp-alarms-count">${seen.length} written so far</p>${rows}`;
 		}
 
-		// The beat. Only shown once the event has actually landed, and only with a
-		// step count when the lesion step was confirmed against the trainer source.
 		function renderBeat(epoch: number) {
 			const ev = bundle?.event;
 			if (!ev || epoch < ev.epoch) { elBeat.hidden = true; return; }
 			const named = ev.detected_nodes?.length
-				? ev.detected_nodes.map((n) => `node ${n}`).join(' and ')
+				? ev.detected_nodes.map((n) => `stage ${n}`).join(' and ')
 				: null;
 			if (ev.detected_step != null && ev.step_confirmed && ev.detected_lag_steps != null) {
 				const lag = ev.detected_lag_steps;
 				elBeat.innerHTML =
-					`<strong>${ev.label}</strong> at step ${fmtInt(ev.step)}.` +
-					(named
-						? ` Named at step ${fmtInt(ev.detected_step)} — ${lag === 1 ? 'one step' : `${fmtInt(lag)} steps`} later, on ${named}.`
-						: '');
+					`<strong>${ev.label}</strong> at step ${num(ev.step)}.` +
+					(named ? ` Named at step ${num(ev.detected_step)} — ${lag === 1 ? 'one step' : `${num(lag)} steps`} later, on ${named}.` : '');
 			} else {
 				elBeat.innerHTML = `<strong>${ev.label}</strong> at epoch ${ev.epoch}.` +
 					(named ? ` Named within one epoch, on ${named}.` : '');
@@ -288,61 +338,46 @@ const SCENARIOS = [
 		function renderRecord() {
 			if (!bundle) return;
 			const rec = bundle.record as any;
-			const sub = q('[data-record-sub]')!;
-			const grid = q('[data-record-grid]')!;
-			const rows = q('[data-record-rows]')!;
 			const c = bundle.conditions;
-
-			sub.textContent =
+			q('[data-record-sub]')!.textContent =
 				`${c.run_id_ormas} · seed ${c.seed} · ${c.dataset} · generated during training`;
 
-			const mission = rec.mission ?? {};
-			const shock = rec.shock ?? null;
-			const recovery = rec.recovery ?? null;
+			const m = rec.mission ?? {}, shock = rec.shock ?? null, rcv = rec.recovery ?? null;
 			const items: [string, string][] = [
-				['Epochs', String(mission.epochs ?? '—')],
-				['Peak', mission.peak != null ? `${fmtPct(mission.peak)} at epoch ${mission.peak_epoch}` : '—'],
-				['Final', mission.final != null ? fmtPct(mission.final) : '—'],
-				['Corrections', String(mission.corrections ?? '—')],
-				['Epochs with corrections', String(mission.epochs_with_corrections ?? '—')],
+				['Epochs', String(m.epochs ?? '—')],
+				['Peak', m.peak != null ? `${pct(m.peak)} at ${m.peak_epoch}` : '—'],
+				['Final', m.final != null ? pct(m.final) : '—'],
+				['Corrections', String(m.corrections ?? '—')],
+				['Epochs with corrections', String(m.epochs_with_corrections ?? '—')],
 			];
 			if (shock) {
 				items.push(['Event at epoch', String(shock.epoch)]);
-				items.push(['Before → after', `${fmtPct(shock.pre)} → ${fmtPct(shock.post)}`]);
+				items.push(['Before → after', `${pct(shock.pre)} → ${pct(shock.post)}`]);
 			}
-			if (recovery) {
-				items.push(['Recovered to', `${fmtPct(recovery.to)} by epoch ${recovery.by_epoch}`]);
-				items.push(['Of what was lost', `${recovery.reclaimed_pct}%`]);
+			if (rcv) {
+				items.push(['Recovered to', `${pct(rcv.to)} by ${rcv.by_epoch}`]);
+				items.push(['Of what was lost', `${rcv.reclaimed_pct}%`]);
 			}
-			grid.innerHTML = items.map(([k, v]) =>
-				`<div class="replay-record-cell"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+			q('[data-record-grid]')!.innerHTML = items.map(([k, v]) =>
+				`<div class="rp-record-cell"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 
-			rows.innerHTML = (bundle.corrections as Correction[]).map((c2) => `
-				<tr>
-					<td>${fmtInt(c2.step)}</td>
-					<td>node ${c2.node}</td>
-					<td>${DIAGNOSIS_LABEL[c2.diagnosis] ?? c2.diagnosis}</td>
-					<td>${c2.magnitude != null ? c2.magnitude.toFixed(4) : '—'}</td>
-					<td>${c2.ceiling != null ? c2.ceiling.toFixed(2) : '—'}</td>
-				</tr>`).join('');
+			q('[data-record-rows]')!.innerHTML = (bundle.corrections as Correction[]).map((x) => `
+				<tr><td>${num(x.step)}</td><td>stage ${x.node}</td>
+				<td>${DIAGNOSIS[x.diagnosis] ?? x.diagnosis}</td>
+				<td>${x.magnitude != null ? x.magnitude.toFixed(4) : '—'}</td>
+				<td>${x.ceiling != null ? x.ceiling.toFixed(2) : '—'}</td></tr>`).join('');
 		}
 
-		function showRecord() {
-			elRecord.hidden = false;
-			renderRecord();
-		}
+		function showRecord() { elRecord.hidden = false; renderRecord(); }
 
 		function setPlayLabel() {
 			const on = engine?.isPlaying ?? false;
 			lblPlay.textContent = on ? 'Pause' : 'Play';
 			btnPlay.setAttribute('aria-label', on ? 'Pause' : 'Play');
+			root.classList.toggle('is-running', on);
 		}
 
 		async function load(key: string) {
-			// A standalone build (scripts/build-standalone-demo.py) embeds the
-			// bundles on the page so the file works from disk, in an email
-			// attachment, or anywhere without a server. On the site there is no
-			// such global and it fetches as normal.
 			const embedded = (window as unknown as {
 				__REPLAY_BUNDLES__?: Record<string, Bundle>;
 			}).__REPLAY_BUNDLES__;
@@ -350,7 +385,7 @@ const SCENARIOS = [
 				bundle = embedded[key];
 			} else {
 				const res = await fetch(`/demo/runs/${key}.json`);
-				if (!res.ok) { elConditions.textContent = 'The archived run could not be loaded.'; return; }
+				if (!res.ok) { elRun.textContent = 'The archived run could not be loaded.'; return; }
 				bundle = await res.json();
 			}
 			if (!bundle) return;
@@ -360,23 +395,30 @@ const SCENARIOS = [
 			engine.onFrame = (e) => render(e);
 			engine.onEnd = () => { setPlayLabel(); showRecord(); };
 
+			anaBase.load(bundle);
+			anaOrmas.load(bundle);
+
 			const c = bundle.conditions;
-			elConditions.textContent =
+			elRun.textContent =
 				`${c.dataset} · seed ${c.seed} · run ${c.archive_index} · ${c.run_id_ormas}`;
 			if (elTitle) elTitle.textContent = bundle.title;
-			elBaseSub.textContent = c.params_baseline
-				? `parameter-matched · ${fmtInt(c.params_baseline)} parameters`
-				: 'parameter-matched';
-			elOrmasSub.textContent = c.params_ormas
-				? `${fmtInt(c.params_ormas)} parameters · same data, same objective`
-				: 'same data, same objective';
+
+			// A run with no event has a different shape of story and the chrome
+			// has to say so, or the reader waits for a catastrophe that never
+			// comes and concludes the demo is broken.
+			const hasEvent = bundle.event != null;
+			btnEvent.textContent = hasEvent ? 'Replay from the event' : 'Replay from the divergence';
+			const nature = q('[data-nature]');
+			if (nature) {
+				nature.textContent = hasEvent
+					? ''
+					: 'Nothing is inflicted in this run. The corruption is in the data from the first step.';
+			}
 
 			elScrub.max = String(engine.lastEpoch);
 			elRecord.hidden = true;
 			q('[data-diff-panel]')!.hidden = true;
 
-			// Reduced motion, or an embed that opens on the record: render the end
-			// state outright. The demo has to be fully comprehensible as a still.
 			if (reduced || root.dataset.openRecord === 'true') {
 				engine.toEnd();   // fires onEnd, which opens the record
 			} else {
@@ -386,18 +428,32 @@ const SCENARIOS = [
 		}
 
 		btnPlay.addEventListener('click', () => { engine?.toggle(); setPlayLabel(); });
-		btnEvent.addEventListener('click', () => { engine?.replayFromEvent(); setPlayLabel(); });
-		elScrub.addEventListener('input', () => {
-			engine?.pause();
-			engine?.seekEpoch(Number(elScrub.value));
+		btnEvent.addEventListener('click', () => {
+			if (!engine || !bundle) return;
+			if (bundle.event) {
+				engine.replayFromEvent();
+			} else {
+				// Where the arms first part by more than a point and stay parted.
+				const o = bundle.series.ormas.accuracy;
+				const b = bundle.series.baseline.accuracy;
+				let at = 0;
+				for (let e = 1; e < o.length; e++) {
+					if (o[e] - b[e] > 0.01) { at = e; break; }
+				}
+				engine.pause();
+				engine.seekEpoch(Math.max(0, at - 5));
+				engine.play();
+			}
 			setPlayLabel();
 		});
-		root.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((b) => {
-			b.addEventListener('click', () => {
-				const r = Number(b.dataset.rate);
-				engine?.setRate(r);
+		elScrub.addEventListener('input', () => {
+			engine?.pause(); engine?.seekEpoch(Number(elScrub.value)); setPlayLabel();
+		});
+		root.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				engine?.setRate(Number(btn.dataset.rate));
 				root.querySelectorAll('[data-rate]').forEach((o) =>
-					o.setAttribute('aria-pressed', String(o === b)));
+					o.setAttribute('aria-pressed', String(o === btn)));
 			});
 		});
 		select?.addEventListener('change', () => {
@@ -413,9 +469,7 @@ const SCENARIOS = [
 			const payload = {
 				note: 'Modification record generated during training. Replayed from the '
 					+ 'archived run named below; regenerable from its seed.',
-				conditions: bundle.conditions,
-				event: bundle.event,
-				record: bundle.record,
+				conditions: bundle.conditions, event: bundle.event, record: bundle.record,
 			};
 			const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
 			const a = document.createElement('a');
@@ -429,50 +483,48 @@ const SCENARIOS = [
 			const panel = q('[data-diff-panel]')!;
 			if (!bundle || !bundle.event) return;
 			if (!panel.hidden) { panel.hidden = true; return; }
-			const before = bundle.health.find((h) => h.epoch === bundle!.event!.epoch - 1);
+			const before = bundle.health.find((f) => f.epoch === bundle!.event!.epoch - 1);
 			const after = bundle.health[bundle.health.length - 1];
 			if (!before || !after) return;
 			panel.innerHTML = `
-				<p class="replay-diff-label">Component state, epoch ${before.epoch} against epoch ${after.epoch}</p>
-				<table class="replay-record-table">
-					<thead><tr><th scope="col">Component</th><th scope="col">Weight norm before</th><th scope="col">After</th><th scope="col">Change</th></tr></thead>
-					<tbody>${before.nodes.map((b) => {
-						const a2 = after.nodes.find((x) => x.id === b.id);
-						const bw = b.weight_norm ?? 0, aw = a2?.weight_norm ?? 0;
-						const d = aw - bw;
-						return `<tr><td>node ${b.id}</td><td>${bw.toFixed(2)}</td><td>${aw.toFixed(2)}</td><td>${d >= 0 ? '+' : ''}${d.toFixed(2)}</td></tr>`;
-					}).join('')}</tbody>
-				</table>`;
+				<p class="rp-diff-label">Component state, epoch ${before.epoch} against epoch ${after.epoch}</p>
+				<table class="rp-table"><thead><tr><th scope="col">Component</th>
+				<th scope="col">Weight norm before</th><th scope="col">After</th><th scope="col">Change</th></tr></thead>
+				<tbody>${before.nodes.map((bn) => {
+					const an = after.nodes.find((z) => z.id === bn.id);
+					const bw = bn.weight_norm ?? 0, aw = an?.weight_norm ?? 0, d = aw - bw;
+					return `<tr><td>stage ${bn.id}</td><td>${bw.toFixed(2)}</td><td>${aw.toFixed(2)}</td><td>${d >= 0 ? '+' : ''}${d.toFixed(2)}</td></tr>`;
+				}).join('')}</tbody></table>`;
 			panel.hidden = false;
 		});
 
-		// Pause off-screen and in a hidden tab. No work while nobody is looking.
 		const io = new IntersectionObserver((entries) => {
 			if (!(entries[0]?.isIntersecting ?? true)) { engine?.pause(); setPlayLabel(); }
 		}, { threshold: 0.15 });
 		io.observe(root);
+
 		const onVisibility = () => {
 			if (document.hidden) { engine?.pause(); setPlayLabel(); }
 		};
 		document.addEventListener('visibilitychange', onVisibility);
-		teardown.push(() => document.removeEventListener('visibilitychange', onVisibility));
 
 		let rt = 0;
 		const onResize = () => {
 			clearTimeout(rt);
 			rt = window.setTimeout(() => {
 				theme = readTheme(root);
-				sizeCanvas(cvBase); sizeCanvas(cvOrmas);
+				sizeCanvas(canvas);
 				if (engine) render(engine.epoch);
 			}, 120);
 		};
 		window.addEventListener('resize', onResize);
 
 		teardown.push(() => {
-			engine?.destroy();
-			engine = null;
+			engine?.destroy(); engine = null;
+			anaBase.destroy(); anaOrmas.destroy();
 			io.disconnect();
 			window.removeEventListener('resize', onResize);
+			document.removeEventListener('visibilitychange', onVisibility);
 			clearTimeout(rt);
 			delete root.dataset.replayReady;
 		});
@@ -487,14 +539,8 @@ const SCENARIOS = [
 	}
 
 	function initAll() {
-		document.querySelectorAll<HTMLElement>('[data-replay]').forEach((el) => {
-			try {
-				init(el);
-			} catch (err) {
-				// One broken instance must not take out the others, or the rest of the
-				// page's interactivity registered after it.
-				console.error('[replay] init failed', err);
-			}
+		document.querySelectorAll<HTMLElement>('[data-replay]').forEach((element) => {
+			try { init(element); } catch (err) { console.error('[replay] init failed', err); }
 		});
 	}
 
@@ -507,309 +553,532 @@ const SCENARIOS = [
 </script>
 
 <style>
-	/* THE REPLAY DEMO.
-	   Two panes of identical geometry. Everything that differs between them is
-	   data, never styling — a difference in treatment would make the comparison
-	   look staged, which is the one thing this element cannot afford. */
+	/* THE REPLAY INSTRUMENT, as a scientific plate.
+	   REPALETTED 2026-09-17. The first version ran on --bg-dark, on the theory
+	   that telemetry reads as emitted signal and every instrument console is
+	   dark. That reference was wrong twice over. A single dark slab on a cream
+	   editorial site reads as a foreign object — an embedded player rather than
+	   part of the document — and near-black with one amber accent is the exact
+	   generic treatment this site's design notes warn against.
+	   The right reference is the printed plate: an anatomical drawing, an
+	   engineering section, a spectrogram. All light-ground, and so are the
+	   technical account's own figures, where the ORMAS line is already this
+	   amber. A light plate also survives being screenshotted into a deck or a
+	   paper, which is most of what this asset is for.
+	   No new palette: every value below is a token the site already ships. */
 
-	.replay {
-		border: 1px solid var(--border-hairline);
+	.rp {
+		--plate: var(--bg-surface);
+		--plate-sunk: var(--bg-base);
+		--rule: var(--border-hairline);
+		--fg: var(--text-primary);
+		--fg-mid: var(--text-secondary);
+		--fg-dim: var(--text-muted);
+		--ormas: var(--chart-ormas);
+		--base: var(--chart-baseline);
+		--warn: var(--chart-warning);
+		--mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+		background: var(--plate);
+		color: var(--fg);
+		border: 1px solid var(--rule);
 		border-radius: 4px;
-		background: var(--bg-surface);
 		overflow: hidden;
+		container-type: inline-size;
 	}
 
-	.replay-head {
+	/* ── chrome ───────────────────────────────────────────────── */
+
+	.rp-bar {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-sm) var(--space-lg);
 		align-items: baseline;
 		justify-content: space-between;
 		padding: var(--space-md) var(--space-lg);
-		border-bottom: 1px solid var(--border-hairline);
+		border-bottom: 1px solid var(--rule);
 	}
 
-	.replay-head-main { display: flex; align-items: baseline; gap: var(--space-md); min-width: 0; }
-	.replay-pick { display: flex; align-items: baseline; gap: var(--space-sm); }
+	.rp-bar-left { display: flex; align-items: baseline; gap: var(--space-md); min-width: 0; }
+	.rp-pick { display: flex; align-items: baseline; gap: var(--space-sm); }
 
-	.replay-pick-label,
-	.replay-telemetry-label {
+	.rp-pick-label, .rp-chart-label {
 		font-size: var(--text-eyebrow);
-		letter-spacing: 0.08em;
+		letter-spacing: 0.09em;
 		text-transform: uppercase;
-		color: var(--text-muted);
+		color: var(--fg-dim);
 	}
 
-	.replay-select {
+	.rp-select {
 		font: inherit;
 		font-size: var(--text-small);
-		color: var(--text-primary);
-		background: var(--bg-surface);
-		border: 1px solid var(--border-hairline);
+		color: var(--fg);
+		background: var(--plate);
+		border: 1px solid var(--rule);
 		border-radius: 3px;
 		padding: 4px 8px;
 	}
 
-	.replay-title { font-size: var(--text-small); font-weight: 600; margin: 0; }
+	.rp-title { margin: 0; font-size: var(--text-small); font-weight: 600; }
 
-	/* The conditions line. It is in the chrome at every frame because
-	   screenshots travel without their context, and a figure loose on a timeline
-	   with no conditions attached reads as an overclaim. */
-	.replay-conditions {
-		margin: 0;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
-		color: var(--text-muted);
-	}
+	/* Conditions stay in the chrome at every frame: screenshots travel without
+	   their context, and a figure loose on a timeline with no conditions reads
+	   as an overclaim. */
+	.rp-run { margin: 0; font-family: var(--mono); font-size: 11px; color: var(--fg-dim); }
 
-	.replay-panes { display: grid; grid-template-columns: 1fr 1fr; }
-	.replay-pane { padding: var(--space-md) var(--space-lg) var(--space-lg); min-width: 0; }
-	.replay-pane--baseline { border-right: 1px solid var(--border-hairline); }
+	/* ── the anatomy band: the hero ───────────────────────────── */
 
-	.replay-pane-head { margin-bottom: var(--space-sm); }
-	.replay-pane-name { margin: 0; font-size: var(--text-small); font-weight: 600; }
-	.replay-pane-sub {
-		margin: 2px 0 0;
-		font-size: 11px;
-		color: var(--text-muted);
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	}
+	.rp-stageband { padding: 0; }
+	.rp-readout, .rp-controls { padding-inline: var(--space-lg); }
 
-	/* Fixed aspect so the box is reserved before the bundle arrives: no layout
-	   shift when the data lands. */
-	.replay-plot { position: relative; aspect-ratio: 16 / 9; min-height: 160px; }
-	.replay-plot canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-
-	.replay-telemetry {
-		margin-top: var(--space-md);
-		padding-top: var(--space-sm);
-		border-top: 1px solid var(--border-hairline);
-		min-height: 148px;
-	}
-
-	/* THE EMPTY PANEL. Set in the same type as the readout opposite, because it
-	   is a statement and not a missing thing. No spinner, no skeleton, no dashes. */
-	.replay-empty { display: flex; align-items: center; min-height: 112px; }
-	.replay-empty-text {
+	/* Folded into the top bar when the controls moved up under the network:
+	   it did not earn a 40px row of its own. */
+	.rp-legend-item {
 		margin: 0;
 		font-size: var(--text-small);
-		line-height: 1.5;
-		color: var(--text-muted);
-		max-width: 30ch;
+		color: var(--fg-mid);
+		min-width: 0;
 	}
 
-	.replay-nodes { list-style: none; margin: var(--space-sm) 0 0; padding: 0; }
-	.replay-node {
+	.rp-panes {
 		display: grid;
-		grid-template-columns: 4.5rem 1fr 5.5rem 4.5rem;
-		gap: var(--space-sm);
-		align-items: center;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
-		color: var(--text-secondary);
-		padding: 2px 0;
+		grid-template-columns: 1fr 1fr;
+		border-block: 1px solid var(--rule);
 	}
-	.replay-node-bar {
-		height: 6px;
-		background: var(--accent-ghost);
-		border-radius: 3px;
-		overflow: hidden;
-	}
-	.replay-node-bar i {
-		display: block;
-		height: 100%;
-		background: var(--chart-ormas);
-		transition: width var(--duration-fast) linear;
-	}
-	.replay-node.is-zero .replay-node-bar i { background: var(--chart-warning); }
-	.replay-node.is-zero .replay-node-state { color: var(--chart-warning); font-weight: 600; }
-	.replay-node-state, .replay-node-wn { color: var(--text-muted); }
 
-	.replay-alarms { margin-top: var(--space-sm); min-height: 64px; }
-	.replay-alarms-idle {
+	.rp-pane {
+		border: 1px solid color-mix(in srgb, var(--rule) 32%, transparent);
+		border-radius: 4px;
+		padding: var(--space-md);
+		min-width: 0;
+		background: color-mix(in srgb, var(--ink-raised) 45%, transparent);
+	}
+	/* The open pane is lifted a half-step. The difference between the two is
+	   the entire argument, so it gets exactly one unit of emphasis and no more. */
+	.rp-pane--sealed { /* geometry identical to the open pane, by design */ }
+	.rp-pane--open {
+		background: var(--ink-raised);
+		border-color: color-mix(in srgb, var(--ormas) 28%, transparent);
+	}
+
+	.rp-anatomy { width: 100%; }
+
+	/* ── SVG anatomy internals ────────────────────────────────── */
+
+	.rp :global(.an-name) {
+		font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+		fill: var(--fg); font-family: var(--font-sans, system-ui);
+	}
+	.rp :global(.an-badge) {
+		font-size: 9px; letter-spacing: 0.14em; font-family: var(--mono);
+		fill: var(--fg-dim);
+	}
+	.rp :global(.an-sub) { font-size: 9px; font-family: var(--mono); fill: var(--fg-dim); }
+	.rp-pane--open :global(.an-badge) { fill: var(--ormas); }
+	.rp :global(.an-sub) { font-size: 9px; font-family: var(--mono); fill: var(--fg-dim); }
+
+	.rp :global(.an-input) {
+		fill: color-mix(in srgb, var(--base) 30%, transparent);
+		stroke: var(--base); stroke-width: 1.1;
+	}
+	.rp :global(.an-output) {
+		fill: color-mix(in srgb, var(--fg) 18%, transparent);
+		stroke: color-mix(in srgb, var(--fg) 45%, transparent); stroke-width: 1.1;
+	}
+	.rp :global(.an-io) { font-size: 9px; font-family: var(--mono); fill: var(--fg-dim); }
+	.rp :global(.an-io-sub) { font-size: 8px; font-family: var(--mono); fill: color-mix(in srgb, var(--fg) 34%, transparent); }
+
+	/* ── the network itself ───────────────────────────────────── */
+
+	/* Edges are recessive: they carry structure, not state. The units and the
+	   signal carry state, and if the web competed with them the drawing would
+	   read as decoration. */
+	.rp :global(.an-edge) {
+		stroke: color-mix(in srgb, var(--fg) 13%, transparent);
+		stroke-width: 0.6;
+		fill: none;
+	}
+	.rp-pane--open :global(.an-edge) { stroke: color-mix(in srgb, var(--ormas) 26%, transparent); }
+
+	.rp :global(.an-spine) {
+		stroke: color-mix(in srgb, var(--fg) 10%, transparent);
+		stroke-width: 1;
+	}
+
+	/* A unit's fill is its stage's health, passed in as --health. Uniform across
+	   the stage on purpose: the telemetry resolves to the stage, not the
+	   channel. */
+	.rp :global(.an-unit) {
+		fill: color-mix(in srgb, var(--ormas) calc(var(--health, 0) * 100%), var(--plate));
+		stroke: color-mix(in srgb, var(--ormas) 70%, transparent);
+		stroke-width: 1.1;
+		transition: fill 260ms var(--ease-out);
+	}
+	/* Sealed: the units are there, drawn at full strength, reporting nothing.
+	   Hollow rather than dim — the stage is working, it is just not observable. */
+	.rp :global(.an-unit.is-sealed) {
+		fill: var(--plate);
+		stroke: color-mix(in srgb, var(--fg) 34%, transparent);
+	}
+	.rp :global(.an-unit.is-destroyed) {
+		fill: var(--plate);
+		stroke: var(--warn);
+		stroke-width: 1.6;
+		stroke-dasharray: 2 1.6;
+	}
+
+	/* Health as a soft field around the column, so a healthy stage reads at a
+	   glance without having to compare eleven small circles. */
+	.rp :global(.an-halo) {
+		fill: var(--ormas);
+		transition: opacity 260ms var(--ease-out);
+	}
+	.rp :global(.an-footnote) {
+		font-size: 7px; font-family: var(--mono); fill: var(--fg-dim);
+	}
+
+	/* A correction fired on this component — the working colour. Not the same
+	   claim as destruction, which has its own outline: drawing both in the
+	   warning colour made a stage that had merely self-corrected read as
+	   wreckage. */
+	.rp :global(.an-strike) { transition: opacity 160ms linear; }
+	.rp :global(.an-strike rect) { fill: none; stroke: var(--ormas); stroke-width: 1.6; }
+	.rp :global(.an-gone) {
+		fill: none; stroke: var(--warn); stroke-width: 1.6;
+		transition: opacity 200ms linear;
+	}
+
+	/* ── stage labels ─────────────────────────────────────────────
+	   Every one of these needs an explicit font-size. SVG text with none
+	   inherits the page's body size and is then multiplied by the viewBox
+	   scale, which is how these once rendered at ~29px. */
+	.rp :global(.an-stage-shape) {
+		font-size: 10px; font-family: var(--mono); font-weight: 700; fill: var(--fg);
+	}
+	.rp :global(.an-stage-params) {
+		font-size: 8px; font-family: var(--mono); fill: var(--fg-dim);
+	}
+	.rp :global(.an-stage-state) {
+		font-size: 9px; font-family: var(--mono); fill: var(--fg-mid);
+	}
+	.rp :global(.an-stage-state.is-destroyed) { fill: var(--warn); font-weight: 700; }
+	.rp :global(.an-stage-metric) {
+		font-size: 8px; font-family: var(--mono); fill: var(--fg-dim);
+	}
+
+	/* THE SIGNAL. One pulse per unit per gap, staggered, travelling forward.
+	   This is the single piece of motion that makes the drawing a network
+	   rather than a diagram of one. */
+	.rp :global(.an-flow) {
+		stroke: var(--base);
+		stroke-width: 2;
+		stroke-linecap: round;
+		fill: none;
+		stroke-dasharray: 5 999;
+		stroke-dashoffset: 0;
+		opacity: 0;
+	}
+	.rp-pane--open :global(.an-flow) { stroke: var(--ormas); }
+	.rp.is-running :global(.an-flow) {
+		opacity: 0.85;
+		animation: rp-pulse 1.5s linear infinite;
+	}
+	@keyframes rp-pulse {
+		0%   { stroke-dashoffset: 5;  opacity: 0; }
+		12%  { opacity: 0.9; }
+		88%  { opacity: 0.9; }
+		100% { stroke-dashoffset: -100; opacity: 0; }
+	}
+
+	.rp :global(.an-tap) { stroke: color-mix(in srgb, var(--ormas) 50%, transparent); stroke-width: 0.9; stroke-dasharray: 2 2; }
+	.rp :global(.an-op) {
+		fill: color-mix(in srgb, var(--ormas) 10%, transparent);
+		stroke: color-mix(in srgb, var(--ormas) 62%, transparent);
+		stroke-width: 0.7;
+	}
+	.rp :global(.an-op-label) { font-size: 6.5px; font-family: var(--mono); fill: var(--ormas); }
+	.rp :global(.an-bottleneck) {
+		fill: color-mix(in srgb, var(--ormas) 8%, transparent);
+		stroke: var(--ormas); stroke-width: 0.9;
+	}
+	.rp :global(.an-bottleneck-label) { font-size: 7.5px; font-family: var(--mono); fill: var(--ormas); }
+	.rp :global(.an-chain-caption) {
+		font-size: 7.5px; font-family: var(--mono);
+		letter-spacing: 0.1em; fill: var(--ormas);
+	}
+	.rp :global(.an-chain-caption--void) { fill: var(--fg-dim); }
+	.rp :global(.an-name) { fill: var(--fg); }
+
+	.rp :global(.an-void) {
+		fill: none;
+		stroke: color-mix(in srgb, var(--fg) 26%, transparent);
+		stroke-width: 0.9; stroke-dasharray: 3 3;
+	}
+	.rp :global(.an-void-label) { font-size: 9px; font-family: var(--mono); fill: var(--fg-mid); }
+	.rp :global(.an-void-sub) { font-size: 7.5px; font-family: var(--mono); fill: var(--fg-dim); }
+
+	/* ── readout row ──────────────────────────────────────────── */
+
+	.rp-readout {
+		display: grid;
+		grid-template-columns: 1.7fr 1fr;
+		gap: var(--space-lg);
+		padding: var(--space-lg) var(--space-lg) var(--space-md);
+		align-items: start;
+	}
+	.rp-chart, .rp-ledger { min-width: 0; }
+	.rp-chart-label { margin: 0 0 var(--space-sm); }
+	.rp-chart-box { position: relative; aspect-ratio: 5 / 2; min-height: 140px; }
+	.rp-chart-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+	.rp-alarms { min-height: 150px; font-family: var(--mono); font-size: 11px; }
+	.rp-alarms :global(.rp-alarms-idle) { margin: 0; color: var(--fg-dim); font-style: italic; }
+	.rp-alarms :global(.rp-alarms-count) {
+		margin: 0 0 8px;
+		font-size: var(--text-eyebrow);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+	}
+	.rp-alarms :global(.rp-alarm) {
+		display: grid;
+		grid-template-columns: 5.2rem 4rem 1fr;
+		gap: 4px 10px;
+		align-items: baseline;
 		margin: 0;
-		font-size: var(--text-small);
-		color: var(--text-muted);
+		padding: 4px 0;
+		border-top: 1px solid var(--rule);
+		color: var(--fg-mid);
+		font-variant-numeric: tabular-nums;
 	}
-	.replay-alarm {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-sm);
-		margin: 0 0 2px;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
-		color: var(--text-secondary);
-	}
-	.replay-alarm-step { color: var(--text-muted); }
-	.replay-alarm-node { font-weight: 600; color: var(--text-primary); }
-	.replay-alarm-diag { color: var(--chart-warning); }
-	.replay-alarm-cap { color: var(--text-muted); }
+	.rp-alarms :global(.rp-alarm.is-latest) { color: var(--fg); }
+	.rp-alarms :global(.rp-alarm-step) { color: var(--fg-dim); }
+	.rp-alarms :global(.rp-alarm-node) { font-weight: 700; color: var(--fg); }
+	.rp-alarms :global(.rp-alarm-diag--dead) { color: var(--warn); font-weight: 700; }
+	.rp-alarms :global(.rp-alarm-diag--oscillating) { color: var(--ormas); }
+	.rp-alarms :global(.rp-alarm-cap) { grid-column: 2 / -1; color: var(--fg-dim); font-size: 10px; }
 
-	.replay-beat {
+	/* ── the verdict ledger ───────────────────────────────────── */
+
+	/* The site already argues this way on the home page: question, how it is
+	   answered today, with ORMAS. Same three columns, answered live against the
+	   frame on screen, so the difference is read rather than inferred.
+
+	   Every rule here is scoped through .rp-verdict-table — a static element —
+	   with :global on the rows, because the rows are injected by script and
+	   carry no scoping attribute of their own. */
+	.rp-verdict { padding: 0 var(--space-lg) var(--space-lg); }
+
+	.rp-verdict-table {
+		width: 100%;
+		border-collapse: collapse;
+		table-layout: fixed;
+		margin-top: var(--space-sm);
+	}
+
+	.rp-verdict-table thead th {
+		text-align: left;
+		padding: 0 12px 7px;
+		font-size: var(--text-eyebrow);
+		letter-spacing: 0.09em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+		font-weight: 600;
+		border-bottom: 1px solid var(--border-strong);
+	}
+	.rp-verdict-table thead th:first-child { padding-left: 0; width: 30%; }
+	.rp-verdict-table thead th:nth-child(2) { width: 30%; }
+	.rp-verdict-table thead th:nth-child(3) { color: var(--ormas); width: 40%; }
+
+	.rp-verdict-table :global(tbody th) {
+		text-align: left;
+		padding: 9px 12px 9px 0;
+		font-weight: 500;
+		font-size: var(--text-small);
+		color: var(--fg);
+		border-bottom: 1px solid var(--rule);
+		vertical-align: baseline;
+	}
+	.rp-verdict-table :global(tbody td) {
+		text-align: left;
+		padding: 9px 12px;
+		font-family: var(--mono);
+		font-size: 11.5px;
+		line-height: 1.45;
+		color: var(--fg-mid);
+		border-bottom: 1px solid var(--rule);
+		vertical-align: baseline;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* The ORMAS column carries a faint ground, so the answer side is one
+	   continuous object rather than three unrelated cells per row. */
+	.rp-verdict-table :global(tbody td:last-child) {
+		background: color-mix(in srgb, var(--ormas) 5%, transparent);
+		color: var(--fg);
+	}
+	.rp-verdict-table thead th:nth-child(3) {
+		background: color-mix(in srgb, var(--ormas) 5%, transparent);
+	}
+
+	/* An unanswerable cell is a statement about the architecture, not a missing
+	   value, so it is set in muted italic and led by a rule rather than a dash —
+	   a dash reads as "not measured yet". */
+	.rp-verdict :global(.rp-v-none) {
+		color: var(--fg-dim);
+		font-style: italic;
+	}
+	.rp-verdict :global(.rp-v-none)::before {
+		content: '';
+		display: inline-block;
+		width: 10px;
+		height: 1px;
+		margin-right: 7px;
+		vertical-align: middle;
+		background: currentColor;
+	}
+	.rp-verdict :global(.rp-v-hit) { color: var(--ormas); font-weight: 700; }
+	/* The one row both can answer, marked identically on both sides. */
+	.rp-verdict :global(.rp-v-both) { color: var(--fg); font-weight: 700; font-size: 13px; }
+
+	/* ── the beat ─────────────────────────────────────────────── */
+
+	.rp-beat {
 		margin: 0;
 		padding: var(--space-sm) var(--space-lg);
-		border-top: 1px solid var(--border-hairline);
-		background: var(--accent-ghost);
+		border-top: 1px solid color-mix(in srgb, var(--warn) 45%, transparent);
+		border-bottom: 1px solid color-mix(in srgb, var(--warn) 45%, transparent);
+		background: color-mix(in srgb, var(--warn) 6%, transparent);
 		font-size: var(--text-small);
-		color: var(--text-primary);
+		color: var(--fg);
 	}
 
-	.replay-controls {
+	/* ── controls ─────────────────────────────────────────────── */
+
+	.rp-controls {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-sm) var(--space-md);
 		align-items: center;
 		padding: var(--space-md) var(--space-lg);
-		border-top: 1px solid var(--border-hairline);
+		border-bottom: 1px solid var(--rule);
+		background: var(--plate-sunk);
 	}
 
-	.replay-btn {
+	.rp-btn {
 		font: inherit;
 		font-size: var(--text-small);
 		padding: 6px 12px;
-		border: 1px solid var(--border-hairline);
+		border: 1px solid var(--rule);
 		border-radius: 3px;
-		background: var(--bg-surface);
-		color: var(--text-primary);
+		background: var(--plate);
+		color: var(--fg);
 		cursor: pointer;
 	}
-	.replay-btn:hover { border-color: var(--border-strong); }
-	.replay-btn--play { min-width: 5.5rem; font-weight: 600; }
-	.replay-btn--primary {
-		background: var(--accent-dark);
-		border-color: var(--accent-dark);
-		color: #fff;
-	}
+	.rp-btn:hover { border-color: var(--border-strong); }
+	.rp-btn--play { min-width: 5.5rem; font-weight: 600; }
+	.rp-btn--primary { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; font-weight: 600; }
 
-	.replay-scrub { flex: 1 1 180px; display: block; }
-	.replay-scrub input { width: 100%; }
+	.rp-scrub { flex: 1 1 200px; display: block; }
+	.rp-scrub input { width: 100%; accent-color: var(--ormas); }
+	.rp-epoch { font-family: var(--mono); font-size: 11px; color: var(--fg-dim); min-width: 10ch; }
+	/* Says what kind of run this is when there is no event to wait for. */
+	.rp-nature { margin: 0; flex-basis: 100%; font-size: var(--text-small); color: var(--fg-dim); }
+	.rp-nature:empty { display: none; }
 
-	.replay-epoch {
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
-		color: var(--text-muted);
-		min-width: 9ch;
-	}
-
-	.replay-rates { display: flex; gap: 2px; }
-	.replay-rate {
-		font: inherit;
-		font-size: 11px;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	.rp-rates { display: flex; gap: 2px; }
+	.rp-rate {
+		font: inherit; font-size: 11px; font-family: var(--mono);
 		padding: 5px 8px;
-		border: 1px solid var(--border-hairline);
-		background: var(--bg-surface);
-		color: var(--text-muted);
-		cursor: pointer;
+		border: 1px solid var(--rule);
+		background: var(--plate); color: var(--fg-dim); cursor: pointer;
 	}
-	.replay-rate[aria-pressed='true'] {
-		color: var(--text-primary);
-		border-color: var(--border-strong);
-		font-weight: 600;
-	}
+	.rp-rate[aria-pressed='true'] { color: var(--plate); background: var(--fg); font-weight: 700; }
 
-	.replay-record {
+	/* ── the record ───────────────────────────────────────────── */
+
+	.rp-record {
 		padding: var(--space-lg);
 		border-top: 1px solid var(--border-strong);
-		background: var(--bg-base);
+		background: var(--plate-sunk);
 	}
-	.replay-record-head { margin-bottom: var(--space-md); }
-	.replay-record-title { margin: 0; font-size: var(--text-h3); }
-	.replay-record-sub {
-		margin: 4px 0 0;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
-		color: var(--text-muted);
-	}
+	.rp-record-head { margin-bottom: var(--space-md); }
+	.rp-record-title { margin: 0; font-size: var(--text-h3); color: var(--fg); }
+	.rp-record-sub { margin: 4px 0 0; font-family: var(--mono); font-size: 11px; color: var(--fg-dim); }
 
-	.replay-record-grid {
+	.rp-record-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 		gap: var(--space-md);
 		margin: 0 0 var(--space-lg);
 	}
-	.replay-record-cell dt {
-		font-size: var(--text-eyebrow);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--text-muted);
+	.rp-record-grid :global(.rp-record-cell dt) {
+		font-size: var(--text-eyebrow); letter-spacing: 0.08em;
+		text-transform: uppercase; color: var(--fg-dim);
 	}
-	.replay-record-cell dd {
-		margin: 2px 0 0;
-		font-size: var(--text-small);
-		font-weight: 600;
-		color: var(--text-primary);
+	.rp-record-grid :global(.rp-record-cell dd) {
+		margin: 2px 0 0; font-size: var(--text-small);
+		font-weight: 600; color: var(--fg); font-variant-numeric: tabular-nums;
 	}
 
-	/* Scrollable, never truncated. All of it, or the record is not a record. */
-	.replay-record-table-wrap {
-		max-height: 260px;
-		overflow: auto;
-		border: 1px solid var(--border-hairline);
-		background: var(--bg-surface);
+	/* All of it, scrollable, never truncated — or it is not a record. */
+	.rp-table-wrap {
+		max-height: 240px; overflow: auto;
+		border: 1px solid var(--rule); background: var(--plate);
 	}
-	.replay-record-table { width: 100%; border-collapse: collapse; }
-	.replay-record-table th,
-	.replay-record-table td {
-		text-align: left;
-		padding: 5px 10px;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
-		border-bottom: 1px solid var(--border-hairline);
+	.rp :global(.rp-table) { width: 100%; border-collapse: collapse; }
+	.rp :global(.rp-table th), .rp :global(.rp-table td) {
+		text-align: left; padding: 5px 10px;
+		font-family: var(--mono); font-size: 10.5px;
+		border-bottom: 1px solid var(--rule);
+		font-variant-numeric: tabular-nums;
 	}
-	.replay-record-table th {
-		position: sticky;
-		top: 0;
-		background: var(--bg-surface);
-		color: var(--text-muted);
-		font-weight: 600;
+	.rp :global(.rp-table th) {
+		position: sticky; top: 0; background: var(--plate);
+		color: var(--fg-dim); font-weight: 600; text-align: left;
 	}
-	.replay-record-table td { color: var(--text-secondary); }
-
-	.replay-record-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-sm);
-		margin-top: var(--space-md);
-	}
-	.replay-diff { margin-top: var(--space-md); }
-	.replay-diff-label {
-		font-size: var(--text-small);
-		color: var(--text-secondary);
-		margin: 0 0 var(--space-sm);
+	.rp :global(.rp-table td) { color: var(--fg-mid); }
+	.rp-diff :global(.rp-diff-label) {
+		font-size: var(--text-small); color: var(--fg-dim); margin: 0 0 var(--space-sm);
 	}
 
-	.replay-noscript {
-		padding: var(--space-lg);
-		font-size: var(--text-small);
-		color: var(--text-secondary);
-		margin: 0;
+	.rp-record-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-md); }
+	.rp-diff { margin-top: var(--space-md); }
+
+	.rp-noscript { padding: var(--space-lg); font-size: var(--text-small); color: var(--fg-dim); margin: 0; }
+
+	.rp-sr {
+		position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+		overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 	}
 
-	.replay-sr {
-		position: absolute;
-		width: 1px; height: 1px;
-		padding: 0; margin: -1px;
-		overflow: hidden;
-		clip: rect(0 0 0 0);
-		white-space: nowrap;
-		border: 0;
+	/* ── narrow ───────────────────────────────────────────────── */
+
+	@container (max-width: 780px) {
+		.rp-panes { grid-template-columns: 1fr; }
+		.rp-pane--open { order: -1; }
+		.rp-readout { grid-template-columns: 1fr; }
 	}
 
-	/* Phone: single column, ORMAS first. Each telemetry panel stays with its own
-	   curve, so the pairing survives the stack. */
 	@media (max-width: 720px) {
-		.replay-panes { grid-template-columns: 1fr; }
-		.replay-pane--ormas { order: -1; border-bottom: 1px solid var(--border-hairline); }
-		.replay-pane--baseline { border-right: 0; }
-		.replay-pane { padding: var(--space-md); }
-		.replay-head, .replay-controls, .replay-record { padding: var(--space-md); }
-		.replay-telemetry { min-height: 0; }
-		.replay-node { grid-template-columns: 4rem 1fr 4.5rem; }
-		.replay-node-wn { display: none; }
+		.rp-bar, .rp-readout, .rp-controls, .rp-record, .rp-verdict { padding-inline: var(--space-md); }
+		.rp-verdict-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+		.rp-verdict-table, .rp-verdict-table :global(tbody), .rp-verdict-table :global(tr) { display: block; }
+		.rp-verdict-table :global(tr) { padding: var(--space-sm) 0; border-bottom: 1px solid var(--rule); }
+		.rp-verdict-table :global(tbody th), .rp-verdict-table :global(tbody td) {
+			display: block; width: auto; border: 0; padding: 3px 0;
+		}
+		.rp-verdict-table :global(tbody td)::before {
+			color: var(--fg-dim); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+		}
+		.rp-verdict-table :global(tbody td:nth-child(2))::before { content: 'standard · '; }
+		.rp-verdict-table :global(tbody td:last-child)::before { content: 'ormas · '; color: var(--ormas); }
+		.rp-alarms :global(.rp-alarm) { grid-template-columns: 4.2rem 3.4rem 1fr; }
+		.rp-alarms :global(.rp-alarm-cap) { display: none; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.replay-node-bar i { transition: none; }
+		.rp :global(.an-flow.is-running) { animation: none; opacity: 0.35; }
+			.rp :global(.an-strike) { transition: none; }
 	}
 </style>

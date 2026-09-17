@@ -33,25 +33,21 @@ Emits a signed, regulator-legible record of every structural modification made d
 
 The record from an archived run, opened at the bottom of the replay: every correction with its component, diagnosis, step, magnitude and the declared ceiling it stayed inside. Generated during training, not assembled afterwards.
 
+The same network, twice. One sealed, one open.
+
 Loading the archived run…
-
-##### Standard CNN
-
-parameter-matched
-
-Component telemetry
-
-No such quantity is computed by this architecture.
-
-##### ORMAS
-
-same data, same objective
-
-Component telemetry
 
 - Field: Epoch
 
-epoch 0
+epoch 0 / 199
+
+Test accuracy · both arms, one axis
+
+Correction ledger · written during training
+
+What each one can answer, at this epoch
+
+The question Standard CNN ORMAS
 
 ##### The record
 

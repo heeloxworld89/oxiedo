@@ -73,6 +73,14 @@
 	--chart-warning-on-dark: #FF7A7A;
 	--rule-on-dark: #6E7290;
 
+	/* The replay instrument runs on --bg-dark, so the two data series need steps
+	   chosen for that ground rather than the light-surface values flipped.
+	   Against #16182B: amber 8.9:1, slate 6.4:1. The amber stays amber — it is
+	   the colour of the ORMAS line in the technical account's own figures, and
+	   that is a sourced fact rather than a palette choice. */
+	--chart-ormas-on-dark: #E09A2B;
+	--chart-baseline-on-dark: #8FA9D4;
+
 	/* Chrome metrics. --nav-h was six hardcoded 88px literals (nav height, body offset,
 	   scroll-padding, three sticky rail tops); they had to be edited in lockstep and could not
 	   scale. One token now drives all six. */
