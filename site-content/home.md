@@ -475,6 +475,38 @@ A fifty-node network at 30% label noise across 200 epochs. Standard training ret
 
 383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and the one result that went against us.
 
+**THE RECORD, REPLAYED**
+
+### The first of those results, as it was recorded.
+
+Two parameter-matched networks, trained identically. At epoch 101 two convolutional stages are destroyed. One sits at chance level for the rest of the run and cannot say why; the other names both damaged components two steps later and recovers. Nothing is computed here — every value is the value recorded during that run.
+
+Loading the archived run…
+
+##### Standard CNN
+
+parameter-matched
+
+Component telemetry
+
+No such quantity is computed by this architecture.
+
+##### ORMAS
+
+same data, same objective
+
+Component telemetry
+
+- Field: Epoch
+
+epoch 0
+
+##### The record
+
+Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
+
+[The full replay](/demo) carries three further scenarios, including the one where this architecture measures worse than the baseline.
+
 **PRE-BOOKING**
 
 ### Pre-booking is the window in which the product is still shaped around the first deployments.

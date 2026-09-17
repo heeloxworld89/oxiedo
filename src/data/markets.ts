@@ -66,6 +66,12 @@ export interface MarketDeep {
 	/** proof assets: anything that reduces doubt. We have no customers; we have unusual artefacts,
 	 *  and naming them concretely is what a six-figure evaluation runs on. */
 	proof: string[];
+	/** The replay scenario that shows this market's proof items, if one exists.
+	 *  Four of the five markets carry one. `data-obligation` deliberately does
+	 *  not: the artefact its proof list asks for is a signed deletion
+	 *  certificate, and the legal opinion governing that wording has not been
+	 *  obtained. That boundary is real and stays visible. */
+	replayScenario?: string;
 	/** disqualification. Saying who this is not for raises trust and saves both sides a quarter. */
 	notFor: string[];
 	sources: Source[];
@@ -145,7 +151,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'The alarm names a component, a step and a magnitude',
-				body: 'Instead of "the loss moved at step 40,200", the record reads: node 1, oscillating, magnitude 7.674, step 39,553. That is an object an operator can act on. In the measured case, fault localisation to a specific component happened within a single epoch of the fault occurring.',
+				body: 'Instead of "the loss moved at step 40,200", the record reads: node 1, dead, step 39,493; node 2, dead, step 39,493. That is an object an operator can act on. In the measured case the two components had been destroyed at step 39,491, and both were named two steps later.',
 			},
 			{
 				title: 'Eight named conditions, each with a declared ceiling',
@@ -213,6 +219,7 @@ export const markets: Record<string, MarketDeep> = {
 				line: 'Runs inside the customer environment. No hosted tier, no metering, no telemetry egress.',
 			},
 		],
+		replayScenario: 'dead-layer-lesion',
 		proof: [
 			'The full technical account, with the reproducibility checklist',
 			'67 archived run records, each reproducible from seed',
@@ -383,6 +390,7 @@ export const markets: Record<string, MarketDeep> = {
 				line: 'On-premise or in the customer environment. Position, client and trading data never move.',
 			},
 		],
+		replayScenario: 'dead-layer-lesion',
 		proof: [
 			'The bound table: eight modification types, individual ceilings, observed frequencies',
 			'A sample modification record, signed and hashed, with the diff format',
@@ -483,7 +491,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'Evidence of what training did, not a description of it',
-				body: 'Node 1, diagnosed oscillating at step 39,553, magnitude 7.674, treated with bounded dampening at 0.10 of the weight norm, conservation residual 0.0, tensor attached. A reviewer can audit a document about a process. They can verify a log of what the process did.',
+				body: 'Node 1 and node 2, both diagnosed dead at step 39,493, each treated under a declared ceiling of 0.30 of that component\u2019s own weight norm, and both reinitialised and recovering by epoch 103. A reviewer can audit a document about a process. They can verify a log of what the process did.',
 			},
 		],
 		regulatory: [
@@ -557,6 +565,7 @@ export const markets: Record<string, MarketDeep> = {
 				line: 'On-premise, no egress. And we will say plainly that the formal privacy analysis of the telemetry is outstanding rather than claim it is done.',
 			},
 		],
+		replayScenario: 'dead-layer-lesion',
 		proof: [
 			'The full technical account, the supplementary material and the reproducibility checklist',
 			'The bound table: eight modification types, ceilings, and observed frequencies across 67 runs',
@@ -767,7 +776,7 @@ export const markets: Record<string, MarketDeep> = {
 				note: 'Diagnosed within one epoch and repaired through 85 individually attributed structural corrections. A system that degrades to eighty rather than ten is in a different safety category.',
 			},
 			{
-				figure: '70.8%',
+				figure: '71.5%',
 				unit: 'recovery from simultaneous full-hierarchy damage',
 				note: 'Every convolutional stage zeroed at once, not one layer. The baseline collapses permanently. Measured on CIFAR-10.',
 			},
@@ -816,7 +825,7 @@ export const markets: Record<string, MarketDeep> = {
 		mechanism: [
 			{
 				title: 'Graceful degradation as a measured property',
-				body: 'A layer was destroyed mid-training on a network that had reached 85.1%. The parameter-matched baseline sat at chance level permanently, on every seed. This architecture diagnosed the failure within one epoch and recovered to 80.3% through 85 individually attributed corrections. Under simultaneous damage to every convolutional stage it recovered to 70.8%.',
+				body: 'A layer was destroyed mid-training on a network that had reached 85.1%. The parameter-matched baseline sat at chance level permanently, on every seed. This architecture diagnosed the failure within one epoch and recovered to 80.3% through 85 individually attributed corrections. Under simultaneous damage to every convolutional stage it recovered to 71.5%.',
 			},
 			{
 				title: 'A bounded, timestamped record of every self-modification',
@@ -902,6 +911,7 @@ export const markets: Record<string, MarketDeep> = {
 				line: 'Fundamental research needs none. The dual-use civilian route — industrial autonomy, robotics — builds the same evidence base without the overhead.',
 			},
 		],
+		replayScenario: 'adversarial',
 		proof: [
 			'The lesion experiments in full: single-layer and simultaneous full-hierarchy, with error bars and seeds',
 			'The adverse result, unprompted: the 1.0 pp adversarial deficit and its mechanism',

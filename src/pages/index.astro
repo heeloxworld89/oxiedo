@@ -40,6 +40,7 @@ import SectorGraphic from '../components/SectorGraphic.astro';
 import { sectors } from '../data/sectors';
 import { features } from '../data/features';
 import Button from '../components/Button.astro';
+import ReplayDemo from '../components/ReplayDemo.astro';
 
 const ormasLd = {
 	'@type': 'SoftwareApplication',
@@ -641,6 +642,26 @@ const whyNow = [
 			383 controlled experiments across four architecture families. All results on CIFAR-10 and
 			CIFAR-100. <a href="/technology">The technology page</a> carries the full conditions, the error
 			bars, and the one result that went against us.
+		</p>
+	</section>
+
+	<!-- 5b. THE REPLAY. The evidence ladder above states the recovery result as a figure; this is
+	     the same result as it was recorded, played back from its archived run. A figure is a claim
+	     and a replay is an exhibit, and the exhibit belongs beside the claim rather than three
+	     pages away. -->
+	<section class="section container reveal">
+		<Eyebrow>THE RECORD, REPLAYED</Eyebrow>
+		<h2 class="section-title">The first of those results, as it was recorded.</h2>
+		<p class="replay-home-intro">
+			Two parameter-matched networks, trained identically. At epoch 101 two convolutional stages
+			are destroyed. One sits at chance level for the rest of the run and cannot say why; the
+			other names both damaged components two steps later and recovers. Nothing is computed
+			here — every value is the value recorded during that run.
+		</p>
+		<ReplayDemo scenario="dead-layer-lesion" fixed />
+		<p class="replay-home-note">
+			<a href="/demo">The full replay</a> carries three further scenarios, including the one
+			where this architecture measures worse than the baseline.
 		</p>
 	</section>
 

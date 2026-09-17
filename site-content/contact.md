@@ -90,6 +90,20 @@ The address originally used to contact us, so we can identify what we hold.
 
 Naming the right helps, but plain English is fine — we will work out which it is.
 
+FALSIFICATION
+
+#### Run the specification
+
+The remaining research programme can be falsified for under thirty GPU-hours on a single card. The specification is supplied on request, it runs on the requester’s own hardware, and it needs nobody from here in the room. A negative result is a result, and we would rather the field established it quickly.
+
+- Field: Name and organisation *
+
+- Field: Email *
+
+- Field: What hardware is available, and who would run it?
+
+One card is enough. Saying who runs it tells us what form the specification should take — a research group and a model risk function want different documents.
+
 OTHER
 
 #### Something else

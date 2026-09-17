@@ -10,12 +10,13 @@ export interface Props {
 	indexable?: boolean;
 	breadcrumbs?: Array<{ name: string; path: string }>;
 	schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+	ogImagePath?: string;
 }
 
-const { title, description, indexable, breadcrumbs, schema } = Astro.props;
+const { title, description, indexable, breadcrumbs, schema, ogImagePath } = Astro.props;
 ---
 
-<Base title={title} description={description} indexable={indexable} breadcrumbs={breadcrumbs} schema={schema}>
+<Base title={title} description={description} indexable={indexable} breadcrumbs={breadcrumbs} schema={schema} ogImagePath={ogImagePath}>
 	<a href="#main-content" class="skip-link">Skip to content</a>
 	<Nav />
 	<main id="main-content">

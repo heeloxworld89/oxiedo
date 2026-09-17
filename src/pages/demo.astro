@@ -1,0 +1,298 @@
+---
+// THE REPLAY DEMO PAGE. Added 2026-09-17.
+//
+// Four of the five sector pages already promise an evaluator a worked alarm
+// output and a worked modification record. Both existed only as sentences. This
+// page is those two, shown, from an archived run that regenerates from its seed.
+//
+// The objections below are not a FAQ. They are the ten things a technical
+// evaluator raises in the first five minutes, answered before they are asked,
+// because an objection raised first is a credential and the same objection raised
+// by a reader is a wound. Two of them are the limits — the CIFAR-only evidence
+// base and the one adverse result — and both are above the others deliberately.
+import Page from '../layouts/Page.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Accordion from '../components/Accordion.astro';
+import ReplayDemo from '../components/ReplayDemo.astro';
+
+// The social card is generated from the bundle by scripts/build-replay-cards.py
+// and rasterised by scripts/rasterise-cards.sh, which needs librsvg. Point
+// og:image at it only once the PNG actually exists: a card URL that 404s is
+// worse than the site default, because the link then previews as nothing at all.
+// Resolved at build time by Vite, so no filesystem types are needed.
+const cards = import.meta.glob('/public/demo/cards/*.png');
+const cardPath = Object.keys(cards).some((k) => k.endsWith('dead-layer-lesion.png'))
+	? '/demo/cards/dead-layer-lesion.png'
+	: undefined;
+
+const objections = [
+	{
+		id: 'obj-adverse',
+		q: 'Where does it lose?',
+		a: [
+			'Under adversarial weight injection the architecture measures 1.0 percentage point worse than a parameter-matched baseline, and there is no current mitigation. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors.',
+			'That run is in the scenario selector above. It plays, and it loses.',
+		],
+	},
+	{
+		id: 'obj-deepsup',
+		q: 'Is this deep supervision with extra steps?',
+		a: [
+			'Auxiliary classification heads on intermediate layers are long established, and the local loss shares that lineage. Two things differ. The readout is a single shared low-rank bottleneck across every node rather than independent per-layer classifiers, which couples readout capacity across the network and makes the signal a continuous health baseline rather than a training objective. And no prior architecture couples that isolation with a health-gated closed-loop repair mechanism.',
+			'The coupling is the contribution, not the auxiliary loss.',
+		],
+	},
+	{
+		id: 'obj-cifar',
+		q: 'This is CIFAR-10.',
+		a: [
+			'Every result is CIFAR-10 or CIFAR-100. No clinical, biological, financial or defence data has ever touched this system. That is the binding constraint on the whole programme rather than a detail, and it is stated on every page where a result appears.',
+		],
+	},
+	{
+		id: 'obj-overhead',
+		q: 'What does the instrumentation cost in compute?',
+		a: [
+			'Two numbers, and conflating them would flatter the answer. In parameters the cost is a bounded constant that does not grow with the model. In wall-clock throughput it is not a constant: the full system has been measured at 1.35× on a graph backbone and 2.16× on a CNN, and the gap between those two is unfused Python loops rather than algorithmic complexity.',
+			'Most of the 1.35× is gradient surgery, which monitoring does not need. The read-only path runs none of it, and its wall-clock cost has been characterised as negligible but not separately benchmarked, so it is a measurement we will run against the customer configuration rather than quote. Anyone sizing a frontier run should assume the full figure until that measurement exists.',
+		],
+	},
+	{
+		id: 'obj-simulation',
+		q: 'Is this a simulation?',
+		a: [
+			'No. It is a replay of one archived training run. The run identifier and the seed are on screen at every frame, and the figures are the values recorded during that run.',
+			'Playback speed varies across the run so that the failure is legible rather than a blink. The data is untouched; only the camera speed changes.',
+		],
+	},
+	{
+		id: 'obj-transformer',
+		q: 'Has this been run on a transformer?',
+		a: [
+			'No. The architecture is demonstrated on fully-connected, convolutional and residual families. Transformers are a stated generalisation target, not a demonstrated result.',
+		],
+	},
+	{
+		id: 'obj-scale',
+		q: 'Does the replay prove it works at scale?',
+		a: [
+			'No. It shows one 200-epoch run on a network of 636,677 parameters. Behaviour at frontier scale, on regulated data, and in production over time has not been observed, because no deployment exists.',
+		],
+	},
+	{
+		id: 'obj-rollback',
+		q: 'Why not checkpoint and roll back instead?',
+		a: [
+			'Rollback recovers the accuracy and discards every step of legitimate learning since the last checkpoint, and it arrives with no account of what failed. The cost of the remedy is set by the checkpoint interval rather than by the size of the fault, and the same failure remains available to happen again unexplained.',
+			'The replay above is not an argument that repair beats rollback on accuracy. It is an argument that a named component, a step and a magnitude is a different class of object from a collapsed curve.',
+		],
+	},
+	{
+		id: 'obj-code',
+		q: 'Where is the code?',
+		a: [
+			'The mechanism is released in full on publication, and that commitment is written into the licence rather than promised. Free for research, teaching and evaluation from that day, permanently.',
+			'Until then, evaluation access is available under a short agreement, every archived run regenerates from its seed, and the falsification specification is supplied on request.',
+		],
+	},
+	{
+		id: 'obj-commercial',
+		q: 'What is the commercial model?',
+		a: [
+			'One product, one licence. The mechanism publishes free for research, teaching and evaluation, permanently. Production deployment is licensed: annual, per institution, running on customer infrastructure, with the bound calibrated for the domain, reproducible builds, support and indemnity.',
+			'Nothing is priced per feature and there is no price list. Terms are agreed per institution and written into the contract.',
+		],
+	},
+];
+
+const obligations = [
+	{ date: '17 April 2026', what: 'SR 26-2 supersedes SR 11-7. In force.', past: true },
+	{ date: '2 December 2027', what: 'EU AI Act, Annex III obligations apply.', past: false },
+	{ date: '2 August 2028', what: 'EU AI Act, Annex I transition.', past: false },
+	{ date: '25 March 2029', what: 'European Health Data Space, secondary use.', past: false },
+];
+---
+
+<Page
+	title="The record, replayed: a network diagnosing its own failure"
+	description="Two parameter-matched networks, trained identically. One is destroyed mid-training and cannot say why. The other names both damaged components two steps later. An archived run, replayed."
+	breadcrumbs={[{ name: 'Demo', path: '/demo' }]}
+	ogImagePath={cardPath}
+>
+	<section class="section container">
+		<Eyebrow>THE RECORD, REPLAYED</Eyebrow>
+		<h1>What the record looks like when a model breaks.</h1>
+		<p class="demo-intro">
+			Two networks, parameter-matched, trained identically on CIFAR-10. At epoch 101 two
+			convolutional stages are destroyed. One network sits at chance level for the remaining
+			ninety-nine epochs and cannot say why. The other names both damaged components and
+			recovers.
+		</p>
+		<p class="demo-intro demo-intro--muted">
+			This is a replay of an archived run, not a simulation. The run identifier and the seed are
+			on screen, and every figure regenerates from that seed.
+		</p>
+	</section>
+
+	<section class="section container">
+		<ReplayDemo scenario="dead-layer-lesion" />
+	</section>
+
+	<section class="section container">
+		<p class="demo-note">
+			Nothing in the panel on the left was withheld. A standard network does not compute a
+			per-component health signal at any point in training, so there is no quantity to display.
+			That absence is the problem ORMAS was built to remove.
+		</p>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>BEFORE THE QUESTIONS</Eyebrow>
+		<h2>Ten objections, answered before they are raised.</h2>
+		<p class="demo-intro">
+			These are the questions a technical evaluation asks in its first five minutes. The limits
+			come first, because a page that lists only what worked is a marketing page wearing a lab
+			coat.
+		</p>
+		<div class="demo-objections">
+			{objections.map((o) => (
+				<Accordion id={o.id} question={o.q}>
+					{o.a.map((p) => <p>{p}</p>)}
+				</Accordion>
+			))}
+		</div>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>WHY THE TIMING MATTERS</Eyebrow>
+		<h2>The obligations arrive on legislated dates, not forecast ones.</h2>
+		<ul class="demo-dates">
+			{obligations.map((o) => (
+				<li class={`demo-date${o.past ? ' demo-date--past' : ''}`}>
+					<span class="demo-date-when">{o.date}</span>
+					<span class="demo-date-what">{o.what}</span>
+				</li>
+			))}
+		</ul>
+		<p class="demo-note demo-note--tight">
+			An architecture cannot be retrofitted into a model that has already been trained. An
+			institution that begins the architecture question after the date is not late by a quarter;
+			it is late by a training cycle.
+		</p>
+	</section>
+
+	<section class="section container">
+		<Eyebrow>THREE WAYS ON</Eyebrow>
+		<h2>Start with the problem already on the table.</h2>
+		<div class="demo-ctas">
+			<article class="demo-cta">
+				<h3>Run the falsification specification</h3>
+				<p>
+					The remaining research programme can be falsified for under thirty GPU-hours on a
+					single card, against a specification we supply. It runs on customer hardware, by the
+					institution's own technical partner, without us in the room.
+				</p>
+				<a class="demo-cta-link" href="/contact?intent=falsify#falsify">Request the specification</a>
+			</article>
+			<article class="demo-cta">
+				<h3>Evaluate it directly</h3>
+				<p>
+					Evaluation access is available now under a short agreement, and free and unrestricted
+					once the research release is out. Either way it runs entirely in the customer
+					environment, with nothing reaching us.
+				</p>
+				<a class="demo-cta-link" href="/contact?intent=other#other">Ask for access</a>
+			</article>
+			<article class="demo-cta">
+				<h3>Pre-book a deployment</h3>
+				<p>
+					Terms are agreed per institution and written into the contract, and pre-booking fixes
+					them ahead of general availability. Early partners shape the baseline architecture
+					while the requirements are still open.
+				</p>
+				<a class="demo-cta-link" href="/contact?intent=pre-book#pre-book">Pre-book a deployment</a>
+			</article>
+		</div>
+	</section>
+
+	<section class="section container">
+		<p class="demo-foot">
+			Every figure on this page is measured on CIFAR-10 across the controlled experiment
+			programme, and is labelled as such wherever it appears.
+			<a href="/technology">The technology page</a> carries the conditions for each, the error
+			bars, and the one result that went against us.
+		</p>
+	</section>
+</Page>
+
+<style>
+	.demo-intro {
+		max-width: 62ch;
+		font-size: var(--text-body);
+		line-height: var(--lh-body);
+		color: var(--text-secondary);
+	}
+	.demo-intro--muted { font-size: var(--text-small); color: var(--text-muted); }
+
+	.demo-note {
+		max-width: 68ch;
+		font-size: var(--text-body);
+		line-height: var(--lh-body);
+		color: var(--text-secondary);
+		border-left: 2px solid var(--border-strong);
+		padding-left: var(--space-md);
+		margin: 0;
+	}
+	.demo-note--tight { margin-top: var(--space-lg); }
+
+	.demo-objections { margin-top: var(--space-lg); }
+
+	.demo-dates { list-style: none; padding: 0; margin: var(--space-lg) 0 0; }
+	.demo-date {
+		display: grid;
+		grid-template-columns: 11rem 1fr;
+		gap: var(--space-md);
+		padding: var(--space-sm) 0;
+		border-bottom: 1px solid var(--border-hairline);
+		font-size: var(--text-small);
+	}
+	.demo-date-when {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		color: var(--text-primary);
+		font-weight: 600;
+	}
+	.demo-date-what { color: var(--text-secondary); }
+	.demo-date--past .demo-date-when { color: var(--text-muted); }
+
+	.demo-ctas {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+		gap: var(--space-lg);
+		margin-top: var(--space-lg);
+	}
+	.demo-cta {
+		border: 1px solid var(--border-hairline);
+		border-radius: 4px;
+		padding: var(--space-lg);
+		background: var(--bg-surface);
+	}
+	.demo-cta h3 { margin: 0 0 var(--space-sm); font-size: var(--text-h3); }
+	.demo-cta p {
+		margin: 0 0 var(--space-md);
+		font-size: var(--text-small);
+		line-height: var(--lh-body);
+		color: var(--text-secondary);
+	}
+	.demo-cta-link { font-size: var(--text-small); font-weight: 600; }
+
+	.demo-foot {
+		max-width: 72ch;
+		font-size: var(--text-small);
+		color: var(--text-muted);
+		line-height: var(--lh-body);
+	}
+
+	@media (max-width: 600px) {
+		.demo-date { grid-template-columns: 1fr; gap: 2px; }
+	}
+</style>

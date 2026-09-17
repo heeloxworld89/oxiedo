@@ -31,6 +31,34 @@ Regulators and auditors now demand a per-component record of every modification 
 
 Emits a signed, regulator-legible record of every structural modification made during training. It documents exactly which component changed, what diagnosis triggered it, what treatment was applied, at what step, and within what declared bound. This is generated natively during training. It is not written after the fact.
 
+The record from an archived run, opened at the bottom of the replay: every correction with its component, diagnosis, step, magnitude and the declared ceiling it stayed inside. Generated during training, not assembled afterwards.
+
+Loading the archived run…
+
+##### Standard CNN
+
+parameter-matched
+
+Component telemetry
+
+No such quantity is computed by this architecture.
+
+##### ORMAS
+
+same data, same objective
+
+Component telemetry
+
+- Field: Epoch
+
+epoch 0
+
+##### The record
+
+Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
+
+[The full replay page](/demo) carries three further scenarios, including the adversarial injection where this architecture measures worse than the baseline.
+
 03
 
 ### Who it is for

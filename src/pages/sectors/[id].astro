@@ -318,6 +318,14 @@ const seoTitle: Record<string, string> = {
 					{m.proof.map((x) => <li>{x}</li>)}
 				</ul>
 
+				{m.replayScenario && (
+					<p class="mk-proof-replay">
+						The first two of those are on the page now, from an archived run:
+						<a href={`/demo?scenario=${m.replayScenario}`}>the alarm output and the record it
+						writes</a>, with the run identifier and seed on screen.
+					</p>
+				)}
+
 				<div class="mk-notfor">
 					<p class="mk-notfor-label">Not a fit where</p>
 					<ul>

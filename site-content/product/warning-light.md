@@ -25,7 +25,35 @@ Silent mid-training collapse costs $16,000 to $24,000 in recovery compute per in
 
 ### What it delivers
 
-A precise, per-component health signal emitted continuously during training. It names which node is failing, not just that the run is failing. Measured: Node 1, oscillation severity 7.674, detected at step 39,553, within one epoch. When a divergence occurs, the operator rolls back 200 steps, not 20,000.
+A precise, per-component health signal emitted continuously during training. It names which component is failing, not just that the run is failing. Measured: two convolutional stages destroyed at step 39,491; both diagnosed dead at step 39,493, two steps later, each named individually. When a divergence occurs, the operator rolls back hundreds of steps rather than thousands.
+
+An archived run in which two convolutional stages are destroyed at epoch 101. The alarm names both damaged components at step 39,493 — two steps after the damage — while the parameter-matched baseline sits at chance level for the rest of the run with nothing to report.
+
+Loading the archived run…
+
+##### Standard CNN
+
+parameter-matched
+
+Component telemetry
+
+No such quantity is computed by this architecture.
+
+##### ORMAS
+
+same data, same objective
+
+Component telemetry
+
+- Field: Epoch
+
+epoch 0
+
+##### The record
+
+Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
+
+[The full replay page](/demo) carries three further scenarios, including the adversarial injection where this architecture measures worse than the baseline.
 
 03
 

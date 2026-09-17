@@ -11,7 +11,7 @@
 // one plots the specific figure its own card text quotes, out of data/sectors.ts, and carries an
 // annotation layer that names the claim.
 //
-//   ai-training              per-node grad norm crosses the bound 647 steps before the loss spikes
+//   ai-training              two components destroyed, both named two steps later, before the loss moves
 //   regulated-finance        2021-regime retention while training 2024: 94.6% held vs 47.3% baseline
 //   medical-ai               six per-site small multiples; site 4 collapses at round 39, global at 41
 //   data-obligation          batch 12's contribution named, bounded, excised — model otherwise identical
@@ -52,11 +52,11 @@ const { id, caption = true } = Astro.props;
 // are aria-hidden. Before this, a screen-reader user got nothing from them at all.
 //
 // Each one names the consequence in money or time, taken from that sector's own figures[] in
-// data/sectors.ts. "647 steps" means nothing to someone who does not know how long a step takes;
+// data/sectors.ts. A raw step count means nothing to someone who does not know how long a step takes;
 // "$16,000-$24,000" needs no priming.
 const CAPTIONS: Record<string, string> = {
 	'ai-training':
-		'A big training run breaks, and today the first sign is the crash itself. ORMAS watches each machine separately, so it flags the one that went wrong 647 steps earlier — roughly two hours of compute, or $16,000–$24,000.',
+		'A big training run breaks, and today the first sign is the crash itself. ORMAS watches each machine separately, so when two were destroyed mid-run it named both of them two steps later — before the aggregate loss had moved at all.',
 	'regulated-finance':
 		'Teach a model about 2024 and it quietly forgets 2021. ORMAS keeps 94.6% of the old behaviour where an ordinary model keeps 47.3% — and a validator can check that claim component by component.',
 	'medical-ai':
@@ -92,15 +92,25 @@ function series(n: number, x0: number, x1: number, f: (x: number, i: number) => 
 }
 
 /* ── 1 · AI TRAINING ────────────────────────────────────────────────────────────────────────
-   Two panels on a shared step axis. Top: aggregate loss, the delayed indicator — it spikes at
-   step 40,200, which is the card's own left-hand column ("the loss spiked at step 40,200").
-   Bottom: per-node gradient norm, where node 1 crosses the declared bound at 39,553 — the
-   right-hand column. The 647-step gap between the two reference lines IS the product. */
+   Two panels on a shared step axis. Top: aggregate loss, the delayed indicator — it moves only
+   once enough of the model has degraded to shift the average. Bottom: per-component health,
+   which resolves to a named node.
+
+   REDRAWN 2026-09-17. The earlier version showed per-node health crossing its bound 647 steps
+   before the loss spiked, with both step numbers given as measurements. Neither was: no archived
+   run produces that pair, and the technology page lists that exact study — how far per-component
+   health leads the global loss — among the four measurements that have not been run. A site
+   cannot claim a lead time on one page and call it unrun on another.
+
+   What is measured, across three seeds, is the lesion case: two convolutional stages destroyed
+   at step 39,491, both diagnosed dead at step 39,493. The two reference lines are now that pair,
+   and the gap is labelled for what it is — the interval between the damage and the diagnosis,
+   not a lead over an organic divergence. */
 const STEP0 = 38500;
 const STEP1 = 41000;
 const sx = (s: number) => 40 + ((s - STEP0) / (STEP1 - STEP0)) * 260;
-const X_NODE = sx(39553);
-const X_SPIKE = sx(40200);
+const X_NODE = sx(39493);   // both components named dead
+const X_SPIKE = sx(40200);  // the aggregate loss finally moves
 
 // Vertical rhythm is tight enough that it has to be reasoned about rather than eyeballed. The
 // loss panel ends at 90 and the node panel starts at 128, leaving a 38-unit gutter for the
@@ -255,14 +265,14 @@ const dashed = (s: [number, number][]) => line(s.filter(([x]) => x >= D_SPLIT - 
 			<line x1={X_NODE} y1="108" x2={X_SPIKE} y2="108" class="sg-bracket" />
 			<line x1={X_NODE} y1="104" x2={X_NODE} y2="112" class="sg-bracket" />
 			<line x1={X_SPIKE} y1="104" x2={X_SPIKE} y2="112" class="sg-bracket" />
-			{/* the gap in compute hours, not just in steps — "647" means nothing to a reader who
-			    does not know how long a step takes, and the money is in the caption */}
+			{/* the interval between the damage and the diagnosis. The money figure lives in the
+			    caption and on the market page, where it is sourced separately */}
 			<text x={(X_NODE + X_SPIKE) / 2} y="102" text-anchor="middle" class="sg-annot">
-				647 steps earlier ≈ 2 hours of compute
+				named at step 39,493 · two steps after the damage
 			</text>
 
 			<text x="40" y="122" class="sg-title">WHAT ORMAS SEES</text>
-			<text x="300" y="122" text-anchor="end" class="sg-title sg-good">machine 1 flagged · step 39,553</text>
+			<text x="300" y="122" text-anchor="end" class="sg-title sg-good">nodes 1 and 2 flagged · step 39,493</text>
 
 			{otherNodes.map((d) => <path d={d} class="sg-trace-ghost" />)}
 

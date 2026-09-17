@@ -29,7 +29,7 @@ The standard operating picture for a large training job is a loss curve on a das
 
 That gap is not a tooling oversight. In a standard network every error signal reaches every parameter on every step, so there is no component whose behaviour can be isolated from the aggregate. The information required to answer "which part?" is not being withheld. It was never separable.
 
-> A big training run breaks, and today the first sign is the crash itself. ORMAS watches each machine separately, so it flags the one that went wrong 647 steps earlier — roughly two hours of compute, or $16,000–$24,000.
+> A big training run breaks, and today the first sign is the crash itself. ORMAS watches each machine separately, so when two were destroyed mid-run it named both of them two steps later — before the aggregate loss had moved at all.
 
 **WHAT IT COSTS**
 
@@ -123,7 +123,7 @@ Adaptive clipping methods reduce the incidence of spikes. They suppress the symp
 
   #### The alarm names a component, a step and a magnitude
 
-  Instead of "the loss moved at step 40,200", the record reads: node 1, oscillating, magnitude 7.674, step 39,553. That is an object an operator can act on. In the measured case, fault localisation to a specific component happened within a single epoch of the fault occurring.
+  Instead of "the loss moved at step 40,200", the record reads: node 1, dead, step 39,493; node 2, dead, step 39,493. That is an object an operator can act on. In the measured case the two components had been destroyed at step 39,491, and both were named two steps later.
 
 3. 03
 
@@ -234,6 +234,8 @@ Nobody has deployed this, and we are not going to imply otherwise. What we can p
 - The read-only configuration, so the first engagement modifies nothing
 
 - Evaluation access under the research licence, so the team can run the mechanism before any contract exists
+
+The first two of those are on the page now, from an archived run:[the alarm output and the record it writes](/demo?scenario=dead-layer-lesion), with the run identifier and seed on screen.
 
 Not a fit where
 

@@ -10300,3 +10300,65 @@ main > section:last-child.band--dark {
 	/* justify-self keeps the pill hugging its text instead of stretching the track. */
 	.iv-use-removes { grid-column: 2; grid-row: 3; justify-self: start; }
 }
+
+/* THE REPLAY EMBED on /technology. Added 2026-09-17.
+   The demo component carries its own scoped styles; these two rules are only the
+   prose that frames it on this page.
+   ------------------------------------------------------------ */
+.tech-replay-intro {
+	max-width: 62ch;
+	font-size: var(--text-body);
+	line-height: var(--lh-body);
+	color: var(--text-secondary);
+	margin-bottom: var(--space-lg);
+}
+
+.tech-replay-note {
+	margin-top: var(--space-md);
+	font-size: var(--text-small);
+	color: var(--text-muted);
+}
+
+/* THE REPLAY EMBED on the two feature pages it demonstrates. Added 2026-09-17.
+   ------------------------------------------------------------ */
+.feature-replay { margin-top: var(--space-xl); }
+
+.feature-replay-lede {
+	max-width: 62ch;
+	font-size: var(--text-small);
+	line-height: var(--lh-body);
+	color: var(--text-secondary);
+	margin-bottom: var(--space-md);
+}
+
+.feature-replay-note {
+	margin-top: var(--space-md);
+	font-size: var(--text-small);
+	color: var(--text-muted);
+}
+
+/* THE REPLAY SECTION on the home page. Added 2026-09-17.
+   ------------------------------------------------------------ */
+.replay-home-intro {
+	max-width: 62ch;
+	font-size: var(--text-body);
+	line-height: var(--lh-body);
+	color: var(--text-secondary);
+	margin-bottom: var(--space-lg);
+}
+
+.replay-home-note {
+	margin-top: var(--space-md);
+	font-size: var(--text-small);
+	color: var(--text-muted);
+}
+
+/* The replay link under a sector's proof list. Added 2026-09-17. Four of the five
+   markets carry one; data-obligation does not, and that absence is deliberate.
+   ------------------------------------------------------------ */
+.mk-proof-replay {
+	margin-top: var(--space-md);
+	font-size: var(--text-small);
+	line-height: var(--lh-body);
+	color: var(--text-secondary);
+}

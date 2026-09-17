@@ -135,7 +135,7 @@ The current artefact. It holds until the scanner is replaced, the protocol chang
 
   #### Evidence of what training did, not a description of it
 
-  Node 1, diagnosed oscillating at step 39,553, magnitude 7.674, treated with bounded dampening at 0.10 of the weight norm, conservation residual 0.0, tensor attached. A reviewer can audit a document about a process. They can verify a log of what the process did.
+  Node 1 and node 2, both diagnosed dead at step 39,493, each treated under a declared ceiling of 0.30 of that component’s own weight norm, and both reinitialised and recovering by epoch 103. A reviewer can audit a document about a process. They can verify a log of what the process did.
 
 **THE OBLIGATIONS**
 
@@ -256,6 +256,8 @@ Nobody has deployed this, and we are not going to imply otherwise. What we can p
 - A label audit on a nominated dataset, returning results broken down by contributing site
 
 - Evaluation access for their own team, under a short agreement, before any contract exists
+
+The first two of those are on the page now, from an archived run:[the alarm output and the record it writes](/demo?scenario=dead-layer-lesion), with the run identifier and seed on screen.
 
 Not a fit where
 

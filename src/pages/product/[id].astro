@@ -24,6 +24,7 @@ import Page from '../../layouts/Page.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Accordion from '../../components/Accordion.astro';
 import GetInTouch from '../../components/GetInTouch.astro';
+import ReplayDemo from '../../components/ReplayDemo.astro';
 import { features } from '../../data/features';
 import { sectors } from '../../data/sectors';
 
@@ -35,6 +36,24 @@ export function getStaticPaths() {
 }
 
 const { feature } = Astro.props;
+
+// The replay demonstrates exactly two of the seven: the per-component alarm
+// (The Warning Light) and the record it writes (The Diary). The other five depend
+// on the separation study or the legal opinion, neither of which has run, so they
+// carry no replay — an embed beside them would imply evidence that does not exist.
+const REPLAY: Record<string, { scenario: string; openRecord: boolean; lede: string }> = {
+	'warning-light': {
+		scenario: 'dead-layer-lesion',
+		openRecord: false,
+		lede: 'An archived run in which two convolutional stages are destroyed at epoch 101. The alarm names both damaged components at step 39,493 — two steps after the damage — while the parameter-matched baseline sits at chance level for the rest of the run with nothing to report.',
+	},
+	diary: {
+		scenario: 'dead-layer-lesion',
+		openRecord: true,
+		lede: 'The record from an archived run, opened at the bottom of the replay: every correction with its component, diagnosis, step, magnitude and the declared ceiling it stayed inside. Generated during training, not assembled afterwards.',
+	},
+};
+const replay = REPLAY[feature.id];
 
 const usedBy = sectors.filter((s) => s.features.includes(feature.id));
 
@@ -169,6 +188,17 @@ const seoTitle: Record<string, string> = {
 				<div class="feature-delivers">
 					<p>{feature.delivers}</p>
 				</div>
+				{replay && (
+					<div class="feature-replay">
+						<p class="feature-replay-lede">{replay.lede}</p>
+						<ReplayDemo scenario={replay.scenario} openRecord={replay.openRecord} fixed />
+						<p class="feature-replay-note">
+							<a href="/demo">The full replay page</a> carries three further scenarios,
+							including the adversarial injection where this architecture measures worse
+							than the baseline.
+						</p>
+					</div>
+				)}
 			</section>
 
 			{/* The 405-character wall. The copy was already a list; it is rendered as one now. */}

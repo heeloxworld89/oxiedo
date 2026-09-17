@@ -42,7 +42,7 @@ export const sectors: Sector[] = [
 		changes: 'The Warning Light supplies that signal: per component, every step, while the run is still recoverable.',
 		comparisonNoun: 'corpus',
 		comparisonLeft: 'the loss spiked at step 40,200',
-		comparisonRight: 'node 1 diverged at step 39,553',
+		comparisonRight: 'nodes 1 and 2 named dead at step 39,493',
 		buyerTitle: 'Infrastructure lead, large fine-tune or domain build',
 		buyerQuote:
 			'HuggingFace hosts 1.2M models. The teams behind them — running large fine-tunes, continued pretraining, and domain builds with real compute costs and no infrastructure team — are the market.',

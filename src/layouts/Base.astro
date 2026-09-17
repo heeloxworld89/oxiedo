@@ -25,9 +25,13 @@ export interface Props {
 	breadcrumbs?: Array<{ name: string; path: string }>;
 	/** Any additional JSON-LD entity for this page. Merged into the same @graph. */
 	schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+	/** Absolute-from-root path to a page-specific social card, e.g. the replay
+	 *  cards under /demo/cards. Falls back to the site card. Pass a PNG or JPEG:
+	 *  Twitter does not reliably render SVG. */
+	ogImagePath?: string;
 }
 
-const { title, description, indexable = true, breadcrumbs, schema } = Astro.props;
+const { title, description, indexable = true, breadcrumbs, schema, ogImagePath } = Astro.props;
 
 // SITE — confirmed by the founder 2026-09-08: oxiedo.com is owned. Canonicals, Open Graph URLs
 // and the sitemap are all built from this, and src/pages/sitemap.xml.ts holds the same constant —
@@ -40,7 +44,7 @@ const desc =
 	description ??
 	'ORMAS is a neural network training architecture that makes per-component causal attribution a physical property of training, not something reconstructed afterwards.';
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', SITE).href;
-const ogImage = new URL('/og.png', SITE).href;
+const ogImage = new URL(ogImagePath ?? '/og.png', SITE).href;
 
 // Organisation card. Everything in it is stated on /about, so it cannot contradict the site.
 const orgLd = {

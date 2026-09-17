@@ -251,6 +251,8 @@ Nobody has deployed this, and we are not going to imply otherwise. What we can p
 
 - The Artifact Survival Clause: the records outlive the contract, with a frozen reader retained permanently
 
+The first two of those are on the page now, from an archived run:[the alarm output and the record it writes](/demo?scenario=dead-layer-lesion), with the run identifier and seed on screen.
+
 Not a fit where
 
 - Institutions whose material models are entirely classical. The mechanism is specific to neural network training.

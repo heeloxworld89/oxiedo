@@ -141,6 +141,20 @@ const intents: Intent[] = [
 		],
 	},
 	{
+		id: 'falsify',
+		label: 'Falsification specification',
+		eyebrow: 'FALSIFICATION',
+		heading: 'Run the specification',
+		blurb: 'The remaining research programme can be falsified for under thirty GPU-hours on a single card. The specification is supplied on request, it runs on the requester\u2019s own hardware, and it needs nobody from here in the room. A negative result is a result, and we would rather the field established it quickly.',
+		submit: 'Send',
+		fields: [
+			{ id: 'falsify-name', label: 'Name and organisation', required: true },
+			{ id: 'falsify-email', label: 'Email', type: 'email', required: true },
+			{ id: 'falsify-context', label: 'What hardware is available, and who would run it?', multiline: true,
+			  hint: 'One card is enough. Saying who runs it tells us what form the specification should take \u2014 a research group and a model risk function want different documents.' },
+		],
+	},
+	{
 		id: 'other',
 		label: 'Something else',
 		eyebrow: 'OTHER',

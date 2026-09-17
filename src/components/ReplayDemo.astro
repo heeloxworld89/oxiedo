@@ -1,0 +1,815 @@
+---
+// THE REPLAY DEMO. Added 2026-09-17.
+//
+// WHY IT EXISTS. Four of the five sector pages already promise an evaluator two
+// artefacts — "a worked example of the alarm output: component, diagnosis, step,
+// magnitude" and "a worked modification record, in the format a reviewer would
+// receive". Both existed only as sentences. This is those two, shown.
+//
+// WHAT IT IS. A replay of one archived training run. Nothing computes in the
+// browser: every value comes from public/demo/runs/<key>.json, generated from the
+// experiment archive by scripts/build-replay-bundle.py and asserted against every
+// published figure by scripts/verify-replay-bundle.py. The run identifier and the
+// seed are on screen at every frame, so a reader can regenerate what they watched.
+//
+// WHY A REPLAY AND NOT A LIVE TRAINER. A network small enough to train in a
+// browser is a network small enough to dismiss, and the first objection would be
+// that it only works on toy models. Replaying a real 200-epoch run at real scale
+// is cheaper to build and harder to attack.
+//
+// THE MOST IMPORTANT ELEMENT IS THE EMPTY PANEL. The baseline's telemetry column
+// renders one sentence and nothing else, driven off `series.baseline.corrections
+// === null`. It is not a placeholder and must never be styled as one — no
+// spinner, no skeleton, no dashes. A standard architecture does not compute a
+// per-component health signal at any point in training, so there is no quantity
+// to display. That absence is the argument.
+export interface Props {
+	/** Bundle key under public/demo/runs. */
+	scenario?: string;
+	/** Hide the scenario selector when embedded on a page about one feature. */
+	fixed?: boolean;
+	/** Open on the record panel — used on /product/diary. */
+	openRecord?: boolean;
+	/** Heading level for the block label, so embeds nest correctly. */
+	compact?: boolean;
+}
+const {
+	scenario = 'dead-layer-lesion',
+	fixed = false,
+	openRecord = false,
+	compact = false,
+} = Astro.props;
+
+const SCENARIOS = [
+	{ key: 'dead-layer-lesion', label: 'Dead-layer lesion' },
+	{ key: 'full-hierarchy', label: 'Full-hierarchy lesion' },
+	{ key: 'adversarial', label: 'Adversarial weight injection' },
+	{ key: 'weight-explosion', label: 'Weight explosion' },
+];
+---
+
+<section
+	class={`replay${compact ? ' replay--compact' : ''}`}
+	data-replay
+	data-scenario={scenario}
+	data-open-record={openRecord ? 'true' : 'false'}
+>
+	<header class="replay-head">
+		<div class="replay-head-main">
+			{!fixed && (
+				<label class="replay-pick">
+					<span class="replay-pick-label">Scenario</span>
+					<select class="replay-select" data-select>
+						{SCENARIOS.map((s) => (
+							<option value={s.key} selected={s.key === scenario}>{s.label}</option>
+						))}
+					</select>
+				</label>
+			)}
+			{fixed && <p class="replay-title" data-title>—</p>}
+		</div>
+		<p class="replay-conditions" data-conditions>Loading the archived run…</p>
+	</header>
+
+	<div class="replay-panes">
+		<article class="replay-pane replay-pane--baseline">
+			<header class="replay-pane-head">
+				<h4 class="replay-pane-name">Standard CNN</h4>
+				<p class="replay-pane-sub" data-baseline-sub>parameter-matched</p>
+			</header>
+			<div class="replay-plot"><canvas data-canvas-baseline aria-label="Accuracy of the standard network across training"></canvas></div>
+			<div class="replay-telemetry">
+				<p class="replay-telemetry-label">Component telemetry</p>
+				<div class="replay-empty" data-baseline-telemetry>
+					<p class="replay-empty-text">No such quantity is computed by this architecture.</p>
+				</div>
+			</div>
+		</article>
+
+		<article class="replay-pane replay-pane--ormas">
+			<header class="replay-pane-head">
+				<h4 class="replay-pane-name">ORMAS</h4>
+				<p class="replay-pane-sub" data-ormas-sub>same data, same objective</p>
+			</header>
+			<div class="replay-plot"><canvas data-canvas-ormas aria-label="Accuracy of the ORMAS network across training"></canvas></div>
+			<div class="replay-telemetry">
+				<p class="replay-telemetry-label">Component telemetry</p>
+				<ul class="replay-nodes" data-nodes></ul>
+				<div class="replay-alarms" data-alarms></div>
+			</div>
+		</article>
+	</div>
+
+	<p class="replay-beat" data-beat hidden></p>
+
+	<div class="replay-controls">
+		<button type="button" class="replay-btn replay-btn--play" data-play aria-label="Play">
+			<span data-play-label>Play</span>
+		</button>
+		<label class="replay-scrub">
+			<span class="replay-sr">Epoch</span>
+			<input type="range" data-scrub min="0" max="199" value="0" step="1" />
+		</label>
+		<output class="replay-epoch" data-epoch>epoch 0</output>
+		<div class="replay-rates" role="group" aria-label="Playback speed">
+			{[1, 4, 16].map((r) => (
+				<button type="button" class="replay-rate" data-rate={r} aria-pressed={r === 1}>{r}×</button>
+			))}
+		</div>
+		<button type="button" class="replay-btn" data-replay-event>Replay from the event</button>
+	</div>
+
+	<div class="replay-record" data-record hidden>
+		<header class="replay-record-head">
+			<h4 class="replay-record-title">The record</h4>
+			<p class="replay-record-sub" data-record-sub></p>
+		</header>
+		<dl class="replay-record-grid" data-record-grid></dl>
+		<div class="replay-record-table-wrap">
+			<table class="replay-record-table">
+				<caption class="replay-sr">Every correction, with its component, diagnosis, step, magnitude and declared ceiling</caption>
+				<thead>
+					<tr><th scope="col">Step</th><th scope="col">Component</th><th scope="col">Diagnosis</th><th scope="col">Magnitude</th><th scope="col">Ceiling</th></tr>
+				</thead>
+				<tbody data-record-rows></tbody>
+			</table>
+		</div>
+		<div class="replay-record-actions">
+			<button type="button" class="replay-btn replay-btn--primary" data-download>Download the record</button>
+			<button type="button" class="replay-btn" data-diff>Diff against the pre-event version</button>
+		</div>
+		<div class="replay-diff" data-diff-panel hidden></div>
+	</div>
+
+	<noscript>
+		<p class="replay-noscript">
+			This replay needs JavaScript. The underlying figures are on the technology
+			page, with the conditions each was measured under.
+		</p>
+	</noscript>
+</section>
+
+<script>
+	import { ReplayEngine } from '../scripts/replay/engine';
+	import { draw, readTheme, sizeCanvas } from '../scripts/replay/render';
+	import type { Bundle, Correction } from '../scripts/replay/types';
+
+	const DIAGNOSIS_LABEL: Record<string, string> = {
+		dead: 'dead',
+		oscillating: 'oscillating',
+		saturated: 'saturated',
+		loss_stagnant: 'loss stagnant',
+		gradient_dead: 'gradient dead',
+		low_confidence: 'low confidence',
+		exploded: 'exploded',
+	};
+
+	const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const fmtPct = (v: number) => `${(v * 100).toFixed(1)}%`;
+	const fmtInt = (v: number) => v.toLocaleString('en-GB');
+
+	const teardown: Array<() => void> = [];
+
+	function init(root: HTMLElement) {
+		// Idempotent: astro:page-load fires on the first load and again after every
+		// client-side navigation, and the same element can be handed to us twice.
+		if (root.dataset.replayReady === 'true') return;
+		root.dataset.replayReady = 'true';
+		const q = <T extends HTMLElement>(sel: string) => root.querySelector(sel) as T | null;
+		const cvBase = q<HTMLCanvasElement>('[data-canvas-baseline]')!;
+		const cvOrmas = q<HTMLCanvasElement>('[data-canvas-ormas]')!;
+		const elConditions = q('[data-conditions]')!;
+		const elTitle = q('[data-title]');
+		const elNodes = q('[data-nodes]')!;
+		const elAlarms = q('[data-alarms]')!;
+		const elBeat = q('[data-beat]')!;
+		const elEpoch = q('[data-epoch]')!;
+		const elScrub = q<HTMLInputElement>('[data-scrub]')!;
+		const btnPlay = q<HTMLButtonElement>('[data-play]')!;
+		const lblPlay = q('[data-play-label]')!;
+		const btnEvent = q<HTMLButtonElement>('[data-replay-event]')!;
+		const select = q<HTMLSelectElement>('[data-select]');
+		const elRecord = q('[data-record]')!;
+		const elBaseSub = q('[data-baseline-sub]')!;
+		const elOrmasSub = q('[data-ormas-sub]')!;
+
+		let engine: ReplayEngine | null = null;
+		let bundle: Bundle | null = null;
+		let theme = readTheme(root);
+
+		const ormasColour = () =>
+			getComputedStyle(root).getPropertyValue('--chart-ormas').trim() || '#A5600C';
+		const baseColour = () =>
+			getComputedStyle(root).getPropertyValue('--chart-baseline').trim() || '#4E6FA8';
+
+		function render(epoch: number) {
+			if (!bundle || !engine) return;
+			const e = Math.round(epoch);
+
+			draw(cvBase, {
+				bundle, series: bundle.series.baseline.accuracy,
+				corrections: bundle.series.baseline.corrections,
+				upto: epoch, colour: baseColour(), dashed: true, theme,
+			});
+			draw(cvOrmas, {
+				bundle, series: bundle.series.ormas.accuracy,
+				corrections: bundle.series.ormas.corrections,
+				upto: epoch, colour: ormasColour(), dashed: false, theme,
+			});
+
+			elEpoch.textContent = `epoch ${e} / ${engine.lastEpoch}`;
+			if (document.activeElement !== elScrub) elScrub.value = String(e);
+
+			renderNodes(e);
+			renderAlarms(e);
+			renderBeat(e);
+		}
+
+		function renderNodes(epoch: number) {
+			if (!bundle) return;
+			const frame = bundle.health.find((h) => h.epoch === epoch)
+				?? bundle.health.filter((h) => h.epoch <= epoch).pop()
+				?? bundle.health[0];
+			if (!frame) return;
+			elNodes.innerHTML = frame.nodes.map((n) => {
+				const g = n.goodness ?? 0;
+				const zeroed = (n.weight_norm ?? 0) === 0;
+				const pct = Math.max(0, Math.min(100, g * 100));
+				const state = zeroed ? 'destroyed' : (n.state ?? '—');
+				return `<li class="replay-node${zeroed ? ' is-zero' : ''}">
+					<span class="replay-node-id">node ${n.id}</span>
+					<span class="replay-node-bar"><i style="width:${pct.toFixed(0)}%"></i></span>
+					<span class="replay-node-state">${state}</span>
+					<span class="replay-node-wn">wn ${(n.weight_norm ?? 0).toFixed(2)}</span>
+				</li>`;
+			}).join('');
+		}
+
+		function renderAlarms(epoch: number) {
+			if (!bundle) return;
+			const recent = bundle.corrections
+				.filter((c) => c.epoch !== null && c.epoch <= epoch)
+				.slice(-4);
+			if (!recent.length) {
+				elAlarms.innerHTML = '<p class="replay-alarms-idle">No component has crossed its own baseline.</p>';
+				return;
+			}
+			elAlarms.innerHTML = recent.map((c) => `
+				<p class="replay-alarm">
+					<span class="replay-alarm-step">step ${fmtInt(c.step)}</span>
+					<span class="replay-alarm-node">node ${c.node}</span>
+					<span class="replay-alarm-diag">${DIAGNOSIS_LABEL[c.diagnosis] ?? c.diagnosis}</span>
+					${c.ceiling != null ? `<span class="replay-alarm-cap">ceiling ${c.ceiling.toFixed(2)} of weight</span>` : ''}
+				</p>`).join('');
+		}
+
+		// The beat. Only shown once the event has actually landed, and only with a
+		// step count when the lesion step was confirmed against the trainer source.
+		function renderBeat(epoch: number) {
+			const ev = bundle?.event;
+			if (!ev || epoch < ev.epoch) { elBeat.hidden = true; return; }
+			const named = ev.detected_nodes?.length
+				? ev.detected_nodes.map((n) => `node ${n}`).join(' and ')
+				: null;
+			if (ev.detected_step != null && ev.step_confirmed && ev.detected_lag_steps != null) {
+				const lag = ev.detected_lag_steps;
+				elBeat.innerHTML =
+					`<strong>${ev.label}</strong> at step ${fmtInt(ev.step)}.` +
+					(named
+						? ` Named at step ${fmtInt(ev.detected_step)} — ${lag === 1 ? 'one step' : `${fmtInt(lag)} steps`} later, on ${named}.`
+						: '');
+			} else {
+				elBeat.innerHTML = `<strong>${ev.label}</strong> at epoch ${ev.epoch}.` +
+					(named ? ` Named within one epoch, on ${named}.` : '');
+			}
+			elBeat.hidden = false;
+		}
+
+		function renderRecord() {
+			if (!bundle) return;
+			const rec = bundle.record as any;
+			const sub = q('[data-record-sub]')!;
+			const grid = q('[data-record-grid]')!;
+			const rows = q('[data-record-rows]')!;
+			const c = bundle.conditions;
+
+			sub.textContent =
+				`${c.run_id_ormas} · seed ${c.seed} · ${c.dataset} · generated during training`;
+
+			const mission = rec.mission ?? {};
+			const shock = rec.shock ?? null;
+			const recovery = rec.recovery ?? null;
+			const items: [string, string][] = [
+				['Epochs', String(mission.epochs ?? '—')],
+				['Peak', mission.peak != null ? `${fmtPct(mission.peak)} at epoch ${mission.peak_epoch}` : '—'],
+				['Final', mission.final != null ? fmtPct(mission.final) : '—'],
+				['Corrections', String(mission.corrections ?? '—')],
+				['Epochs with corrections', String(mission.epochs_with_corrections ?? '—')],
+			];
+			if (shock) {
+				items.push(['Event at epoch', String(shock.epoch)]);
+				items.push(['Before → after', `${fmtPct(shock.pre)} → ${fmtPct(shock.post)}`]);
+			}
+			if (recovery) {
+				items.push(['Recovered to', `${fmtPct(recovery.to)} by epoch ${recovery.by_epoch}`]);
+				items.push(['Of what was lost', `${recovery.reclaimed_pct}%`]);
+			}
+			grid.innerHTML = items.map(([k, v]) =>
+				`<div class="replay-record-cell"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+
+			rows.innerHTML = (bundle.corrections as Correction[]).map((c2) => `
+				<tr>
+					<td>${fmtInt(c2.step)}</td>
+					<td>node ${c2.node}</td>
+					<td>${DIAGNOSIS_LABEL[c2.diagnosis] ?? c2.diagnosis}</td>
+					<td>${c2.magnitude != null ? c2.magnitude.toFixed(4) : '—'}</td>
+					<td>${c2.ceiling != null ? c2.ceiling.toFixed(2) : '—'}</td>
+				</tr>`).join('');
+		}
+
+		function showRecord() {
+			elRecord.hidden = false;
+			renderRecord();
+		}
+
+		function setPlayLabel() {
+			const on = engine?.isPlaying ?? false;
+			lblPlay.textContent = on ? 'Pause' : 'Play';
+			btnPlay.setAttribute('aria-label', on ? 'Pause' : 'Play');
+		}
+
+		async function load(key: string) {
+			// A standalone build (scripts/build-standalone-demo.py) embeds the
+			// bundles on the page so the file works from disk, in an email
+			// attachment, or anywhere without a server. On the site there is no
+			// such global and it fetches as normal.
+			const embedded = (window as unknown as {
+				__REPLAY_BUNDLES__?: Record<string, Bundle>;
+			}).__REPLAY_BUNDLES__;
+			if (embedded && embedded[key]) {
+				bundle = embedded[key];
+			} else {
+				const res = await fetch(`/demo/runs/${key}.json`);
+				if (!res.ok) { elConditions.textContent = 'The archived run could not be loaded.'; return; }
+				bundle = await res.json();
+			}
+			if (!bundle) return;
+
+			engine?.destroy();
+			engine = new ReplayEngine(bundle);
+			engine.onFrame = (e) => render(e);
+			engine.onEnd = () => { setPlayLabel(); showRecord(); };
+
+			const c = bundle.conditions;
+			elConditions.textContent =
+				`${c.dataset} · seed ${c.seed} · run ${c.archive_index} · ${c.run_id_ormas}`;
+			if (elTitle) elTitle.textContent = bundle.title;
+			elBaseSub.textContent = c.params_baseline
+				? `parameter-matched · ${fmtInt(c.params_baseline)} parameters`
+				: 'parameter-matched';
+			elOrmasSub.textContent = c.params_ormas
+				? `${fmtInt(c.params_ormas)} parameters · same data, same objective`
+				: 'same data, same objective';
+
+			elScrub.max = String(engine.lastEpoch);
+			elRecord.hidden = true;
+			q('[data-diff-panel]')!.hidden = true;
+
+			// Reduced motion, or an embed that opens on the record: render the end
+			// state outright. The demo has to be fully comprehensible as a still.
+			if (reduced || root.dataset.openRecord === 'true') {
+				engine.toEnd();   // fires onEnd, which opens the record
+			} else {
+				engine.seekEpoch(0);
+			}
+			setPlayLabel();
+		}
+
+		btnPlay.addEventListener('click', () => { engine?.toggle(); setPlayLabel(); });
+		btnEvent.addEventListener('click', () => { engine?.replayFromEvent(); setPlayLabel(); });
+		elScrub.addEventListener('input', () => {
+			engine?.pause();
+			engine?.seekEpoch(Number(elScrub.value));
+			setPlayLabel();
+		});
+		root.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((b) => {
+			b.addEventListener('click', () => {
+				const r = Number(b.dataset.rate);
+				engine?.setRate(r);
+				root.querySelectorAll('[data-rate]').forEach((o) =>
+					o.setAttribute('aria-pressed', String(o === b)));
+			});
+		});
+		select?.addEventListener('change', () => {
+			root.dataset.openRecord = 'false';
+			load(select.value);
+			const u = new URL(location.href);
+			u.searchParams.set('scenario', select.value);
+			history.replaceState(null, '', u);
+		});
+
+		q<HTMLButtonElement>('[data-download]')?.addEventListener('click', () => {
+			if (!bundle) return;
+			const payload = {
+				note: 'Modification record generated during training. Replayed from the '
+					+ 'archived run named below; regenerable from its seed.',
+				conditions: bundle.conditions,
+				event: bundle.event,
+				record: bundle.record,
+			};
+			const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+			const a = document.createElement('a');
+			a.href = URL.createObjectURL(blob);
+			a.download = `ormas-record-${bundle.key}-${bundle.conditions.run_id_ormas}.json`;
+			a.click();
+			URL.revokeObjectURL(a.href);
+		});
+
+		q<HTMLButtonElement>('[data-diff]')?.addEventListener('click', () => {
+			const panel = q('[data-diff-panel]')!;
+			if (!bundle || !bundle.event) return;
+			if (!panel.hidden) { panel.hidden = true; return; }
+			const before = bundle.health.find((h) => h.epoch === bundle!.event!.epoch - 1);
+			const after = bundle.health[bundle.health.length - 1];
+			if (!before || !after) return;
+			panel.innerHTML = `
+				<p class="replay-diff-label">Component state, epoch ${before.epoch} against epoch ${after.epoch}</p>
+				<table class="replay-record-table">
+					<thead><tr><th scope="col">Component</th><th scope="col">Weight norm before</th><th scope="col">After</th><th scope="col">Change</th></tr></thead>
+					<tbody>${before.nodes.map((b) => {
+						const a2 = after.nodes.find((x) => x.id === b.id);
+						const bw = b.weight_norm ?? 0, aw = a2?.weight_norm ?? 0;
+						const d = aw - bw;
+						return `<tr><td>node ${b.id}</td><td>${bw.toFixed(2)}</td><td>${aw.toFixed(2)}</td><td>${d >= 0 ? '+' : ''}${d.toFixed(2)}</td></tr>`;
+					}).join('')}</tbody>
+				</table>`;
+			panel.hidden = false;
+		});
+
+		// Pause off-screen and in a hidden tab. No work while nobody is looking.
+		const io = new IntersectionObserver((entries) => {
+			if (!(entries[0]?.isIntersecting ?? true)) { engine?.pause(); setPlayLabel(); }
+		}, { threshold: 0.15 });
+		io.observe(root);
+		const onVisibility = () => {
+			if (document.hidden) { engine?.pause(); setPlayLabel(); }
+		};
+		document.addEventListener('visibilitychange', onVisibility);
+		teardown.push(() => document.removeEventListener('visibilitychange', onVisibility));
+
+		let rt = 0;
+		const onResize = () => {
+			clearTimeout(rt);
+			rt = window.setTimeout(() => {
+				theme = readTheme(root);
+				sizeCanvas(cvBase); sizeCanvas(cvOrmas);
+				if (engine) render(engine.epoch);
+			}, 120);
+		};
+		window.addEventListener('resize', onResize);
+
+		teardown.push(() => {
+			engine?.destroy();
+			engine = null;
+			io.disconnect();
+			window.removeEventListener('resize', onResize);
+			clearTimeout(rt);
+			delete root.dataset.replayReady;
+		});
+
+		const url = new URL(location.href);
+		const wanted = url.searchParams.get('scenario');
+		const initial = (wanted && select
+			&& Array.from(select.options).some((o) => o.value === wanted))
+			? wanted : (root.dataset.scenario || 'dead-layer-lesion');
+		if (select) select.value = initial;
+		load(initial);
+	}
+
+	function initAll() {
+		document.querySelectorAll<HTMLElement>('[data-replay]').forEach((el) => {
+			try {
+				init(el);
+			} catch (err) {
+				// One broken instance must not take out the others, or the rest of the
+				// page's interactivity registered after it.
+				console.error('[replay] init failed', err);
+			}
+		});
+	}
+
+	document.addEventListener('astro:page-load', initAll);
+	document.addEventListener('astro:before-swap', () => {
+		while (teardown.length) teardown.pop()?.();
+	});
+	if (document.readyState !== 'loading') initAll();
+	else document.addEventListener('DOMContentLoaded', initAll);
+</script>
+
+<style>
+	/* THE REPLAY DEMO.
+	   Two panes of identical geometry. Everything that differs between them is
+	   data, never styling — a difference in treatment would make the comparison
+	   look staged, which is the one thing this element cannot afford. */
+
+	.replay {
+		border: 1px solid var(--border-hairline);
+		border-radius: 4px;
+		background: var(--bg-surface);
+		overflow: hidden;
+	}
+
+	.replay-head {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-sm) var(--space-lg);
+		align-items: baseline;
+		justify-content: space-between;
+		padding: var(--space-md) var(--space-lg);
+		border-bottom: 1px solid var(--border-hairline);
+	}
+
+	.replay-head-main { display: flex; align-items: baseline; gap: var(--space-md); min-width: 0; }
+	.replay-pick { display: flex; align-items: baseline; gap: var(--space-sm); }
+
+	.replay-pick-label,
+	.replay-telemetry-label {
+		font-size: var(--text-eyebrow);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+
+	.replay-select {
+		font: inherit;
+		font-size: var(--text-small);
+		color: var(--text-primary);
+		background: var(--bg-surface);
+		border: 1px solid var(--border-hairline);
+		border-radius: 3px;
+		padding: 4px 8px;
+	}
+
+	.replay-title { font-size: var(--text-small); font-weight: 600; margin: 0; }
+
+	/* The conditions line. It is in the chrome at every frame because
+	   screenshots travel without their context, and a figure loose on a timeline
+	   with no conditions attached reads as an overclaim. */
+	.replay-conditions {
+		margin: 0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		color: var(--text-muted);
+	}
+
+	.replay-panes { display: grid; grid-template-columns: 1fr 1fr; }
+	.replay-pane { padding: var(--space-md) var(--space-lg) var(--space-lg); min-width: 0; }
+	.replay-pane--baseline { border-right: 1px solid var(--border-hairline); }
+
+	.replay-pane-head { margin-bottom: var(--space-sm); }
+	.replay-pane-name { margin: 0; font-size: var(--text-small); font-weight: 600; }
+	.replay-pane-sub {
+		margin: 2px 0 0;
+		font-size: 11px;
+		color: var(--text-muted);
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	}
+
+	/* Fixed aspect so the box is reserved before the bundle arrives: no layout
+	   shift when the data lands. */
+	.replay-plot { position: relative; aspect-ratio: 16 / 9; min-height: 160px; }
+	.replay-plot canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+	.replay-telemetry {
+		margin-top: var(--space-md);
+		padding-top: var(--space-sm);
+		border-top: 1px solid var(--border-hairline);
+		min-height: 148px;
+	}
+
+	/* THE EMPTY PANEL. Set in the same type as the readout opposite, because it
+	   is a statement and not a missing thing. No spinner, no skeleton, no dashes. */
+	.replay-empty { display: flex; align-items: center; min-height: 112px; }
+	.replay-empty-text {
+		margin: 0;
+		font-size: var(--text-small);
+		line-height: 1.5;
+		color: var(--text-muted);
+		max-width: 30ch;
+	}
+
+	.replay-nodes { list-style: none; margin: var(--space-sm) 0 0; padding: 0; }
+	.replay-node {
+		display: grid;
+		grid-template-columns: 4.5rem 1fr 5.5rem 4.5rem;
+		gap: var(--space-sm);
+		align-items: center;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		color: var(--text-secondary);
+		padding: 2px 0;
+	}
+	.replay-node-bar {
+		height: 6px;
+		background: var(--accent-ghost);
+		border-radius: 3px;
+		overflow: hidden;
+	}
+	.replay-node-bar i {
+		display: block;
+		height: 100%;
+		background: var(--chart-ormas);
+		transition: width var(--duration-fast) linear;
+	}
+	.replay-node.is-zero .replay-node-bar i { background: var(--chart-warning); }
+	.replay-node.is-zero .replay-node-state { color: var(--chart-warning); font-weight: 600; }
+	.replay-node-state, .replay-node-wn { color: var(--text-muted); }
+
+	.replay-alarms { margin-top: var(--space-sm); min-height: 64px; }
+	.replay-alarms-idle {
+		margin: 0;
+		font-size: var(--text-small);
+		color: var(--text-muted);
+	}
+	.replay-alarm {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-sm);
+		margin: 0 0 2px;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		color: var(--text-secondary);
+	}
+	.replay-alarm-step { color: var(--text-muted); }
+	.replay-alarm-node { font-weight: 600; color: var(--text-primary); }
+	.replay-alarm-diag { color: var(--chart-warning); }
+	.replay-alarm-cap { color: var(--text-muted); }
+
+	.replay-beat {
+		margin: 0;
+		padding: var(--space-sm) var(--space-lg);
+		border-top: 1px solid var(--border-hairline);
+		background: var(--accent-ghost);
+		font-size: var(--text-small);
+		color: var(--text-primary);
+	}
+
+	.replay-controls {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-sm) var(--space-md);
+		align-items: center;
+		padding: var(--space-md) var(--space-lg);
+		border-top: 1px solid var(--border-hairline);
+	}
+
+	.replay-btn {
+		font: inherit;
+		font-size: var(--text-small);
+		padding: 6px 12px;
+		border: 1px solid var(--border-hairline);
+		border-radius: 3px;
+		background: var(--bg-surface);
+		color: var(--text-primary);
+		cursor: pointer;
+	}
+	.replay-btn:hover { border-color: var(--border-strong); }
+	.replay-btn--play { min-width: 5.5rem; font-weight: 600; }
+	.replay-btn--primary {
+		background: var(--accent-dark);
+		border-color: var(--accent-dark);
+		color: #fff;
+	}
+
+	.replay-scrub { flex: 1 1 180px; display: block; }
+	.replay-scrub input { width: 100%; }
+
+	.replay-epoch {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		color: var(--text-muted);
+		min-width: 9ch;
+	}
+
+	.replay-rates { display: flex; gap: 2px; }
+	.replay-rate {
+		font: inherit;
+		font-size: 11px;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		padding: 5px 8px;
+		border: 1px solid var(--border-hairline);
+		background: var(--bg-surface);
+		color: var(--text-muted);
+		cursor: pointer;
+	}
+	.replay-rate[aria-pressed='true'] {
+		color: var(--text-primary);
+		border-color: var(--border-strong);
+		font-weight: 600;
+	}
+
+	.replay-record {
+		padding: var(--space-lg);
+		border-top: 1px solid var(--border-strong);
+		background: var(--bg-base);
+	}
+	.replay-record-head { margin-bottom: var(--space-md); }
+	.replay-record-title { margin: 0; font-size: var(--text-h3); }
+	.replay-record-sub {
+		margin: 4px 0 0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		color: var(--text-muted);
+	}
+
+	.replay-record-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		gap: var(--space-md);
+		margin: 0 0 var(--space-lg);
+	}
+	.replay-record-cell dt {
+		font-size: var(--text-eyebrow);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+	.replay-record-cell dd {
+		margin: 2px 0 0;
+		font-size: var(--text-small);
+		font-weight: 600;
+		color: var(--text-primary);
+	}
+
+	/* Scrollable, never truncated. All of it, or the record is not a record. */
+	.replay-record-table-wrap {
+		max-height: 260px;
+		overflow: auto;
+		border: 1px solid var(--border-hairline);
+		background: var(--bg-surface);
+	}
+	.replay-record-table { width: 100%; border-collapse: collapse; }
+	.replay-record-table th,
+	.replay-record-table td {
+		text-align: left;
+		padding: 5px 10px;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		border-bottom: 1px solid var(--border-hairline);
+	}
+	.replay-record-table th {
+		position: sticky;
+		top: 0;
+		background: var(--bg-surface);
+		color: var(--text-muted);
+		font-weight: 600;
+	}
+	.replay-record-table td { color: var(--text-secondary); }
+
+	.replay-record-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-sm);
+		margin-top: var(--space-md);
+	}
+	.replay-diff { margin-top: var(--space-md); }
+	.replay-diff-label {
+		font-size: var(--text-small);
+		color: var(--text-secondary);
+		margin: 0 0 var(--space-sm);
+	}
+
+	.replay-noscript {
+		padding: var(--space-lg);
+		font-size: var(--text-small);
+		color: var(--text-secondary);
+		margin: 0;
+	}
+
+	.replay-sr {
+		position: absolute;
+		width: 1px; height: 1px;
+		padding: 0; margin: -1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	/* Phone: single column, ORMAS first. Each telemetry panel stays with its own
+	   curve, so the pairing survives the stack. */
+	@media (max-width: 720px) {
+		.replay-panes { grid-template-columns: 1fr; }
+		.replay-pane--ormas { order: -1; border-bottom: 1px solid var(--border-hairline); }
+		.replay-pane--baseline { border-right: 0; }
+		.replay-pane { padding: var(--space-md); }
+		.replay-head, .replay-controls, .replay-record { padding: var(--space-md); }
+		.replay-telemetry { min-height: 0; }
+		.replay-node { grid-template-columns: 4rem 1fr 4.5rem; }
+		.replay-node-wn { display: none; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.replay-node-bar i { transition: none; }
+	}
+</style>

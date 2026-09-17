@@ -165,6 +165,38 @@ Causal saliency through the bounded chain, per parameter
 
 Gradient conflict between the signals is resolved by PCGrad projection. Every continuous correction satisfies a mean-centring conservation constraint and is bounded by an Input-to-State Stability argument under local strong convexity, and the observed correction rate settles exactly as that bound predicts, which is the part that matters: the stability argument is testable, and it was tested.
 
+**THE FIRST RESULT, REPLAYED**
+
+### The recovery result, as it was recorded.
+
+The first of the six results below, played back from its archived run. Two parameter-matched networks, trained identically; at epoch 101 two convolutional stages are destroyed. Nothing is computed here — every value is the value recorded during that run, and the run identifier and seed are on screen.
+
+Loading the archived run…
+
+##### Standard CNN
+
+parameter-matched
+
+Component telemetry
+
+No such quantity is computed by this architecture.
+
+##### ORMAS
+
+same data, same objective
+
+Component telemetry
+
+- Field: Epoch
+
+epoch 0
+
+##### The record
+
+Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
+
+[The full replay page](/demo) carries the other three scenarios, including the adversarial injection where this architecture measures worse than the baseline.
+
 **WHAT IS PUBLISHED**
 
 ### Six results, and the conditions each was measured under.
@@ -193,10 +225,10 @@ Written for a reader who works in this field. Every figure in it appears with it
 
   #### Recovery from simultaneous full-hierarchy collapse
 
-  +60.8 pp
+  +61.5 pp
 
   - **Condition** — Every convolutional stage zeroed at once, rather than a single layer.
-  - **Result** — Recovered to 70.8% ± 2.2%.
+  - **Result** — Recovered to 71.5% ± 2.5% across three seeds; 72.9% on the seed shown in the replay.
   - **Baseline** — Parameter-matched standard network: 10.0% ± 0.0%, permanent.
 
 3. 03
