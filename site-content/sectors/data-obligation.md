@@ -271,7 +271,7 @@ In markets whose central complaint is that vendors overstate their approximation
 
 - No data-protection lawyer has yet told us what may be certified, and in what words. Until that answer exists this is a strong story rather than a certifiable product.
 
-Sources
+#### Sources for the external figures on this page — 4
 
 - [Machine unlearning doesn't do what you think · lessons for policy and research](https://arxiv.org/pdf/2412.06966)
 

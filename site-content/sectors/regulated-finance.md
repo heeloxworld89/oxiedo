@@ -273,7 +273,7 @@ In markets whose central complaint is that vendors overstate their approximation
 
 - Backtest discipline decides credibility in this market before mechanism does. A clean protocol with a dull architecture beats the reverse.
 
-Sources
+#### Sources for the external figures on this page — 3
 
 - [Federal Reserve · SR 26-2 supervisory letter](https://www.federalreserve.gov/supervisionreg/srletters/SR2602.htm)
 

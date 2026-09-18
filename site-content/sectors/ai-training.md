@@ -257,7 +257,7 @@ In markets whose central complaint is that vendors overstate their approximation
 
 - Our evidence for the health signal comes from corruption-driven failure. Whether it transfers cleanly to optimiser-driven instability is an open question, and a frontier engineer will raise it inside five minutes.
 
-Sources
+#### Sources for the external figures on this page — 5
 
 - [Meta · Llama 3 training interruptions (Tom's Hardware)](https://www.tomshardware.com/tech-industry/artificial-intelligence/faulty-nvidia-h100-gpus-and-hbm3-memory-caused-half-of-the-failures-during-llama-3-training-one-failure-every-three-hours-for-metas-16384-gpu-training-cluster)
 

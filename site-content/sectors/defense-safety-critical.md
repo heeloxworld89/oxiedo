@@ -277,7 +277,7 @@ In markets whose central complaint is that vendors overstate their approximation
 
 - Nothing here has been run on sensor data, and no defense or classified data has ever touched this system.
 
-Sources
+#### Sources for the external figures on this page — 4
 
 - [Army assesses AI's unpredictable behaviors (DefenseScoop, Jan 2026)](https://defensescoop.com/2026/01/12/army-contract-ai-behavior-risk-evaluation/)
 

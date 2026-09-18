@@ -9,15 +9,43 @@ THE BLACK BOX
 
 ## Opacity is not a law of deep learning. It is a consequence of one decision.
 
-Every error signal in a standard neural network reaches every parameter on every step. That property is the source of a network's capability, and it is also why nothing inside one can be named afterwards. The trail does not go cold. It was never laid.
+**THE RUN, REPLAYED**
 
-That decision was reasonable when it was made and has not been revisited since. Change it — bound each component's learning path so the component stays individually addressable — and one half of the black box stops existing. Not because a better tool was pointed at a finished model, but because the model now keeps the account as it goes.
+### The same network, twice. One sealed, one open.
+
+Two networks of identical shape, trained on the same data toward the same objective. At epoch 101 two of their convolutional stages are destroyed. One names the damaged components two steps later and recovers. The other sits at chance for the rest of the run and cannot say what happened to it.
+
+Press play, or drag the epoch bar, and watch the table underneath stop answering the same way for the two of them. The run is archived: every figure is read from its own telemetry, and its identifier and seed are on screen. Each of the four scenarios regenerates from its own seed — the fourth is the one that goes against us, and it sits in the same menu as the other three.
+
+The same network, twice. One sealed, one open.
+
+- Field: Scenario — Dead-layer lesion Full-hierarchy lesion Corrupted labels Adversarial weight injection
+
+Loading the archived run…
+
+- Field: Epoch
+
+epoch 0 / 199
+
+Test accuracy · both arms, one axis
+
+Correction ledger · written during training
+
+What each one can answer, at this epoch
+
+The question Standard CNN ORMAS
+
+##### The record
+
+Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
+
+Nothing in the sealed pane was withheld. A standard network does not compute a per-component health signal at any point in training, so there is no quantity to display and no setting that would reveal one. That absence is the problem, drawn.
 
 **THE SPLIT**
 
 ### The black box was never one problem. It is two questions that were given one name.
 
-The distinction is not academic. One of these is a question about meaning and it is genuinely hard. The other is a question about accounting, and it is the one that decides whether a regulated institution can use a model at all. For a decade both were attacked with the same instrument.
+What the open pane just did is not a better reading of a finished model. It is a different question, answered by different means — and the distinction is not academic. One of these is a question about meaning, and it is genuinely hard. The other is a question about accounting, and it is the one that decides whether a regulated institution can use a model at all. For a decade both were attacked with the same instrument.
 
 OPEN
 
@@ -49,41 +77,13 @@ Only the right-hand question is closed here, and only within the limits set out 
 
 ### An account that was never written cannot be recovered from the weights.
 
+Every error signal in a standard neural network reaches every parameter on every step. That property is the source of a network's capability, and it is also why nothing inside one can be named afterwards. The trail does not go cold. It was never laid.
+
 Ask a finished model what it took from a particular source and every available tool works the same way: examine the trained system, produce a best estimate of what must have occurred. The estimate is frequently a good one. It is also unverifiable, two tools disagree on the same input, and an estimate is not something a data owner accepts or a supervisor files.
 
 This was never a tooling failure. The quantity was not being withheld. In a network where every gradient touches every parameter, there is no component whose behaviour can be isolated from the aggregate, so there is nothing for a question to be put to. Reverse engineering is the right instrument for the left-hand question and the wrong one for the right-hand question, and the field spent a decade using it for both.
 
-**THE ACCOUNT, BEING WRITTEN**
-
-### Two networks of identical shape. One sealed, one open.
-
-Below is an archived training run, replayed. Both networks have the same three convolutional stages, the same data and the same objective. At epoch 101 two of those stages are destroyed. One network sits at chance level for the remaining ninety-nine epochs and cannot say why. The other names both damaged components two steps later and recovers.
-
-Nothing computes in the browser. Every figure is read from the run's own telemetry, the run identifier and seed are on screen, and each of the four scenarios regenerates from that seed.
-
-The same network, twice. One sealed, one open.
-
-- Field: Scenario — Dead-layer lesion Full-hierarchy lesion Corrupted labels Adversarial weight injection
-
-Loading the archived run…
-
-- Field: Epoch
-
-epoch 0 / 199
-
-Test accuracy · both arms, one axis
-
-Correction ledger · written during training
-
-What each one can answer, at this epoch
-
-The question Standard CNN ORMAS
-
-##### The record
-
-Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
-
-Nothing in the sealed pane was withheld. A standard network does not compute a per-component health signal at any point in training, so there is no quantity to display and no setting that would reveal one. That absence is the problem, drawn.
+That decision was reasonable when it was made and has not been revisited since. Change it — bound each component's learning path so the component stays individually addressable — and one half of the black box stops existing. Not because a better tool was pointed at a finished model, but because the model keeps the account as it goes, which is what the run above is doing.
 
 **WHAT THAT RECORD IS FOR**
 

@@ -281,7 +281,7 @@ In markets whose central complaint is that vendors overstate their approximation
 
 - Nothing here is autonomous field adaptation. Every modification happens during supervised retraining, under review, before release.
 
-Sources
+#### Sources for the external figures on this page — 4
 
 - [FDA · PCCP marketing submission recommendations](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/marketing-submission-recommendations-predetermined-change-control-plan-artificial-intelligence)
 
