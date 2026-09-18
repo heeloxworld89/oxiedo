@@ -1483,7 +1483,42 @@ const SCENARIOS = [
 	   at 1400px of viewport, well before a reader would expect a problem. Below 1400 the rail
 	   is icons only, and the pane stacking is driven by a container query on the working
 	   area's real width rather than the viewport's, so it cannot disagree with the rail. */
+	/* ── THE CONSOLE IS DARK ─────────────────────────────────────────────────────
+	   The light plate was right when this was a figure printed inside an article. As a
+	   screen it was a cream admin template, and it read as one.
+
+	   Dark ground, amber telemetry, monospace precision is the established language for
+	   instruments that report on a running system, and here it is not borrowed: the data IS
+	   telemetry, the ORMAS arm is ALREADY drawn in amber on every chart, and the figures are
+	   already set in a mono face. The console is the palette agreeing with the content.
+
+	   IT IS A TOKEN SWAP AND NOTHING ELSE. render.ts reads grid, text, muted, ormas, baseline
+	   and event off this element's custom properties, and anatomy.ts is styled by classes
+	   inside this component — so redefining six variables turns the chart, both network
+	   drawings, the ledger and the tables over together, with no second code path to keep in
+	   step. Measured against the panel ground: text 15.58:1, secondary 8.14:1, amber 8.01:1,
+	   baseline blue 6.98:1, the event red 5.26:1.
+
+	   The document below stays cream. The boundary is deliberate — the instrument is dark and
+	   the writing about it is not, which is how a reader knows which one they are in. */
 	.rp--app {
+		--plate: #141625;
+		--plate-sunk: #0F111C;
+		--rule: #2F3550;
+		--fg: #F1EFE8;
+		--fg-mid: #A9AEC4;
+		/* #6E7492 measured 3.91:1 and this token carries the metric labels, the chart labels,
+		   the table headers and the run string — all 10-12px, so the 4.5 floor applies to
+		   every one of them. #828AA8 is 5.25:1 on the panel and 5.50:1 on the sunk ground. */
+		--fg-dim: #828AA8;
+		--ormas: #E0A233;
+		--ormas-text: #E0A233;
+		--base: #7FA3DC;
+		--warn: #E0645F;
+		--ink-raised: #1A1D2E;
+		background: var(--plate);
+		color: var(--fg);
+
 		--rail: 220px;
 		--appbar: 48px;
 		display: flex;
@@ -1571,34 +1606,37 @@ const SCENARIOS = [
 	.rp-rail-item {
 		display: flex;
 		align-items: center;
-		gap: 9px;
+		gap: 10px;
 		width: 100%;
 		height: 36px;
 		padding: 0 var(--space-md);
 		border: 0;
 		background: none;
 		font: inherit;
-		font-size: var(--text-small);
+		font-size: 12.5px;
 		text-align: left;
 		color: var(--fg-mid);
 		cursor: pointer;
 		transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
 	}
-	.rp-rail-item:hover { background: color-mix(in oklab, var(--fg) 5%, transparent); color: var(--fg); }
+	.rp-rail-item:hover { background: color-mix(in oklab, var(--fg) 7%, transparent); color: var(--fg); }
 	.rp-rail-item[aria-pressed='true'] {
-		background: color-mix(in oklab, var(--ormas) 10%, transparent);
+		background: color-mix(in oklab, var(--ormas) 12%, transparent);
 		color: var(--fg);
 		font-weight: 600;
 		box-shadow: inset 2px 0 0 0 var(--ormas);
 	}
+	/* A TICK, NOT A BULLET. A round dot before a label is the template look; a 1px rule that
+	   grows to 8px and turns amber when selected reads as a scale marker, which is what the
+	   rest of this screen is made of. */
 	.rp-rail-dot {
-		width: 5px;
-		height: 5px;
-		border-radius: 999px;
-		background: color-mix(in oklab, var(--fg-dim) 55%, transparent);
+		width: 3px;
+		height: 1px;
+		background: var(--fg-dim);
 		flex: none;
+		transition: width var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
 	}
-	.rp-rail-item[aria-pressed='true'] .rp-rail-dot { background: var(--ormas); }
+	.rp-rail-item[aria-pressed='true'] .rp-rail-dot { width: 8px; height: 2px; background: var(--ormas); }
 	.rp-rail-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 	.rp-rail-foot { margin-top: auto; padding: var(--space-md); }
 	.rp-rail-guide {
@@ -1633,7 +1671,10 @@ const SCENARIOS = [
 		border-bottom: 1px solid var(--rule);
 		flex: none;
 	}
-	.rp-metric { background: var(--plate); padding: 10px var(--space-lg); min-width: 0; }
+	/* A READOUT, NOT CARDS. Four rounded boxes in a row is the admin-template signature. These
+	   are cells of one instrument face, divided by the same hairline as everything else, with
+	   the label above the figure the way a panel is silkscreened. */
+	.rp-metric { background: var(--plate); padding: 9px var(--space-lg) 10px; min-width: 0; }
 	.rp-metric-label {
 		margin: 0;
 		font-family: var(--mono);
@@ -1643,11 +1684,13 @@ const SCENARIOS = [
 		color: var(--fg-dim);
 	}
 	.rp-metric-value {
-		margin: 2px 0 0;
+		margin: 3px 0 0;
 		font-family: var(--mono);
 		font-size: 30px;
 		line-height: 1.05;
+		letter-spacing: -0.01em;
 		font-variant-numeric: tabular-nums;
+		font-feature-settings: 'zero' 1;
 		color: var(--fg);
 	}
 	.rp-metric--open .rp-metric-value { color: var(--ormas-text); }
@@ -1983,10 +2026,13 @@ const SCENARIOS = [
 		white-space: nowrap;
 	}
 	.rp-guide :global(.rp-btn:disabled) { opacity: 0.35; cursor: default; }
+	/* #fff, not --text-on-dark. The cream is #F3F1EA and on this amber it measures 4.34:1,
+	   just under the floor; white is 4.91:1 on the same fill. The dock is light-themed and
+	   sits outside the console, so it does not inherit the console's amber. */
 	.rp-guide :global(.rp-btn--primary) {
 		background: var(--chart-ormas);
 		border-color: var(--chart-ormas);
-		color: var(--text-on-dark);
+		color: #fff;
 	}
 
 	/* TRAVELLING. The run takes several seconds to cross from one stop to the next, and the
@@ -2187,7 +2233,11 @@ const SCENARIOS = [
 		font-weight: 700;
 		background: var(--ormas);
 		border-color: var(--ormas);
-		color: #fff;
+		/* INK, NOT WHITE. The light-theme amber was dark enough to carry white at 4.91:1; the
+		   console amber is a light one and white on it measured 2.24:1. The label takes the
+		   panel's own ground instead, which is 8.01:1 and correct on both themes because the
+		   fill and the text move together. */
+		color: var(--plate);
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;

@@ -511,6 +511,72 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
+// ── EVERY RENDERED WORD IN THE CONSOLE ───────────────────────────────────────────────────
+//
+// The console is dark and its palette is six custom properties, so a single token being a
+// shade off moves a dozen labels at once. Spot-checking named selectors is not enough —
+// switching to the dark palette put seven things under the floor and only a sweep found
+// them all: white on the light amber at 2.24:1, and --fg-dim at 3.91:1 carrying the metric
+// labels, the chart labels, the table headers, the run string and the breadcrumb.
+//
+// Two things this sweep has to get right, both learned by getting them wrong. Elements
+// inside a hidden panel still report their own computed display, so they must be filtered
+// by whether they actually render — otherwise the guide dock is measured against the
+// console's dark ground while it is closed and reports five phantom failures. And the floor
+// is 3:1 for large text, 4.5:1 otherwise, because most of this screen is 10-12px labels.
+{
+	const page = await browser.newPage({ viewport: { width: 1512, height: 945 } });
+	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(1300);
+
+	const sweep = () => page.evaluate(() => {
+		const lum = (c) => {
+			const m = c.match(/[\d.]+/g);
+			if (!m) return 1;
+			const [r, g, b] = m.slice(0, 3).map(Number)
+				.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+			return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+		};
+		const behind = (el) => {
+			for (let e = el.parentElement; e; e = e.parentElement) {
+				const bg = getComputedStyle(e).backgroundColor;
+				if (bg && !/rgba\(0, 0, 0, 0\)/.test(bg)) return bg;
+			}
+			return 'rgb(255,255,255)';
+		};
+		const out = [];
+		const scope = [...document.querySelectorAll('.rp--app *'), ...document.querySelectorAll('[data-guide] *')];
+		for (const el of scope) {
+			if (el.getClientRects().length === 0) continue;
+			if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+			const c = getComputedStyle(el);
+			const bg = /rgba\(0, 0, 0, 0\)/.test(c.backgroundColor) ? behind(el) : c.backgroundColor;
+			const px = parseFloat(c.fontSize);
+			const floor = px >= 24 || (px >= 18.66 && parseInt(c.fontWeight, 10) >= 700) ? 3 : 4.5;
+			const a = lum(c.color), b = lum(bg);
+			const ratio = +(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2));
+			if (ratio < floor) {
+				out.push({ text: el.textContent.trim().slice(0, 34), ratio, floor, size: c.fontSize });
+			}
+		}
+		return out;
+	});
+
+	// Once with the guided read over the console, once with it closed — the dock is a light
+	// panel on a dark screen and only one of those states is covered by looking at either.
+	const open = await sweep();
+	ok(open.length === 0,
+		`console contrast, guide open: ${open.length} below floor` +
+			(open[0] ? ` — "${open[0].text}" at ${open[0].ratio}:1 (needs ${open[0].floor})` : ''));
+	await page.evaluate(() => document.querySelector('[data-guide-skip]')?.click());
+	await page.waitForTimeout(500);
+	const rest = await sweep();
+	ok(rest.length === 0,
+		`console contrast, at rest: ${rest.length} below floor` +
+			(rest[0] ? ` — "${rest[0].text}" at ${rest[0].ratio}:1 (needs ${rest[0].floor})` : ''));
+	await page.close();
+}
+
 // ── THE HERO TRUST BAR ───────────────────────────────────────────────────────────────────
 //
 // Five sector names on one line. The column gap was --space-xl, which pushed the fifth name
