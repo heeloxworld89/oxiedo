@@ -195,35 +195,72 @@
 	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 	font-weight: 600;
 	font-size: var(--text-small);
-	border-radius: 8px; /* reference uses a soft rounded corner, not the dark theme's crisp 2px */
+	/* 6px, not 8px. The keyline below is a drawn edge, and a drawn edge on a soft corner reads
+	   as a sticker; pulling the radius in a notch makes it read as a machined one. */
+	border-radius: 6px;
 	text-decoration: none;
 	cursor: pointer;
+	/* THE REST SHADOW EXISTS SO THE PRESS HAS SOMETHING TO COLLAPSE. A hairline of ink under
+	   the bottom edge, which is what a real control sitting on a surface casts. On :active it
+	   goes and the button drops into its own place, which is the whole of the effect. */
+	box-shadow: 0 1px 0 0 color-mix(in oklab, var(--text-primary) 22%, transparent);
 	transition:
 		background var(--duration-fast) var(--ease-out),
 		border-color var(--duration-fast) var(--ease-out),
 		color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out),
+		transform var(--duration-fast) var(--ease-out),
 		opacity var(--duration-fast) var(--ease-out);
+}
+
+/* PRESSED. One pixel and the shadow, nothing more. The reference that prompted this was a
+   painted sign hanging on two cords — the part worth taking from it was not the wood, it was
+   that the thing looks like an object a hand can push. That is one pixel of travel.
+
+   It is a transform rather than a margin change so nothing around it reflows, and it is on
+   :active rather than a class so it needs no JavaScript and works on touch. */
+.btn:active:not(:disabled):not([aria-disabled='true']) {
+	transform: translateY(1px);
+	box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.btn {
+		transition:
+			background var(--duration-fast) var(--ease-out),
+			border-color var(--duration-fast) var(--ease-out),
+			color var(--duration-fast) var(--ease-out);
+	}
 }
 
 .btn--primary,
 .btn--secondary {
-	padding: 12px var(--space-lg); /* 12px — no matching --space-* token; 24px = --space-lg */
+	/* 12px/24px minus the extra pixel of border on each side, so the box is the size it was. */
+	padding: 11px calc(var(--space-lg) - 1px);
 }
 
 .btn--primary.btn--small,
 .btn--secondary.btn--small {
 	/* design/12 §Navigation — "Invest" / "Book Now" small CTAs, no separate size spec given */
-	padding: var(--space-sm) var(--space-md);
+	padding: calc(var(--space-sm) - 1px) calc(var(--space-md) - 1px);
 }
 
 .btn--full {
 	width: 100%;
 }
 
+/* THE KEYLINE IS INK, NOT THE FILL COLOUR. A border in the same indigo as the background is
+   not an edge, it is a rounding error — the button had no drawn boundary at all, which is why
+   it read as soft. Ink at 2px gives it the mass the reference has, and it is the same ink the
+   current-page nav pill and the body type already use, so nothing new enters the palette.
+
+   The padding loses a pixel on each side to pay for the extra border, so every button keeps
+   the height it had. That is not cosmetic: the nav bar is measured to the pixel between
+   1160px and 1339px, and two pixels of growth on the Contact Us button wraps the links. */
 .btn--primary {
 	background: var(--accent-dark);
 	color: var(--text-on-dark);
-	border: 1px solid var(--accent-dark);
+	border: 2px solid var(--text-primary);
 }
 
 .btn--primary:hover:not(:disabled):not([aria-disabled='true']) {
@@ -231,13 +268,13 @@
 }
 
 .btn--secondary {
-	background: transparent;
+	background: var(--bg-surface);
 	color: var(--text-primary);
-	border: 1px solid var(--border-strong);
+	border: 2px solid var(--text-primary);
 }
 
 .btn--secondary:hover:not(:disabled):not([aria-disabled='true']) {
-	border-color: var(--accent-mid);
+	border-color: var(--accent-dark);
 	color: var(--accent-dark);
 }
 
@@ -257,6 +294,8 @@
 	opacity: 0.4;
 	cursor: not-allowed;
 	pointer-events: none;
+	/* No cast shadow on something that cannot be pressed. */
+	box-shadow: none;
 }
 
 /* ============================================================
@@ -1241,7 +1280,21 @@ main > section:last-child.band--dark {
    the rule that ends it. */
 .band--dark .btn--secondary,
 .hero .btn--secondary {
+	/* BACKGROUND, NOT JUST COLOUR — the third time this rule has been caught short. It set the
+	   text and the border and left the background alone, which was correct while the base
+	   .btn--secondary was transparent. The 2026-09-18 keyline pass gave the base rule
+	   `background: var(--bg-surface)`, a near-white, and light-on-dark text landed on it: the
+	   hero's "See the technology" went effectively invisible, exactly as the two notes above
+	   describe happening before. Stating all three properties is what stops it recurring. */
+	background: transparent;
 	color: var(--text-on-dark);
+	border-color: var(--rule-on-dark);
+}
+
+/* The primary's keyline is ink, which vanishes into a dark band. It takes the same on-dark
+   rule the secondary uses, so the button keeps a drawn edge on every surface. */
+.band--dark .btn--primary,
+.hero .btn--primary {
 	border-color: var(--rule-on-dark);
 }
 

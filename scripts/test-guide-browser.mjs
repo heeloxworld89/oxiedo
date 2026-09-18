@@ -218,6 +218,79 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
+// ── BUTTONS ──────────────────────────────────────────────────────────────────────────────
+//
+// CONTRAST, ON EVERY SURFACE. `.btn--secondary` has now been caught three times rendering
+// near-invisible on a dark band: twice because a per-section patch was missing, and once on
+// 2026-09-18 because the base rule gained `background: var(--bg-surface)` while the on-dark
+// rule still set only colour and border — light text on a near-white fill. Each time it was
+// found by eye, which is not a process. Every button on every page is measured here.
+{
+	const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+	const ROUTES = ['/', '/product', '/technology', '/licensing', '/invest', '/sectors',
+		'/black-box', '/contact', '/about', '/press', '/data', '/faq', '/careers'];
+	let worst = { ratio: 99 };
+	for (const route of ROUTES) {
+		await page.goto(`${ORIGIN}${route}`, { waitUntil: 'networkidle' });
+		const rows = await page.evaluate(() => {
+			const lum = (c) => {
+				const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(Number)
+					.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+				return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+			};
+			// Walk up for the first non-transparent ancestor: a transparent button takes the
+			// band's colour, and the band is the thing that changes underneath it.
+			const solid = (el) => {
+				for (let e = el; e; e = e.parentElement) {
+					const bg = getComputedStyle(e).backgroundColor;
+					if (bg && !/rgba\(0, 0, 0, 0\)|transparent/.test(bg)) return bg;
+				}
+				return 'rgb(255,255,255)';
+			};
+			return [...document.querySelectorAll('.btn')].map((el) => {
+				const c = getComputedStyle(el);
+				const bg = /rgba\(0, 0, 0, 0\)|transparent/.test(c.backgroundColor)
+					? solid(el.parentElement) : c.backgroundColor;
+				const a = lum(c.color), b = lum(bg);
+				return {
+					label: el.textContent.trim().slice(0, 30),
+					ratio: +(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2)),
+				};
+			});
+		});
+		for (const r of rows) {
+			ok(r.ratio >= 4.5, `contrast ${route}: "${r.label}" is ${r.ratio}:1, below the 4.5:1 floor`);
+			if (r.ratio < worst.ratio) worst = { ...r, route };
+		}
+	}
+	ok(worst.ratio >= 4.5, `buttons: worst contrast is ${worst.ratio}:1 ("${worst.label}" on ${worst.route})`);
+
+	// THE PRESS. One pixel of travel and the cast shadow going. It is the whole of what was
+	// taken from the reference, and a silent regression would leave a button that looks
+	// pressable and is not.
+	await page.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });
+	const btn = await page.$('main .btn--primary');
+	await btn.scrollIntoViewIfNeeded();
+	await page.waitForTimeout(350);
+	const read = () => page.evaluate(() => {
+		const c = getComputedStyle(document.querySelector('main .btn--primary'));
+		return { t: c.transform, s: c.boxShadow, bw: c.borderTopWidth };
+	});
+	const rest = await read();
+	const box = await btn.boundingBox();
+	await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+	await page.mouse.down();
+	await page.waitForTimeout(320);
+	const down = await read();
+	await page.mouse.up();
+	ok(rest.t === 'none', `button: sits flush at rest (${rest.t})`);
+	ok(rest.s !== 'none', 'button: casts a shadow at rest, for the press to collapse');
+	ok(down.t !== 'none' && down.t !== rest.t, `button: travels on press (${down.t})`);
+	ok(down.s === 'none', `button: the shadow collapses on press (${down.s})`);
+	ok(rest.bw === '2px', `button: the keyline is 2px (${rest.bw})`);
+	await page.close();
+}
+
 await browser.close();
 server.close();
 
