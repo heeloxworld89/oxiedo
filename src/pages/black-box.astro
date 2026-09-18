@@ -416,14 +416,19 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 		</div>
 	</section>
 
-	<section class="section container">
-		<p class="demo-sources-label">Sources for the state of the field</p>
-		<ul class="demo-sources">
-			<li><a href="https://arxiv.org/pdf/2501.16496">Open problems in mechanistic interpretability</a></li>
-			<li><a href="https://arxiv.org/pdf/2404.14082">Mechanistic interpretability for AI safety — a review</a></li>
-			<li><a href="https://arxiv.org/html/2511.19265v1">Unboxing the black box — algorithmic understanding of neural networks</a></li>
-		</ul>
-	</section>
+	{/* THE READING LIST IS GONE, 2026-09-18. It cited no figure on this page. It was three
+	    outbound links supporting a rhetorical claim about the state of the field, rendered as
+	    a bulleted list of blue underlines — the visual language of a Wikipedia references
+	    section, at the foot of the page that has to carry the most conviction.
+
+	    It also worked against the page's own argument. The page is careful to say it does not
+	    attempt the semantic question that mechanistic interpretability attempts; a reading
+	    list of mechanistic interpretability papers invites exactly the comparison the section
+	    above it spends four paragraphs declining. And the last thing this page should do is
+	    send a reader somewhere else.
+
+	    The sourcing that remains is the sourcing that carries figures: the sector pages
+	    footnote external numbers they quote as fact, and that stays. */}
 
 	<section class="section container">
 		<p class="demo-foot">
@@ -503,25 +508,9 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 	}
 	.demo-readers li strong, .demo-limits li strong { color: var(--text-primary); }
 
-	.demo-sources-label {
-		font-size: var(--text-eyebrow);
-		letter-spacing: 0.09em;
-		text-transform: uppercase;
-		color: var(--text-muted);
-		margin: 0;
-	}
-
 	/* The open half carries no accent: identical weight to its neighbour is the
 	   point, and only the state chip distinguishes them. */
 	.demo-half--semantic { }
-
-	.demo-sources {
-		list-style: none;
-		padding: 0;
-		margin: var(--space-sm) 0 0;
-		font-size: var(--text-small);
-	}
-	.demo-sources li { padding: 3px 0; }
 
 	.demo-note {
 		max-width: 68ch;

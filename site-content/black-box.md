@@ -215,12 +215,4 @@ Terms are agreed per institution and written into the contract, and pre-booking 
 
 [Pre-book a deployment](/contact?intent=pre-book#pre-book)
 
-Sources for the state of the field
-
-- [Open problems in mechanistic interpretability](https://arxiv.org/pdf/2501.16496)
-
-- [Mechanistic interpretability for AI safety — a review](https://arxiv.org/pdf/2404.14082)
-
-- [Unboxing the black box — algorithmic understanding of neural networks](https://arxiv.org/html/2511.19265v1)
-
 Every figure on this page is measured on CIFAR-10 across the controlled experiment programme, and is labelled as such wherever it appears.[The technology page](/technology) carries the conditions for each, the error bars, and the one result that went against us.
