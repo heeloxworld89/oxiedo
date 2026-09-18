@@ -115,58 +115,25 @@ const SCENARIOS = [
 					</ol>
 				</nav>
 			)}
+			<div class="rp-opts" role="group" aria-label="Scenario">
+				{SCENARIOS.map((s) => (
+					<button
+						type="button"
+						class="rp-opt"
+						data-rail-scenario={s.key}
+						aria-pressed={s.key === scenario}
+					>{s.label}</button>
+				))}
+			</div>
 			<p class="rp-appbar-run" data-conditions-app>Loading the archived run…</p>
 		</header>
 	)}
 
 	<div class="rp-shell">
-		{app && (
-			<nav class="rp-rail" aria-label="Replay console">
-				<p class="rp-rail-head">Scenario</p>
-				<ul class="rp-rail-list">
-					{SCENARIOS.map((s) => (
-						<li>
-							<button
-								type="button"
-								class="rp-rail-item"
-								data-rail-scenario={s.key}
-								aria-pressed={s.key === scenario}
-							>
-								<span class="rp-rail-dot" aria-hidden="true"></span>
-								<span class="rp-rail-label">{s.label}</span>
-							</button>
-						</li>
-					))}
-				</ul>
-
-				<p class="rp-rail-head">Panel</p>
-				<ul class="rp-rail-list">
-					{[
-						{ id: 'answers', label: 'What each can answer' },
-						{ id: 'accuracy', label: 'Accuracy' },
-						{ id: 'ledger', label: 'Corrections' },
-						{ id: 'record', label: 'The record' },
-					].map((x) => (
-						<li>
-							<button
-								type="button"
-								class="rp-rail-item"
-								data-rail-panel={x.id}
-								aria-pressed={x.id === 'answers'}
-							>
-								<span class="rp-rail-dot" aria-hidden="true"></span>
-								<span class="rp-rail-label">{x.label}</span>
-							</button>
-						</li>
-					))}
-				</ul>
-
-				<div class="rp-rail-foot">
-					<button type="button" class="rp-rail-guide" data-rail-guide>Guided read</button>
-				</div>
-			</nav>
-		)}
-
+		{/* NO RAIL. It cost 220px of the working area to hold eight items that fit on one line,
+		    and it made the panels one-at-a-time when the whole point of this screen is that
+		    the two networks and their four readouts are compared AT ONCE. The scenarios moved
+		    into the product bar as options; the panels are all on screen together. */}
 		<div class="rp-main">
 			{app && (
 				<div class="rp-metrics" data-metrics>
@@ -589,6 +556,14 @@ const SCENARIOS = [
 		const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
 		const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
 
+		// IN APP MODE NOTHING IS HIDDEN. The four readouts are cells of one face and are all
+		// on screen together, so selecting is only ever about which one the guided read is
+		// pointing at. Outside app mode the component shares a page and still tabs.
+		const allVisible = root.classList.contains('rp--app');
+		if (allVisible) {
+			for (const el of panels) el.hidden = false;
+		}
+
 		function selectTab(name: string, focus = false) {
 			for (const b of tabs) {
 				const on = b.dataset.tab === name;
@@ -596,16 +571,15 @@ const SCENARIOS = [
 				b.tabIndex = on ? 0 : -1;
 				if (on && focus) b.focus();
 			}
-			for (const el of panels) el.hidden = el.dataset.panel !== name;
-			// The rail mirrors the tablist, including when the guided read changes panel.
-			for (const b of root.querySelectorAll('[data-rail-panel]')) {
-				b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.railPanel === name));
+			if (!allVisible) {
+				for (const el of panels) el.hidden = el.dataset.panel !== name;
 			}
+
 
 			// A canvas in a hidden panel has no box, so it sizes to zero and draws nothing.
 			// Sizing on reveal is not an optimisation here; without it the accuracy tab is
 			// blank the first time it is opened.
-			if (name === 'accuracy') {
+			if (name === 'accuracy' && !allVisible) {
 				sizeCanvas(canvas);
 				if (engine) render(engine.epoch);
 			}
@@ -632,7 +606,6 @@ const SCENARIOS = [
 		// the layout rather than hidden and mirrored. The rail calls the same functions, so
 		// there is one path into scenario and panel and nothing to keep in sync.
 		const railScenario = [...root.querySelectorAll<HTMLButtonElement>('[data-rail-scenario]')];
-		const railPanel = [...root.querySelectorAll<HTMLButtonElement>('[data-rail-panel]')];
 
 		for (const b of railScenario) {
 			b.addEventListener('click', () => {
@@ -641,12 +614,8 @@ const SCENARIOS = [
 				load(b.dataset.railScenario!);
 			});
 		}
-		for (const b of railPanel) {
-			b.addEventListener('click', () => selectTab(b.dataset.railPanel!));
-		}
-		root.querySelector('[data-rail-guide]')?.addEventListener('click', () => {
-			guideRunning() ? guideStop() : guideStart();
-		});
+
+
 
 		/** The four cards at the top of the working area, live with the epoch. A metric strip
 		 *  whose numbers do not move while the run plays is decoration. */
@@ -1117,6 +1086,15 @@ const SCENARIOS = [
 			setPlayLabel();
 		}
 
+		// The canvas is visible from the start in app mode, but only after the grid has laid
+		// out — sizing it in the same frame gives a zero-width box and an empty chart.
+		if (allVisible) {
+			requestAnimationFrame(() => {
+				sizeCanvas(canvas);
+				if (engine) render(engine.epoch);
+			});
+		}
+
 		const io = new IntersectionObserver((entries) => {
 			inView = entries[0]?.isIntersecting ?? true;
 			if (!inView) { clearTimeout(loopTimer); engine?.pause(); setPlayLabel(); return; }
@@ -1519,7 +1497,6 @@ const SCENARIOS = [
 		background: var(--plate);
 		color: var(--fg);
 
-		--rail: 220px;
 		--appbar: 48px;
 		display: flex;
 		flex-direction: column;
@@ -1550,7 +1527,35 @@ const SCENARIOS = [
 		color: var(--fg);
 	}
 	.rp-appbar-mark span { margin: 0 8px; color: var(--ormas); }
-	.rp-appbar-trail { margin-right: auto; }
+	.rp-appbar-trail { margin-right: var(--space-lg); }
+
+	/* SEGMENTED OPTIONS, in the bar. Four scenarios on one line where a 220px column used to
+	   hold them, so the working area keeps the width. */
+	.rp-opts {
+		display: flex;
+		gap: 1px;
+		margin-right: auto;
+		background: var(--rule);
+		border: 1px solid var(--rule);
+		border-radius: 4px;
+		overflow: hidden;
+	}
+	.rp-opt {
+		font: inherit;
+		font-family: var(--mono);
+		font-size: 10.5px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		white-space: nowrap;
+		padding: 5px 11px;
+		border: 0;
+		background: var(--plate);
+		color: var(--fg-dim);
+		cursor: pointer;
+		transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+	}
+	.rp-opt:hover { color: var(--fg); background: color-mix(in oklab, var(--fg) 7%, var(--plate)); }
+	.rp-opt[aria-pressed='true'] { background: var(--ormas); color: var(--plate); font-weight: 700; }
 	.rp-appbar-trail ol {
 		display: flex;
 		gap: 6px;
@@ -1578,80 +1583,10 @@ const SCENARIOS = [
 	}
 
 	.rp--app .rp-shell {
-		display: grid;
-		grid-template-columns: var(--rail) minmax(0, 1fr);
+		display: flex;
 		flex: 1 1 auto;
 		min-height: 0;
 	}
-
-	.rp-rail {
-		border-right: 1px solid var(--rule);
-		background: var(--plate-sunk);
-		padding: var(--space-md) 0;
-		overflow-y: auto;
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-	}
-	.rp-rail-head {
-		margin: var(--space-sm) 0 4px;
-		padding: 0 var(--space-md);
-		font-family: var(--mono);
-		font-size: 10px;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: var(--fg-dim);
-	}
-	.rp-rail-list { list-style: none; margin: 0; padding: 0; }
-	.rp-rail-item {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		width: 100%;
-		height: 36px;
-		padding: 0 var(--space-md);
-		border: 0;
-		background: none;
-		font: inherit;
-		font-size: 12.5px;
-		text-align: left;
-		color: var(--fg-mid);
-		cursor: pointer;
-		transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
-	}
-	.rp-rail-item:hover { background: color-mix(in oklab, var(--fg) 7%, transparent); color: var(--fg); }
-	.rp-rail-item[aria-pressed='true'] {
-		background: color-mix(in oklab, var(--ormas) 12%, transparent);
-		color: var(--fg);
-		font-weight: 600;
-		box-shadow: inset 2px 0 0 0 var(--ormas);
-	}
-	/* A TICK, NOT A BULLET. A round dot before a label is the template look; a 1px rule that
-	   grows to 8px and turns amber when selected reads as a scale marker, which is what the
-	   rest of this screen is made of. */
-	.rp-rail-dot {
-		width: 3px;
-		height: 1px;
-		background: var(--fg-dim);
-		flex: none;
-		transition: width var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
-	}
-	.rp-rail-item[aria-pressed='true'] .rp-rail-dot { width: 8px; height: 2px; background: var(--ormas); }
-	.rp-rail-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-	.rp-rail-foot { margin-top: auto; padding: var(--space-md); }
-	.rp-rail-guide {
-		width: 100%;
-		font: inherit;
-		font-size: var(--text-small);
-		font-weight: 600;
-		padding: 9px 10px;
-		border: 1px solid var(--ormas);
-		border-radius: 4px;
-		background: none;
-		color: var(--ormas-text);
-		cursor: pointer;
-	}
-	.rp-rail-guide:hover { background: color-mix(in oklab, var(--ormas) 9%, transparent); }
 
 	.rp--app .rp-main {
 		display: flex;
@@ -1718,18 +1653,50 @@ const SCENARIOS = [
 	.rp--app .rp-stageband { flex: none; display: flex; }
 	.rp--app .rp-panes { flex: 1 1 auto; min-width: 0; }
 	.rp--app .rp-controls { flex: none; }
+	/* ── FOUR PANELS, ALL OF THEM, ALL THE TIME ──────────────────────────────────
+	   Tabs were the right answer while this was a block inside a page competing for height.
+	   On a screen of its own they are the wrong one: the whole argument of this instrument
+	   is a comparison, and a comparison you have to click between is not one. The four
+	   readouts share the bottom band as cells of a single face, divided by the same hairline
+	   as the metric strip above them.
+
+	   Each panel keeps its own heading — with no tablist, the heading is the only thing
+	   naming it — and scrolls inside itself if its content outruns the band. */
 	.rp--app .rp-tabs {
 		flex: 1 1 auto;
 		min-height: 0;
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		/* NOT FOUR EQUAL CELLS. The answer table is the panel that carries the argument and
+		   the only one a non-technical reader parses on sight — at an equal quarter its
+		   question column wrapped to three lines. It takes the space the chart and the
+		   ledger do not need. Measured at 1512px: 483 / 302 / 302 / 423. */
+		grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+		gap: 1px;
+		background: var(--rule);
 		border-top: 1px solid var(--rule);
 	}
 	.rp--app .rp-panel {
 		height: auto;
-		flex: 1 1 auto;
 		min-height: 0;
 		overflow-y: auto;
+		background: var(--plate);
+		padding: var(--space-md) var(--space-md) var(--space-sm);
+	}
+
+	/* Two rows of two before the cells get too narrow to read, then one column. Driven by the
+	   working area's own width, which is the whole viewport now that the rail is gone. */
+	/* BELOW 1240 THE SCREEN STOPS BEING ONE SCREEN, and says so rather than crushing. The
+	   panels wrap to two rows there, and two rows of readouts plus two network drawings do
+	   not fit in the 711px a 800px window leaves — measured, each cell came out 92px tall,
+	   which is not a panel. The console releases its fixed height and the page scrolls; the
+	   band keeps a floor so a cell is always something you can read. */
+	@media (max-width: 1240px) {
+		.rp--app { height: auto; }
+		.rp--app .rp-tabs { grid-template-columns: 1.4fr 1fr; }
+		.rp--app .rp-panel { min-height: 230px; }
+	}
+	@container (max-width: 680px) {
+		.rp--app .rp-tabs { grid-template-columns: 1fr; }
 	}
 	.rp--app .rp-anatomy > :global(svg) { height: 240px !important; }
 
@@ -1739,34 +1706,10 @@ const SCENARIOS = [
 		.rp--app .rp-panes { grid-template-columns: 1fr; }
 	}
 
-	@media (max-width: 1400px) {
-		.rp--app { --rail: 58px; }
-		.rp-rail-head, .rp-rail-label { display: none; }
-		.rp-rail-item { justify-content: center; padding: 0; }
-		.rp-rail-dot { width: 7px; height: 7px; }
-		.rp-rail-foot { padding: 8px 6px; }
-		.rp-rail-guide { font-size: 0; padding: 9px 0; }
-		.rp-rail-guide::before { content: '\25B8'; font-size: 12px; }
-	}
-
 	/* A phone is not a console. The rail becomes a scrolling strip and the screen gives up
 	   its fixed height, because 560px of instrument in a 620px window is not usable. */
 	@media (max-width: 860px) {
 		.rp--app { height: auto; }
-		.rp--app .rp-shell { grid-template-columns: 1fr; }
-		.rp-rail {
-			--rail: auto;
-			flex-direction: row;
-			align-items: center;
-			gap: 4px;
-			overflow-x: auto;
-			border-right: 0;
-			border-bottom: 1px solid var(--rule);
-			padding: 6px var(--space-md);
-		}
-		.rp-rail-list { display: flex; gap: 2px; }
-		.rp-rail-item { width: auto; padding: 0 10px; }
-		.rp-rail-foot { margin: 0; padding: 0 0 0 6px; }
 		.rp-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 		.rp--app .rp-panel { height: auto; min-height: 200px; }
 	}
@@ -2315,6 +2258,19 @@ const SCENARIOS = [
 		background: var(--plate-sunk);
 	}
 	.rp-record-head { margin-bottom: var(--space-md); }
+	/* The other three panels are named by a mono uppercase label. This one had a serif
+	   heading left over from when it was a section of a page, and it read as a different
+	   kind of object sitting in the same row. */
+	.rp--app .rp-record-title {
+		font-family: var(--mono);
+		font-size: var(--text-eyebrow);
+		font-weight: 400;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+	}
+	.rp--app .rp-record-head { display: block; margin-bottom: var(--space-sm); }
+
 	.rp-record-title { margin: 0; font-size: var(--text-h3); color: var(--fg); }
 	.rp-record-sub { margin: 4px 0 0; font-family: var(--mono); font-size: 11px; color: var(--fg-dim); }
 

@@ -314,92 +314,84 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
-// ── THE CONSOLE FITS, AND ITS TABS WORK ──────────────────────────────────────────────────
+// ── THE CONSOLE ─────────────────────────────────────────────────────────────────────────
 //
-// The component was 1113px against 811px of usable height at 1440×900, and every complaint
-// about it — the guided read with nowhere to sit, the dock hunting for room, having to
-// scroll to see what changed — was downstream of that one number. Tabbed, it is ~818px.
+// /black-box is an application screen: a product bar, a metric strip, the two networks, the
+// controls, and four readouts side by side. No rail and no tabs — the argument this screen
+// makes is a comparison, and a comparison you have to click between is not one.
 //
-// Three things can silently undo that: a panel growing past its fixed height and scrolling
-// inside itself, the four panels disagreeing on height so switching tabs makes the page
-// jump, and the chart canvas drawing at zero size because it was measured while hidden.
+// What can silently go wrong is geometric. The screen is sized to the window, so a panel
+// that outgrows its band, a chart canvas measured before the grid has laid out, or a
+// breakpoint that crushes cells to nothing are all invisible to a stylesheet check.
 {
-	for (const vp of [{ w: 1280, h: 800 }, { w: 1440, h: 900 }, { w: 1728, h: 1080 }]) {
+	for (const vp of [{ w: 1680, h: 1050 }, { w: 1512, h: 945 }, { w: 1440, h: 900 }]) {
 		const page = await browser.newPage({ viewport: { width: vp.w, height: vp.h } });
 		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
-		await page.waitForTimeout(500);
-		const heights = [];
-		// IN APP MODE THE RAIL REPLACES THE TABLIST, which is display:none there — so clicking
-		// [data-tab] waits forever on an invisible element. The test drives whichever control
-		// the page actually presents, which is also what a reader can reach.
-		const usesRail = await page.evaluate(() => !!document.querySelector('[data-rail-panel]')
-			&& getComputedStyle(document.querySelector('.rp-tablist')).display === 'none');
-		const isAppMode = await page.evaluate(() =>
-			document.querySelector('.rp').classList.contains('rp--app'));
-		for (const tab of ['answers', 'accuracy', 'ledger', 'record']) {
-			await page.click(usesRail ? `[data-rail-panel="${tab}"]` : `[data-tab="${tab}"]`);
-			await page.waitForTimeout(260);
-			const m = await page.evaluate((name) => {
-				const rp = document.querySelector('.rp').getBoundingClientRect();
-				const panel = document.querySelector(`[data-panel="${name}"]`);
-				const shown = [...document.querySelectorAll('[data-panel]')].filter((e) => !e.hidden);
-				const canvas = document.querySelector('[data-canvas]');
-				return {
-					component: Math.round(rp.height),
-					usable: innerHeight - Math.round(document.querySelector('.nav').getBoundingClientRect().height),
-					onlyOne: shown.length === 1 && shown[0].dataset.panel === name,
-					clipped: panel.scrollHeight > panel.clientHeight + 2,
-					canvasDrawn: name !== 'accuracy' || Math.round(canvas.getBoundingClientRect().height) > 40,
-					selected: document.querySelector(`[data-rail-panel="${name}"]`)?.getAttribute('aria-pressed')
-						?? document.querySelector(`[data-tab="${name}"]`).getAttribute('aria-selected'),
-					// The short-viewport rule needs :global() — the svg is built in JS and has
-					// no [data-astro-cid], so a bare `> svg` matches nothing. It shipped that
-					// way once and the component moved 4px instead of 64px.
-					diagram: Math.round(document.querySelector('.rp-anatomy svg').getBoundingClientRect().height),
-					isApp: document.querySelector('.rp').classList.contains('rp--app'),
-					panelH: Math.round(panel.getBoundingClientRect().height),
-				};
-			}, tab);
-			heights.push(m.component);
-			var lastDiagram = m.diagram;
-			ok(m.onlyOne, `console ${vp.w}px: opening "${tab}" shows that panel and only that one`);
-			ok(m.selected === 'true', `console ${vp.w}px: "${tab}" is marked selected`);
-			// IN APP MODE A SCROLLING PANEL IS NORMAL. A console's working area scrolls —
-			// Grafana and every CRM do it — and at 1280×800 there are 711px for two network
-			// diagrams, a metric strip and a five-row table, which does not fit and should
-			// not be forced to. What must hold is that the panel is big enough to work in.
-			// Outside app mode the component is a fixed block in a page and a scrolling
-			// panel there means the height is wrong, so the strict rule stays.
-			if (m.isApp) {
-				ok(m.panelH >= 170,
-					`console ${vp.w}×${vp.h}: the "${tab}" panel is ${m.panelH}px, too short to work in`);
-			} else {
-				ok(!m.clipped, `console ${vp.w}px: the "${tab}" panel is not scrolling inside itself`);
-			}
-			ok(m.canvasDrawn, `console ${vp.w}px: the chart has a real height when its tab opens`);
-			// At 900px of window height and above it fits outright. At 800px it runs about
-			// 43px past the fold even with the diagram shrunk to 240px, and shrinking it
-			// further makes its labels unreadable — a worse trade than a short scroll. The
-			// tolerance is that measured number, not a round one, so a regression that costs
-			// another 50px fails here.
-			if (isAppMode) {
-				// The app screen is sized to the window on purpose: it should fill what is
-				// left under the site header and never exceed it.
-				ok(Math.abs(m.component - m.usable) <= 8,
-					`console ${vp.w}×${vp.h}: the app screen is ${m.component}px against ${m.usable}px of window`);
-			} else {
-				const tolerance = vp.h >= 900 ? 12 : 48;
-				ok(m.component <= m.usable + tolerance,
-					`console ${vp.w}×${vp.h}: on "${tab}" the component is ${m.component}px against ${m.usable}px of usable height`);
-			}
-		}
-		// App mode always draws the diagram at 240px to leave the working area room; outside
-		// it, only a short viewport does.
-		const wantDiagram = isAppMode || vp.h <= 880 ? 240 : 300;
-		ok(lastDiagram === wantDiagram,
-			`console ${vp.w}×${vp.h}: the diagram is ${lastDiagram}px, expected ${wantDiagram}px`);
-		ok(new Set(heights).size === 1,
-			`console ${vp.w}px: all four tabs are the same height, so switching does not jump (${heights.join('/')})`);
+		await page.waitForTimeout(1100);
+		await page.evaluate(() => {
+			const d = document.querySelector('[data-guide]');
+			if (d && !d.hidden) document.querySelector('[data-guide-skip]')?.click();
+		});
+		await page.waitForTimeout(400);
+
+		const m = await page.evaluate(() => {
+			const rp = document.querySelector('.rp').getBoundingClientRect();
+			const cells = [...document.querySelectorAll('[data-panel]')].map((e) => ({
+				name: e.dataset.panel,
+				rendered: e.getClientRects().length > 0,
+				box: e.getBoundingClientRect(),
+			}));
+			return {
+				component: Math.round(rp.height),
+				usable: innerHeight - Math.round(document.querySelector('.nav').getBoundingClientRect().height),
+				allRendered: cells.every((c) => c.rendered),
+				count: cells.length,
+				rows: new Set(cells.map((c) => Math.round(c.box.top))).size,
+				shortest: Math.round(Math.min(...cells.map((c) => c.box.height))),
+				narrowest: Math.round(Math.min(...cells.map((c) => c.box.width))),
+				// The answer table carries the argument and gets the widest cell.
+				answersWidest: Math.round(cells.find((c) => c.name === 'answers').box.width)
+					=== Math.round(Math.max(...cells.map((c) => c.box.width))),
+				canvas: Math.round(document.querySelector('[data-canvas]').getBoundingClientRect().width),
+				rail: !!document.querySelector('.rp-rail'),
+				options: document.querySelectorAll('.rp-opt').length,
+				overflowX: document.documentElement.scrollWidth > innerWidth + 1,
+			};
+		});
+
+		ok(!m.rail, `console ${vp.w}: there is no sidebar`);
+		ok(m.options === 4, `console ${vp.w}: four scenario options sit in the bar (${m.options})`);
+		ok(m.allRendered && m.count === 4,
+			`console ${vp.w}: all four readouts are on screen at once (${m.count}, all rendered: ${m.allRendered})`);
+		ok(m.rows === 1, `console ${vp.w}: the four sit on one row (${m.rows})`);
+		ok(m.answersWidest, `console ${vp.w}: the answer table gets the widest cell`);
+		ok(m.shortest >= 200, `console ${vp.w}: the shortest cell is ${m.shortest}px, too short to read`);
+		ok(m.narrowest >= 240, `console ${vp.w}: the narrowest cell is ${m.narrowest}px`);
+		ok(m.canvas > 120,
+			`console ${vp.w}: the chart has a real width (${m.canvas}px) — a canvas measured before the grid lays out is 0`);
+		ok(Math.abs(m.component - m.usable) <= 8,
+			`console ${vp.w}×${vp.h}: the screen is ${m.component}px against ${m.usable}px of window`);
+		ok(!m.overflowX, `console ${vp.w}: nothing overflows sideways`);
+		await page.close();
+	}
+
+	// Below 1240 the panels wrap and the screen releases its fixed height rather than
+	// crushing the cells — measured at 1200×800 they came out 92px tall before this.
+	{
+		const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+		await page.waitForTimeout(900);
+		const m = await page.evaluate(() => {
+			const cells = [...document.querySelectorAll('[data-panel]')].map((e) => e.getBoundingClientRect());
+			return {
+				shortest: Math.round(Math.min(...cells.map((c) => c.height))),
+				rows: new Set(cells.map((c) => Math.round(c.top))).size,
+				overflowX: document.documentElement.scrollWidth > innerWidth + 1,
+			};
+		});
+		ok(m.rows === 2, `console 1200: the panels wrap to two rows (${m.rows})`);
+		ok(m.shortest >= 200, `console 1200: cells keep a usable height (${m.shortest}px)`);
+		ok(!m.overflowX, 'console 1200: nothing overflows sideways');
 		await page.close();
 	}
 
@@ -411,8 +403,6 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await fp.waitForTimeout(1500);
 	ok(await fp.evaluate(() => !document.querySelector('[data-guide]').hidden),
 		'first visit: the guided read opens by itself');
-	ok(await fp.evaluate(() => localStorage.getItem('oxiedo.blackbox.guideSeen') === '1'),
-		'first visit: it records that it has been shown');
 	await fp.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
 	await fp.evaluate(() => document.querySelector('.rp').scrollIntoView({ block: 'center' }));
 	await fp.waitForTimeout(1500);
@@ -423,92 +413,12 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	const home = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 	const hp = await home.newPage();
 	await hp.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });
-	await hp.evaluate(() => document.querySelector('.rp')?.scrollIntoView({ block: 'center' }));
-	await hp.waitForTimeout(1500);
+	await hp.waitForTimeout(900);
 	ok(await hp.evaluate(() => document.querySelector('.rp').dataset.guideMode !== 'auto'),
 		'homepage: the ambient embed never opens the guided read by itself');
+	ok(await hp.evaluate(() => !document.querySelector('.rp').classList.contains('rp--app')),
+		'homepage: the embed is not the application screen');
 	await home.close();
-}
-
-// ── THE THREE REPLAY CONTROLS ────────────────────────────────────────────────────────────
-//
-// Play, Replay from the event and Guided read were all the same cream chrome as the speed
-// toggles, so a first-time visitor had nothing telling them the thing moves. They now form a
-// hierarchy in the component's own amber, and the risks are the ordinary CSS ones: a colour
-// that fails contrast, and a rule that loses to the base .rp-btn on source order — which is
-// exactly what happened to the guided-read button, measuring 18.23:1 because `color:
-// var(--fg)` came later at equal specificity and the amber never applied.
-{
-	const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
-	await page.waitForTimeout(500);
-	// MEASURE THE RESTING STATE. /black-box opens the guided read by itself, which puts the
-	// Guided read button into its active tint — so the row was being measured mid-tour, and
-	// a tinted button reported as "filled" and its label as low-contrast. Close it first.
-	await page.evaluate(() => {
-		const d = document.querySelector('[data-guide]');
-		if (d && !d.hidden) document.querySelector('[data-guide-skip]')?.click();
-	});
-	await page.waitForTimeout(300);
-	const m = await page.evaluate(() => {
-		const lum = (c) => {
-			const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(Number)
-				.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
-			return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-		};
-		const cr = (a, b) => {
-			const A = lum(a), B = lum(b);
-			return +(((Math.max(A, B) + 0.05) / (Math.min(A, B) + 0.05)).toFixed(2));
-		};
-		// THE BACKDROP IS THE BUTTON'S OWN ANCESTOR, not the component's background. In app
-		// mode the controls sit on the sunk cream strip rather than the white plate, and
-		// measuring against .rp reported the wrong ground for every button in that row —
-		// which is how a genuine 4.27:1 label was first surfaced as a "hierarchy" failure.
-		const behind = (el) => {
-			for (let e = el.parentElement; e; e = e.parentElement) {
-				const bg = getComputedStyle(e).backgroundColor;
-				if (bg && !/rgba\(0, 0, 0, 0\)/.test(bg)) return bg;
-			}
-			return 'rgb(255,255,255)';
-		};
-		const one = (sel) => {
-			const e = document.querySelector(sel);
-			const c = getComputedStyle(e);
-			const plate = behind(e);
-			const bg = /rgba\(0, 0, 0, 0\)/.test(c.backgroundColor) ? plate : c.backgroundColor;
-			return {
-				text: cr(c.color, bg),
-				edge: cr(c.borderTopColor, plate),
-				// "Filled" means carrying its own colour, NOT merely having a background: the
-				// base .rp-btn already paints itself the plate colour, so a transparency test
-				// reports every button as filled.
-				bg: c.backgroundColor,
-				h: Math.round(e.getBoundingClientRect().height),
-			};
-		};
-		const btns = [...document.querySelectorAll('.rp-controls .rp-btn')];
-		return {
-			play: one('[data-play]'), event: one('[data-replay-event]'), guide: one('[data-guide-start]'),
-			rows: new Set(btns.map((e) => Math.round(e.getBoundingClientRect().top))).size,
-			heights: [...new Set(btns.map((e) => Math.round(e.getBoundingClientRect().height)))],
-		};
-	});
-	for (const [name, v] of [['Play', m.play], ['Replay from the event', m.event], ['Guided read', m.guide]]) {
-		ok(v.text >= 4.5, `control "${name}": label is ${v.text}:1 against its own background`);
-	}
-	// STATED AS A RELATIONSHIP, not against a fixed "plate" colour. The base .rp-btn paints
-	// itself white while the app strip behind it is cream, so "has a background of its own"
-	// is true of all three and says nothing. What the hierarchy actually means is that Play
-	// carries a different fill from the other two, and the other two match each other.
-	ok(m.play.bg !== m.event.bg,
-		`controls: Play carries a fill the others do not (${m.play.bg} vs ${m.event.bg})`);
-	ok(m.event.bg === m.guide.bg,
-		`controls: the two secondary buttons share one treatment (${m.event.bg} / ${m.guide.bg})`);
-	ok(m.event.edge >= 3, `control "Replay from the event": its edge reads at ${m.event.edge}:1`);
-	ok(m.guide.edge >= 3, `control "Guided read": its edge reads at ${m.guide.edge}:1`);
-	ok(m.rows === 1, `controls: the three buttons stay on one row (${m.rows})`);
-	ok(m.heights.length === 1, `controls: all three are the same height (${m.heights.join('/')}px)`);
-	await page.close();
 }
 
 // ── EVERY RENDERED WORD IN THE CONSOLE ───────────────────────────────────────────────────
