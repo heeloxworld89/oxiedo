@@ -5871,16 +5871,51 @@ main > section:last-child.band--dark {
    832px, seven fixed items take 622px, and "Open the Black Box" needs 165px — 45px of headroom
    where before there were none. Emphasis is colour and weight and nothing else: 6.99:1 on the
    bar, and the current-page pill still takes precedence on its own page. */
+/* OUTLINED, NOT COLOURED. It was accent-dark text, which is the same indigo as the Contact Us
+   button — so on every page that is not /black-box it read as a STATE rather than as emphasis:
+   the one item that looked switched on. Reported as "it looks like the landing page is on it".
+
+   The pill shape is already the nav's vocabulary for the current page, and filled-versus-
+   outlined is the clearest distinction available inside one shape language. That gives three
+   unambiguous tiers, none of which can be mistaken for another:
+
+     plain text   the sections
+     outlined     this destination — a thing to open
+     filled dark  where you are now
+     filled indigo the primary call to action
+
+   Emphasis is now shape and weight, not hue, so it survives greyscale and colour blindness.
+   The border costs 2px of nav width; verified at the 1160–1339px band where the bar is
+   tightest, and by the browser test, which fails if the links wrap. */
 .nav-link--mark {
-	color: var(--accent-dark);
+	color: var(--text-primary);
 	font-weight: 600;
+	border: 1px solid color-mix(in oklab, var(--accent-dark) 55%, transparent);
+	/* The border is drawn OUTSIDE the padding box, so a bare 1px border made this item 44px
+	   tall against its neighbours' 42px and sat it 1px proud of the row. The padding gives the
+	   two pixels back. Measured, not guessed: every .nav-link is 42px again. */
+	padding-block: calc(var(--space-sm) - 1px);
+}
+
+/* The underline is the hover affordance for a plain link. Inside a pill it reads as a mistake,
+   and the pill has its own hover, so it is suppressed here. */
+.nav-link--mark::after {
+	display: none;
 }
 
 /* Guarded against [aria-current]. The generic anchor hover already broke the current-page pill
    once by outranking it; a bare .nav-link--mark:hover at (0,2,0) would tie with the pill and win
    on order, repainting the label onto the ink. */
 .nav-link--mark:not([aria-current='page']):hover {
-	color: var(--accent-mid);
+	color: var(--accent-dark);
+	border-color: var(--accent-dark);
+	background: color-mix(in oklab, var(--accent-dark) 7%, transparent);
+}
+
+/* On its own page the dark pill takes over completely. A visible outline around a filled pill
+   would read as a third state that means nothing. */
+.nav-link--mark[aria-current='page'] {
+	border-color: transparent;
 }
 
 

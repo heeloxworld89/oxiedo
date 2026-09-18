@@ -164,6 +164,60 @@ ok(
 );
 await home.close();
 
+// ── THE NAV BAR ──────────────────────────────────────────────────────────────────────────
+//
+// The featured item is an outlined pill, which costs 2px of width and 2px of height. The bar
+// is nearly full between 1160px and 1339px — there is a whole comment in components.css about
+// advance widths measured off the shipped font — so a change here can wrap the links or push
+// them into the CTA, and neither shows up in any stylesheet check. The border also sat the
+// pill 1px proud of its neighbours until the padding was compensated.
+for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
+	const page = await browser.newPage({ viewport: { width: w, height: 800 } });
+	await page.goto(`${ORIGIN}/technology`, { waitUntil: 'networkidle' });
+	const m = await page.evaluate(() => {
+		const links = [...document.querySelectorAll('.nav-links > li > .nav-link')];
+		const r = links.map((l) => l.getBoundingClientRect());
+		const cta = document.querySelector('.nav-cta').getBoundingClientRect();
+		return {
+			count: links.length,
+			rows: new Set(r.map((x) => Math.round(x.top))).size,
+			heights: [...new Set(r.map((x) => Math.round(x.height)))],
+			gap: Math.round(cta.left - r[r.length - 1].right),
+		};
+	});
+	ok(m.rows === 1, `nav ${w}px: the links stay on one row (${m.rows})`);
+	ok(m.heights.length === 1, `nav ${w}px: every link is the same height (${m.heights.join('/')}px)`);
+	ok(m.gap >= 8, `nav ${w}px: the links clear the Contact Us button (${m.gap}px)`);
+	await page.close();
+}
+
+// The featured pill and the current page must not look the same. Outlined versus filled is the
+// whole distinction, and it was accent-coloured text before — which read as "you are here" on
+// every page that was not /black-box.
+{
+	const page = await browser.newPage({ viewport: { width: 1440, height: 800 } });
+	await page.goto(`${ORIGIN}/technology`, { waitUntil: 'networkidle' });
+	const off = await page.evaluate(() => {
+		const m = document.querySelector('.nav-link--mark');
+		const c = getComputedStyle(m);
+		return { aria: m.getAttribute('aria-current'), bg: c.backgroundColor, border: c.borderTopColor };
+	});
+	ok(off.aria === null, 'nav: the featured item is not marked as the current page elsewhere');
+	ok(/rgba\(0, 0, 0, 0\)|transparent/.test(off.bg), 'nav: the featured pill is outlined, not filled');
+	ok(!/rgba\(0, 0, 0, 0\)|transparent/.test(off.border), 'nav: the featured pill has a visible border');
+
+	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	const on = await page.evaluate(() => {
+		const m = document.querySelector('.nav-link--mark');
+		const c = getComputedStyle(m);
+		return { aria: m.getAttribute('aria-current'), bg: c.backgroundColor, border: c.borderTopColor };
+	});
+	ok(on.aria === 'page', 'nav: on its own page the featured item is the current page');
+	ok(!/rgba\(0, 0, 0, 0\)/.test(on.bg), 'nav: on its own page it fills to the dark pill');
+	ok(/rgba\(0, 0, 0, 0\)|transparent/.test(on.border), 'nav: the outline is dropped once it is filled');
+	await page.close();
+}
+
 await browser.close();
 server.close();
 
