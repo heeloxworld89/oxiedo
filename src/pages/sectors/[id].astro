@@ -352,13 +352,31 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Sectors', href: '/sectors
 				</ul>
 			</section>
 
+			{/* COLLAPSED, 2026-09-18. These were a bulleted list of blue underlines, which is the
+			    visual language of a bibliography and read as unprofessional on a commercial page.
+			    They are not decoration, though: they footnote external figures this page states
+			    as fact — Meta's 419 interruptions across 16,384 H100s, the label-error work, the
+			    loss-spike papers — and dropping them would turn a sourced number into an
+			    unsourced assertion in front of the one reader whose job is to ask "says who?".
+
+			    So the attribution stays and its form changes. Native <details>, closed by
+			    default: invisible to the visitor who does not care, one click for the one who
+			    does, and no JavaScript, so it cannot fail to a page of open panels. The note
+			    below stays outside it — the distinction between external figures and ORMAS's
+			    own measurements is not a footnote, and has to be readable without opening
+			    anything. */}
 			<section class="mk-section mk-sources">
-				<p class="mk-sources-label">Sources</p>
-				<ul>
-					{m.sources.map((s) => (
-						<li><a href={s.url} rel="noopener noreferrer" target="_blank">{s.label}</a></li>
-					))}
-				</ul>
+				<details class="mk-sources-disclosure">
+					<summary>
+						<span class="mk-sources-label">Sources for the external figures on this page</span>
+						<span class="mk-sources-count">{m.sources.length}</span>
+					</summary>
+					<ul>
+						{m.sources.map((s) => (
+							<li><a href={s.url} rel="noopener noreferrer" target="_blank">{s.label}</a></li>
+						))}
+					</ul>
+				</details>
 				<p class="mk-sources-note">
 					Figures attributed to the ORMAS experiment programme are measured on CIFAR-10 and
 					CIFAR-100 across 383 controlled runs, and are labelled as such wherever they appear.

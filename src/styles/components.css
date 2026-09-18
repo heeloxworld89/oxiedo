@@ -8060,7 +8060,7 @@ main > section:last-child.band--dark {
 .mk-sources ul {
 	list-style: none;
 	padding: 0;
-	margin: var(--space-md) 0 0;
+	margin: var(--space-sm) 0 var(--space-xs) 18px;
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-xs);
@@ -8074,9 +8074,60 @@ main > section:last-child.band--dark {
 	color: var(--text-muted);
 }
 
+/* ── the sources disclosure ──────────────────────────────────
+   Closed by default and deliberately quiet. Accent-blue underlines on twenty links read as a
+   bibliography; these are footnotes, and a footnote that competes with the page it annotates
+   is doing the wrong job. Ink text with a muted underline, and the accent kept for the hover
+   so the link still announces itself when a pointer is on it. */
+.mk-sources-disclosure {
+	border-top: 1px solid var(--border-hairline);
+	padding-top: var(--space-md);
+}
+
+.mk-sources-disclosure summary {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	cursor: pointer;
+	list-style: none;
+	padding: 4px 0;
+	color: var(--text-muted);
+}
+.mk-sources-disclosure summary::-webkit-details-marker { display: none; }
+
+/* The marker is drawn rather than inherited, so it can rotate. ▸ turns to ▾ on open. */
+.mk-sources-disclosure summary::before {
+	content: '\25B8';
+	font-size: 10px;
+	color: var(--text-muted);
+	transition: transform var(--duration-fast) var(--ease-out);
+}
+.mk-sources-disclosure[open] summary::before { transform: rotate(90deg); }
+
+.mk-sources-disclosure summary:hover .mk-sources-label { color: var(--text-primary); }
+
+.mk-sources-count {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	color: var(--text-muted);
+	border: 1px solid var(--border-hairline);
+	border-radius: 999px;
+	padding: 1px 8px;
+}
+
 .mk-sources a {
 	font-size: var(--text-small);
+	color: var(--text-secondary);
+	text-decoration-color: var(--border-strong);
+	text-underline-offset: 3px;
+}
+.mk-sources a:hover {
 	color: var(--accent-dark);
+	text-decoration-color: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mk-sources-disclosure summary::before { transition: none; }
 }
 
 .mk-sources-note {
