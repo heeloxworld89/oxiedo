@@ -209,17 +209,23 @@ const open = [
 	'Under adversarial weight injection the architecture measures 1.0 pp worse than a standard baseline. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors. Published rather than omitted, and unmitigated.',
 	'Whether the signal survives at small n, meaning tens of examples rather than tens of thousands, is untested.',
 ];
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
+
 ---
 
 <Page
 	title="The ORMAS architecture, and 383 experiments"
 	description="How a bounded gradient chain makes a network account for what it took from each source of data. 383 controlled experiments, and what is not yet established."
-	breadcrumbs={[{ name: 'Technology', path: '/technology' }]}
+	trail={trail}
 >
 	<PageBanner
 		eyebrow="THE TECHNOLOGY"
 		title="Transparency is the mechanism. Unlocking data is the point."
-		trail={[{ label: 'Home', href: '/' }, { label: 'Technology' }]}
+		trail={trail}
 	/>
 
 	<div class="tech-stats">

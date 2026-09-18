@@ -7,6 +7,7 @@
 // just does a normal page load, so nothing depends on it. The reduced-motion case is handled
 // in motion.css, which disables the transition entirely rather than fading fast.
 import { ClientRouter } from 'astro:transitions';
+import lastmod from '../data/lastmod.json';
 import '../styles/tokens.css';
 import '../styles/reset.css';
 import '../styles/base.css';
@@ -62,6 +63,7 @@ const SITE_ID = `${SITE}/#website`;
 const FOUNDER_ID = `${SITE}/#founder`;
 const LOGO_ID = `${SITE}/#logo`;
 const ORMAS_ID = `${SITE}/#ormas`;
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 const PAGE_ID = `${canonical}#webpage`;
 const CRUMB_ID = `${canonical}#breadcrumb`;
 
@@ -202,7 +204,12 @@ const breadcrumbLd = breadcrumbs?.length
 // overclaiming — /careers is not a page about Oxiedo as an entity, it is a page
 // the entity publishes, which is what `publisher` says.
 const ORG_PAGES = new Set(['/', '/about', '/press']);
-const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+// dateModified from the same table the sitemap reads, so the two can never disagree about
+// when a page last changed — a crawler that finds them contradicting each other discounts
+// both. Absent rather than guessed for a route with no entry: a made-up freshness date is
+// the specific thing that makes Google stop reading them.
+const modified = (lastmod as Record<string, string>)[pathname];
 
 const webPageLd = {
 	'@type': 'WebPage',
@@ -213,6 +220,7 @@ const webPageLd = {
 	isPartOf: { '@id': SITE_ID },
 	publisher: { '@id': ORG_ID },
 	inLanguage: 'en',
+	...(modified ? { dateModified: modified } : {}),
 	...(ORG_PAGES.has(pathname) ? { about: { '@id': ORG_ID } } : {}),
 	...(breadcrumbLd ? { breadcrumb: { '@id': CRUMB_ID } } : {}),
 };

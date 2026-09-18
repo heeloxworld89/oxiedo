@@ -112,13 +112,19 @@ const never = [
 	{ rule: 'No relicensing of the research core', why: 'Publishing and then closing after adoption would destroy the credibility every commercial claim here rests on. The research release is permanent once made, and that is a commitment written into the licence rather than a default.' },
 	{ rule: 'No delivery-date commitments', why: 'We state what is built, what is being built, and what is not started. We will not put a date on the third category.' },
 ];
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Licensing' }];
+
 ---
 
-<Page title="Licensing: one product, one licence" description={"A research licence, free for research and teaching. Production deployment is licensed, because an open licence has no counterparty to stand behind a filing."}>
+<Page title="Licensing: one product, one licence" description={"A research licence, free for research and teaching. Production deployment is licensed, because an open licence has no counterparty to stand behind a filing."} trail={trail}>
 	<PageBanner
 		eyebrow="LICENSING"
 		title="We publish the mechanism. We license the accountability."
-		trail={[{ label: 'Home', href: '/' }, { label: 'Licensing' }]}
+		trail={trail}
 	/>
 
 	<section class="section container">

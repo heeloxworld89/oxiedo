@@ -66,17 +66,23 @@ const seoTitle: Record<string, string> = {
 	'data-obligation': 'Data obligation: deletion evidence for AI models',
 	'defense-safety-critical': 'Safety-critical AI: accounting for self-change',
 };
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Sectors', href: '/sectors' }, { label: sector.name }];
+
 ---
 
 <Page
 	title={seoTitle[sector.id] ?? sector.name}
 	description={`${sector.question} How ORMAS applies in ${sector.name.toLowerCase()}: the failures, the regulation, and the limits.`.slice(0, 155)}
-	breadcrumbs={[{ name: 'Sectors', path: '/sectors' }, { name: sector.name, path: `/sectors/${sector.id}` }]}
+	trail={trail}
 >
 	<PageBanner
 		eyebrow="SECTOR"
 		title={sector.name}
-		trail={[{ label: 'Home', href: '/' }, { label: 'Sectors', href: '/sectors' }, { label: sector.name }]}
+		trail={trail}
 	/>
 
 	<nav class="appnav" aria-label="Markets">

@@ -164,18 +164,24 @@ const obligations = [
 	{ date: '2 August 2028', what: 'EU AI Act, Annex I transition.', past: false },
 	{ date: '25 March 2029', what: 'European Health Data Space, secondary use.', past: false },
 ];
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
+
 ---
 
 <Page
 	title="The black box is not a law of nature"
 	description="Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running."
-	breadcrumbs={[{ name: 'The black box', path: '/black-box' }]}
 	ogImagePath={cardPath}
+	trail={trail}
 >
 	<PageBanner
 		eyebrow="THE BLACK BOX"
 		title="Opacity is not a law of deep learning. It is a consequence of one decision."
-		trail={[{ label: 'Home', href: '/' }, { label: 'The black box' }]}
+		trail={trail}
 	/>
 
 	<section class="section container">

@@ -52,17 +52,24 @@ const jsonLd = {
 		acceptedAnswer: { '@type': 'Answer', text: f.a.join(' ') },
 	})),
 };
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'FAQ' }];
+
 ---
 
 <Page
 	title="FAQ: ORMAS, licensing and compliance"
 	description={"The questions a technical evaluation, a security review and a procurement process actually ask, answered without hedging — including the uncomfortable ones."}
 	schema={jsonLd}
+	trail={trail}
 >
 	<PageBanner
 		eyebrow="FAQ"
 		title={`${faqs.length} questions, answered without hedging.`}
-		trail={[{ label: 'Home', href: '/' }, { label: 'FAQ' }]}
+		trail={trail}
 	/>
 
 	<section class="section-tight container">

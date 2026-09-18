@@ -14,7 +14,18 @@ const posts = (await getCollection('insights')).sort(
 );
 ---
 
-<Page title="Insights: documented analysis" description={"Documented analysis with sourced claims: what we know, what we do not, and what changed our minds."}>
+<!-- NOINDEX WHILE EMPTY, added 2026-09-18. The empty state below is deliberate and it is
+     honest, but it is still a page whose entire content is a note explaining that there is
+     no content. On a 26-page site that is 4% of the index telling a crawler nothing, and
+     thin pages are assessed against the site, not in isolation. It is left linked in the
+     footer and crawlable, so the link equity and the three onward links still count — only
+     the indexing is withheld, and it restores itself the moment a post exists. The sitemap
+     drops the route on the same condition. -->
+<Page
+	title="Insights: documented analysis"
+	description={"Documented analysis with sourced claims: what we know, what we do not, and what changed our minds."}
+	indexable={posts.length > 0}
+>
 	<section class="section container">
 		<Eyebrow>INSIGHTS</Eyebrow>
 		<h1>Insights</h1>

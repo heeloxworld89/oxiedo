@@ -8,12 +8,30 @@ export interface Props {
 	title: string;
 	description?: string;
 	indexable?: boolean;
-	breadcrumbs?: Array<{ name: string; path: string }>;
+	/** THE BREADCRUMB TRAIL, DECLARED ONCE PER PAGE AND CONSUMED TWICE.
+	 *
+	 *  This is the same array the page hands to <PageBanner trail={...}>, in the same shape, so
+	 *  the trail a reader sees and the BreadcrumbList a crawler reads cannot disagree.
+	 *
+	 *  Before 2026-09-18 they were two separate declarations in two different shapes —
+	 *  `trail={[{label, href}]}` on the banner and `breadcrumbs={[{name, path}]}` on the layout —
+	 *  and eight of the fourteen pages with a visible trail simply never wrote the second one.
+	 *  They rendered a breadcrumb to a person and emitted nothing at all to a search engine, on
+	 *  a site whose ONLY currently eligible rich result is the breadcrumb.
+	 *
+	 *  Home is dropped here because Base prepends it; the final crumb carries no href in the
+	 *  banner (it is the current page) so it takes this page's own path. */
+	trail?: Array<{ label: string; href?: string }>;
 	schema?: Record<string, unknown> | Array<Record<string, unknown>>;
 	ogImagePath?: string;
 }
 
-const { title, description, indexable, breadcrumbs, schema, ogImagePath } = Astro.props;
+const { title, description, indexable, trail, schema, ogImagePath } = Astro.props;
+
+const here = Astro.url.pathname.replace(/\/$/, '') || '/';
+const breadcrumbs = trail
+	?.filter((c) => c.label !== 'Home')
+	.map((c) => ({ name: c.label, path: c.href ?? here }));
 ---
 
 <Base title={title} description={description} indexable={indexable} breadcrumbs={breadcrumbs} schema={schema} ogImagePath={ogImagePath}>

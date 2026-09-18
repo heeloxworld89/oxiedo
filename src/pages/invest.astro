@@ -198,13 +198,19 @@ const risks = [
 	{ q: 'The evidence base is CIFAR-10 and CIFAR-100.', a: 'Stated on every page where a result appears. The architecture is domain-independent by construction; that is an argument, and this round converts it into a result.' },
 	{ q: 'Regulatory timelines can move.', a: 'They can, and they have moved before: the Omnibus shifted Annex III to December 2027. They move later, not away. Every reset extends the window rather than closing it.' },
 ];
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
+
 ---
 
-<Page title="Pre-seed: the round and the risks" description={"Pre-seed, $1.5M, 18 months, six named milestones. Every regulated training run will soon have to account for itself, and almost none of them can."}>
+<Page title="Pre-seed: the round and the risks" description={"Pre-seed, $1.5M, 18 months, six named milestones. Every regulated training run will soon have to account for itself, and almost none of them can."} trail={trail}>
 	<PageBanner
 		eyebrow="INVEST"
 		title="Every model in a regulated industry will soon have to account for itself. Almost none of them can."
-		trail={[{ label: 'Home', href: '/' }, { label: 'Invest' }]}
+		trail={trail}
 	/>
 
 	<section class="section-tight container reveal">

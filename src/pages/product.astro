@@ -63,17 +63,23 @@ const surface = [
 // the mapping cannot drift from the sector pages.
 const marketsFor = (id: string) => sectors.filter((s) => s.features.includes(id));
 const leadFor = (id: string) => sectors.find((s) => s.primaryFeature === id);
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Product' }];
+
 ---
 
 <Page
 	title="ORMAS: one product, seven features"
 	description="One architecture, one licence, seven features. Every model it trains arrives with a record of what it took from each source of data."
-	breadcrumbs={[{ name: 'Product', path: '/product' }]}
+	trail={trail}
 >
 	<PageBanner
 		eyebrow="THE PRODUCT"
 		title="One product, with one job: make data usable that cannot be used today."
-		trail={[{ label: 'Home', href: '/' }, { label: 'Product' }]}
+		trail={trail}
 	/>
 
 	<!-- 1. WHAT IT IS. The page had no such section: it went from a banner straight to a capability

@@ -109,21 +109,23 @@ const seoTitle: Record<string, string> = {
 	'federated-node': 'The Federated Node: per-party attribution',
 	'update-engine': 'The Update Engine: retraining inside a bound',
 };
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Product', href: '/product' }, { label: feature.name }];
+
 ---
 
 <Page
 	title={seoTitle[feature.id] ?? feature.name}
 	description={`${feature.question} ${feature.name} is one of the seven features of ORMAS, under one architecture and one licence.`.slice(0, 155)}
-	breadcrumbs={[{ name: 'Product', path: '/product' }, { name: feature.name, path: `/product/${feature.id}` }]}
+	trail={trail}
 >
 	<PageBanner
 		eyebrow="AN APPLICATION OF ORMAS"
 		title={feature.name}
-		trail={[
-			{ label: 'Home', href: '/' },
-			{ label: 'Product', href: '/product' },
-			{ label: feature.name },
-		]}
+		trail={trail}
 	/>
 
 	{/* All seven, with the current one marked. Replaces a sidebar card headed "THE OTHER SIX" that

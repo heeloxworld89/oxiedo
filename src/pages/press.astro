@@ -93,13 +93,19 @@ const releases = [
 		note: 'That PR-004 exists at all is the point. A company with a press release already written for its own downside case is one a journalist can check against later.',
 	},
 ];
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Press' }];
+
 ---
 
-<Page title="Press: facts, figures and prepared releases" description={"Press kit, fast facts, every published result including the adverse one, prepared releases, and a corrections policy. Everything here is checkable."}>
+<Page title="Press: facts, figures and prepared releases" description={"Press kit, fast facts, every published result including the adverse one, prepared releases, and a corrections policy. Everything here is checkable."} trail={trail}>
 	<PageBanner
 		eyebrow="PRESS"
 		title="Everything on this page is checkable, including the unflattering parts."
-		trail={[{ label: 'Home', href: '/' }, { label: 'Press' }]}
+		trail={trail}
 	/>
 
 	<section class="section container press-page">

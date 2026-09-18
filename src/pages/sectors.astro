@@ -15,17 +15,23 @@ import PageBanner from '../components/PageBanner.astro';
 import GetInTouch from '../components/GetInTouch.astro';
 import SectorGraphic from '../components/SectorGraphic.astro';
 import { sectors } from '../data/sectors';
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Sectors' }];
+
 ---
 
 <Page
 	title="Five sectors, one architecture"
 	description="Every sector holding data asks one question: what did this model take from it, and can that be proven? These five are where the answer is worth the most."
-	breadcrumbs={[{ name: 'Sectors', path: '/sectors' }]}
+	trail={trail}
 >
 	<PageBanner
 		eyebrow="FIVE MARKETS"
 		title="Every sector that holds data has this problem. These five are where solving it is worth the most."
-		trail={[{ label: 'Home', href: '/' }, { label: 'Sectors' }]}
+		trail={trail}
 	/>
 
 	<section class="section container sectors-head">

@@ -140,13 +140,19 @@ const sectors = [
 		body: 'Each participating site holds its own data and its own record. Nothing central is required for the architecture to work, and no participant sees another participant\'s data through us because no route exists for that.',
 	},
 ];
+
+// ONE TRAIL, TWO CONSUMERS: the banner a reader sees and the BreadcrumbList a crawler
+// reads. They used to be declared separately, in two shapes, and could not be kept in step —
+// see the `trail` prop in layouts/Page.astro for what that cost.
+const trail = [{ label: 'Home', href: '/' }, { label: 'Data handling' }];
+
 ---
 
-<Page title="Data handling: three modes, separated in law" description={"Three modes with distinct legal shapes. Under a deployment licence we receive nothing, so no Article 28 relationship arises and no BAA is required."}>
+<Page title="Data handling: three modes, separated in law" description={"Three modes with distinct legal shapes. Under a deployment licence we receive nothing, so no Article 28 relationship arises and no BAA is required."} trail={trail}>
 	<PageBanner
 		eyebrow="DATA HANDLING"
 		title="In the ordinary case we never receive the data at all."
-		trail={[{ label: 'Home', href: '/' }, { label: 'Data handling' }]}
+		trail={trail}
 	/>
 
 	<section class="section container">
