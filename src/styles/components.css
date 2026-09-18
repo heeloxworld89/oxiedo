@@ -195,72 +195,35 @@
 	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 	font-weight: 600;
 	font-size: var(--text-small);
-	/* 6px, not 8px. The keyline below is a drawn edge, and a drawn edge on a soft corner reads
-	   as a sticker; pulling the radius in a notch makes it read as a machined one. */
-	border-radius: 6px;
+	border-radius: 8px; /* reference uses a soft rounded corner, not the dark theme's crisp 2px */
 	text-decoration: none;
 	cursor: pointer;
-	/* THE REST SHADOW EXISTS SO THE PRESS HAS SOMETHING TO COLLAPSE. A hairline of ink under
-	   the bottom edge, which is what a real control sitting on a surface casts. On :active it
-	   goes and the button drops into its own place, which is the whole of the effect. */
-	box-shadow: 0 1px 0 0 color-mix(in oklab, var(--text-primary) 22%, transparent);
 	transition:
 		background var(--duration-fast) var(--ease-out),
 		border-color var(--duration-fast) var(--ease-out),
 		color var(--duration-fast) var(--ease-out),
-		box-shadow var(--duration-fast) var(--ease-out),
-		transform var(--duration-fast) var(--ease-out),
 		opacity var(--duration-fast) var(--ease-out);
-}
-
-/* PRESSED. One pixel and the shadow, nothing more. The reference that prompted this was a
-   painted sign hanging on two cords — the part worth taking from it was not the wood, it was
-   that the thing looks like an object a hand can push. That is one pixel of travel.
-
-   It is a transform rather than a margin change so nothing around it reflows, and it is on
-   :active rather than a class so it needs no JavaScript and works on touch. */
-.btn:active:not(:disabled):not([aria-disabled='true']) {
-	transform: translateY(1px);
-	box-shadow: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.btn {
-		transition:
-			background var(--duration-fast) var(--ease-out),
-			border-color var(--duration-fast) var(--ease-out),
-			color var(--duration-fast) var(--ease-out);
-	}
 }
 
 .btn--primary,
 .btn--secondary {
-	/* 12px/24px minus the extra pixel of border on each side, so the box is the size it was. */
-	padding: 11px calc(var(--space-lg) - 1px);
+	padding: 12px var(--space-lg); /* 12px — no matching --space-* token; 24px = --space-lg */
 }
 
 .btn--primary.btn--small,
 .btn--secondary.btn--small {
 	/* design/12 §Navigation — "Invest" / "Book Now" small CTAs, no separate size spec given */
-	padding: calc(var(--space-sm) - 1px) calc(var(--space-md) - 1px);
+	padding: var(--space-sm) var(--space-md);
 }
 
 .btn--full {
 	width: 100%;
 }
 
-/* THE KEYLINE IS INK, NOT THE FILL COLOUR. A border in the same indigo as the background is
-   not an edge, it is a rounding error — the button had no drawn boundary at all, which is why
-   it read as soft. Ink at 2px gives it the mass the reference has, and it is the same ink the
-   current-page nav pill and the body type already use, so nothing new enters the palette.
-
-   The padding loses a pixel on each side to pay for the extra border, so every button keeps
-   the height it had. That is not cosmetic: the nav bar is measured to the pixel between
-   1160px and 1339px, and two pixels of growth on the Contact Us button wraps the links. */
 .btn--primary {
 	background: var(--accent-dark);
 	color: var(--text-on-dark);
-	border: 2px solid var(--text-primary);
+	border: 1px solid var(--accent-dark);
 }
 
 .btn--primary:hover:not(:disabled):not([aria-disabled='true']) {
@@ -268,13 +231,13 @@
 }
 
 .btn--secondary {
-	background: var(--bg-surface);
+	background: transparent;
 	color: var(--text-primary);
-	border: 2px solid var(--text-primary);
+	border: 1px solid var(--border-strong);
 }
 
 .btn--secondary:hover:not(:disabled):not([aria-disabled='true']) {
-	border-color: var(--accent-dark);
+	border-color: var(--accent-mid);
 	color: var(--accent-dark);
 }
 
@@ -294,8 +257,6 @@
 	opacity: 0.4;
 	cursor: not-allowed;
 	pointer-events: none;
-	/* No cast shadow on something that cannot be pressed. */
-	box-shadow: none;
 }
 
 /* ============================================================
@@ -1280,23 +1241,16 @@ main > section:last-child.band--dark {
    the rule that ends it. */
 .band--dark .btn--secondary,
 .hero .btn--secondary {
-	/* BACKGROUND, NOT JUST COLOUR — the third time this rule has been caught short. It set the
-	   text and the border and left the background alone, which was correct while the base
-	   .btn--secondary was transparent. The 2026-09-18 keyline pass gave the base rule
-	   `background: var(--bg-surface)`, a near-white, and light-on-dark text landed on it: the
-	   hero's "See the technology" went effectively invisible, exactly as the two notes above
-	   describe happening before. Stating all three properties is what stops it recurring. */
+	/* BACKGROUND STATED EXPLICITLY, even though the base rule is transparent again. This rule
+	   has been caught short three times: twice by a missing per-section patch, and once when
+	   the base gained a near-white background and light-on-dark text landed on it, which the
+	   contrast check in test-guide-browser.mjs found on three pages at 1.13:1. Naming all
+	   three properties costs one line and removes the whole class of failure. */
 	background: transparent;
 	color: var(--text-on-dark);
 	border-color: var(--rule-on-dark);
 }
 
-/* The primary's keyline is ink, which vanishes into a dark band. It takes the same on-dark
-   rule the secondary uses, so the button keeps a drawn edge on every surface. */
-.band--dark .btn--primary,
-.hero .btn--primary {
-	border-color: var(--rule-on-dark);
-}
 
 .band--dark .btn--secondary:hover:not(:disabled),
 .hero .btn--secondary:hover:not(:disabled) {
@@ -5933,51 +5887,135 @@ main > section:last-child.band--dark {
    832px, seven fixed items take 622px, and "Open the Black Box" needs 165px — 45px of headroom
    where before there were none. Emphasis is colour and weight and nothing else: 6.99:1 on the
    bar, and the current-page pill still takes precedence on its own page. */
-/* OUTLINED, NOT COLOURED. It was accent-dark text, which is the same indigo as the Contact Us
-   button — so on every page that is not /black-box it read as a STATE rather than as emphasis:
-   the one item that looked switched on. Reported as "it looks like the landing page is on it".
+/* THE HANGING SIGN.
+   ============================================================
+   A small enamel plate suspended from the underside of the bar on two hairline cords — the
+   shop sign from the reference, drawn in this site's materials rather than in wood and rope.
 
-   The pill shape is already the nav's vocabulary for the current page, and filled-versus-
-   outlined is the clearest distinction available inside one shape language. That gives three
-   unambiguous tiers, none of which can be mistaken for another:
+   WHY ONLY THIS ITEM. Colouring it indigo made it read as a state; an outlined pill was too
+   quiet to be noticed. Both failed the same way: a nav item nudged is still a nav item. A
+   sign hanging off the bar is a different object, and there is exactly one of it. A second
+   would make it a pattern, and a pattern is not emphasis.
 
-     plain text   the sections
-     outlined     this destination — a thing to open
-     filled dark  where you are now
-     filled indigo the primary call to action
+   IT IS SPLIT LIKE A REAL SIGN. The bracket keeps the first words — "Open the" — and the
+   plate swinging beneath carries the name. Both spans are inside one anchor, so the
+   accessible name is the whole phrase and it is one tab stop; the split is presentational.
+   Keeping text in the bar is also what stops the row having a hole in it where a link
+   should be, which is what happened when the whole link dropped out of the flow.
 
-   Emphasis is now shape and weight, not hue, so it survives greyscale and colour blindness.
-   The border costs 2px of nav width; verified at the 1160–1339px band where the bar is
-   tightest, and by the browser test, which fails if the links wrap. */
+   The nav is position: fixed and clips nothing, so the plate hangs over the page below it.
+   transform-origin sits at the top centre, between the cords, so it swings from where it is
+   hung rather than pivoting about its own middle. */
 .nav-link--mark {
+	--cord: 18px;
+	position: relative;
+	overflow: visible;
 	color: var(--text-primary);
 	font-weight: 600;
-	border: 1px solid color-mix(in oklab, var(--accent-dark) 55%, transparent);
-	/* The border is drawn OUTSIDE the padding box, so a bare 1px border made this item 44px
-	   tall against its neighbours' 42px and sat it 1px proud of the row. The padding gives the
-	   two pixels back. Measured, not guessed: every .nav-link is 42px again. */
-	padding-block: calc(var(--space-sm) - 1px);
+	/* NO EXTRA PADDING TO COVER THE PLATE. The first attempt grew the anchor to 88px so its
+	   own box would enclose the sign, which made it the odd one out in a row of 42px links.
+	   It is unnecessary: the plate is a CHILD of the anchor, so a click on it activates the
+	   link wherever it is drawn. Verified in a browser — the plate resolves to /black-box. */
 }
 
-/* The underline is the hover affordance for a plain link. Inside a pill it reads as a mistake,
-   and the pill has its own hover, so it is suppressed here. */
+.nav-sign-field {
+	font-size: var(--text-nav);
+}
+
+/* The plate. Centred under the bracket, hung on two cords. */
+.nav-sign-plate {
+	position: absolute;
+	/* Hung from the anchor's own bottom edge, so the drop does not depend on the bar's
+	   padding and cannot silently change if that padding is ever retuned. */
+	top: calc(100% + var(--cord));
+	left: 50%;
+	translate: -50% 0;
+	display: block;
+	white-space: nowrap;
+	padding: 5px 13px;
+	font-size: 12.5px;
+	line-height: 1.35;
+	letter-spacing: 0.01em;
+	color: var(--text-on-dark);
+	background: var(--bg-dark);
+	border-radius: 3px;
+	/* A LIGHT HAIRLINE, BECAUSE THE PLATE AND THE PAGE BANNER ARE THE SAME INK. The plate is
+	   --bg-dark and so is every PageBanner, so it hung half on cream and half on a ground it
+	   matched exactly — the lower half vanished. The ring reads on both surfaces: against the
+	   cream it is invisible behind a dark plate, against the banner it is the only thing
+	   separating them. */
+	box-shadow:
+		0 0 0 1px color-mix(in oklab, var(--text-on-dark) 26%, transparent),
+		0 6px 16px rgb(0 0 0 / 0.22),
+		inset 0 1px 0 rgb(255 255 255 / 0.12);
+	transform-origin: 50% calc(var(--cord) * -1);
+	transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* The two cords, on the PLATE rather than on the link — .nav-link::after is already the
+   hover underline, and overriding half its properties left one cord drawn and one missing. */
+.nav-sign-plate::before,
+.nav-sign-plate::after {
+	content: '';
+	position: absolute;
+	top: calc(var(--cord) * -1);
+	height: var(--cord);
+	width: 1px;
+	background: linear-gradient(
+		to bottom,
+		color-mix(in oklab, var(--text-primary) 15%, transparent),
+		color-mix(in oklab, var(--text-primary) 55%, transparent)
+	);
+}
+.nav-sign-plate::before { left: 22%; }
+.nav-sign-plate::after { right: 22%; }
+
+/* A push, and it swings and settles. Three diminishing arcs, a degree and a half at the
+   widest — a sign that has just been knocked, not a pendulum. */
+@keyframes nav-sign-sway {
+	0%   { rotate: 0deg; }
+	22%  { rotate: 1.6deg; }
+	46%  { rotate: -1deg; }
+	70%  { rotate: 0.5deg; }
+	88%  { rotate: -0.22deg; }
+	100% { rotate: 0deg; }
+}
+
+.nav-link--mark:hover .nav-sign-plate,
+.nav-link--mark:focus-visible .nav-sign-plate {
+	animation: nav-sign-sway 1150ms var(--ease-out);
+	box-shadow:
+		0 0 0 1px color-mix(in oklab, var(--text-on-dark) 40%, transparent),
+		0 9px 22px rgb(0 0 0 / 0.28),
+		inset 0 1px 0 rgb(255 255 255 / 0.16);
+}
+
+.nav-link--mark:hover,
+.nav-link--mark:focus-visible {
+	color: var(--text-primary);
+}
+
+/* On its own page the plate takes the accent. The shape already says "this is the one"; the
+   colour is what says "and you are on it". */
+.nav-link--mark[aria-current='page'] {
+	background: transparent;
+	color: var(--text-primary);
+}
+.nav-link--mark[aria-current='page'] .nav-sign-plate {
+	background: var(--accent-dark);
+}
+
+/* The bar's hover underline would draw across the bracket text and read as a second
+   affordance; the sign has its own. */
 .nav-link--mark::after {
 	display: none;
 }
 
-/* Guarded against [aria-current]. The generic anchor hover already broke the current-page pill
-   once by outranking it; a bare .nav-link--mark:hover at (0,2,0) would tie with the pill and win
-   on order, repainting the label onto the ink. */
-.nav-link--mark:not([aria-current='page']):hover {
-	color: var(--accent-dark);
-	border-color: var(--accent-dark);
-	background: color-mix(in oklab, var(--accent-dark) 7%, transparent);
-}
-
-/* On its own page the dark pill takes over completely. A visible outline around a filled pill
-   would read as a third state that means nothing. */
-.nav-link--mark[aria-current='page'] {
-	border-color: transparent;
+@media (prefers-reduced-motion: reduce) {
+	.nav-link--mark:hover .nav-sign-plate,
+	.nav-link--mark:focus-visible .nav-sign-plate {
+		animation: none;
+	}
 }
 
 

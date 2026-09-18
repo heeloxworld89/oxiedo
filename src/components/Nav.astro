@@ -85,8 +85,19 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 							href={link.href}
 							class={link.mark ? 'nav-link nav-link--mark' : 'nav-link'}
 							aria-current={isCurrent(link.href) ? 'page' : undefined}
+							{...(link.mark ? { 'aria-label': link.label } : {})}
 						>
-							{link.label}
+							{/* THE HANGING SIGN, split exactly as a shop sign is: the bracket carries the
+							    first words and the plate swinging under it carries the name. Both spans
+							    sit inside ONE anchor, so the accessible name is still the whole of
+							    "Open the Black Box" and the link is a single tab stop — the split is
+							    presentational and screen readers never see it. */}
+							{link.mark ? (
+								<>
+									<span class="nav-sign-field">Open the</span>
+									<span class="nav-sign-plate">Black Box</span>
+								</>
+							) : link.label}
 							{link.children && <span class="nav-caret" aria-hidden="true">▾</span>}
 						</a>
 

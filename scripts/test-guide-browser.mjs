@@ -191,40 +191,60 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
-// The featured pill and the current page must not look the same. Outlined versus filled is the
-// whole distinction, and it was accent-coloured text before — which read as "you are here" on
-// every page that was not /black-box.
+// THE HANGING SIGN. It is the one deliberately unusual object in the chrome, and every way
+// it can go wrong is geometric: the plate leaving the anchor's row, the accessible name
+// losing the space between its two spans, the plate failing to resolve as the link, or the
+// plate landing on a page banner of exactly its own colour and disappearing into it.
 {
 	const page = await browser.newPage({ viewport: { width: 1440, height: 800 } });
-	await page.goto(`${ORIGIN}/technology`, { waitUntil: 'networkidle' });
-	const off = await page.evaluate(() => {
-		const m = document.querySelector('.nav-link--mark');
-		const c = getComputedStyle(m);
-		return { aria: m.getAttribute('aria-current'), bg: c.backgroundColor, border: c.borderTopColor };
-	});
-	ok(off.aria === null, 'nav: the featured item is not marked as the current page elsewhere');
-	ok(/rgba\(0, 0, 0, 0\)|transparent/.test(off.bg), 'nav: the featured pill is outlined, not filled');
-	ok(!/rgba\(0, 0, 0, 0\)|transparent/.test(off.border), 'nav: the featured pill has a visible border');
-
-	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
-	const on = await page.evaluate(() => {
-		const m = document.querySelector('.nav-link--mark');
-		const c = getComputedStyle(m);
-		return { aria: m.getAttribute('aria-current'), bg: c.backgroundColor, border: c.borderTopColor };
-	});
-	ok(on.aria === 'page', 'nav: on its own page the featured item is the current page');
-	ok(!/rgba\(0, 0, 0, 0\)/.test(on.bg), 'nav: on its own page it fills to the dark pill');
-	ok(/rgba\(0, 0, 0, 0\)|transparent/.test(on.border), 'nav: the outline is dropped once it is filled');
+	for (const [route, expectCurrent] of [['/technology', false], ['/black-box', true]]) {
+		await page.goto(`${ORIGIN}${route}`, { waitUntil: 'networkidle' });
+		const m = await page.evaluate(() => {
+			const nav = document.querySelector('.nav').getBoundingClientRect();
+			const a = document.querySelector('.nav-link--mark');
+			const ar = a.getBoundingClientRect();
+			const plate = document.querySelector('.nav-sign-plate');
+			const pr = plate.getBoundingClientRect();
+			const others = [...document.querySelectorAll('.nav-links > li > .nav-link:not(.nav-link--mark)')]
+				.map((e) => e.getBoundingClientRect());
+			const cs = getComputedStyle(plate);
+			return {
+				anchorH: Math.round(ar.height),
+				otherH: [...new Set(others.map((r) => Math.round(r.height)))],
+				rows: new Set([...others.map((r) => Math.round(r.top)), Math.round(ar.top)]).size,
+				hangsBy: Math.round(pr.bottom - nav.bottom),
+				name: a.getAttribute('aria-label'),
+				resolves: document.elementFromPoint(pr.left + pr.width / 2, pr.top + pr.height / 2)
+					?.closest('a')?.getAttribute('href'),
+				// The ring that keeps it off a same-coloured banner.
+				ring: /0px 0px 0px 1px|0px 0px 0px 1px/.test(cs.boxShadow) || cs.boxShadow.includes('1px'),
+				current: a.getAttribute('aria-current') === 'page',
+				cords: [getComputedStyle(plate, '::before').width, getComputedStyle(plate, '::after').width],
+			};
+		});
+		ok(m.anchorH === 42 && m.otherH.length === 1 && m.otherH[0] === m.anchorH,
+			`sign ${route}: the bracket is the same height as every other link (${m.anchorH} vs ${m.otherH})`);
+		ok(m.rows === 1, `sign ${route}: the bracket stays on the nav's row (${m.rows})`);
+		ok(m.hangsBy > 12, `sign ${route}: the plate hangs clear below the bar (${m.hangsBy}px)`);
+		ok(m.name === 'Open the Black Box',
+			`sign ${route}: the accessible name is the whole phrase, not the two spans run together ("${m.name}")`);
+		ok(m.resolves === '/black-box', `sign ${route}: the plate itself resolves to the link (${m.resolves})`);
+		ok(m.ring, `sign ${route}: the plate keeps its separating ring`);
+		ok(m.cords[0] === '1px' && m.cords[1] === '1px',
+			`sign ${route}: both cords are drawn (${m.cords.join(', ')})`);
+		ok(m.current === expectCurrent, `sign ${route}: aria-current is ${expectCurrent}`);
+	}
 	await page.close();
 }
 
 // ── BUTTONS ──────────────────────────────────────────────────────────────────────────────
 //
-// CONTRAST, ON EVERY SURFACE. `.btn--secondary` has now been caught three times rendering
-// near-invisible on a dark band: twice because a per-section patch was missing, and once on
-// 2026-09-18 because the base rule gained `background: var(--bg-surface)` while the on-dark
-// rule still set only colour and border — light text on a near-white fill. Each time it was
-// found by eye, which is not a process. Every button on every page is measured here.
+// CONTRAST, ON EVERY SURFACE. `.btn--secondary` has been caught three times rendering
+// near-invisible on a dark band: twice because a per-section patch was missing, and once
+// when the base rule briefly gained `background: var(--bg-surface)` while the on-dark rule
+// still set only colour and border — light text on a near-white fill, 1.13:1, on three
+// pages. Each time it was found by eye, which is not a process. That experiment has since
+// been reverted, but this check is what makes the next one safe, so it stays.
 {
 	const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 	const ROUTES = ['/', '/product', '/technology', '/licensing', '/invest', '/sectors',
@@ -265,29 +285,6 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	}
 	ok(worst.ratio >= 4.5, `buttons: worst contrast is ${worst.ratio}:1 ("${worst.label}" on ${worst.route})`);
 
-	// THE PRESS. One pixel of travel and the cast shadow going. It is the whole of what was
-	// taken from the reference, and a silent regression would leave a button that looks
-	// pressable and is not.
-	await page.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });
-	const btn = await page.$('main .btn--primary');
-	await btn.scrollIntoViewIfNeeded();
-	await page.waitForTimeout(350);
-	const read = () => page.evaluate(() => {
-		const c = getComputedStyle(document.querySelector('main .btn--primary'));
-		return { t: c.transform, s: c.boxShadow, bw: c.borderTopWidth };
-	});
-	const rest = await read();
-	const box = await btn.boundingBox();
-	await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-	await page.mouse.down();
-	await page.waitForTimeout(320);
-	const down = await read();
-	await page.mouse.up();
-	ok(rest.t === 'none', `button: sits flush at rest (${rest.t})`);
-	ok(rest.s !== 'none', 'button: casts a shadow at rest, for the press to collapse');
-	ok(down.t !== 'none' && down.t !== rest.t, `button: travels on press (${down.t})`);
-	ok(down.s === 'none', `button: the shadow collapses on press (${down.s})`);
-	ok(rest.bw === '2px', `button: the keyline is 2px (${rest.bw})`);
 	await page.close();
 }
 
