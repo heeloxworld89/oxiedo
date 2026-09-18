@@ -49,6 +49,15 @@ export interface Props {
 	 *  else the replay is an illustration inside a page about something else, and a tour
 	 *  that starts itself there is an interruption. */
 	guide?: 'auto' | 'manual';
+	/** Render as a full-height application screen — a rail, a metric strip and a working
+	 *  area — instead of a block inside a page. For /black-box only, where the component IS
+	 *  the page rather than an illustration inside one. */
+	app?: boolean;
+	/** App mode only: the breadcrumb, rendered into the product bar. It lives here rather
+	 *  than in a PageBanner because in app mode there is no banner — and dropping it would
+	 *  cost the page its BreadcrumbList, which is the one rich result this site is eligible
+	 *  for. Same markup and aria-label as the banner's, so the schema guard still sees it. */
+	trail?: Array<{ label: string; href?: string }>;
 }
 const {
 	scenario = 'dead-layer-lesion',
@@ -57,6 +66,8 @@ const {
 	loop = false,
 	compact = false,
 	guide = 'manual',
+	app = false,
+	trail = [],
 } = Astro.props;
 
 const SCENARIOS = [
@@ -69,13 +80,119 @@ const SCENARIOS = [
 ---
 
 <section
-	class={`rp${compact ? ' rp--compact' : ''}`}
+	class={`rp${compact ? ' rp--compact' : ''}${app ? ' rp--app' : ''}`}
 	data-replay
 	data-scenario={scenario}
 	data-open-record={openRecord ? 'true' : 'false'}
 	data-loop={loop ? 'true' : 'false'}
 	data-guide-mode={guide}
 >
+	{/* ── APPLICATION CHROME ───────────────────────────────────────────────────────
+	    Only in app mode. A product bar, a rail and a metric strip: the three things that
+	    make a screen read as an instrument someone works in rather than a figure embedded
+	    in an article.
+
+	    THE RAIL IS THE SCENARIO PICKER AND THE PANEL SWITCHER, which is why the <select>
+	    and the tablist are hidden in this mode rather than duplicated — two controls driving
+	    one piece of state is how they drift apart. The rail writes to the same handlers.
+
+	    The rail collapses to icons before the working area gets too narrow for the two
+	    networks: anatomy.ts holds each to 560px, so the pair needs 1120px and the rail has
+	    to give its 220px back long before that limit is reached. */}
+	{app && (
+		<header class="rp-appbar">
+			<p class="rp-appbar-mark">ORMAS<span>·</span>replay console</p>
+			{trail.length > 0 && (
+				<nav class="rp-appbar-trail" aria-label="Breadcrumb">
+					<ol>
+						{trail.map((c, i) => (
+							<li>
+								{c.href && i < trail.length - 1
+									? <a href={c.href}>{c.label}</a>
+									: <span aria-current="page">{c.label}</span>}
+							</li>
+						))}
+					</ol>
+				</nav>
+			)}
+			<p class="rp-appbar-run" data-conditions-app>Loading the archived run…</p>
+		</header>
+	)}
+
+	<div class="rp-shell">
+		{app && (
+			<nav class="rp-rail" aria-label="Replay console">
+				<p class="rp-rail-head">Scenario</p>
+				<ul class="rp-rail-list">
+					{SCENARIOS.map((s) => (
+						<li>
+							<button
+								type="button"
+								class="rp-rail-item"
+								data-rail-scenario={s.key}
+								aria-pressed={s.key === scenario}
+							>
+								<span class="rp-rail-dot" aria-hidden="true"></span>
+								<span class="rp-rail-label">{s.label}</span>
+							</button>
+						</li>
+					))}
+				</ul>
+
+				<p class="rp-rail-head">Panel</p>
+				<ul class="rp-rail-list">
+					{[
+						{ id: 'answers', label: 'What each can answer' },
+						{ id: 'accuracy', label: 'Accuracy' },
+						{ id: 'ledger', label: 'Corrections' },
+						{ id: 'record', label: 'The record' },
+					].map((x) => (
+						<li>
+							<button
+								type="button"
+								class="rp-rail-item"
+								data-rail-panel={x.id}
+								aria-pressed={x.id === 'answers'}
+							>
+								<span class="rp-rail-dot" aria-hidden="true"></span>
+								<span class="rp-rail-label">{x.label}</span>
+							</button>
+						</li>
+					))}
+				</ul>
+
+				<div class="rp-rail-foot">
+					<button type="button" class="rp-rail-guide" data-rail-guide>Guided read</button>
+				</div>
+			</nav>
+		)}
+
+		<div class="rp-main">
+			{app && (
+				<div class="rp-metrics" data-metrics>
+					<div class="rp-metric">
+						<p class="rp-metric-label">Sealed network</p>
+						<p class="rp-metric-value" data-metric-sealed>—</p>
+						<p class="rp-metric-note">test accuracy now</p>
+					</div>
+					<div class="rp-metric rp-metric--open">
+						<p class="rp-metric-label">Open network</p>
+						<p class="rp-metric-value" data-metric-open>—</p>
+						<p class="rp-metric-note">test accuracy now</p>
+					</div>
+					<div class="rp-metric">
+						<p class="rp-metric-label">Corrections written</p>
+						<p class="rp-metric-value" data-metric-corrections>—</p>
+						<p class="rp-metric-note">during training, so far</p>
+					</div>
+					<div class="rp-metric">
+						<p class="rp-metric-label">Fault named in</p>
+						<p class="rp-metric-value" data-metric-lag>—</p>
+						<p class="rp-metric-note" data-metric-lag-note>after the event</p>
+					</div>
+				</div>
+			)}
+
 	<header class="rp-bar">
 		<div class="rp-bar-left">
 			<p class="rp-legend-item">The same network, twice. One sealed, one open.</p>
@@ -248,6 +365,9 @@ const SCENARIOS = [
 		</div>
 	</div>
 
+		</div>
+	</div>
+
 	<noscript>
 		<p class="rp-noscript">
 			This replay needs JavaScript. The underlying figures are on the technology
@@ -304,6 +424,7 @@ const SCENARIOS = [
 		function render(epoch: number) {
 			if (!bundle || !engine) return;
 			const e = Math.round(epoch);
+			paintMetrics(epoch);
 
 			draw(canvas, bundle, epoch, theme);
 
@@ -476,6 +597,10 @@ const SCENARIOS = [
 				if (on && focus) b.focus();
 			}
 			for (const el of panels) el.hidden = el.dataset.panel !== name;
+			// The rail mirrors the tablist, including when the guided read changes panel.
+			for (const b of root.querySelectorAll('[data-rail-panel]')) {
+				b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.railPanel === name));
+			}
 
 			// A canvas in a hidden panel has no box, so it sizes to zero and draws nothing.
 			// Sizing on reveal is not an optimisation here; without it the accuracy tab is
@@ -500,6 +625,56 @@ const SCENARIOS = [
 				: (i + (k === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
 			selectTab(tabs[next].dataset.tab!, true);
 		});
+
+		// ── THE RAIL DRIVES THE SAME STATE ──────────────────────────────────────
+		//
+		// In app mode the rail replaces the <select> and the tablist, which are removed from
+		// the layout rather than hidden and mirrored. The rail calls the same functions, so
+		// there is one path into scenario and panel and nothing to keep in sync.
+		const railScenario = [...root.querySelectorAll<HTMLButtonElement>('[data-rail-scenario]')];
+		const railPanel = [...root.querySelectorAll<HTMLButtonElement>('[data-rail-panel]')];
+
+		for (const b of railScenario) {
+			b.addEventListener('click', () => {
+				if (select) { select.value = b.dataset.railScenario!; }
+				for (const o of railScenario) o.setAttribute('aria-pressed', String(o === b));
+				load(b.dataset.railScenario!);
+			});
+		}
+		for (const b of railPanel) {
+			b.addEventListener('click', () => selectTab(b.dataset.railPanel!));
+		}
+		root.querySelector('[data-rail-guide]')?.addEventListener('click', () => {
+			guideRunning() ? guideStop() : guideStart();
+		});
+
+		/** The four cards at the top of the working area, live with the epoch. A metric strip
+		 *  whose numbers do not move while the run plays is decoration. */
+		function paintMetrics(epoch: number) {
+			if (!bundle) return;
+			const e = Math.round(epoch);
+			const o = bundle.series.ormas.accuracy[e];
+			const b = bundle.series.baseline.accuracy[e];
+			const set = (sel: string, v: string) => {
+				const el = root.querySelector(sel);
+				if (el) el.textContent = v;
+			};
+			set('[data-metric-sealed]', b == null ? '—' : `${(b * 100).toFixed(1)}%`);
+			set('[data-metric-open]', o == null ? '—' : `${(o * 100).toFixed(1)}%`);
+			set('[data-metric-corrections]',
+				String(bundle.corrections.filter((c) => (c.epoch ?? 0) <= e).length));
+
+			const ev = bundle.event;
+			const lag = ev?.detected_lag_steps;
+			const named = ev != null && e >= ev.epoch;
+			set('[data-metric-lag]', !ev ? 'n/a' : !named ? '—' : lag == null ? 'same epoch' : `${lag} step${lag === 1 ? '' : 's'}`);
+			const note = root.querySelector('[data-metric-lag-note]');
+			if (note) {
+				note.textContent = !ev
+					? 'no single event in this run'
+					: !named ? 'nothing has happened yet' : 'after the event';
+			}
+		}
 
 		function showRecord() { selectTab('record'); renderRecord(); }
 
@@ -778,6 +953,8 @@ const SCENARIOS = [
 			const c = bundle.conditions;
 			elRun.textContent =
 				`${c.dataset} · seed ${c.seed} · run ${c.archive_index} · ${c.run_id_ormas}`;
+			const appRun = root.querySelector('[data-conditions-app]');
+			if (appRun) appRun.textContent = elRun.textContent;
 			if (elTitle) elTitle.textContent = bundle.title;
 
 			// A run with no event has a different shape of story and the chrome
@@ -1026,6 +1203,7 @@ const SCENARIOS = [
 		--ormas: var(--chart-ormas);
 		--base: var(--chart-baseline);
 		--warn: var(--chart-warning);
+		--ormas-text: var(--ormas-ink);
 		--mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
 		background: var(--plate);
@@ -1288,6 +1466,266 @@ const SCENARIOS = [
 		.rp-plain { padding-block: 8px; }
 		.rp-pane { padding-block: 6px; }
 		.rp-panel { padding-block: 10px; }
+	}
+
+	/* ══ APPLICATION MODE ═══════════════════════════════════════════════════════════
+	   /black-box only. Specs follow the enterprise-dashboard conventions rather than being
+	   invented: a 220px rail with 36px items, a metric strip of four cards with a 30px
+	   primary number, 24px gutters, and density over whitespace — the reader of a console is
+	   looking for data, not for air.
+
+	   THE SCREEN IS calc(100dvh - nav). The site header stays, because nothing outside this
+	   page changes, so the app gets what is left. Measured: app bar 48 + metrics 86 + panes
+	   336 + controls 60 + panel 220 + gutters 44 = 794 against 811 available at 1440×900.
+
+	   THE RAIL COLLAPSES BEFORE THE NETWORKS DO. anatomy.ts holds each network to MIN_W 560,
+	   so the pair needs 1120px; a 220px rail plus padding takes the working area under that
+	   at 1400px of viewport, well before a reader would expect a problem. Below 1400 the rail
+	   is icons only, and the pane stacking is driven by a container query on the working
+	   area's real width rather than the viewport's, so it cannot disagree with the rail. */
+	.rp--app {
+		--rail: 220px;
+		--appbar: 48px;
+		display: flex;
+		flex-direction: column;
+		height: calc(100dvh - var(--nav-h, 89px));
+		min-height: 560px;
+		border: 0;
+		border-radius: 0;
+		border-bottom: 1px solid var(--rule);
+	}
+
+	.rp-appbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-md);
+		height: var(--appbar);
+		padding: 0 var(--space-lg);
+		border-bottom: 1px solid var(--rule);
+		background: var(--plate-sunk);
+		flex: none;
+	}
+	.rp-appbar-mark {
+		margin: 0;
+		font-family: var(--mono);
+		font-size: 11px;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--fg);
+	}
+	.rp-appbar-mark span { margin: 0 8px; color: var(--ormas); }
+	.rp-appbar-trail { margin-right: auto; }
+	.rp-appbar-trail ol {
+		display: flex;
+		gap: 6px;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-family: var(--mono);
+		font-size: 10px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+	}
+	.rp-appbar-trail li + li::before { content: '/'; margin-right: 6px; color: var(--fg-dim); }
+	.rp-appbar-trail a { color: var(--fg-dim); text-decoration: none; }
+	.rp-appbar-trail a:hover { color: var(--fg); }
+	.rp-appbar-trail [aria-current='page'] { color: var(--fg-mid); }
+	.rp-appbar-run {
+		margin: 0;
+		font-family: var(--mono);
+		font-size: 11px;
+		color: var(--fg-dim);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.rp--app .rp-shell {
+		display: grid;
+		grid-template-columns: var(--rail) minmax(0, 1fr);
+		flex: 1 1 auto;
+		min-height: 0;
+	}
+
+	.rp-rail {
+		border-right: 1px solid var(--rule);
+		background: var(--plate-sunk);
+		padding: var(--space-md) 0;
+		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+	.rp-rail-head {
+		margin: var(--space-sm) 0 4px;
+		padding: 0 var(--space-md);
+		font-family: var(--mono);
+		font-size: 10px;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+	}
+	.rp-rail-list { list-style: none; margin: 0; padding: 0; }
+	.rp-rail-item {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+		width: 100%;
+		height: 36px;
+		padding: 0 var(--space-md);
+		border: 0;
+		background: none;
+		font: inherit;
+		font-size: var(--text-small);
+		text-align: left;
+		color: var(--fg-mid);
+		cursor: pointer;
+		transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+	}
+	.rp-rail-item:hover { background: color-mix(in oklab, var(--fg) 5%, transparent); color: var(--fg); }
+	.rp-rail-item[aria-pressed='true'] {
+		background: color-mix(in oklab, var(--ormas) 10%, transparent);
+		color: var(--fg);
+		font-weight: 600;
+		box-shadow: inset 2px 0 0 0 var(--ormas);
+	}
+	.rp-rail-dot {
+		width: 5px;
+		height: 5px;
+		border-radius: 999px;
+		background: color-mix(in oklab, var(--fg-dim) 55%, transparent);
+		flex: none;
+	}
+	.rp-rail-item[aria-pressed='true'] .rp-rail-dot { background: var(--ormas); }
+	.rp-rail-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.rp-rail-foot { margin-top: auto; padding: var(--space-md); }
+	.rp-rail-guide {
+		width: 100%;
+		font: inherit;
+		font-size: var(--text-small);
+		font-weight: 600;
+		padding: 9px 10px;
+		border: 1px solid var(--ormas);
+		border-radius: 4px;
+		background: none;
+		color: var(--ormas-text);
+		cursor: pointer;
+	}
+	.rp-rail-guide:hover { background: color-mix(in oklab, var(--ormas) 9%, transparent); }
+
+	.rp--app .rp-main {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	/* THE METRIC STRIP. Four cards, a 30px primary number each, live with the epoch — the
+	   number a reader looks at first has to be the one that is changing. */
+	.rp-metrics {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 1px;
+		background: var(--rule);
+		border-bottom: 1px solid var(--rule);
+		flex: none;
+	}
+	.rp-metric { background: var(--plate); padding: 10px var(--space-lg); min-width: 0; }
+	.rp-metric-label {
+		margin: 0;
+		font-family: var(--mono);
+		font-size: 10px;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+	}
+	.rp-metric-value {
+		margin: 2px 0 0;
+		font-family: var(--mono);
+		font-size: 30px;
+		line-height: 1.05;
+		font-variant-numeric: tabular-nums;
+		color: var(--fg);
+	}
+	.rp-metric--open .rp-metric-value { color: var(--ormas-text); }
+	.rp-metric-note { margin: 1px 0 0; font-size: 11px; color: var(--fg-dim); }
+
+	/* In app mode the rail owns scenario and panel, so the duplicates are removed rather than
+	   hidden-and-synced: two controls writing one piece of state is how they drift apart. */
+	.rp--app .rp-bar,
+	.rp--app .rp-tablist { display: none; }
+	/* THE PANEL TAKES WHAT IS LEFT, rather than a fixed height. A console's working area is
+	   whatever the window did not spend on chrome, and a number guessed here is a number that
+	   is wrong on the next screen size — 214px was, and every panel scrolled inside itself.
+	   Everything above it is flex:none and the panel is flex:1, so the arithmetic is the
+	   browser's rather than mine.
+
+	   The diagram gives up 60px in app mode to make that space exist. At 1440×900 there are
+	   811px: appbar 48 + metrics 86 + plain 52 + panes 276 + controls 60 leaves 289 for the
+	   panel, against the 299 the answer table wants — close enough that the last row is
+	   reachable, and 240px is the same height the short-viewport rule already uses, so the
+	   labels are known to hold at it. */
+	.rp--app .rp-plain { flex: none; }
+	/* .rp-panes must be told to grow. The stageband is a flex container here, and a grid
+	   child of a flex parent sizes to its content unless it is given flex:1 — which is why
+	   the two networks sat in the left two thirds with dead cream beside them. */
+	.rp--app .rp-stageband { flex: none; display: flex; }
+	.rp--app .rp-panes { flex: 1 1 auto; min-width: 0; }
+	.rp--app .rp-controls { flex: none; }
+	.rp--app .rp-tabs {
+		flex: 1 1 auto;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		border-top: 1px solid var(--rule);
+	}
+	.rp--app .rp-panel {
+		height: auto;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+	}
+	.rp--app .rp-anatomy > :global(svg) { height: 240px !important; }
+
+	/* The pane stacking follows the WORKING AREA, not the viewport, because the rail's width
+	   changes underneath it. .rp already declares container-type: inline-size. */
+	@container (max-width: 1150px) {
+		.rp--app .rp-panes { grid-template-columns: 1fr; }
+	}
+
+	@media (max-width: 1400px) {
+		.rp--app { --rail: 58px; }
+		.rp-rail-head, .rp-rail-label { display: none; }
+		.rp-rail-item { justify-content: center; padding: 0; }
+		.rp-rail-dot { width: 7px; height: 7px; }
+		.rp-rail-foot { padding: 8px 6px; }
+		.rp-rail-guide { font-size: 0; padding: 9px 0; }
+		.rp-rail-guide::before { content: '\25B8'; font-size: 12px; }
+	}
+
+	/* A phone is not a console. The rail becomes a scrolling strip and the screen gives up
+	   its fixed height, because 560px of instrument in a 620px window is not usable. */
+	@media (max-width: 860px) {
+		.rp--app { height: auto; }
+		.rp--app .rp-shell { grid-template-columns: 1fr; }
+		.rp-rail {
+			--rail: auto;
+			flex-direction: row;
+			align-items: center;
+			gap: 4px;
+			overflow-x: auto;
+			border-right: 0;
+			border-bottom: 1px solid var(--rule);
+			padding: 6px var(--space-md);
+		}
+		.rp-rail-list { display: flex; gap: 2px; }
+		.rp-rail-item { width: auto; padding: 0 10px; }
+		.rp-rail-foot { margin: 0; padding: 0 0 0 6px; }
+		.rp-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		.rp--app .rp-panel { height: auto; min-height: 200px; }
 	}
 
 	/* ── plain-language strip ── */
@@ -1782,12 +2220,14 @@ const SCENARIOS = [
 
 	.rp-btn--guide {
 		border-color: var(--ormas);
-		color: var(--ormas);
+		color: var(--ormas-text);
 		font-weight: 600;
 	}
 	.rp-btn--guide:hover { background: color-mix(in oklab, var(--ormas) 9%, transparent); }
+	/* 8%, not 14%. The active tint is behind amber text, and at 14% it took the label to
+	   3.73:1. The state still reads — it is the only tinted control in the row. */
 	.rp.is-guided .rp-btn--guide {
-		background: color-mix(in oklab, var(--ormas) 14%, transparent);
+		background: color-mix(in oklab, var(--ormas) 8%, transparent);
 	}
 
 	.rp-btn--event {

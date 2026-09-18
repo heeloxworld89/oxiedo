@@ -70,6 +70,10 @@
 	   "Open the Black Box" wearing it is the palette agreeing with the label. Measured against
 	   both grounds: 7.34:1 on #16182B, 7.65:1 against the ink it carries. */
 	--sign-amber: #D99D2B;
+	/* A darker step of the ORMAS amber, for AMBER TEXT ON THE CREAM GROUND. --chart-ormas is
+	   4.34:1 there, under the 4.5 floor — fine as a fill carrying white, not fine as a label.
+	   #985807 is 4.98:1 on the cream and 5.62:1 on white, so one token serves both grounds. */
+	--ormas-ink: #985807;
 	--chart-baseline: #4E6FA8;
 	--chart-warning: #B23B3B;
 	--chart-recovery: #15703F;

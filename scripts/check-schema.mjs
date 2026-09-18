@@ -128,12 +128,22 @@ for (const file of files) {
 	//
 	//    Compared by rendered label, in order, against the marked-up names, so the two cannot
 	//    drift even by one renamed crumb.
-	const nav = html.match(/<nav class="page-banner-trail" aria-label="Breadcrumb">([\s\S]*?)<\/nav>/);
+	//    Matched on the aria-label, not on a class. It was `.page-banner-trail`, which assumed
+	//    every breadcrumb lives in a PageBanner — and /black-box has no banner: it opens with
+	//    the application, and its trail sits in the product bar. A crawler and a screen reader
+	//    both find a breadcrumb by its role and label, so the check should too.
+	//    ATTRIBUTES AFTER THE LABEL. Astro appends data-astro-cid-… to scoped elements, so a
+	//    pattern ending at `aria-label="Breadcrumb">` matches only the elements that happen
+	//    not to carry it. Anything up to the closing bracket is allowed.
+	const nav = html.match(/<nav[^>]*aria-label="Breadcrumb"[^>]*>([\s\S]*?)<\/nav>/);
 	const crumbs = graph.find((n) => n['@type'] === 'BreadcrumbList');
 	if (nav && !crumbs) {
 		failures.push(`${route}: renders a breadcrumb trail but emits no BreadcrumbList`);
 	} else if (nav && crumbs) {
-		const shown = [...nav[1].matchAll(/<li>[\s\S]*?>([^<]+)<\/(?:a|span)>/g)].map((m) =>
+		// <li[^>]*> for the same reason as the <nav> above: Astro's scoping attribute lands on
+		// these too, and a pattern demanding a bare `<li>` silently matched nothing and
+		// reported the page as showing an empty trail.
+		const shown = [...nav[1].matchAll(/<li[^>]*>[\s\S]*?>([^<]+)<\/(?:a|span)>/g)].map((m) =>
 			decode(m[1].trim()),
 		);
 		const marked = crumbs.itemListElement.map((i) => i.name);

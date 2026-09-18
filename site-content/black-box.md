@@ -5,17 +5,25 @@
 - **Meta description:** Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running.
 
 ---
-THE BLACK BOX
+ORMAS·replay console
 
-## Opacity is not a law of deep learning. It is a consequence of one decision.
+Loading the archived run…
 
-**THE RUN, REPLAYED**
+Sealed network
 
-### The same network, twice. One sealed, one open.
+test accuracy now
 
-Two networks of identical shape, trained on the same data toward the same objective. At epoch 101 two of their convolutional stages are destroyed. One names the damaged components two steps later and recovers. The other sits at chance for the rest of the run and cannot say what happened to it.
+Open network
 
-Press play, or drag the epoch bar, and watch the table underneath stop answering the same way for the two of them. The run is archived: every figure is read from its own telemetry, and its identifier and seed are on screen. Each of the four scenarios regenerates from its own seed — the fourth is the one that goes against us, and it sits in the same menu as the other three.
+test accuracy now
+
+Corrections written
+
+during training, so far
+
+Fault named in
+
+after the event
 
 The same network, twice. One sealed, one open.
 
@@ -40,6 +48,14 @@ Correction ledger · written during training
 ##### The record
 
 Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
+
+**THE RUN, REPLAYED**
+
+### The same network, twice. One sealed, one open.
+
+Two networks of identical shape, trained on the same data toward the same objective. At epoch 101 two of their convolutional stages are destroyed. One names the damaged components two steps later and recovers. The other sits at chance for the rest of the run and cannot say what happened to it.
+
+Press play, or drag the epoch bar, and watch the table underneath stop answering the same way for the two of them. The run is archived: every figure is read from its own telemetry, and its identifier and seed are on screen. Each of the four scenarios regenerates from its own seed — the fourth is the one that goes against us, and it sits in the same menu as the other three.
 
 Nothing in the sealed pane was withheld. A standard network does not compute a per-component health signal at any point in training, so there is no quantity to display and no setting that would reveal one. That absence is the problem, drawn.
 

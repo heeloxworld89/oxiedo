@@ -34,7 +34,6 @@
 // the first five minutes, answered before they are asked, with the two limits
 // first.
 import Page from '../layouts/Page.astro';
-import PageBanner from '../components/PageBanner.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Accordion from '../components/Accordion.astro';
 import ReplayDemo from '../components/ReplayDemo.astro';
@@ -178,25 +177,19 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 	ogImagePath={cardPath}
 	trail={trail}
 >
-	{/* COMPACT, 2026-09-18. At full height this banner was 626px, more than two thirds of a
-	    900px window, and the run this page exists for was under it. */}
-	<PageBanner
-		eyebrow="THE BLACK BOX"
-		title="Opacity is not a law of deep learning. It is a consequence of one decision."
-		trail={trail}
-		compact
-	/>
+	{/* NO BANNER ON THIS PAGE. Every other page opens with one; this one opens with the
+	    product. A 490px hero in front of an application is the "boxed into a website" look —
+	    a visitor arriving here should already be inside the instrument, and the writing is
+	    underneath it for whoever scrolls. The breadcrumb moved into the app bar so the page
+	    keeps its BreadcrumbList. */}
+	{/* FULL BLEED, NO CONTAINER, NO SECTION PADDING. In app mode the replay is not a figure
+	    inside a column — it is the screen. Wrapping it in .container would box an application
+	    into a 1280px measure with cream either side, which is the "boxed into a place on a
+	    website" look this replaces. */}
+	<div class="demo-app">
+		<ReplayDemo scenario="dead-layer-lesion" guide="auto" app trail={trail} />
+	</div>
 
-	{/* THE RUN COMES FIRST, 2026-09-18. The page used to spend four sections building an
-	    argument and then show the evidence for it. That is the order a paper is written in and
-	    the wrong order for a page: the strongest thing here is a run that can be watched, and
-	    it was a thousand pixels below the fold. Everything above it was asking a reader to
-	    accept a premise before being given any reason to.
-
-	    So the replay is the first thing, and the argument follows as the explanation of what
-	    was just watched. The copy is re-cut for that: this lede sets up the run in two
-	    sentences instead of the mechanism in two paragraphs, and the mechanism moves down into
-	    "why the old instrument could not do it", which is the section it belongs to. */}
 	<section class="section container">
 		<Eyebrow>THE RUN, REPLAYED</Eyebrow>
 		<h2>The same network, twice. One sealed, one open.</h2>
@@ -215,9 +208,6 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 		</p>
 	</section>
 
-	<section class="section container">
-		<ReplayDemo scenario="dead-layer-lesion" guide="auto" />
-	</section>
 
 	<section class="section container">
 		<p class="demo-note">
@@ -525,6 +515,9 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 	/* The open half carries no accent: identical weight to its neighbour is the
 	   point, and only the state chip distinguishes them. */
 	.demo-half--semantic { }
+
+	/* The app screen runs edge to edge; the prose above and below keeps the page's measure. */
+	.demo-app { margin-block: var(--space-lg) 0; }
 
 	.demo-note {
 		max-width: 68ch;
