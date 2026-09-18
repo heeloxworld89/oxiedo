@@ -115,7 +115,7 @@ const SCENARIOS = [
 				<button type="button" class="rp-rate" data-rate={r} aria-pressed={r === 1}>{r}×</button>
 			))}
 		</div>
-		<button type="button" class="rp-btn" data-replay-event>Replay from the event</button>
+		<button type="button" class="rp-btn rp-btn--event" data-replay-event>Replay from the event</button>
 		{/* THE GUIDED READ. Opt-in, never automatic: the ambient homepage embed hides this
 		    button entirely (see the loop branch in the island), because a tour that starts
 		    itself over a looping background animation is an interruption, not guidance. */}
@@ -1201,12 +1201,10 @@ const SCENARIOS = [
 	      to 0.3, which reads as disabled rather than guided — the page looked broken. The
 	      surroundings now recede only slightly and the lit panel is raised by an outline and
 	      a lift, which is the difference between "this is off" and "look here". */
-	.rp-btn--guide {
-		border-color: color-mix(in oklab, var(--ormas) 45%, var(--rule));
-		color: var(--ormas);
-	}
-	.rp-btn--guide:hover { border-color: var(--ormas); }
-	.rp.is-guided .rp-btn--guide { border-color: var(--ormas); background: color-mix(in oklab, var(--ormas) 10%, var(--plate)); }
+	/* The colour rules for this button live further down, beside .rp-btn--play. They were
+	   here, ahead of the base .rp-btn rule, and `color: var(--fg)` won on source order at
+	   equal specificity — the amber never applied and the button measured 18.23:1, which is
+	   ink. Same class, same weight, later wins. */
 
 	/* Leaf panels only: .rp-ledger is a child of .rp-readout and opacity composites down the
 	   tree, so dimming the parent would cap the lit child at whatever the parent is. */
@@ -1518,7 +1516,75 @@ const SCENARIOS = [
 		cursor: pointer;
 	}
 	.rp-btn:hover { border-color: var(--border-strong); }
-	.rp-btn--play { min-width: 5.5rem; font-weight: 600; }
+	/* ── THE THREE ACTIONS ────────────────────────────────────────
+	   A first-time visitor arrives at a still frame and has no reason to think any of this
+	   moves. All three controls were the same cream chrome as the speed toggles, so nothing
+	   said "start here". They are not equal, though, and treating them equally would have
+	   produced three shouts and no hierarchy:
+
+	     Play                  the one thing to do first   — solid amber
+	     Guided read           the way in, if Play is not  — amber outline
+	     Replay from the event for someone already reading — ink outline, quiet
+
+	   Amber, not indigo: inside this component amber is the ORMAS arm, the colour its line is
+	   drawn in on every chart. Measured on the white plate — #A5600C carries white text at
+	   4.91:1 and separates from the plate at 4.91:1, so it works as a fill and as an outline. */
+	.rp-btn--play {
+		min-width: 6.5rem;
+		font-weight: 700;
+		background: var(--ormas);
+		border-color: var(--ormas);
+		color: #fff;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 7px;
+	}
+	.rp-btn--play:hover { filter: brightness(1.08); }
+
+	/* A glyph, so the control is recognisable before the label is read. Driven by the class
+	   the island already toggles on the root, so there is no second source of truth about
+	   whether the run is playing. */
+	.rp-btn--play::before {
+		content: '\25B6';
+		font-size: 9px;
+		line-height: 1;
+	}
+	.rp.is-running .rp-btn--play::before { content: '\275A\275A'; font-size: 8px; }
+
+	/* THE ATTENTION RING, and the two things that stop it being an irritation: it exists only
+	   while the run is NOT playing, so the first press ends it permanently for that visit, and
+	   it is a ring on a pseudo-element rather than a transform, so it cannot shift the layout
+	   of a row measured this tightly. */
+	@keyframes rp-play-attention {
+		0%, 68%  { box-shadow: 0 0 0 0 color-mix(in oklab, var(--ormas) 55%, transparent); }
+		84%      { box-shadow: 0 0 0 7px color-mix(in oklab, var(--ormas) 0%, transparent); }
+		100%     { box-shadow: 0 0 0 0 color-mix(in oklab, var(--ormas) 0%, transparent); }
+	}
+	.rp:not(.is-running) .rp-btn--play {
+		animation: rp-play-attention 2600ms var(--ease-out) infinite;
+	}
+
+	.rp-btn--guide {
+		border-color: var(--ormas);
+		color: var(--ormas);
+		font-weight: 600;
+	}
+	.rp-btn--guide:hover { background: color-mix(in oklab, var(--ormas) 9%, transparent); }
+	.rp.is-guided .rp-btn--guide {
+		background: color-mix(in oklab, var(--ormas) 14%, transparent);
+	}
+
+	.rp-btn--event {
+		border-color: var(--fg-dim);
+		color: var(--fg);
+		font-weight: 600;
+	}
+	.rp-btn--event:hover { border-color: var(--fg); }
+
+	@media (prefers-reduced-motion: reduce) {
+		.rp:not(.is-running) .rp-btn--play { animation: none; }
+	}
 	.rp-btn--primary { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; font-weight: 600; }
 
 	.rp-scrub { flex: 1 1 200px; display: block; }

@@ -307,6 +307,62 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
+// ── THE THREE REPLAY CONTROLS ────────────────────────────────────────────────────────────
+//
+// Play, Replay from the event and Guided read were all the same cream chrome as the speed
+// toggles, so a first-time visitor had nothing telling them the thing moves. They now form a
+// hierarchy in the component's own amber, and the risks are the ordinary CSS ones: a colour
+// that fails contrast, and a rule that loses to the base .rp-btn on source order — which is
+// exactly what happened to the guided-read button, measuring 18.23:1 because `color:
+// var(--fg)` came later at equal specificity and the amber never applied.
+{
+	const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(500);
+	const m = await page.evaluate(() => {
+		const lum = (c) => {
+			const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(Number)
+				.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+			return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+		};
+		const cr = (a, b) => {
+			const A = lum(a), B = lum(b);
+			return +(((Math.max(A, B) + 0.05) / (Math.min(A, B) + 0.05)).toFixed(2));
+		};
+		const plate = getComputedStyle(document.querySelector('.rp')).backgroundColor;
+		const one = (sel) => {
+			const e = document.querySelector(sel);
+			const c = getComputedStyle(e);
+			const bg = /rgba\(0, 0, 0, 0\)/.test(c.backgroundColor) ? plate : c.backgroundColor;
+			return {
+				text: cr(c.color, bg),
+				edge: cr(c.borderTopColor, plate),
+				// "Filled" means carrying its own colour, NOT merely having a background: the
+				// base .rp-btn already paints itself the plate colour, so a transparency test
+				// reports every button as filled.
+				filled: !/rgba\(0, 0, 0, 0\)/.test(c.backgroundColor) && c.backgroundColor !== plate,
+				h: Math.round(e.getBoundingClientRect().height),
+			};
+		};
+		const btns = [...document.querySelectorAll('.rp-controls .rp-btn')];
+		return {
+			play: one('[data-play]'), event: one('[data-replay-event]'), guide: one('[data-guide-start]'),
+			rows: new Set(btns.map((e) => Math.round(e.getBoundingClientRect().top))).size,
+			heights: [...new Set(btns.map((e) => Math.round(e.getBoundingClientRect().height)))],
+		};
+	});
+	for (const [name, v] of [['Play', m.play], ['Replay from the event', m.event], ['Guided read', m.guide]]) {
+		ok(v.text >= 4.5, `control "${name}": label is ${v.text}:1 against its own background`);
+	}
+	ok(m.play.filled, 'controls: Play is the filled one — the first thing to do');
+	ok(!m.event.filled && !m.guide.filled, 'controls: only Play is filled, so the hierarchy holds');
+	ok(m.event.edge >= 3, `control "Replay from the event": its edge reads at ${m.event.edge}:1`);
+	ok(m.guide.edge >= 3, `control "Guided read": its edge reads at ${m.guide.edge}:1`);
+	ok(m.rows === 1, `controls: the three buttons stay on one row (${m.rows})`);
+	ok(m.heights.length === 1, `controls: all three are the same height (${m.heights.join('/')}px)`);
+	await page.close();
+}
+
 // ── THE HERO TRUST BAR ───────────────────────────────────────────────────────────────────
 //
 // Five sector names on one line. The column gap was --space-xl, which pushed the fifth name
