@@ -11,12 +11,16 @@ export interface Props {
 	title: string;
 	trail: Array<{ label: string; href?: string }>;
 	tone?: 'ink' | 'accent';
+	/** Half the vertical band and a smaller title. For a page whose subject is an object
+	 *  further down it, where a full-height banner is 626px of nothing between the reader
+	 *  and the thing they came for. */
+	compact?: boolean;
 }
 
-const { eyebrow, title, trail, tone = 'ink' } = Astro.props;
+const { eyebrow, title, trail, tone = 'ink', compact = false } = Astro.props;
 ---
 
-<section class={`page-banner page-banner--${tone}`}>
+<section class={`page-banner page-banner--${tone}${compact ? ' page-banner--compact' : ''}`}>
 	<div class="page-banner-field" aria-hidden="true">
 		<svg viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice">
 			<defs>

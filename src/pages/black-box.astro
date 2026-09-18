@@ -178,10 +178,13 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 	ogImagePath={cardPath}
 	trail={trail}
 >
+	{/* COMPACT, 2026-09-18. At full height this banner was 626px, more than two thirds of a
+	    900px window, and the run this page exists for was under it. */}
 	<PageBanner
 		eyebrow="THE BLACK BOX"
 		title="Opacity is not a law of deep learning. It is a consequence of one decision."
 		trail={trail}
+		compact
 	/>
 
 	{/* THE RUN COMES FIRST, 2026-09-18. The page used to spend four sections building an

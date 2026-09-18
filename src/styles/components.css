@@ -5174,6 +5174,19 @@ main > section:last-child.band--dark {
 	max-width: 18ch;
 }
 
+/* COMPACT. On /black-box the banner measured 626px — over two thirds of a 900px window — and
+   the thing the page exists for sat under it. A banner is an introduction; it should not be
+   the longest thing a reader looks at. Half the band, a title sized to fit two lines rather
+   than four, and the same type family so it still reads as the same site. */
+.page-banner--compact {
+	padding-block: var(--space-xl);
+}
+.page-banner--compact .page-banner-title {
+	font-size: clamp(2rem, 3.6vw, 3.1rem);
+	max-width: 26ch;
+	margin-top: var(--space-sm);
+}
+
 /* The rule runs from the title's column across the band to the trail. Content-free, so it
    invents nothing, and it gives the full-bleed width a reason to exist at any screen size. */
 .page-banner-foot {
