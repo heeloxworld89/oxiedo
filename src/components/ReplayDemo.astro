@@ -128,14 +128,18 @@ const SCENARIOS = [
 	    JavaScript never carries it — twice now that has shipped as a silently unstyled panel.
 	    Only text content and hidden/class state are touched from the island. */}
 	<aside class="rp-guide" data-guide hidden aria-live="polite">
-		<div class="rp-guide-head">
+		{/* The rail runs the full width across the top: every stop visible at once, the
+		    current one filled, each reachable. Dots told a reader their position and nothing
+		    else — not how far it runs, and not how to get back to one they had passed. */}
+		<nav class="rp-guide-rail" data-guide-rail aria-label="Guided read progress"></nav>
+		<div class="rp-guide-text">
 			<p class="rp-guide-eyebrow"><span data-guide-count></span><span data-guide-where></span></p>
-			<button type="button" class="rp-guide-skip" data-guide-skip>Skip</button>
+			<h4 class="rp-guide-title" data-guide-title></h4>
+			<p class="rp-guide-body" data-guide-body></p>
 		</div>
-		<h4 class="rp-guide-title" data-guide-title></h4>
-		<p class="rp-guide-body" data-guide-body></p>
 		<div class="rp-guide-foot">
-			<div class="rp-guide-dots" data-guide-dots aria-hidden="true"></div>
+			<button type="button" class="rp-guide-skip" data-guide-skip>Close</button>
+			<button type="button" class="rp-btn" data-guide-back>Back</button>
 			<button type="button" class="rp-btn rp-btn--primary" data-guide-next>Next</button>
 		</div>
 	</aside>
@@ -420,26 +424,59 @@ const SCENARIOS = [
 
 		function guideRunning() { return guideAt >= 0; }
 
+		// EVERY LOOKUP INSIDE THE DOCK GOES THROUGH gq, NEVER q.
+		//
+		// q() is bound to `root`, and the dock is re-parented to <body> while a guided read is
+		// running — `.rp` has container-type: inline-size, so a fixed child of it is fixed to
+		// the component rather than the viewport and has to leave. The first version of this
+		// function used q() anyway. Every lookup returned null, the non-null assertion is a
+		// compile-time claim and not a runtime guard, and the first assignment threw. The
+		// component dimmed and no dock ever appeared: a blank grey screen with no way out.
+		const gq = <T extends HTMLElement>(s: string) => elGuide.querySelector(s) as T | null;
+
 		function paintGuide() {
 			const step = guide[guideAt];
 			if (!step) return;
-			q('[data-guide-count]')!.textContent = `${guideAt + 1} of ${guide.length}`;
-			q('[data-guide-where]')!.textContent = step.eyebrow ? ` · ${step.eyebrow}` : '';
-			q('[data-guide-title]')!.textContent = step.title;
-			q('[data-guide-body]')!.textContent = step.body;
-			q('[data-guide-dots]')!.textContent = guide.map((_, i) => (i <= guideAt ? '●' : '○')).join(' ');
-			const next = q<HTMLButtonElement>('[data-guide-next]')!;
-			next.textContent = guideAt === guide.length - 1 ? 'Finish' : 'Next';
 
-			// Light one panel, dim the rest. The class goes on static elements only.
+			const count = gq('[data-guide-count]');
+			if (count) count.textContent = `${guideAt + 1} / ${guide.length}`;
+			const where = gq('[data-guide-where]');
+			if (where) where.textContent = step.eyebrow ? ` · ${step.eyebrow}` : '';
+			const title = gq('[data-guide-title]');
+			if (title) title.textContent = step.title;
+			const body = gq('[data-guide-body]');
+			if (body) body.textContent = step.body;
+
+			// The rail is the orientation device: every stop visible at once, the current one
+			// filled, the rest reachable. Dots gave a reader no idea what was coming or how to
+			// get back to something they had already passed.
+			const rail = gq('[data-guide-rail]');
+			if (rail) {
+				rail.replaceChildren(...guide.map((s, i) => {
+					const seg = document.createElement('button');
+					seg.type = 'button';
+					seg.className = 'rp-guide-seg';
+					seg.dataset.seg = String(i);
+					seg.setAttribute('aria-current', String(i === guideAt));
+					seg.setAttribute('aria-label', `Stop ${i + 1} of ${guide.length}: ${s.title}`);
+					if (i < guideAt) seg.dataset.done = 'true';
+					return seg;
+				}));
+			}
+
+			const back = gq<HTMLButtonElement>('[data-guide-back]');
+			if (back) back.disabled = guideAt === 0;
+			const next = gq<HTMLButtonElement>('[data-guide-next]');
+			if (next) next.textContent = guideAt === guide.length - 1 ? 'Finish' : 'Next';
+
+			// Highlight by ADDITION. The previous version dropped everything to 0.3, which made
+			// a working instrument look disabled rather than guided. The rest now recedes only
+			// slightly; the lit panel is raised by an outline and a lift.
 			for (const el of root.querySelectorAll('.is-lit')) el.classList.remove('is-lit');
 			const lit = root.querySelector(step.target);
 			lit?.classList.add('is-lit');
 
-			// THE DOCK DOES NOT MOVE. The panel comes to the reader instead: the lit panel is
-			// scrolled to the middle of the viewport, clear of both the fixed nav above and
-			// the dock below. Previously the card chased the highlight down a component taller
-			// than the screen, so the reader lost the Next button between stops.
+			// The dock does not move; the panel comes to the reader.
 			lit?.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
 			elGuide.hidden = false;
 		}
@@ -497,14 +534,22 @@ const SCENARIOS = [
 			guideWaiting = -1;
 			paintGuide();
 			setPlayLabel();
-			elGuide.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+			// No scrollIntoView on the dock: it is position:fixed, so there is nothing to scroll to.
 		}
 
 		btnGuide.addEventListener('click', () => (guideRunning() ? guideStop() : guideStart()));
-		q('[data-guide-skip]')!.addEventListener('click', guideStop);
-		q('[data-guide-next]')!.addEventListener('click', () => {
+		gq('[data-guide-skip]')!.addEventListener('click', guideStop);
+		gq('[data-guide-next]')!.addEventListener('click', () => {
 			if (guideAt >= guide.length - 1) { guideStop(); showRecord(); return; }
 			guideGoTo(guideAt + 1);
+		});
+		gq('[data-guide-back]')!.addEventListener('click', () => {
+			if (guideAt > 0) guideGoTo(guideAt - 1);
+		});
+		// Delegated: the rail's segments are rebuilt on every paint.
+		elGuide.addEventListener('click', (e) => {
+			const seg = (e.target as HTMLElement)?.closest?.('[data-seg]') as HTMLElement | null;
+			if (seg) guideGoTo(Number(seg.dataset.seg));
 		});
 		// Escape leaves it, the same key that closes every other overlay on the site.
 		root.addEventListener('keydown', (e) => {
@@ -1083,23 +1128,22 @@ const SCENARIOS = [
 	   with :global on the rows, because the rows are injected by script and
 	   carry no scoping attribute of their own. */
 	/* ── guided read ──────────────────────────────────────────────
-	   A DOCK, NOT A CARD THAT FOLLOWS THE HIGHLIGHT.
+	   Three rules, each one written after the previous attempt failed on a real screen.
 
-	   The first version inserted the annotation next to whichever panel was lit, which meant
-	   it jumped between three places down a component taller than the viewport. The reader
-	   lost it, could not find Next, and the only feedback that anything had happened was
-	   half the page dimming. That is a worse instrument than no guidance at all.
+	   1. THE DOCK DOES NOT MOVE. Version one inserted the annotation beside whichever panel
+	      was lit, so it jumped between three places down a component taller than the viewport
+	      and the reader lost the Next button. It is now one fixed position for the whole
+	      sequence and the lit panel scrolls to the reader instead.
 
-	   It is now in ONE place for the whole sequence and always on screen. Wherever the lit
-	   panel is, the run scrolls it to the middle of the viewport; the dock never moves.
+	   2. IT LIVES ON <body>. `.rp` sets container-type: inline-size, which applies layout
+	      containment and makes it the containing block for fixed descendants — a fixed card
+	      inside it is fixed to the component, not the viewport. The .rp-local custom
+	      properties do not travel with it, so everything here reads global tokens.
 
-	   IT LIVES ON <body>, NOT INSIDE .rp. `.rp` sets `container-type: inline-size`, which
-	   applies layout containment, which makes it the containing block for fixed-position
-	   descendants — a `position: fixed` card inside it is fixed to the component, not to the
-	   viewport, which is exactly the bug being fixed. The island moves the element to
-	   document.body on start and puts it back on stop. Astro's scoping is attribute-based, so
-	   the styles follow it; the .rp-local custom properties do not, which is why everything
-	   below reads the global tokens directly. */
+	   3. HIGHLIGHT BY ADDITION, NOT BY SUBTRACTION. Version two dropped the whole component
+	      to 0.3, which reads as disabled rather than guided — the page looked broken. The
+	      surroundings now recede only slightly and the lit panel is raised by an outline and
+	      a lift, which is the difference between "this is off" and "look here". */
 	.rp-btn--guide {
 		border-color: color-mix(in oklab, var(--ormas) 45%, var(--rule));
 		color: var(--ormas);
@@ -1107,158 +1151,168 @@ const SCENARIOS = [
 	.rp-btn--guide:hover { border-color: var(--ormas); }
 	.rp.is-guided .rp-btn--guide { border-color: var(--ormas); background: color-mix(in oklab, var(--ormas) 10%, var(--plate)); }
 
-	/* Leaf panels only: .rp-ledger is a child of .rp-readout, and opacity composites down the
-	   tree, so dimming the parent would cap the lit child at 0.32. */
+	/* Leaf panels only: .rp-ledger is a child of .rp-readout and opacity composites down the
+	   tree, so dimming the parent would cap the lit child at whatever the parent is. */
 	.rp.is-guided .rp-panes,
 	.rp.is-guided .rp-chart,
 	.rp.is-guided .rp-ledger,
 	.rp.is-guided .rp-verdict,
 	.rp.is-guided .rp-bar {
-		opacity: 0.3;
-		transition: opacity 240ms ease;
+		opacity: 0.55;
+		transition: opacity 220ms ease;
 	}
-	.rp.is-guided .is-lit { opacity: 1; position: relative; }
-	/* A rule down the leading edge, not a glow. A drop shadow on a light plate reads as a
-	   card lifting off the page, the wrong metaphor for a diagram being pointed at. */
-	.rp.is-guided .is-lit::before {
-		content: '';
-		position: absolute;
-		inset-block: -6px;
-		inset-inline-start: -14px;
-		width: 2px;
-		background: var(--ormas);
-		border-radius: 2px;
+	.rp.is-guided .is-lit {
+		opacity: 1;
+		position: relative;
+		z-index: 1;
+		border-radius: 4px;
+		outline: 2px solid color-mix(in oklab, var(--ormas) 70%, transparent);
+		outline-offset: 10px;
+		background: var(--plate);
+		box-shadow: 0 0 0 10px var(--plate), 0 10px 32px rgb(0 0 0 / 0.08);
 	}
 
-	/* THE DOCK — bottom of the viewport, centred on the same 1280px measure as the page, so
-	   it lines up with the content rather than floating loose in a corner. */
+	/* ── the dock ── */
 	.rp-guide:not([hidden]) {
 		position: fixed;
-		z-index: 90;              /* under the nav (100) and its menus (120) */
+		z-index: 90;                       /* under the nav (100) and its menus (120) */
 		left: 50%;
 		transform: translateX(-50%);
-		bottom: var(--space-md);
+		bottom: 18px;
 		width: min(1240px, calc(100vw - 32px));
-		max-height: 42vh;
-		overflow-y: auto;
 		display: grid;
-		grid-template-columns: 1fr auto;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: auto auto;
 		align-items: center;
-		gap: var(--space-md);
-		padding: var(--space-md) var(--space-lg);
-		border: 1px solid color-mix(in oklab, var(--chart-ormas) 40%, var(--border-hairline));
-		border-radius: 6px;
+		column-gap: var(--space-lg);
+		row-gap: 12px;
+		padding: 14px var(--space-lg) 16px;
+		border: 1px solid color-mix(in oklab, var(--chart-ormas) 30%, var(--border-hairline));
+		border-radius: 10px;
 		background: var(--bg-surface);
-		box-shadow: 0 6px 28px rgb(0 0 0 / 0.14);
+		box-shadow: 0 12px 40px rgb(0 0 0 / 0.16);
 		color: var(--text-primary);
 	}
-	.rp-guide-head { display: contents; }
-	.rp-guide-eyebrow {
-		grid-column: 1;
+
+	/* THE RAIL. Full width across the top, one segment per stop, clickable. */
+	.rp-guide-rail {
+		grid-column: 1 / -1;
 		grid-row: 1;
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: 1fr;
+		gap: 4px;
+	}
+	.rp-guide :global(.rp-guide-seg) {
+		appearance: none;
+		border: 0;
+		padding: 0;
+		height: 3px;
+		border-radius: 2px;
+		background: color-mix(in oklab, var(--text-muted) 28%, transparent);
+		cursor: pointer;
+		transition: background 180ms ease, height 180ms ease;
+	}
+	.rp-guide :global(.rp-guide-seg[data-done='true']) {
+		background: color-mix(in oklab, var(--chart-ormas) 45%, transparent);
+	}
+	.rp-guide :global(.rp-guide-seg[aria-current='true']) {
+		background: var(--chart-ormas);
+		height: 5px;
+	}
+	.rp-guide :global(.rp-guide-seg:hover) { background: color-mix(in oklab, var(--chart-ormas) 70%, transparent); }
+
+	.rp-guide-text { grid-column: 1; grid-row: 2; min-width: 0; }
+	.rp-guide-eyebrow {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 11px;
 		letter-spacing: 0.08em;
 		color: var(--chart-ormas);
-		margin: 0;
+		margin: 0 0 3px;
 	}
-	.rp-guide-title { grid-column: 1; grid-row: 2; margin: 0; font-size: var(--text-body); line-height: 1.25; }
+	.rp-guide-title { margin: 0 0 4px; font-size: var(--text-body); line-height: 1.25; }
 	.rp-guide-body {
-		grid-column: 1;
-		grid-row: 3;
 		margin: 0;
 		font-size: var(--text-small);
 		line-height: 1.5;
 		color: var(--text-secondary);
-		max-width: 88ch;
+		max-width: 92ch;
 	}
-	/* The controls hold the right-hand column across all three rows, so Skip and Next sit in
-	   exactly the same place at every stop — the thing the reader was hunting for. */
+
+	/* Fixed column, so Close / Back / Next are in the same pixel at every stop — the thing
+	   the reader was hunting for when the card used to move. */
 	.rp-guide-foot {
 		grid-column: 2;
-		grid-row: 1 / 4;
+		grid-row: 2;
 		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		justify-content: center;
-		gap: 8px;
+		align-items: center;
+		gap: 10px;
 	}
 	.rp-guide-skip {
 		font: inherit;
 		font-size: var(--text-small);
 		background: none;
 		border: 0;
-		padding: 0;
+		padding: 0 4px;
 		color: var(--text-muted);
-		text-decoration: underline;
-		text-underline-offset: 3px;
 		cursor: pointer;
 	}
 	.rp-guide-skip:hover { color: var(--text-primary); }
-	.rp-guide-dots { font-size: 9px; letter-spacing: 0.3em; color: var(--chart-ormas); }
 	.rp-guide :global(.rp-btn) {
 		font: inherit;
 		font-size: var(--text-small);
-		padding: 8px 18px;
+		padding: 9px 20px;
 		border: 1px solid var(--border-hairline);
-		border-radius: 3px;
+		border-radius: 4px;
 		background: var(--bg-surface);
 		color: var(--text-primary);
 		cursor: pointer;
 		white-space: nowrap;
 	}
+	.rp-guide :global(.rp-btn:disabled) { opacity: 0.35; cursor: default; }
 	.rp-guide :global(.rp-btn--primary) {
 		background: var(--chart-ormas);
 		border-color: var(--chart-ormas);
-		color: var(--text-on-dark, #fff);
+		color: var(--text-on-dark);
 	}
 
-	/* ONLY WHERE THE GUTTER ACTUALLY FITS IT. A 340px panel needs 24px of clearance from the
-	   1280px container and at least 32px from the viewport edge, so the gutter has to be
-	   ≥396px, which is a viewport of 2072px. Rounded to 2080. Below that the "put it in the
-	   gap" instinct is right and the gap simply is not there — at 1920px the gutter is 320px
-	   and a side panel would sit on top of the thing it is describing, which is how the first
-	   version went wrong. The dock is the correct answer for every ordinary screen. */
-	@media (min-width: 2080px) {
+	/* ONLY WHERE THE GUTTER ACTUALLY FITS IT. A 360px panel needs 24px of clearance from the
+	   1280px container and 32px from the viewport edge, so the gutter has to be ≥416px — a
+	   viewport of 2112px. At 1920px the gutter is 320px and a side panel would sit on top of
+	   the thing it is describing, which is the bug this replaced. */
+	@media (min-width: 2120px) {
 		.rp-guide:not([hidden]) {
 			left: auto;
-			right: calc((100vw - 1280px) / 2 - 364px);
+			right: calc((100vw - 1280px) / 2 - 384px);
 			transform: none;
 			top: 50%;
 			translate: 0 -50%;
 			bottom: auto;
-			width: 340px;
-			max-height: 70vh;
+			width: 360px;
 			grid-template-columns: 1fr;
-			gap: 10px;
+			row-gap: 14px;
 		}
-		.rp-guide-eyebrow, .rp-guide-title, .rp-guide-body { grid-column: 1; }
-		.rp-guide-foot {
-			grid-column: 1;
-			grid-row: auto;
-			flex-direction: row;
-			align-items: center;
-			justify-content: space-between;
-			margin-top: 4px;
-		}
+		.rp-guide-text, .rp-guide-foot { grid-column: 1; }
+		.rp-guide-foot { grid-row: 3; justify-content: space-between; }
 	}
 
-	/* Phone: a full-width sheet. The two-column layout has nowhere to put a second column. */
-	@media (max-width: 640px) {
+	@media (max-width: 760px) {
 		.rp-guide:not([hidden]) {
 			grid-template-columns: 1fr;
-			gap: 8px;
-			padding: var(--space-md);
-			max-height: 50vh;
+			bottom: 8px;
+			width: calc(100vw - 16px);
+			padding: 12px 14px 14px;
 		}
-		.rp-guide-foot {
-			grid-column: 1;
-			grid-row: auto;
-			flex-direction: row;
-			align-items: center;
-			justify-content: space-between;
+		.rp-guide-text, .rp-guide-foot { grid-column: 1; }
+		.rp-guide-foot { grid-row: 3; justify-content: space-between; }
+		.rp-guide-body {
+			font-size: 13px;
+			display: -webkit-box;
+			-webkit-line-clamp: 4;
+			line-clamp: 4;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
 		}
-		.rp-guide-body { font-size: 13px; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -1267,6 +1321,7 @@ const SCENARIOS = [
 		.rp.is-guided .rp-ledger,
 		.rp.is-guided .rp-verdict,
 		.rp.is-guided .rp-bar { transition: none; }
+		.rp-guide :global(.rp-guide-seg) { transition: none; }
 	}
 
 	.rp-verdict { padding: 0 var(--space-lg) var(--space-lg); }

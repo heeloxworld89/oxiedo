@@ -89,5 +89,54 @@ if (unstyled.length) {
 	process.exit(1);
 }
 
+// ── THE DOCK IS NOT INSIDE root ──────────────────────────────────────────────────────────
+//
+// While a guided read runs, the dock is re-parented to <body>: `.rp` sets
+// container-type: inline-size, which makes it the containing block for fixed descendants, so
+// a fixed card inside it is fixed to the component rather than the viewport.
+//
+// q() is bound to root. Every q('[data-guide-…]') therefore returns null the moment the dock
+// moves, and TypeScript's `!` is a compile-time claim, not a runtime guard — the first
+// assignment throws, the component dims, and no dock ever appears. That shipped: a blank grey
+// screen with no way out of it. Lookups inside the dock go through gq(), which is bound to
+// the element itself.
+// Two are legitimately root-scoped and always will be:
+//   [data-guide]        the initial capture of the dock, while it is still in the markup
+//   [data-guide-start]  the button, which lives in .rp-controls and never moves
+const ROOT_SCOPED_OK = new Set(['[data-guide]', '[data-guide-start]']);
+const strayQ = [...src.matchAll(/(?<![\w$])q(?:<[^>]*>)?\(\s*'(\[data-guide[^']*\])'/g)]
+	.filter((m) => !ROOT_SCOPED_OK.has(m[1]));
+if (strayQ.length) {
+	console.error(`\n  guide scoping: ${strayQ.length} lookup(s) use q() for a dock element\n`);
+	for (const m of strayQ) {
+		console.error(`  ✗ q('${m[1]}') — the dock is re-parented to <body>; use gq('${m[1]}')`);
+	}
+	console.error('      q() is bound to root and returns null once the dock has moved.\n');
+	process.exit(1);
+}
+
+// ── EVERY gq() SELECTOR EXISTS IN THE DOCK ───────────────────────────────────────────────
+//
+// gq() is bound to the dock, so a selector that matches nothing inside it returns null just
+// as surely as the root-scoped version did. Narrowing the binding fixed WHERE it looks; this
+// checks WHAT it looks for. A renamed data attribute in the markup would otherwise put the
+// dock straight back into the silent-null failure.
+const dock = src.match(/<aside class="rp-guide"[\s\S]*?<\/aside>/);
+if (!dock) {
+	console.error('\n  guide markup: the .rp-guide dock is not in ReplayDemo.astro\n');
+	process.exit(1);
+}
+const missing = [...src.matchAll(/(?<![\w$])gq(?:<[^>]*>)?\(\s*'\[([\w-]+)\]'/g)]
+	.map((m) => m[1])
+	.filter((attr, i, a) => a.indexOf(attr) === i)
+	.filter((attr) => !new RegExp(`\\b${attr}\\b`).test(dock[0]));
+if (missing.length) {
+	console.error(`\n  guide markup: ${missing.length} gq() selector(s) match nothing in the dock\n`);
+	for (const a of missing) console.error(`  ✗ gq('[${a}]') — no [${a}] inside <aside class="rp-guide">`);
+	console.error('      gq() returns null and the next assignment throws mid-paint.\n');
+	process.exit(1);
+}
+
 console.log(`  replay scoping: ${injected.size} script-injected classes all reachable`);
 console.log(`  anatomy styling: ${emitted.size} drawn classes all styled`);
+console.log(`  guide scoping: every dock lookup is bound to the dock, not to root`);
