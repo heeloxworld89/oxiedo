@@ -16,4 +16,86 @@ Allow: /
 # journalist, a grant reviewer or an accelerator looks for, and keeping it out of search
 # served nobody.
 
+# ─── ANSWER ENGINES AND MODEL CRAWLERS ──────────────────────────────────────────────────────
+#
+# `User-agent: *` above already permits every one of these, and these blocks change nothing
+# functionally. They are here for two reasons that are not about permission.
+#
+# FIRST, GOOGLE-EXTENDED IS NOT COVERED BY THE WILDCARD IN THE WAY IT LOOKS. It is a control
+# token, not a crawler: Googlebot fetches the page under `*`, and Google-Extended decides
+# separately whether Gemini and the grounding layer of AI Overviews may use what was fetched.
+# A site that says nothing is treated as permitting it, but saying it outright removes the
+# question — and this is the surface on which the company is currently being misidentified.
+#
+# SECOND, EXPLICIT IS PROTECTION AGAINST A FUTURE EDIT. The moment anyone adds a `Disallow:`
+# under `*` — for a staging path, an asset directory, anything — every unnamed agent inherits
+# it. A named group does not. These blocks are what makes that edit safe to make.
+#
+# This is a deliberate decision to be trained on and quoted. For a pre-revenue company whose
+# name an answer engine currently reads as a typo, being in the corpus is the distribution.
+
+# OpenAI: GPTBot trains, OAI-SearchBot indexes for ChatGPT search, ChatGPT-User fetches a page
+# a person linked in a conversation. They are three separate agents and obey three separate
+# groups; permitting one does not permit the others.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic: ClaudeBot crawls, Claude-User fetches on a person's behalf.
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Google's AI surfaces. Governs Gemini and AI Overview grounding, not Googlebot's crawl.
+User-agent: Google-Extended
+Allow: /
+
+# Perplexity: the crawler and the on-demand fetcher.
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Apple Intelligence and Siri summaries.
+User-agent: Applebot-Extended
+Allow: /
+
+# Meta, Amazon, ByteDance, Mistral, Common Crawl. Common Crawl is the one that matters most
+# for a new name: it is the substrate a large share of open training corpora are built from,
+# so an absence there propagates for years.
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: MistralAI-User
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# ─── MACHINE-READABLE ENTRY POINTS ──────────────────────────────────────────────────────────
+#
+# llms.txt is not a standard any crawler is obliged to read, and no major engine has committed
+# to it. It costs one generated route and it is the only place on this domain that states, in
+# one flat extractable block, what the company is, what the architecture does, what has been
+# measured and what has not. If it is read, that is the paragraph that gets quoted.
+#
+#   https://oxiedo.com/llms.txt
+
 Sitemap: https://oxiedo.com/sitemap.xml

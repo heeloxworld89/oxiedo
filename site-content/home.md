@@ -2,7 +2,7 @@
 
 - **URL:** `/`
 - **Page title:** Oxiedo — the architecture that unlocks locked data
-- **Meta description:** The most valuable data in the world cannot be trained on, because no model can account for what it did with it. ORMAS produces that account as the model learns.
+- **Meta description:** Oxiedo builds ORMAS, a neural network training architecture that records what a model took from each source of data as it trains. The account a custodian needs.
 
 ---
 **ORMAS · THE ARCHITECTURE THAT UNLOCKS LOCKED DATA**

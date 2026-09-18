@@ -46,25 +46,149 @@ const desc =
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', SITE).href;
 const ogImage = new URL(ogImagePath ?? '/og.png', SITE).href;
 
-// Organisation card. Everything in it is stated on /about, so it cannot contradict the site.
+// ─── JSON-LD ────────────────────────────────────────────────────────────────
+// STABLE @ids, and everything points at them. Before 2026-09-18 this layout
+// restated the whole organisation on all 26 pages as an anonymous node, which
+// is not one entity a crawler accumulates confidence in — it is 26 unrelated
+// nodes that happen to share a name. A search engine builds a Knowledge Graph
+// entity out of corroboration, and there is nothing to corroborate when every
+// page asserts the company from scratch and nothing references anything.
+//
+// The fragments never change. They hang off canonical URLs, so a node survives
+// the page it was first declared on being renamed — which /demo → /black-box
+// had just demonstrated is a thing that happens.
+const ORG_ID = `${SITE}/#organization`;
+const SITE_ID = `${SITE}/#website`;
+const FOUNDER_ID = `${SITE}/#founder`;
+const LOGO_ID = `${SITE}/#logo`;
+const ORMAS_ID = `${SITE}/#ormas`;
+const PAGE_ID = `${canonical}#webpage`;
+const CRUMB_ID = `${canonical}#breadcrumb`;
+
+// Organisation. Every claim is stated on /press under FAST FACTS, so the markup
+// cannot drift from the page a journalist checks it against. Nothing is here
+// that is not there: no legalName (the company is not yet incorporated), no
+// address (none is published), no telephone, no aggregateRating.
 const orgLd = {
-	'@context': 'https://schema.org',
 	'@type': 'Organization',
+	'@id': ORG_ID,
 	name: 'Oxiedo',
 	url: SITE,
-	description: 'Builds ORMAS, a neural network training architecture that produces a causal account of its own behaviour.',
+	description:
+		'Oxiedo is a research company building ORMAS, a neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns.',
 	foundingDate: '2023',
-	founder: { '@type': 'Person', name: 'Rokib Al Dhin Raadh' },
-	// sameAs is how a search engine ties the account to the company. One account, one entry.
+	// REQUIRED, and it was missing entirely. Google's organisation result does
+	// not render a logo it has to infer from a favicon; the property has to name
+	// an image. Both properties are references to the node below rather than one
+	// inline object and one pointer at it — a nested definition resolves for a
+	// parser that keeps the tree, and dangles for anything that flattens the
+	// graph first, which is most of them.
+	logo: { '@id': LOGO_ID },
+	image: { '@id': LOGO_ID },
+	founder: { '@id': FOUNDER_ID },
+	// knowsAbout is the topic declaration. It is the one place the site states,
+	// in machine-readable form, which field this name belongs to — which is the
+	// question a search engine is actually failing to answer when it decides
+	// "Oxiedo" is a misspelling of a drug brand.
+	knowsAbout: [
+		'Neural network training',
+		'Machine learning interpretability',
+		'Training-time telemetry',
+		'Data provenance',
+		'Model auditability',
+		'AI governance',
+	],
+	// sameAs is how a crawler ties an account to a company, and it is verified by
+	// reciprocity — the linked profile has to point back. One entry is one
+	// corroboration, which is why the entity is not resolving. Every profile
+	// added here must link to oxiedo.com from its own bio or it counts for
+	// nothing. The outstanding list is in `Replay Demo Plan/12_ENTITY_AND_SEO.md`;
+	// this array is the record of which ones exist.
 	sameAs: ['https://x.com/oxiedo_ai'],
 };
 
-// EVERY JSON-LD ENTITY GOES IN ONE @graph, not in several <script> blocks. Separate blocks are
-// parsed as unrelated entities, so a crawler has no way to know the breadcrumb belongs to the
-// same page as the organisation. A graph with @id references states the relationship outright.
+// 512×512 raster — the mark is brushed metal, so there is no SVG of it.
+const logoLd = {
+	'@type': 'ImageObject',
+	'@id': LOGO_ID,
+	url: `${SITE}/icons/icon-512.png`,
+	contentUrl: `${SITE}/icons/icon-512.png`,
+	width: 512,
+	height: 512,
+	caption: 'Oxiedo',
+};
+
+// ORMAS, the architecture, as an entity distinct from Oxiedo, the company that
+// publishes it. That distinction is the first thing /faq has to explain to a
+// human, so it is worth stating to a crawler in the same breath.
+//
+// IT LIVES HERE, not on the two pages that describe it. It was declared twice —
+// once in index.astro, once in product.astro — and the two copies had already
+// drifted apart, which is the whole failure mode: a crawler reconciling two
+// different descriptions of one name concludes it is looking at two things, or
+// at one thing the site cannot describe consistently. Every page now carries
+// the same node, so 26 pages corroborate one architecture instead of two pages
+// each asserting their own.
+const ormasLd = {
+	'@type': 'SoftwareApplication',
+	'@id': ORMAS_ID,
+	name: 'ORMAS',
+	alternateName: 'Orchestrated Repair and Monitoring with Architectural Self-correction',
+	applicationCategory: 'DeveloperApplication',
+	applicationSubCategory: 'Machine learning training architecture',
+	operatingSystem: 'Linux',
+	description:
+		'A neural network training architecture that records what a model took from each source of data as it trains, so data locked by regulation and contract becomes data an institution can defensibly train on.',
+	url: `${SITE}/product`,
+	author: { '@id': ORG_ID },
+	provider: { '@id': ORG_ID },
+	// NO aggregateRating and NO price. Both are what a rich result for this type
+	// needs, and both would have to be invented: there are zero customers and the
+	// licence fee is agreed per institution. An ineligible listing is the correct
+	// outcome; a fabricated rating is a manual action.
+	offers: {
+		'@type': 'Offer',
+		category: 'Annual deployment licence, per institution',
+		availability: 'https://schema.org/PreOrder',
+		url: `${SITE}/licensing`,
+		priceSpecification: {
+			'@type': 'PriceSpecification',
+			description: 'Agreed per institution and written into the contract. No price list.',
+		},
+	},
+};
+
+const founderLd = {
+	'@type': 'Person',
+	'@id': FOUNDER_ID,
+	name: 'Rokib Al Dhin Raadh',
+	jobTitle: 'Founder',
+	worksFor: { '@id': ORG_ID },
+};
+
+// WebSite is the node that declares what this domain IS, distinct from the
+// company that runs it. No SearchAction: the sitelinks searchbox was retired in
+// November 2024, and the FAQ filter is client-side with no URL to hand over —
+// markup for an endpoint that does not exist is a lie a crawler can catch.
+const websiteLd = {
+	'@type': 'WebSite',
+	'@id': SITE_ID,
+	url: SITE,
+	name: 'Oxiedo',
+	description:
+		'ORMAS is a neural network training architecture that makes per-component causal attribution a physical property of training.',
+	publisher: { '@id': ORG_ID },
+	inLanguage: 'en',
+};
+
+// EVERY JSON-LD ENTITY GOES IN ONE @graph, not in several <script> blocks.
+// Separate blocks are parsed as unrelated entities, so a crawler has no way to
+// know the breadcrumb belongs to the same page as the organisation. A graph
+// with @id references states the relationship outright.
 const breadcrumbLd = breadcrumbs?.length
 	? {
 			'@type': 'BreadcrumbList',
+			'@id': CRUMB_ID,
 			itemListElement: [{ name: 'Home', path: '/' }, ...breadcrumbs].map((b, i) => ({
 				'@type': 'ListItem',
 				position: i + 1,
@@ -74,7 +198,35 @@ const breadcrumbLd = breadcrumbs?.length
 		}
 	: null;
 
-const graph = [orgLd, breadcrumbLd, ...(Array.isArray(schema) ? schema : schema ? [schema] : [])]
+// The three pages that are ABOUT the company get `about`; the rest would be
+// overclaiming — /careers is not a page about Oxiedo as an entity, it is a page
+// the entity publishes, which is what `publisher` says.
+const ORG_PAGES = new Set(['/', '/about', '/press']);
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const webPageLd = {
+	'@type': 'WebPage',
+	'@id': PAGE_ID,
+	url: canonical,
+	name: pageTitle,
+	description: desc,
+	isPartOf: { '@id': SITE_ID },
+	publisher: { '@id': ORG_ID },
+	inLanguage: 'en',
+	...(ORG_PAGES.has(pathname) ? { about: { '@id': ORG_ID } } : {}),
+	...(breadcrumbLd ? { breadcrumb: { '@id': CRUMB_ID } } : {}),
+};
+
+const graph = [
+	orgLd,
+	logoLd,
+	founderLd,
+	websiteLd,
+	ormasLd,
+	webPageLd,
+	breadcrumbLd,
+	...(Array.isArray(schema) ? schema : schema ? [schema] : []),
+]
 	.filter(Boolean)
 	.map((e) => ({ ...(e as Record<string, unknown>) }));
 const pageLd = { '@context': 'https://schema.org', '@graph': graph };

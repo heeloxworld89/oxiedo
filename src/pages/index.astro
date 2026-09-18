@@ -42,28 +42,6 @@ import { features } from '../data/features';
 import Button from '../components/Button.astro';
 import ReplayDemo from '../components/ReplayDemo.astro';
 
-const ormasLd = {
-	'@type': 'SoftwareApplication',
-	name: 'ORMAS',
-	alternateName: 'Orchestrated Repair and Monitoring with Architectural Self-correction',
-	applicationCategory: 'DeveloperApplication',
-	applicationSubCategory: 'Machine learning training architecture',
-	operatingSystem: 'Linux',
-	description:
-		'A neural network training architecture that records what a model took from each source of data as it trains, so data locked by regulation and contract becomes data an institution can defensibly train on.',
-	url: 'https://oxiedo.com/product',
-	author: { '@type': 'Organization', name: 'Oxiedo' },
-	offers: {
-		'@type': 'Offer',
-		category: 'Annual deployment licence, per institution',
-		priceSpecification: {
-			'@type': 'PriceSpecification',
-			description: 'Agreed per institution and written into the contract. No price list.',
-		},
-	},
-};
-
-
 // Which markets each use case serves, read from data/sectors.ts so the mapping cannot drift from
 // the sector pages. `12 §3` "Where Each Product Lands" is the source: the Proofreader is the only
 // one that enters every market, and saying so is worth more than listing five names.
@@ -227,8 +205,7 @@ const whyNow = [
 
 <Page
 	title="Oxiedo — the architecture that unlocks locked data"
-	description="The most valuable data in the world cannot be trained on, because no model can account for what it did with it. ORMAS produces that account as the model learns."
-	schema={ormasLd}
+	description="Oxiedo builds ORMAS, a neural network training architecture that records what a model took from each source of data as it trains. The account a custodian needs."
 >
 	<!-- 1. HERO. Capability-led: the headline states the thing nothing else can do, and the three
 	     figures beneath it are the evidence for that specific sentence, not general credentials. -->

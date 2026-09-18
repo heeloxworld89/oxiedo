@@ -30,9 +30,22 @@ import { faqs, faqCategories } from '../data/faq';
 
 const countFor = (id: string) => faqs.filter((f) => f.cat === id).length;
 
+// FAQPage. This used to be emitted from its own <script> block further down the
+// file, which is the exact mistake Base.astro's graph comment warns against: two
+// ld+json blocks on one page parse as two unrelated entities, so nothing tied
+// these 30 questions to the page, the site or the company that answers them. It
+// now goes through the `schema` prop and lands in the single @graph.
+//
+// It will not produce a rich result. Google restricted FAQ rich results to
+// government and health sites in August 2023 and has not reversed it. The
+// markup stays because it is the cleanest machine-readable question-and-answer
+// pairing on the site, and that is what an answer engine quotes from.
 const jsonLd = {
-	'@context': 'https://schema.org',
 	'@type': 'FAQPage',
+	'@id': 'https://oxiedo.com/faq#faqpage',
+	url: 'https://oxiedo.com/faq',
+	isPartOf: { '@id': 'https://oxiedo.com/#website' },
+	about: { '@id': 'https://oxiedo.com/#ormas' },
 	mainEntity: faqs.map((f) => ({
 		'@type': 'Question',
 		name: f.q,
@@ -41,7 +54,11 @@ const jsonLd = {
 };
 ---
 
-<Page title="FAQ: ORMAS, licensing and compliance" description={"The questions a technical evaluation, a security review and a procurement process actually ask, answered without hedging — including the uncomfortable ones."}>
+<Page
+	title="FAQ: ORMAS, licensing and compliance"
+	description={"The questions a technical evaluation, a security review and a procurement process actually ask, answered without hedging — including the uncomfortable ones."}
+	schema={jsonLd}
+>
 	<PageBanner
 		eyebrow="FAQ"
 		title={`${faqs.length} questions, answered without hedging.`}
@@ -135,7 +152,6 @@ const jsonLd = {
 		</div>
 	</section>
 
-	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
 
 	<script>
 		// Search + category filtering. Both narrow the same set, so they compose: picking a category
