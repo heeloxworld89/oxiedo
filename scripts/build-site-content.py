@@ -203,8 +203,16 @@ def page(f):
     return title, desc, clean
 
 routes = {}
+# Build ARTEFACTS that are not routes. black-box-standalone.html is the self-contained
+# copy of the demo, emitted by build-standalone-demo.py for people who cannot reach an
+# external URL; it is one file with every bundle inlined and it is not served as a page.
+# Mirroring it produces an 800 KB markdown file for a URL that does not exist.
+NOT_A_ROUTE = {'black-box-standalone'}
+
 for f in sorted(glob.glob('dist/**/*.html', recursive=True)):
     url = f[len('dist/'):].replace('/index.html', '').replace('.html', '')
+    if url in NOT_A_ROUTE:
+        continue
     url = '/' if url in ('index', '') else '/' + url
     routes[url] = page(f)
 

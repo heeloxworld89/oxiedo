@@ -22,6 +22,13 @@ const mod = await import('data:text/javascript;base64,' +
 	Buffer.from(out.outputFiles[0].text).toString('base64'));
 const { ReplayEngine } = mod;
 
+const gout = await build({
+	entryPoints: [fileURLToPath(new URL('../src/scripts/replay/guide.ts', import.meta.url))],
+	bundle: true, write: false, format: 'esm', target: 'es2022',
+});
+const { buildGuide } = await import('data:text/javascript;base64,' +
+	Buffer.from(gout.outputFiles[0].text).toString('base64'));
+
 globalThis.performance = globalThis.performance ?? { now: () => Date.now() };
 globalThis.requestAnimationFrame = () => 0;
 globalThis.cancelAnimationFrame = () => {};
@@ -83,5 +90,56 @@ for (const key of keys) {
 	e.seekEpoch(-50); ok(e.epoch === 0, 'seek below range clamps to 0');
 	e.seekEpoch(9999); ok(Math.abs(e.epoch - e.lastEpoch) < 0.01, 'seek above range clamps to last');
 }
+// ─── GUIDED READ ──────────────────────────────────────────────────────────────
+//
+// Every stop's prose is generated from bundle fields, so the risk is not a typo — it is a
+// stop quoting a number the run does not contain, or pointing at an epoch or a panel that
+// does not exist. Those are the four things checked here, per scenario.
+//
+// The last check is the one that matters most. The adversarial run LOSES, by 1.09 points,
+// and its final stop has to say so. A guided read that narrates three wins and goes quiet
+// on the fourth is worth less than none, because the reader being walked through this is
+// deciding whether the account can be trusted at exactly that moment.
+const PANELS = ['.rp-panes', '.rp-verdict', '.rp-ledger'];
+console.log('\nguided read');
+for (const key of keys) {
+	const b = JSON.parse(readFileSync(
+		new URL(`../public/black-box/runs/${key}.json`, import.meta.url), 'utf8'));
+	const g = buildGuide(b);
+	const last = b.series.ormas.accuracy.length - 1;
+
+	ok(g.length >= 4, `${b.key}: ${g.length} stops`);
+	ok(g.every((s) => s.epoch >= 0 && s.epoch <= last),
+		`${b.key}: every stop lands inside the run`);
+	ok(g.every((s, i) => i === 0 || s.epoch >= g[i - 1].epoch),
+		`${b.key}: stops advance monotonically through the run`);
+	ok(g.every((s) => PANELS.includes(s.target)),
+		`${b.key}: every stop lights a panel that exists`);
+	ok(g.every((s) => s.title && s.body && s.eyebrow),
+		`${b.key}: no stop is missing copy`);
+	ok(!g.some((s) => /undefined|NaN|\[object/.test(s.body + s.title + s.eyebrow)),
+		`${b.key}: no stop interpolated a missing field`);
+	ok(g[g.length - 1].epoch === last,
+		`${b.key}: the last stop is the end of the run`);
+
+	if (b.event) {
+		const shock = g.find((s) => s.eyebrow === `EPOCH ${b.event.epoch}`);
+		ok(!!shock, `${b.key}: a stop is pinned to the event epoch`);
+		const named = g.find((s) => s.target === '.rp-ledger');
+		ok(named?.body.includes(String(b.event.detected_step).replace(/\B(?=(\d{3})+(?!\d))/g, ',')),
+			`${b.key}: the detection stop quotes the archived detection step`);
+	}
+
+	const gap = b.summary.gap_pp;
+	const closing = g[g.length - 1].body;
+	if (gap < 0) {
+		ok(/finishes ahead/.test(closing) && closing.includes(Math.abs(gap).toFixed(2)),
+			`${b.key}: the adverse result is stated as a loss of ${Math.abs(gap).toFixed(2)} points`);
+	} else {
+		ok(closing.includes(gap.toFixed(2)),
+			`${b.key}: the closing stop quotes the archived gap of ${gap.toFixed(2)} points`);
+	}
+}
+
 console.log(fail ? `\n${fail} FAILURES` : `\nall engine checks pass`);
 process.exit(fail ? 1 : 0);

@@ -116,8 +116,29 @@ const SCENARIOS = [
 			))}
 		</div>
 		<button type="button" class="rp-btn" data-replay-event>Replay from the event</button>
+		{/* THE GUIDED READ. Opt-in, never automatic: the ambient homepage embed hides this
+		    button entirely (see the loop branch in the island), because a tour that starts
+		    itself over a looping background animation is an interruption, not guidance. */}
+		<button type="button" class="rp-btn rp-btn--guide" data-guide-start>Guided read</button>
 		<p class="rp-nature" data-nature></p>
 	</div>
+
+	{/* The annotation card is STATIC MARKUP, not injected at runtime. Astro scopes styles by
+	    appending a [data-astro-cid-…] attribute to every selector, and an element created in
+	    JavaScript never carries it — twice now that has shipped as a silently unstyled panel.
+	    Only text content and hidden/class state are touched from the island. */}
+	<aside class="rp-guide" data-guide hidden aria-live="polite">
+		<div class="rp-guide-head">
+			<p class="rp-guide-eyebrow"><span data-guide-count></span><span data-guide-where></span></p>
+			<button type="button" class="rp-guide-skip" data-guide-skip>Skip</button>
+		</div>
+		<h4 class="rp-guide-title" data-guide-title></h4>
+		<p class="rp-guide-body" data-guide-body></p>
+		<div class="rp-guide-foot">
+			<div class="rp-guide-dots" data-guide-dots aria-hidden="true"></div>
+			<button type="button" class="rp-btn rp-btn--primary" data-guide-next>Next</button>
+		</div>
+	</aside>
 
 	<div class="rp-readout">
 		<div class="rp-chart">
@@ -181,6 +202,7 @@ const SCENARIOS = [
 	import { draw, readTheme, sizeCanvas } from '../scripts/replay/render';
 	import { Anatomy } from '../scripts/replay/anatomy';
 	import type { Bundle, Correction } from '../scripts/replay/types';
+	import { buildGuide, type GuideStep } from '../scripts/replay/guide';
 
 	const DIAGNOSIS: Record<string, string> = {
 		dead: 'dead', oscillating: 'oscillating', saturated: 'saturated',
@@ -210,6 +232,8 @@ const SCENARIOS = [
 		const btnEvent = q<HTMLButtonElement>('[data-replay-event]')!;
 		const select = q<HTMLSelectElement>('[data-select]');
 		const elRecord = q('[data-record]')!;
+		const elGuide = q('[data-guide]')!;
+		const btnGuide = q<HTMLButtonElement>('[data-guide-start]')!;
 
 		const anaBase = new Anatomy(q('[data-anatomy-baseline]')!, { instrumented: false, reduced });
 		const anaOrmas = new Anatomy(q('[data-anatomy-ormas]')!, { instrumented: true, reduced });
@@ -384,6 +408,107 @@ const SCENARIOS = [
 			root.classList.toggle('is-running', on);
 		}
 
+		// ─── GUIDED READ ────────────────────────────────────────────────────────
+		//
+		// It DRIVES the engine rather than sitting on top of it. Next resumes playback and the
+		// frame callback stops the run when it reaches the next stop's epoch, so the reader
+		// watches the run arrive at each beat instead of being teleported between freeze-frames.
+		// The run is the argument; a slideshow of its stills is not.
+		let guide: GuideStep[] = [];
+		let guideAt = -1;          // -1 = not running
+		let guideWaiting = -1;     // epoch the engine is currently travelling towards
+
+		function guideRunning() { return guideAt >= 0; }
+
+		function paintGuide() {
+			const step = guide[guideAt];
+			if (!step) return;
+			q('[data-guide-count]')!.textContent = `${guideAt + 1} of ${guide.length}`;
+			q('[data-guide-where]')!.textContent = step.eyebrow ? ` · ${step.eyebrow}` : '';
+			q('[data-guide-title]')!.textContent = step.title;
+			q('[data-guide-body]')!.textContent = step.body;
+			q('[data-guide-dots]')!.textContent = guide.map((_, i) => (i <= guideAt ? '●' : '○')).join(' ');
+			const next = q<HTMLButtonElement>('[data-guide-next]')!;
+			next.textContent = guideAt === guide.length - 1 ? 'Finish' : 'Next';
+
+			// Light one panel, dim the rest. The class goes on static elements only.
+			for (const el of root.querySelectorAll('.is-lit')) el.classList.remove('is-lit');
+			root.querySelector(step.target)?.classList.add('is-lit');
+
+			// The card sits directly under the band holding whatever is lit, so the eye does
+			// not travel — but it is parked after the BAND, never beside the panel itself.
+			// .rp-ledger is a cell of a two-column grid; inserting a sibling there would make
+			// the card a third grid item and rearrange the readout underneath the reader.
+			const BAND = {
+				'.rp-panes': '.rp-stageband',
+				'.rp-chart': '.rp-readout',
+				'.rp-ledger': '.rp-readout',
+				'.rp-verdict': '.rp-verdict',
+			} as Record<string, string>;
+			const band = root.querySelector(BAND[step.target] ?? step.target);
+			if (band?.parentElement) band.parentElement.insertBefore(elGuide, band.nextSibling);
+			elGuide.hidden = false;
+		}
+
+		function guideStop() {
+			guideAt = -1;
+			guideWaiting = -1;
+			elGuide.hidden = true;
+			root.classList.remove('is-guided');
+			for (const el of root.querySelectorAll('.is-lit')) el.classList.remove('is-lit');
+			engine?.pause();
+			setPlayLabel();
+		}
+
+		/** Travel to a stop. Under reduced motion the run does not play between stops —
+		 *  it seeks, because the motion IS the thing being suppressed. */
+		function guideGoTo(i: number) {
+			if (!engine || i < 0 || i >= guide.length) return guideStop();
+			const target = guide[i].epoch;
+			const here = Math.round(Number(elScrub.value));
+			guideAt = i;
+			if (reduced || target <= here) {
+				engine.seekEpoch(target);
+				guideWaiting = -1;
+				paintGuide();
+				setPlayLabel();
+				return;
+			}
+			elGuide.hidden = true;
+			guideWaiting = target;
+			engine.play();
+			setPlayLabel();
+		}
+
+		function guideStart() {
+			if (!engine || !bundle) return;
+			guide = buildGuide(bundle);
+			if (guide.length === 0) return;
+			root.classList.add('is-guided');
+			elRecord.hidden = true;
+			engine.setRate(4);          // the gaps between stops are long at 1x
+			for (const b of root.querySelectorAll('[data-rate]')) {
+				b.setAttribute('aria-pressed', String(b.getAttribute('data-rate') === '4'));
+			}
+			engine.seekEpoch(0);
+			guideAt = 0;
+			guideWaiting = -1;
+			paintGuide();
+			setPlayLabel();
+			elGuide.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+		}
+
+		btnGuide.addEventListener('click', () => (guideRunning() ? guideStop() : guideStart()));
+		q('[data-guide-skip]')!.addEventListener('click', guideStop);
+		q('[data-guide-next]')!.addEventListener('click', () => {
+			if (guideAt >= guide.length - 1) { guideStop(); showRecord(); return; }
+			guideGoTo(guideAt + 1);
+		});
+		// Escape leaves it, the same key that closes every other overlay on the site.
+		root.addEventListener('keydown', (e) => {
+			if ((e as KeyboardEvent).key === 'Escape' && guideRunning()) guideStop();
+		});
+
 		async function load(key: string) {
 			const embedded = (window as unknown as {
 				__REPLAY_BUNDLES__?: Record<string, Bundle>;
@@ -399,7 +524,17 @@ const SCENARIOS = [
 
 			engine?.destroy();
 			engine = new ReplayEngine(bundle);
-			engine.onFrame = (e) => render(e);
+			engine.onFrame = (e) => {
+				render(e);
+				// The guide is travelling towards a stop; arrive, hold, and show the card.
+				if (guideWaiting >= 0 && e >= guideWaiting) {
+					guideWaiting = -1;
+					engine?.pause();
+					engine?.seekEpoch(guide[guideAt].epoch);
+					setPlayLabel();
+					paintGuide();
+				}
+			};
 			engine.onEnd = () => {
 				setPlayLabel();
 				// An ambient embed loops; the run holds on its final frame for a
@@ -417,6 +552,15 @@ const SCENARIOS = [
 				}
 				showRecord();
 			};
+
+			// The looping homepage embed is ambient: it plays itself and must not invite a
+			// reader into a modal sequence over the top of it. The button is removed there
+			// rather than hidden, so nothing can tab to it.
+			if (root.dataset.loop === 'true') btnGuide.remove();
+
+			// A scenario change abandons any guide in progress — its stops are built from the
+			// bundle that was loaded, and half of them would point at epochs in the old run.
+			if (guideRunning()) guideStop();
 
 			anaBase.load(bundle);
 			anaOrmas.load(bundle);
@@ -451,12 +595,17 @@ const SCENARIOS = [
 			maybeAutoStart();   // the observer may already have fired
 		}
 
+		// TAKING A CONTROL ENDS THE GUIDE. Someone who reaches for the scrubber or the play
+		// button has decided to drive; leaving a sequence half-open over the top of that is
+		// the behaviour everyone hates about tours. It does not resume, and it does not ask.
 		btnPlay.addEventListener('click', () => {
 			clearTimeout(loopTimer);
+			if (guideRunning()) guideStop();
 			engine?.toggle();
 			setPlayLabel();
 		});
 		btnEvent.addEventListener('click', () => {
+			if (guideRunning()) guideStop();
 			if (!engine || !bundle) return;
 			if (bundle.event) {
 				engine.replayFromEvent();
@@ -476,6 +625,7 @@ const SCENARIOS = [
 		});
 		elScrub.addEventListener('input', () => {
 			clearTimeout(loopTimer);
+			if (guideRunning()) guideStop();
 			engine?.pause(); engine?.seekEpoch(Number(elScrub.value)); setPlayLabel();
 		});
 		root.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((btn) => {
@@ -926,6 +1076,100 @@ const SCENARIOS = [
 	   Every rule here is scoped through .rp-verdict-table — a static element —
 	   with :global on the rows, because the rows are injected by script and
 	   carry no scoping attribute of their own. */
+	/* ── guided read ──────────────────────────────────────────────
+	   A SPOTLIGHT, NOT A MODAL. Nothing covers the component and nothing is
+	   trapped: the dimmed panels stay on screen, keep their layout and remain
+	   readable at 0.32 — the lit panel is raised by contrast, not by hiding
+	   everything else, because the comparison between panels IS the content.
+	   A modal overlay would obscure the one thing it was opened to explain.
+
+	   The card is inserted next to whichever panel is lit, so the eye never has
+	   to travel between the explanation and the thing explained. */
+	.rp-btn--guide {
+		border-color: color-mix(in oklab, var(--ormas) 45%, var(--rule));
+		color: var(--ormas);
+	}
+	.rp-btn--guide:hover { border-color: var(--ormas); }
+	.rp.is-guided .rp-btn--guide { border-color: var(--ormas); background: color-mix(in oklab, var(--ormas) 10%, var(--plate)); }
+
+	/* LEAF PANELS ONLY. .rp-ledger lives inside .rp-readout, and opacity composites
+	   down the tree — dimming the parent puts a hard ceiling of 0.32 on the child,
+	   so lighting the ledger would have done nothing at all. Each dimmable panel is
+	   named individually and no dimmed element is ever an ancestor of a lit one. */
+	.rp.is-guided .rp-panes,
+	.rp.is-guided .rp-chart,
+	.rp.is-guided .rp-ledger,
+	.rp.is-guided .rp-verdict,
+	.rp.is-guided .rp-bar {
+		opacity: 0.32;
+		filter: saturate(0.4);
+		transition: opacity 260ms ease, filter 260ms ease;
+	}
+	.rp.is-guided .is-lit {
+		opacity: 1;
+		filter: none;
+		position: relative;
+	}
+	/* The rule, not a glow: a hairline in the ORMAS amber down the lit panel's
+	   leading edge. A drop shadow on a light plate reads as a card lifting off
+	   the page, which is the wrong metaphor for a diagram being pointed at. */
+	.rp.is-guided .is-lit::before {
+		content: '';
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: calc(var(--space-lg) * -0.5);
+		width: 2px;
+		background: var(--ormas);
+		border-radius: 2px;
+	}
+
+	.rp-guide {
+		margin: var(--space-md) var(--space-lg);
+		padding: var(--space-md);
+		border: 1px solid color-mix(in oklab, var(--ormas) 35%, var(--rule));
+		border-radius: 4px;
+		background: color-mix(in oklab, var(--ormas) 6%, var(--plate));
+		display: grid;
+		gap: 8px;
+	}
+	.rp-guide-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-sm); }
+	.rp-guide-eyebrow {
+		font-family: var(--mono);
+		font-size: 11px;
+		letter-spacing: 0.08em;
+		color: var(--fg-dim);
+		margin: 0;
+	}
+	.rp-guide-skip {
+		font: inherit;
+		font-size: var(--text-small);
+		background: none;
+		border: 0;
+		padding: 0;
+		color: var(--fg-dim);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		cursor: pointer;
+	}
+	.rp-guide-skip:hover { color: var(--fg); }
+	.rp-guide-title { margin: 0; font-size: var(--text-body); line-height: 1.3; }
+	.rp-guide-body { margin: 0; font-size: var(--text-small); line-height: 1.55; color: var(--fg-mid); max-width: 68ch; }
+	.rp-guide-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-top: 4px; }
+	.rp-guide-dots { font-size: 9px; letter-spacing: 0.3em; color: var(--ormas); }
+
+	@media (prefers-reduced-motion: reduce) {
+		.rp.is-guided .rp-panes,
+		.rp.is-guided .rp-chart,
+		.rp.is-guided .rp-ledger,
+		.rp.is-guided .rp-verdict,
+		.rp.is-guided .rp-bar { transition: none; }
+	}
+
+	@container (max-width: 560px) {
+		.rp-guide { margin-inline: var(--space-md); }
+		.rp-guide-foot { flex-direction: column; align-items: stretch; }
+	}
+
 	.rp-verdict { padding: 0 var(--space-lg) var(--space-lg); }
 
 	.rp-verdict-table {
