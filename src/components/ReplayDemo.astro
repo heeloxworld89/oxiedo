@@ -44,6 +44,11 @@ export interface Props {
 	 *  record is the payoff a reader came for. */
 	loop?: boolean;
 	compact?: boolean;
+	/** 'auto' opens the guided read by itself, once per browser, when the component first
+	 *  scrolls into view. For the page whose whole subject is this component. Everywhere
+	 *  else the replay is an illustration inside a page about something else, and a tour
+	 *  that starts itself there is an interruption. */
+	guide?: 'auto' | 'manual';
 }
 const {
 	scenario = 'dead-layer-lesion',
@@ -51,6 +56,7 @@ const {
 	openRecord = false,
 	loop = false,
 	compact = false,
+	guide = 'manual',
 } = Astro.props;
 
 const SCENARIOS = [
@@ -68,6 +74,7 @@ const SCENARIOS = [
 	data-scenario={scenario}
 	data-open-record={openRecord ? 'true' : 'false'}
 	data-loop={loop ? 'true' : 'false'}
+	data-guide-mode={guide}
 >
 	<header class="rp-bar">
 		<div class="rp-bar-left">
@@ -87,6 +94,16 @@ const SCENARIOS = [
 		</div>
 		<p class="rp-run" data-conditions>Loading the archived run…</p>
 	</header>
+
+	{/* PLAIN LANGUAGE, FIRST. Everything else in this component is written for somebody who
+	    already knows what an epoch is. A first-time reader who does not gets a wall of
+	    instrumentation and no reason to press anything, which is what was reported. Two
+	    sentences, no jargon, above the diagram rather than below it. */}
+	<p class="rp-plain">
+		<strong>A neural network is damaged partway through training.</strong> The version on the
+		right names which parts broke, two steps later, and repairs itself. The one on the left
+		cannot say anything about it, and never will.
+	</p>
 
 	<div class="rp-stageband">
 		<div class="rp-panes">
@@ -147,53 +164,88 @@ const SCENARIOS = [
 		</div>
 	</aside>
 
-	<div class="rp-readout">
-		<div class="rp-chart">
+	{/* ── ONE PANEL AT A TIME ──────────────────────────────────────────────────────
+	    The chart, the ledger, the answer table and the record used to stack, and the
+	    component came to 1113px against 811px of usable height at 1440×900. Everything a
+	    reader was asked to compare was therefore off-screen from everything else, and every
+	    problem reported on this component — the guided read with nowhere to sit, the dock
+	    hunting for room, having to scroll to see what changed — was downstream of that one
+	    number.
+
+	    Tabbed, the component is bar 63 + panes 336 + controls 71 + panel 291 = 761px. It
+	    fits, with room to spare.
+
+	    UNDER the panes, not beside them. The side-by-side arrangement is the obvious one and
+	    it cannot work here: anatomy.ts holds each network to MIN_W = 560, so the two need
+	    1120px between them, and a right-hand panel taking a third of a 1280px container
+	    would leave them 395px each and force an overflow.
+
+	    "What each one can answer" is the default tab deliberately. It is the only panel a
+	    non-technical reader understands on sight — a list of questions, and whether each
+	    network can answer them. The chart and the ledger are for someone already convinced. */}
+	<div class="rp-tabs">
+		<div class="rp-tablist" role="tablist" aria-label="Replay panels">
+			<button type="button" class="rp-tab" role="tab" id="rp-tab-answers" aria-controls="rp-panel-answers" aria-selected="true" data-tab="answers">What each one can answer</button>
+			<button type="button" class="rp-tab" role="tab" id="rp-tab-accuracy" aria-controls="rp-panel-accuracy" aria-selected="false" tabindex="-1" data-tab="accuracy">Accuracy</button>
+			<button type="button" class="rp-tab" role="tab" id="rp-tab-ledger" aria-controls="rp-panel-ledger" aria-selected="false" tabindex="-1" data-tab="ledger">Corrections</button>
+			<button type="button" class="rp-tab" role="tab" id="rp-tab-record" aria-controls="rp-panel-record" aria-selected="false" tabindex="-1" data-tab="record">The record</button>
+		</div>
+
+		<div class="rp-panel" id="rp-panel-answers" role="tabpanel" aria-labelledby="rp-tab-answers" data-panel="answers">
+			<div class="rp-verdict">
+			<p class="rp-chart-label">What each one can answer, at this epoch</p>
+			<table class="rp-verdict-table">
+				<thead>
+					<tr>
+						<th scope="col">The question</th>
+						<th scope="col">Standard CNN</th>
+						<th scope="col">ORMAS</th>
+					</tr>
+				</thead>
+				<tbody data-verdict></tbody>
+			</table>
+			</div>
+		</div>
+
+		<div class="rp-panel" id="rp-panel-accuracy" role="tabpanel" aria-labelledby="rp-tab-accuracy" data-panel="accuracy" hidden>
+			<div class="rp-chart">
 			<p class="rp-chart-label">Test accuracy · both arms, one axis</p>
 			<div class="rp-chart-box">
 				<canvas data-canvas aria-label="Test accuracy across training for both networks on one axis"></canvas>
 			</div>
+			</div>
 		</div>
-		<div class="rp-ledger">
+
+		<div class="rp-panel" id="rp-panel-ledger" role="tabpanel" aria-labelledby="rp-tab-ledger" data-panel="ledger" hidden>
+			<div class="rp-ledger">
 			<p class="rp-chart-label">Correction ledger · written during training</p>
 			<div class="rp-alarms" data-alarms></div>
+			</div>
 		</div>
-	</div>
 
-	<div class="rp-verdict">
-		<p class="rp-chart-label">What each one can answer, at this epoch</p>
-		<table class="rp-verdict-table">
-			<thead>
-				<tr>
-					<th scope="col">The question</th>
-					<th scope="col">Standard CNN</th>
-					<th scope="col">ORMAS</th>
-				</tr>
-			</thead>
-			<tbody data-verdict></tbody>
-		</table>
-	</div>
-
-	<div class="rp-record" data-record hidden>
-		<header class="rp-record-head">
-			<h4 class="rp-record-title">The record</h4>
-			<p class="rp-record-sub" data-record-sub></p>
-		</header>
-		<dl class="rp-record-grid" data-record-grid></dl>
-		<div class="rp-table-wrap">
-			<table class="rp-table">
-				<caption class="rp-sr">Every correction, with its component, diagnosis, step, magnitude and declared ceiling</caption>
-				<thead>
-					<tr><th scope="col">Step</th><th scope="col">Component</th><th scope="col">Diagnosis</th><th scope="col">Magnitude</th><th scope="col">Ceiling</th></tr>
-				</thead>
-				<tbody data-record-rows></tbody>
-			</table>
+		<div class="rp-panel" id="rp-panel-record" role="tabpanel" aria-labelledby="rp-tab-record" data-panel="record" hidden>
+			<div class="rp-record" data-record>
+			<header class="rp-record-head">
+				<h4 class="rp-record-title">The record</h4>
+				<p class="rp-record-sub" data-record-sub></p>
+			</header>
+			<dl class="rp-record-grid" data-record-grid></dl>
+			<div class="rp-table-wrap">
+				<table class="rp-table">
+					<caption class="rp-sr">Every correction, with its component, diagnosis, step, magnitude and declared ceiling</caption>
+					<thead>
+						<tr><th scope="col">Step</th><th scope="col">Component</th><th scope="col">Diagnosis</th><th scope="col">Magnitude</th><th scope="col">Ceiling</th></tr>
+					</thead>
+					<tbody data-record-rows></tbody>
+				</table>
+			</div>
+			<div class="rp-record-actions">
+				<button type="button" class="rp-btn rp-btn--primary" data-download>Download the record</button>
+				<button type="button" class="rp-btn" data-diff>Diff against the pre-event version</button>
+			</div>
+			<div class="rp-diff" data-diff-panel hidden></div>
+			</div>
 		</div>
-		<div class="rp-record-actions">
-			<button type="button" class="rp-btn rp-btn--primary" data-download>Download the record</button>
-			<button type="button" class="rp-btn" data-diff>Diff against the pre-event version</button>
-		</div>
-		<div class="rp-diff" data-diff-panel hidden></div>
 	</div>
 
 	<noscript>
@@ -406,7 +458,50 @@ const SCENARIOS = [
 				<td>${x.ceiling != null ? x.ceiling.toFixed(2) : '—'}</td></tr>`).join('');
 		}
 
-		function showRecord() { elRecord.hidden = false; renderRecord(); }
+		// ── TABS ────────────────────────────────────────────────────────────────
+		//
+		// One panel visible at a time is what gets the component under the fold line. The
+		// panels use the `hidden` attribute and carry NO display rule of their own, so
+		// reset.css's `[hidden] { display: none !important }` is what hides them — the same
+		// trap that shipped an always-visible guide card is avoided by simply not setting
+		// display here. check.py's fourth audit fails the build if anyone adds one.
+		const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+		const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+
+		function selectTab(name: string, focus = false) {
+			for (const b of tabs) {
+				const on = b.dataset.tab === name;
+				b.setAttribute('aria-selected', String(on));
+				b.tabIndex = on ? 0 : -1;
+				if (on && focus) b.focus();
+			}
+			for (const el of panels) el.hidden = el.dataset.panel !== name;
+
+			// A canvas in a hidden panel has no box, so it sizes to zero and draws nothing.
+			// Sizing on reveal is not an optimisation here; without it the accuracy tab is
+			// blank the first time it is opened.
+			if (name === 'accuracy') {
+				sizeCanvas(canvas);
+				if (engine) render(engine.epoch);
+			}
+		}
+
+		for (const b of tabs) {
+			b.addEventListener('click', () => selectTab(b.dataset.tab!));
+		}
+		// Arrow keys move between tabs, which is what a tablist is expected to do.
+		root.querySelector('.rp-tablist')?.addEventListener('keydown', (e) => {
+			const k = (e as KeyboardEvent).key;
+			const i = tabs.findIndex((b) => b.getAttribute('aria-selected') === 'true');
+			if (k !== 'ArrowRight' && k !== 'ArrowLeft' && k !== 'Home' && k !== 'End') return;
+			e.preventDefault();
+			const next = k === 'Home' ? 0
+				: k === 'End' ? tabs.length - 1
+				: (i + (k === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
+			selectTab(tabs[next].dataset.tab!, true);
+		});
+
+		function showRecord() { selectTab('record'); renderRecord(); }
 
 		function setPlayLabel() {
 			const on = engine?.isPlaying ?? false;
@@ -478,6 +573,17 @@ const SCENARIOS = [
 			// slightly; the lit panel is raised by an outline and a lift.
 			for (const el of root.querySelectorAll('.is-lit')) el.classList.remove('is-lit');
 			const lit = root.querySelector(step.target);
+
+			// OPEN THE TAB THE TARGET LIVES IN, FIRST. Three of the four stops point at
+			// something that is now inside a tab panel, and a panel that is not selected is
+			// `hidden` — so the guide was lighting an element with no box and telling the
+			// reader to look at nothing. Caught by the browser test at stop 4 on every
+			// viewport: "the highlighted panel is visible" failed the moment the panels
+			// became tabs. Derived from the DOM rather than a second lookup table, so a stop
+			// that points at a new panel needs no change here.
+			const owner = lit?.closest<HTMLElement>('[data-panel]');
+			if (owner && owner.hidden) selectTab(owner.dataset.panel!);
+
 			lit?.classList.add('is-lit');
 
 			// The dock does not move; the panel comes to the reader.
@@ -567,7 +673,7 @@ const SCENARIOS = [
 			// Scoping is attribute-based, so the styles travel with the element.
 			document.body.appendChild(elGuide);
 			root.classList.add('is-guided');
-			elRecord.hidden = true;
+			selectTab('answers');
 			engine.setRate(4);          // the gaps between stops are long at 1x
 			for (const b of root.querySelectorAll('[data-rate]')) {
 				b.setAttribute('aria-pressed', String(b.getAttribute('data-rate') === '4'));
@@ -687,7 +793,7 @@ const SCENARIOS = [
 			}
 
 			elScrub.max = String(engine.lastEpoch);
-			elRecord.hidden = true;
+			selectTab('answers');
 			q('[data-diff-panel]')!.hidden = true;
 
 			if (reduced || root.dataset.openRecord === 'true') {
@@ -798,11 +904,37 @@ const SCENARIOS = [
 		let inView = false;
 		let loopTimer = 0;
 
+		// FIRST VISIT GETS THE GUIDED READ, ONCE.
+		//
+		// Nobody clicks a button they do not know is there, so on the page whose subject is
+		// this component the guided read opens itself the first time the component is
+		// scrolled to. Once per browser: the flag is written the moment it fires, so a second
+		// visit gets the plain autoplay and is never walked through it again.
+		//
+		// localStorage is wrapped both ways. It throws in a private window and in a browser
+		// with site data blocked, and an exception here would take out the autostart with it.
+		// A reader whose storage is unavailable gets the guide every visit, which is the safe
+		// direction to fail in.
+		const GUIDE_SEEN = 'oxiedo.blackbox.guideSeen';
+		function guideAlreadySeen() {
+			try { return localStorage.getItem(GUIDE_SEEN) === '1'; } catch { return false; }
+		}
+		function rememberGuideSeen() {
+			try { localStorage.setItem(GUIDE_SEEN, '1'); } catch { /* storage unavailable */ }
+		}
+
 		function maybeAutoStart() {
 			if (autoStarted || reduced) return;
 			if (root.dataset.openRecord === 'true') return;
 			if (!inView || !engine || engine.isPlaying) return;
 			autoStarted = true;
+
+			if (root.dataset.guideMode === 'auto' && !guideAlreadySeen() && !guideRunning()) {
+				rememberGuideSeen();
+				guideStart();
+				return;
+			}
+
 			engine.seekEpoch(0);
 			engine.play();
 			setPlayLabel();
@@ -966,7 +1098,9 @@ const SCENARIOS = [
 	.rp-pane {
 		border: 1px solid color-mix(in srgb, var(--rule) 32%, transparent);
 		border-radius: 4px;
-		padding: var(--space-md);
+		/* Tight vertically: the anatomy inside is a fixed 300px, so every pixel of pane
+		   padding is a pixel of component height, and the component has to clear the fold. */
+		padding: 8px var(--space-md);
 		min-width: 0;
 		background: color-mix(in srgb, var(--ink-raised) 45%, transparent);
 	}
@@ -1136,16 +1270,97 @@ const SCENARIOS = [
 
 	/* ── readout row ──────────────────────────────────────────── */
 
+	/* SHORT VIEWPORTS. The console is built to clear the fold at 900px of window height, which
+	   leaves 811px under the nav. At 800px there are only 711px and it does not fit — so on a
+	   short window the network drawing gives up 60px and the chrome tightens, which closes
+	   most of the gap. Not all of it: at 800px tall the component still runs about 45px past
+	   the fold, and shrinking the diagram further would make its labels unreadable, which is
+	   a worse trade than a short scroll.
+
+	   Two things this rule needs that are easy to miss. The !important is against an inline
+	   style: anatomy.ts sets svg.style.height = "300px" when it draws, so nothing in a
+	   stylesheet reaches it otherwise. And the :global() is because that svg is created in
+	   JavaScript and therefore carries no [data-astro-cid] — a bare `> svg` compiles to
+	   `svg[data-astro-cid-…]` and matches nothing, which is exactly how this first shipped:
+	   the padding trims applied, the diagram did not, and the component moved 4px. */
+	@media (max-height: 880px) {
+		.rp-anatomy > :global(svg) { height: 240px !important; }
+		.rp-plain { padding-block: 8px; }
+		.rp-pane { padding-block: 6px; }
+		.rp-panel { padding-block: 10px; }
+	}
+
+	/* ── plain-language strip ── */
+	.rp-plain {
+		margin: 0;
+		padding: 10px var(--space-lg);
+		border-bottom: 1px solid var(--rule);
+		font-size: 13px;
+		line-height: 1.5;
+		color: var(--fg-mid);
+		max-width: 104ch;
+	}
+	.rp-plain strong { color: var(--fg); font-weight: 700; }
+
+	/* ── tabs ── */
+	.rp-tabs {
+		border-top: 1px solid var(--rule);
+		background: var(--plate);
+	}
+
+	.rp-tablist {
+		display: flex;
+		gap: 2px;
+		padding: 0 var(--space-lg);
+		border-bottom: 1px solid var(--rule);
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.rp-tablist::-webkit-scrollbar { display: none; }
+
+	.rp-tab {
+		font: inherit;
+		font-size: var(--text-small);
+		font-weight: 600;
+		white-space: nowrap;
+		padding: 8px 14px;
+		border: 0;
+		border-bottom: 2px solid transparent;
+		background: none;
+		color: var(--fg-dim);
+		cursor: pointer;
+		transition: color var(--duration-fast) var(--ease-out),
+			border-color var(--duration-fast) var(--ease-out);
+	}
+	.rp-tab:hover { color: var(--fg); }
+	.rp-tab[aria-selected='true'] {
+		color: var(--ormas);
+		border-bottom-color: var(--ormas);
+	}
+
+	/* NO `display` ON .rp-panel. The panels are toggled with the hidden attribute, and an
+	   author display here would outrank the UA rule and make every panel permanently
+	   visible — the exact bug that shipped an always-open guide card. */
+	/* THE PANEL SETS THE COMPONENT'S HEIGHT, so it is fixed rather than min-height'd: every
+	   tab is the same height and switching between them does not make the page jump. 244px
+	   is the tallest of the four panels' contents at 1440px, measured, not chosen. */
+	.rp-panel {
+		padding: var(--space-md) var(--space-lg);
+		height: 258px;
+		overflow-y: auto;
+	}
+
 	.rp-readout {
 		display: grid;
 		grid-template-columns: 1.7fr 1fr;
 		gap: var(--space-lg);
-		padding: var(--space-lg) var(--space-lg) var(--space-md);
 		align-items: start;
 	}
 	.rp-chart, .rp-ledger { min-width: 0; }
 	.rp-chart-label { margin: 0 0 var(--space-sm); }
-	.rp-chart-box { position: relative; aspect-ratio: 5 / 2; min-height: 140px; }
+	/* HEIGHT, NOT ASPECT RATIO. At 5/2 the box grew with its width: 460px tall on a 1150px
+	   panel, which is nearly twice the panel it sits in. It now fills the panel it is given. */
+	.rp-chart-box { position: relative; height: 196px; min-height: 0; }
 	.rp-chart-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 	.rp-alarms { min-height: 150px; font-family: var(--mono); font-size: 11px; }
@@ -1407,7 +1622,7 @@ const SCENARIOS = [
 		.rp-guide :global(.rp-guide-seg) { transition: none; }
 	}
 
-	.rp-verdict { padding: 0 var(--space-lg) var(--space-lg); }
+	.rp-verdict { padding: 0; }
 
 	.rp-verdict-table {
 		width: 100%;
@@ -1432,7 +1647,7 @@ const SCENARIOS = [
 
 	.rp-verdict-table :global(tbody th) {
 		text-align: left;
-		padding: 9px 12px 9px 0;
+		padding: 5px 12px 5px 0;
 		font-weight: 500;
 		font-size: var(--text-small);
 		color: var(--fg);
@@ -1441,7 +1656,7 @@ const SCENARIOS = [
 	}
 	.rp-verdict-table :global(tbody td) {
 		text-align: left;
-		padding: 9px 12px;
+		padding: 5px 12px;
 		font-family: var(--mono);
 		font-size: 11.5px;
 		line-height: 1.45;
@@ -1606,8 +1821,7 @@ const SCENARIOS = [
 	/* ── the record ───────────────────────────────────────────── */
 
 	.rp-record {
-		padding: var(--space-lg);
-		border-top: 1px solid var(--border-strong);
+		padding: 0;
 		background: var(--plate-sunk);
 	}
 	.rp-record-head { margin-bottom: var(--space-md); }

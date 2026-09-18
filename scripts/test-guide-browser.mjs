@@ -307,6 +307,92 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
+// ── THE CONSOLE FITS, AND ITS TABS WORK ──────────────────────────────────────────────────
+//
+// The component was 1113px against 811px of usable height at 1440×900, and every complaint
+// about it — the guided read with nowhere to sit, the dock hunting for room, having to
+// scroll to see what changed — was downstream of that one number. Tabbed, it is ~818px.
+//
+// Three things can silently undo that: a panel growing past its fixed height and scrolling
+// inside itself, the four panels disagreeing on height so switching tabs makes the page
+// jump, and the chart canvas drawing at zero size because it was measured while hidden.
+{
+	for (const vp of [{ w: 1280, h: 800 }, { w: 1440, h: 900 }, { w: 1728, h: 1080 }]) {
+		const page = await browser.newPage({ viewport: { width: vp.w, height: vp.h } });
+		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+		await page.waitForTimeout(500);
+		const heights = [];
+		for (const tab of ['answers', 'accuracy', 'ledger', 'record']) {
+			await page.click(`[data-tab="${tab}"]`);
+			await page.waitForTimeout(260);
+			const m = await page.evaluate((name) => {
+				const rp = document.querySelector('.rp').getBoundingClientRect();
+				const panel = document.querySelector(`[data-panel="${name}"]`);
+				const shown = [...document.querySelectorAll('[data-panel]')].filter((e) => !e.hidden);
+				const canvas = document.querySelector('[data-canvas]');
+				return {
+					component: Math.round(rp.height),
+					usable: innerHeight - Math.round(document.querySelector('.nav').getBoundingClientRect().height),
+					onlyOne: shown.length === 1 && shown[0].dataset.panel === name,
+					clipped: panel.scrollHeight > panel.clientHeight + 2,
+					canvasDrawn: name !== 'accuracy' || Math.round(canvas.getBoundingClientRect().height) > 40,
+					selected: document.querySelector(`[data-tab="${name}"]`).getAttribute('aria-selected'),
+					// The short-viewport rule needs :global() — the svg is built in JS and has
+					// no [data-astro-cid], so a bare `> svg` matches nothing. It shipped that
+					// way once and the component moved 4px instead of 64px.
+					diagram: Math.round(document.querySelector('.rp-anatomy svg').getBoundingClientRect().height),
+				};
+			}, tab);
+			heights.push(m.component);
+			var lastDiagram = m.diagram;
+			ok(m.onlyOne, `console ${vp.w}px: opening "${tab}" shows that panel and only that one`);
+			ok(m.selected === 'true', `console ${vp.w}px: "${tab}" is marked selected`);
+			ok(!m.clipped, `console ${vp.w}px: the "${tab}" panel is not scrolling inside itself`);
+			ok(m.canvasDrawn, `console ${vp.w}px: the chart has a real height when its tab opens`);
+			// At 900px of window height and above it fits outright. At 800px it runs about
+			// 43px past the fold even with the diagram shrunk to 240px, and shrinking it
+			// further makes its labels unreadable — a worse trade than a short scroll. The
+			// tolerance is that measured number, not a round one, so a regression that costs
+			// another 50px fails here.
+			const tolerance = vp.h >= 900 ? 12 : 48;
+			ok(m.component <= m.usable + tolerance,
+				`console ${vp.w}×${vp.h}: on "${tab}" the component is ${m.component}px against ${m.usable}px of usable height`);
+		}
+		const wantDiagram = vp.h <= 880 ? 240 : 300;
+		ok(lastDiagram === wantDiagram,
+			`console ${vp.w}×${vp.h}: the diagram is ${lastDiagram}px, expected ${wantDiagram}px`);
+		ok(new Set(heights).size === 1,
+			`console ${vp.w}px: all four tabs are the same height, so switching does not jump (${heights.join('/')})`);
+		await page.close();
+	}
+
+	// The guided read opens itself once, on a first visit to this page only.
+	const first = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+	const fp = await first.newPage();
+	await fp.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await fp.evaluate(() => document.querySelector('.rp').scrollIntoView({ block: 'center' }));
+	await fp.waitForTimeout(1500);
+	ok(await fp.evaluate(() => !document.querySelector('[data-guide]').hidden),
+		'first visit: the guided read opens by itself');
+	ok(await fp.evaluate(() => localStorage.getItem('oxiedo.blackbox.guideSeen') === '1'),
+		'first visit: it records that it has been shown');
+	await fp.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await fp.evaluate(() => document.querySelector('.rp').scrollIntoView({ block: 'center' }));
+	await fp.waitForTimeout(1500);
+	ok(await fp.evaluate(() => document.querySelector('[data-guide]').hidden),
+		'second visit: it does not open again');
+	await first.close();
+
+	const home = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+	const hp = await home.newPage();
+	await hp.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });
+	await hp.evaluate(() => document.querySelector('.rp')?.scrollIntoView({ block: 'center' }));
+	await hp.waitForTimeout(1500);
+	ok(await hp.evaluate(() => document.querySelector('.rp').dataset.guideMode !== 'auto'),
+		'homepage: the ambient embed never opens the guided read by itself');
+	await home.close();
+}
+
 // ── THE THREE REPLAY CONTROLS ────────────────────────────────────────────────────────────
 //
 // Play, Replay from the event and Guided read were all the same cream chrome as the speed

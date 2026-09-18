@@ -237,17 +237,19 @@ The same network, twice. One sealed, one open.
 
 Loading the archived run…
 
+**A neural network is damaged partway through training.** The version on the right names which parts broke, two steps later, and repairs itself. The one on the left cannot say anything about it, and never will.
+
 - Field: Epoch
 
 epoch 0 / 199
 
-Test accuracy · both arms, one axis
-
-Correction ledger · written during training
-
 What each one can answer, at this epoch
 
 The question Standard CNN ORMAS
+
+Test accuracy · both arms, one axis
+
+Correction ledger · written during training
 
 ##### The record
 
