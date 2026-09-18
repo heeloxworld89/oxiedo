@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Structural CSS audits for this site. Run after any stylesheet change.
 
-Three checks, each written after a real bug shipped:
+Four checks, each written after a real bug shipped:
   1. unstyled classes   — a class in the built HTML with no rule anywhere
   2. specificity        — `.parent tag` out-specifying a class on the same node
   3. container conflict — a class sharing an element with .container that widens past it
+  4. hidden override    — an author `display:` on a class that ships with the hidden attribute
 """
 import re, glob, sys
 
@@ -30,7 +31,14 @@ css = ''.join(open(f).read() for f in glob.glob('src/styles/*.css'))
 for f in glob.glob('src/**/*.astro', recursive=True):
     for blk in re.findall(r'<style[^>]*>(.*?)</style>', open(f).read(), re.S):
         css += blk
-pages = [p for p in sorted(glob.glob('dist/**/*.html', recursive=True)) if 'paper' not in p]
+# black-box-standalone.html is a BUILD ARTEFACT, not a page: one 820 KB file with all four
+# replay bundles and the fonts inlined, for evaluators who cannot reach an external URL. It
+# is excluded from every audit here. Auditing it is meaningless — it has no separate
+# stylesheet to be wrong about — and it is also a performance trap: a tag-scanning regex over
+# a single 820 KB document with base64 blobs inside it turns quadratic and hangs the check.
+ARTEFACTS = ('paper', 'black-box-standalone')
+pages = [p for p in sorted(glob.glob('dist/**/*.html', recursive=True))
+         if not any(a in p for a in ARTEFACTS)]
 allhtml = ''.join(open(f).read() for f in pages)
 fail = 0
 
@@ -110,9 +118,14 @@ fail += len(hits)
 #        section on /press at 700px inside a 1680px container until 2026-09-08.
 #      The original check only tested the first kind, so the second shipped.
 rules = {}
+# Whole declaration blocks, keyed by class, for audits that need more than one property.
+# Only bare `.class` selectors: anything compound is already qualified by something else
+# and is not the accidental-collision case these checks are looking for.
+rules_raw = {}
 for sel, body in re.findall(r'([^{}]+)\{([^}]*)\}', re.sub(r'/\*.*?\*/', '', css, flags=re.S)):
     for s2 in (x.strip() for x in sel.split(',')):
         if re.fullmatch(r'\.[\w-]+', s2):
+            rules_raw.setdefault(s2[1:], []).append(body)
             for d in body.split(';'):
                 if ':' in d:
                     k, v = (x.strip() for x in d.split(':', 1))
@@ -144,6 +157,46 @@ for c in sorted(siblings):
 print("3. container conflict:", "clean" if not conf else f"{len(conf)} conflicts")
 for c in conf: print(c)
 fail += len(conf)
+
+# ── 4. hidden override ───────────────────────────────────────────────────────────────────
+#
+# `hidden` is honoured by the UA stylesheet, which every author rule outranks. So a
+# component that gives a hidden element a display value makes it permanently visible, and
+# the symptom is an empty panel sitting in the layout that no state ever removes. It shipped
+# once: `.rp-guide { display: grid }` put an empty annotation card under the replay controls
+# on every page with the demo.
+#
+# reset.css now carries `[hidden] { display: none !important }`, so the bug cannot bite. This
+# audit still fails on it, because a rule written in the belief that it controls display and
+# silently having no effect is its own defect — better to be told than to wonder why the
+# panel will not lay out.
+hidden_classes = set()
+for f in pages:
+    src = open(f, encoding='utf-8').read()
+    # Anchored on the attribute, not on the tag: scanning every `<tag ...>` in a built page
+    # with `[^>]*` is quadratic on documents carrying large inline blobs. This looks only at
+    # the ~200 characters before a bare `hidden`, which is where its class attribute lives.
+    for m in re.finditer(r'(?:^|\s)hidden(?=[\s/>=])', src):
+        window = src[max(0, m.start() - 200):m.start()]
+        if '<' not in window:
+            continue
+        attrs = window[window.rindex('<'):]
+        cl = re.search(r'class="([^"]+)"', attrs)
+        if cl:
+            hidden_classes.update(cl.group(1).split())
+
+over = []
+for cls in sorted(hidden_classes):
+    for decls in rules_raw.get(cls, []):
+        d = re.search(r'(?:^|[;{\s])display\s*:\s*([a-z-]+)', decls)
+        if d and d.group(1) != 'none':
+            over.append(
+                f"  HIDDEN .{cls} sets display:{d.group(1)} while shipping the hidden attribute. "
+                f"An author display beats the UA [hidden] rule, so the element would never hide. "
+                f"Toggle a class instead, or scope the rule as .{cls}:not([hidden]).")
+print("4. hidden override   :", "clean" if not over else f"{len(over)} overrides")
+for o in over: print(o)
+fail += len(over)
 
 print("\nRESULT:", "all clean" if fail == 0 else f"{fail} issue(s)")
 sys.exit(1 if fail else 0)

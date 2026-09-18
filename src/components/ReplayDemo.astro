@@ -1123,7 +1123,10 @@ const SCENARIOS = [
 		border-radius: 2px;
 	}
 
-	.rp-guide {
+	/* :not([hidden]) for the same reason as .nav-mobile-sub: a bare `display: grid` here beat
+	   the UA's [hidden] rule and parked an empty annotation card under the controls on every
+	   page carrying the demo. */
+	.rp-guide:not([hidden]) {
 		margin: var(--space-md) var(--space-lg);
 		padding: var(--space-md);
 		border: 1px solid color-mix(in oklab, var(--ormas) 35%, var(--rule));

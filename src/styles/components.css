@@ -5087,8 +5087,14 @@ main > section:last-child.band--dark {
 }
 
 /* Children sit under their parent, indented against a rule. Gap is 0 because each link carries
-   its own padding for a 44px tap target — a gap on top of that would double the spacing. */
-.nav-mobile-sub {
+   its own padding for a 44px tap target — a gap on top of that would double the spacing.
+
+   :not([hidden]) IS LOAD-BEARING. The caret collapses this list by setting `sub.hidden`, and
+   `display: flex` on a bare `.nav-mobile-sub` outranks the UA's `[hidden] { display: none }`
+   — so on a phone both submenus stood permanently open and the caret did nothing visible.
+   test-nav.mjs did not catch it: it asserts the hidden PROPERTY, which was being set
+   correctly the whole time. Found 2026-09-18 by check.py's fourth audit. */
+.nav-mobile-sub:not([hidden]) {
 	list-style: none;
 	margin: 0 0 var(--space-md);
 	padding-left: var(--space-md);
