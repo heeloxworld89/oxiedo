@@ -197,7 +197,10 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 // plate landing on a page banner of exactly its own colour and disappearing into it.
 {
 	const page = await browser.newPage({ viewport: { width: 1440, height: 800 } });
-	for (const [route, expectCurrent] of [['/technology', false], ['/black-box', true]]) {
+	// /insights is the one route with a cream ground under the bar; the other fifteen are
+	// #16182B. Both cases are checked, because the plate's whole job is to be an object on
+	// whatever is behind it.
+	for (const [route, expectCurrent] of [['/technology', false], ['/black-box', true], ['/insights', false]]) {
 		await page.goto(`${ORIGIN}${route}`, { waitUntil: 'networkidle' });
 		const m = await page.evaluate(() => {
 			const nav = document.querySelector('.nav').getBoundingClientRect();
@@ -216,8 +219,19 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 				name: a.getAttribute('aria-label'),
 				resolves: document.elementFromPoint(pr.left + pr.width / 2, pr.top + pr.height / 2)
 					?.closest('a')?.getAttribute('href'),
-				// The ring that keeps it off a same-coloured banner.
-				ring: /0px 0px 0px 1px|0px 0px 0px 1px/.test(cs.boxShadow) || cs.boxShadow.includes('1px'),
+				// The ring, which is what defines the plate's edge on a ground close to its own.
+				ring: /0px 0px 0px [12]px/.test(cs.boxShadow),
+				clearsBar: Math.round(pr.top - nav.bottom),
+				// Text on the plate, and the plate against whatever is behind it.
+				textContrast: (() => {
+					const lum = (c) => {
+						const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(Number)
+							.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+						return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+					};
+					const a = lum(cs.color), b = lum(cs.backgroundColor);
+					return +(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2));
+				})(),
 				current: a.getAttribute('aria-current') === 'page',
 				cords: [getComputedStyle(plate, '::before').width, getComputedStyle(plate, '::after').width],
 			};
@@ -230,6 +244,11 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 			`sign ${route}: the accessible name is the whole phrase, not the two spans run together ("${m.name}")`);
 		ok(m.resolves === '/black-box', `sign ${route}: the plate itself resolves to the link (${m.resolves})`);
 		ok(m.ring, `sign ${route}: the plate keeps its separating ring`);
+		ok(m.clearsBar >= 0,
+			`sign ${route}: the plate hangs CLEAR of the bar rather than straddling it (${m.clearsBar}px). ` +
+			'Straddling put half of it on a banner of its own colour, at 1.0:1.');
+		ok(m.textContrast >= 4.5,
+			`sign ${route}: the plate's label is ${m.textContrast}:1 against the plate`);
 		ok(m.cords[0] === '1px' && m.cords[1] === '1px',
 			`sign ${route}: both cords are drawn (${m.cords.join(', ')})`);
 		ok(m.current === expectCurrent, `sign ${route}: aria-current is ${expectCurrent}`);

@@ -5907,7 +5907,7 @@ main > section:last-child.band--dark {
    transform-origin sits at the top centre, between the cords, so it swings from where it is
    hung rather than pivoting about its own middle. */
 .nav-link--mark {
-	--cord: 18px;
+	--cord: 27px;
 	position: relative;
 	overflow: visible;
 	color: var(--text-primary);
@@ -5936,18 +5936,19 @@ main > section:last-child.band--dark {
 	font-size: 12.5px;
 	line-height: 1.35;
 	letter-spacing: 0.01em;
-	color: var(--text-on-dark);
-	background: var(--bg-dark);
+	color: var(--text-primary);
+	background: var(--sign-amber);
 	border-radius: 3px;
-	/* A LIGHT HAIRLINE, BECAUSE THE PLATE AND THE PAGE BANNER ARE THE SAME INK. The plate is
-	   --bg-dark and so is every PageBanner, so it hung half on cream and half on a ground it
-	   matched exactly — the lower half vanished. The ring reads on both surfaces: against the
-	   cream it is invisible behind a dark plate, against the banner it is the only thing
-	   separating them. */
+	/* IT HANGS CLEAR OF THE BAR, NOT ACROSS IT. The first version straddled the bar's lower
+	   edge, which put half the plate on cream and half on a page banner of exactly its own
+	   ink — measured at 1.0:1 against that ground, so the lower half did not exist. Sampling
+	   every route showed the same thing under the bar on fifteen of sixteen: #16182B. So the
+	   plate drops fully onto that ground and takes a colour chosen for it.
+	   The ink ring is for /insights, the one route where the ground is cream. */
 	box-shadow:
-		0 0 0 1px color-mix(in oklab, var(--text-on-dark) 26%, transparent),
-		0 6px 16px rgb(0 0 0 / 0.22),
-		inset 0 1px 0 rgb(255 255 255 / 0.12);
+		0 0 0 1px color-mix(in oklab, var(--text-primary) 28%, transparent),
+		0 7px 18px rgb(0 0 0 / 0.30),
+		inset 0 1px 0 rgb(255 255 255 / 0.30);
 	transform-origin: 50% calc(var(--cord) * -1);
 	transition: box-shadow var(--duration-fast) var(--ease-out);
 }
@@ -5984,10 +5985,11 @@ main > section:last-child.band--dark {
 .nav-link--mark:hover .nav-sign-plate,
 .nav-link--mark:focus-visible .nav-sign-plate {
 	animation: nav-sign-sway 1150ms var(--ease-out);
+	background: color-mix(in oklab, var(--sign-amber) 88%, #fff);
 	box-shadow:
-		0 0 0 1px color-mix(in oklab, var(--text-on-dark) 40%, transparent),
-		0 9px 22px rgb(0 0 0 / 0.28),
-		inset 0 1px 0 rgb(255 255 255 / 0.16);
+		0 0 0 1px color-mix(in oklab, var(--text-primary) 40%, transparent),
+		0 10px 26px rgb(0 0 0 / 0.34),
+		inset 0 1px 0 rgb(255 255 255 / 0.38);
 }
 
 .nav-link--mark:hover,
@@ -5995,14 +5997,19 @@ main > section:last-child.band--dark {
 	color: var(--text-primary);
 }
 
-/* On its own page the plate takes the accent. The shape already says "this is the one"; the
-   colour is what says "and you are on it". */
+/* ON ITS OWN PAGE the plate keeps the amber and gains a solid ink ring. Changing the hue was
+   tried and is wrong twice over: indigo measures 2.21:1 against the banner, so the sign stops
+   being an object, and the amber is doing semantic work that "you are here" should not
+   override. A ring says selected without arguing with the colour. */
 .nav-link--mark[aria-current='page'] {
 	background: transparent;
 	color: var(--text-primary);
 }
 .nav-link--mark[aria-current='page'] .nav-sign-plate {
-	background: var(--accent-dark);
+	box-shadow:
+		0 0 0 2px var(--text-primary),
+		0 7px 18px rgb(0 0 0 / 0.30),
+		inset 0 1px 0 rgb(255 255 255 / 0.30);
 }
 
 /* The bar's hover underline would draw across the bracket text and read as a second

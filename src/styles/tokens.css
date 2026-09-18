@@ -64,6 +64,12 @@
 	/* Data and chart colours. --chart-ormas stays amber: it is the colour of the ORMAS line in
 	   the preprint's own figures, a sourced fact that does not follow the site's chrome. */
 	--chart-ormas: #A5600C;
+	/* A lighter step of the ORMAS amber, for the one object that has to read as an object on
+	   both the cream bar and the ink banner beneath it. Not an imported gold: on this site
+	   amber IS the open arm — it is the colour the ORMAS line is drawn in on every chart — so
+	   "Open the Black Box" wearing it is the palette agreeing with the label. Measured against
+	   both grounds: 7.34:1 on #16182B, 7.65:1 against the ink it carries. */
+	--sign-amber: #D99D2B;
 	--chart-baseline: #4E6FA8;
 	--chart-warning: #B23B3B;
 	--chart-recovery: #15703F;
