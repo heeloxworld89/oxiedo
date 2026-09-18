@@ -306,33 +306,37 @@ const SCENARIOS = [
 			<div class="rp-alarms" data-alarms></div>
 			</div>
 		</div>
-
-		<div class="rp-panel" id="rp-panel-record" role="tabpanel" aria-labelledby="rp-tab-record" data-panel="record" hidden>
-			<div class="rp-record" data-record>
-			<header class="rp-record-head">
-				<h4 class="rp-record-title">The record</h4>
-				<p class="rp-record-sub" data-record-sub></p>
-			</header>
-			<dl class="rp-record-grid" data-record-grid></dl>
-			<div class="rp-table-wrap">
-				<table class="rp-table">
-					<caption class="rp-sr">Every correction, with its component, diagnosis, step, magnitude and declared ceiling</caption>
-					<thead>
-						<tr><th scope="col">Step</th><th scope="col">Component</th><th scope="col">Diagnosis</th><th scope="col">Magnitude</th><th scope="col">Ceiling</th></tr>
-					</thead>
-					<tbody data-record-rows></tbody>
-				</table>
-			</div>
-			<div class="rp-record-actions">
-				<button type="button" class="rp-btn rp-btn--primary" data-download>Download the record</button>
-				<button type="button" class="rp-btn" data-diff>Diff against the pre-event version</button>
-			</div>
-			<div class="rp-diff" data-diff-panel hidden></div>
-			</div>
+		</div>
 		</div>
 	</div>
 
-		</div>
+	{/* THE RECORD IS THE ENDING, not a quarter of the readout row. In a 423px cell its
+	    five-column table had nowhere to go and the panel sat mostly empty; as a full-width
+	    strip under the console the columns breathe and it reads as what it is — the artefact
+	    the whole screen exists to produce. It is below the fold on purpose: the console is
+	    one screen, and this is the first thing under it. */}
+	<div class="rp-panel rp-recordband" id="rp-panel-record" role="tabpanel" aria-labelledby="rp-tab-record" data-panel="record" hidden>
+	<div class="rp-record" data-record>
+	<header class="rp-record-head">
+		<h4 class="rp-record-title">The record</h4>
+		<p class="rp-record-sub" data-record-sub></p>
+	</header>
+	<dl class="rp-record-grid" data-record-grid></dl>
+	<div class="rp-table-wrap">
+		<table class="rp-table">
+			<caption class="rp-sr">Every correction, with its component, diagnosis, step, magnitude and declared ceiling</caption>
+			<thead>
+				<tr><th scope="col">Step</th><th scope="col">Component</th><th scope="col">Diagnosis</th><th scope="col">Magnitude</th><th scope="col">Ceiling</th></tr>
+			</thead>
+			<tbody data-record-rows></tbody>
+		</table>
+	</div>
+	<div class="rp-record-actions">
+		<button type="button" class="rp-btn rp-btn--primary" data-download>Download the record</button>
+		<button type="button" class="rp-btn" data-diff>Diff against the pre-event version</button>
+	</div>
+	<div class="rp-diff" data-diff-panel hidden></div>
+	</div>
 	</div>
 
 	<noscript>
@@ -387,11 +391,23 @@ const SCENARIOS = [
 		let engine: ReplayEngine | null = null;
 		let bundle: Bundle | null = null;
 		let theme = readTheme(root);
+		const recordAlwaysOn = root.classList.contains('rp--app');
+		let recordShown = -1;
 
 		function render(epoch: number) {
 			if (!bundle || !engine) return;
 			const e = Math.round(epoch);
 			paintMetrics(epoch);
+
+			// THE RECORD FILLS AS THE RUN GOES. It used to be written once, on the run
+			// ending, because it was a panel you opened afterwards. As a strip that is
+			// always on screen, an empty table under a live console reads as broken.
+			// Re-rendered only when the count changes — it is 85 rows, and rebuilding them
+			// on every frame would be the most expensive thing on the page.
+			if (recordAlwaysOn && bundle) {
+				const n = bundle.corrections.filter((c) => (c.epoch ?? 0) <= e).length;
+				if (n !== recordShown) { recordShown = n; renderRecord(e); }
+			}
 
 			draw(canvas, bundle, epoch, theme);
 
@@ -513,7 +529,9 @@ const SCENARIOS = [
 			elBeat.hidden = false;
 		}
 
-		function renderRecord() {
+		/** `upto` limits the rows to the corrections written by that epoch, so the strip shows
+		 *  the record AS IT IS BEING WRITTEN rather than jumping from empty to complete. */
+		function renderRecord(upto?: number) {
 			if (!bundle) return;
 			const rec = bundle.record as any;
 			const c = bundle.conditions;
@@ -539,7 +557,10 @@ const SCENARIOS = [
 			q('[data-record-grid]')!.innerHTML = items.map(([k, v]) =>
 				`<div class="rp-record-cell"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 
-			q('[data-record-rows]')!.innerHTML = (bundle.corrections as Correction[]).map((x) => `
+			const rows = upto == null
+				? (bundle.corrections as Correction[])
+				: (bundle.corrections as Correction[]).filter((x) => (x.epoch ?? 0) <= upto);
+			q('[data-record-rows]')!.innerHTML = rows.map((x) => `
 				<tr><td>${num(x.step)}</td><td>stage ${x.node}</td>
 				<td>${DIAGNOSIS[x.diagnosis] ?? x.diagnosis}</td>
 				<td>${x.magnitude != null ? x.magnitude.toFixed(4) : '—'}</td>
@@ -1500,8 +1521,11 @@ const SCENARIOS = [
 		--appbar: 48px;
 		display: flex;
 		flex-direction: column;
-		height: calc(100dvh - var(--nav-h, 89px));
-		min-height: 560px;
+		/* The CONSOLE is one screen — the bar plus the working area. The record strip below
+		   is deliberately outside that height, so it is the first thing a reader meets on
+		   scrolling rather than a quarter-panel squeezed into the fold. */
+		height: auto;
+		min-height: 0;
 		border: 0;
 		border-radius: 0;
 		border-bottom: 1px solid var(--rule);
@@ -1584,8 +1608,8 @@ const SCENARIOS = [
 
 	.rp--app .rp-shell {
 		display: flex;
-		flex: 1 1 auto;
-		min-height: 0;
+		height: calc(100dvh - var(--nav-h, 89px) - var(--appbar));
+		min-height: 520px;
 	}
 
 	.rp--app .rp-main {
@@ -1670,7 +1694,10 @@ const SCENARIOS = [
 		   the only one a non-technical reader parses on sight — at an equal quarter its
 		   question column wrapped to three lines. It takes the space the chart and the
 		   ledger do not need. Measured at 1512px: 483 / 302 / 302 / 423. */
-		grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+		/* Three, not four. The record left this row for a full-width strip below, which gives
+		   the answer table the width its question column needs and the chart enough box to
+		   draw two bands in without its labels colliding. */
+		grid-template-columns: 1.5fr 1.25fr 1fr;
 		gap: 1px;
 		background: var(--rule);
 		border-top: 1px solid var(--rule);
@@ -1680,8 +1707,26 @@ const SCENARIOS = [
 		min-height: 0;
 		overflow-y: auto;
 		background: var(--plate);
-		padding: var(--space-md) var(--space-md) var(--space-sm);
+		padding: 12px var(--space-md) 8px;
 	}
+
+	/* The ledger is a LOG and scrolls by nature — 85 corrections will never fit a band. The
+	   other two are readouts and must not. */
+	.rp--app [data-panel='ledger'] { overflow-y: auto; }
+
+	/* THE ANSWER TABLE FITS ITS CELL. It was the one panel scrolling inside itself, and a
+	   readout you have to scroll to finish reading is not a readout — the last row is "test
+	   accuracy right now", which is the row the metric strip above is echoing. Row padding
+	   and type come down until five rows and a header clear the band. */
+	/* Sized for the TALLEST state, not the resting one. The ORMAS cell grows to two lines
+	   once corrections accumulate ("41 bounded corrections, each inside its declared
+	   ceiling"), and at rest-height padding that pushed the last row — "test accuracy right
+	   now" — out of the cell. */
+	.rp--app .rp-verdict-table { font-size: 11.5px; }
+	.rp--app .rp-verdict-table :global(tbody th) { padding: 2px 9px 2px 0; font-size: 12px; line-height: 1.3; }
+	.rp--app .rp-verdict-table :global(tbody td) { padding: 2px 9px; font-size: 11px; line-height: 1.35; }
+	.rp--app .rp-verdict-table thead th { padding-bottom: 5px; }
+	.rp--app .rp-chart-label { margin-bottom: 6px; }
 
 	/* Two rows of two before the cells get too narrow to read, then one column. Driven by the
 	   working area's own width, which is the whole viewport now that the rail is gone. */
@@ -2258,6 +2303,23 @@ const SCENARIOS = [
 		background: var(--plate-sunk);
 	}
 	.rp-record-head { margin-bottom: var(--space-md); }
+	/* ── THE RECORD STRIP ──────────────────────────────────────────────────────── */
+	.rp-recordband {
+		border-top: 1px solid var(--rule);
+		background: var(--plate-sunk);
+		padding: var(--space-lg);
+		overflow: visible;
+	}
+	.rp--app .rp-recordband .rp-table-wrap { max-height: 320px; overflow-y: auto; }
+	.rp--app .rp-recordband .rp-record-actions { margin-top: var(--space-md); }
+	/* The download is the console's own action, so it wears the console's accent rather than
+	   the site's indigo — which on this ground read as a button from another application. */
+	.rp--app .rp-recordband :global(.rp-btn--primary) {
+		background: var(--ormas);
+		border-color: var(--ormas);
+		color: var(--plate);
+	}
+
 	/* The other three panels are named by a mono uppercase label. This one had a serif
 	   heading left over from when it was a section of a page, and it read as a different
 	   kind of object sitting in the same row. */

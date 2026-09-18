@@ -335,8 +335,10 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		await page.waitForTimeout(400);
 
 		const m = await page.evaluate(() => {
-			const rp = document.querySelector('.rp').getBoundingClientRect();
-			const cells = [...document.querySelectorAll('[data-panel]')].map((e) => ({
+			const rp = document.querySelector('.rp-shell').getBoundingClientRect();
+			// SCOPED TO THE ROW. The record is a full-width strip outside .rp-tabs now, and
+			// counting it here reported four cells on two rows.
+			const cells = [...document.querySelectorAll('.rp-tabs [data-panel]')].map((e) => ({
 				name: e.dataset.panel,
 				rendered: e.getClientRects().length > 0,
 				box: e.getBoundingClientRect(),
@@ -356,21 +358,50 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 				rail: !!document.querySelector('.rp-rail'),
 				options: document.querySelectorAll('.rp-opt').length,
 				overflowX: document.documentElement.scrollWidth > innerWidth + 1,
+				recordIsStrip: (() => {
+					const rb = document.querySelector('.rp-recordband');
+					if (!rb) return false;
+					const inRow = rb.closest('.rp-tabs') !== null;
+					return !inRow && Math.round(rb.getBoundingClientRect().width) >= innerWidth - 4;
+				})(),
+				overflowAtEnd: [],
 			};
 		});
 
+		// Drive the run to its last epoch and re-measure — the tallest state, not the resting one.
+		await page.evaluate(() => {
+			const sc = document.querySelector('[data-scrub]');
+			sc.value = String(sc.max);
+			sc.dispatchEvent(new Event('input', { bubbles: true }));
+		});
+		await page.waitForTimeout(700);
+		m.overflowAtEnd = await page.evaluate(() =>
+			[...document.querySelectorAll('.rp-tabs [data-panel]')]
+				.map((e) => ({ name: e.dataset.panel, over: e.scrollHeight - e.clientHeight })));
+
 		ok(!m.rail, `console ${vp.w}: there is no sidebar`);
 		ok(m.options === 4, `console ${vp.w}: four scenario options sit in the bar (${m.options})`);
-		ok(m.allRendered && m.count === 4,
-			`console ${vp.w}: all four readouts are on screen at once (${m.count}, all rendered: ${m.allRendered})`);
-		ok(m.rows === 1, `console ${vp.w}: the four sit on one row (${m.rows})`);
+		ok(m.allRendered && m.count === 3,
+			`console ${vp.w}: all three readouts are on screen at once (${m.count}, all rendered: ${m.allRendered})`);
+		ok(m.rows === 1, `console ${vp.w}: the three sit on one row (${m.rows})`);
+		ok(m.recordIsStrip,
+			`console ${vp.w}: the record is a full-width strip below the console, not a cell in the row`);
+		// AT THE END OF THE RUN, not at rest. The ORMAS cell grows to two lines once
+		// corrections accumulate, and sizing to the resting height pushed the last row —
+		// "test accuracy right now" — out of the cell. The ledger is exempt: it is a log of
+		// 85 entries and scrolls by nature.
+		ok(m.overflowAtEnd.every((x) => x.name === 'ledger' || x.over <= 2),
+			`console ${vp.w}: the readouts still fit at the end of the run (` +
+				m.overflowAtEnd.map((x) => `${x.name} +${x.over}`).join(' ') + ')');
 		ok(m.answersWidest, `console ${vp.w}: the answer table gets the widest cell`);
 		ok(m.shortest >= 200, `console ${vp.w}: the shortest cell is ${m.shortest}px, too short to read`);
 		ok(m.narrowest >= 240, `console ${vp.w}: the narrowest cell is ${m.narrowest}px`);
 		ok(m.canvas > 120,
 			`console ${vp.w}: the chart has a real width (${m.canvas}px) — a canvas measured before the grid lays out is 0`);
-		ok(Math.abs(m.component - m.usable) <= 8,
-			`console ${vp.w}×${vp.h}: the screen is ${m.component}px against ${m.usable}px of window`);
+		// The CONSOLE is one screen — the product bar plus the working area. The record strip
+		// below is deliberately outside it.
+		ok(Math.abs(m.component + 48 - m.usable) <= 10,
+			`console ${vp.w}×${vp.h}: bar + working area is ${m.component + 48}px against ${m.usable}px of window`);
 		ok(!m.overflowX, `console ${vp.w}: nothing overflows sideways`);
 		await page.close();
 	}
@@ -382,14 +413,15 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(900);
 		const m = await page.evaluate(() => {
-			const cells = [...document.querySelectorAll('[data-panel]')].map((e) => e.getBoundingClientRect());
+			const cells = [...document.querySelectorAll('.rp-tabs [data-panel]')].map((e) => e.getBoundingClientRect());
 			return {
 				shortest: Math.round(Math.min(...cells.map((c) => c.height))),
 				rows: new Set(cells.map((c) => Math.round(c.top))).size,
 				overflowX: document.documentElement.scrollWidth > innerWidth + 1,
 			};
 		});
-		ok(m.rows === 2, `console 1200: the panels wrap to two rows (${m.rows})`);
+		// Three readouts in a two-column grid is two rows.
+		ok(m.rows === 2, `console 1200: the readouts wrap to two rows (${m.rows})`);
 		ok(m.shortest >= 200, `console 1200: cells keep a usable height (${m.shortest}px)`);
 		ok(!m.overflowX, 'console 1200: nothing overflows sideways');
 		await page.close();

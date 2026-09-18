@@ -63,9 +63,18 @@ export function readTheme(el: HTMLElement): Theme {
 	};
 }
 
-const PAD = { top: 14, right: 78, bottom: 24, left: 42 };
+// THE CHROME SCALES WITH THE BOX. These were fixed, sized for the full-width chart this
+// used to be: 78px of label gutter plus 42px of axis is 120px, which is 40% of a 300px
+// panel — the plot was squeezed into the remainder and the series labels collided with the
+// lines they name. In a narrow cell the gutter and the axis both give ground, and the
+// direct labels are dropped entirely below the width where they cannot be placed clear of
+// the data.
+const PAD_WIDE = { top: 14, right: 78, bottom: 24, left: 42 };
+const PAD_TIGHT = { top: 12, right: 46, bottom: 22, left: 34 };
+const NARROW = 560;      // below this the chart is in a console cell, not a page column
 const GAP = 16;          // between the two panels
-const LABEL_W = 78;      // reserved gutter for the direct labels
+const LABEL_W_WIDE = 78; // reserved gutter for the direct labels
+const LABEL_W_TIGHT = 46;
 
 export function sizeCanvas(cv: HTMLCanvasElement): { w: number; h: number } {
 	const dpr = Math.min(3, window.devicePixelRatio || 1);
@@ -92,6 +101,9 @@ export function draw(cv: HTMLCanvasElement, bundle: Bundle, upto: number, theme:
 	const o = bundle.series.ormas.accuracy;
 	const b = bundle.series.baseline.accuracy;
 	const n = o.length - 1;
+	const tight = w < NARROW;
+	const PAD = tight ? PAD_TIGHT : PAD_WIDE;
+	const LABEL_W = tight ? LABEL_W_TIGHT : LABEL_W_WIDE;
 	const plotW = w - PAD.left - PAD.right;
 	const bandH = (h - PAD.top - PAD.bottom - GAP) / 2;
 	if (plotW <= 0 || bandH <= 10) return;
@@ -230,5 +242,9 @@ export function draw(cv: HTMLCanvasElement, bundle: Bundle, upto: number, theme:
 	for (const e of [0, Math.round(n / 2), n]) {
 		ctx.fillText(String(e), x(e), h - PAD.bottom + 5);
 	}
-	ctx.fillText('epoch', PAD.left + plotW / 2, h - 11);
+	// THE CAPTION SITS UNDER THE MIDDLE TICK, so in a console cell it lands on top of it —
+	// "100" and "epoch" were printed over each other. There is no room for both in 22px of
+	// bottom padding, and the tick numbers are the ones carrying information, so the caption
+	// goes. The axis is labelled by the run's own epoch counter beside the transport anyway.
+	if (!tight) ctx.fillText('epoch', PAD.left + plotW / 2, h - 11);
 }
