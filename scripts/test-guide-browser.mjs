@@ -453,6 +453,60 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await home.close();
 }
 
+// ── WHEN THE RUN DOES NOT ARRIVE ─────────────────────────────────────────────────────────
+//
+// Only `!res.ok` was handled, so a thrown fetch — a network failure, a blocked request, an
+// intercepted response — rejected unhandled and the console sat on "Loading the archived
+// run…" indefinitely while everything around it rendered. A dark screen with a scrubber,
+// empty readouts and no explanation reads as the product being broken rather than as a file
+// not arriving, and it was reported exactly that way.
+{
+	// Blocked outright.
+	const p1 = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	const thrown = [];
+	p1.on('pageerror', (e) => thrown.push(String(e)));
+	await p1.route('**/runs/*.json', (r) => r.abort());
+	await p1.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
+	await p1.waitForTimeout(2200);
+	const blocked = await p1.evaluate(() => ({
+		failed: document.querySelector('.rp').classList.contains('is-failed'),
+		panel: !document.querySelector('[data-failed]').hidden,
+		instrumentGone: getComputedStyle(document.querySelector('.rp-stageband')).display === 'none',
+		says: document.querySelector('[data-conditions-app]').textContent.trim(),
+	}));
+	ok(blocked.failed && blocked.panel, 'blocked run: the console says it failed');
+	ok(blocked.instrumentGone,
+		'blocked run: the empty instrument is removed rather than left pretending to be one');
+	ok(/could not be loaded/.test(blocked.says), `blocked run: the bar explains ("${blocked.says}")`);
+	ok(thrown.length === 0, `blocked run: nothing throws unhandled (${thrown[0] ?? ''})`);
+	await p1.close();
+
+	// Answered, badly.
+	const p2 = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	await p2.route('**/runs/*.json', (r) => r.fulfill({ status: 500, body: 'nope' }));
+	await p2.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
+	await p2.waitForTimeout(1800);
+	ok(/answered 500/.test(await p2.evaluate(() => document.querySelector('[data-conditions-app]').textContent)),
+		'a 500 is reported with its status');
+	await p2.close();
+
+	// And it recovers.
+	const p3 = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	let block = true;
+	await p3.route('**/runs/*.json', (r) => (block ? r.abort() : r.continue()));
+	await p3.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
+	await p3.waitForTimeout(1800);
+	block = false;
+	await p3.click('[data-retry]');
+	await p3.waitForTimeout(1800);
+	const back = await p3.evaluate(() => ({
+		failed: document.querySelector('.rp').classList.contains('is-failed'),
+		svgs: document.querySelectorAll('.rp-anatomy svg').length,
+	}));
+	ok(!back.failed && back.svgs === 2, 'retry loads the run and restores the console');
+	await p3.close();
+}
+
 // ── EVERY RENDERED WORD IN THE CONSOLE ───────────────────────────────────────────────────
 //
 // The console is dark and its palette is six custom properties, so a single token being a

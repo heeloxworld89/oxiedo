@@ -33,6 +33,10 @@ The same network, twice. One sealed, one open.
 
 Loading the archived run…
 
+The archived run did not load.
+
+Every figure on this screen is read from a file in the experiment archive, and that file did not arrive. Nothing here is computed in the browser, so there is nothing to show until it does.
+
 **A neural network is damaged partway through training.** The version on the right names which parts broke, two steps later, and repairs itself. The one on the left cannot say anything about it, and never will.
 
 - Field: Epoch

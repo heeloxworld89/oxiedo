@@ -183,6 +183,18 @@ const SCENARIOS = [
 	    already knows what an epoch is. A first-time reader who does not gets a wall of
 	    instrumentation and no reason to press anything, which is what was reported. Two
 	    sentences, no jargon, above the diagram rather than below it. */}
+	{/* Shown only when the run cannot be fetched. Static markup with no display rule of its
+	    own, so reset.css's [hidden] governs it. */}
+	<div class="rp-failed" data-failed hidden role="alert">
+		<p class="rp-failed-title">The archived run did not load.</p>
+		<p class="rp-failed-body">
+			Every figure on this screen is read from a file in the experiment archive, and that
+			file did not arrive. Nothing here is computed in the browser, so there is nothing to
+			show until it does.
+		</p>
+		<button type="button" class="rp-btn rp-btn--primary" data-retry>Try again</button>
+	</div>
+
 	<p class="rp-plain">
 		<strong>A neural network is damaged partway through training.</strong> The version on the
 		right names which parts broke, two steps later, and repairs itself. The one on the left
@@ -851,6 +863,10 @@ const SCENARIOS = [
 			// No scrollIntoView on the dock: it is position:fixed, so there is nothing to scroll to.
 		}
 
+		root.querySelector('[data-retry]')?.addEventListener('click', () => {
+			load(select?.value ?? root.dataset.scenario ?? 'dead-layer-lesion');
+		});
+
 		btnGuide.addEventListener('click', () => (guideRunning() ? guideStop() : guideStart()));
 		gq('[data-guide-skip]')!.addEventListener('click', guideStop);
 		gq('[data-guide-next]')!.addEventListener('click', () => {
@@ -872,6 +888,20 @@ const SCENARIOS = [
 			if ((e as KeyboardEvent).key === 'Escape' && guideRunning()) guideStop();
 		});
 
+		/** Say so, with a way out. `reason` null clears it. */
+		function setFailed(reason: string | null) {
+			const on = reason !== null;
+			root.classList.toggle('is-failed', on);
+			const msg = on
+				? `The archived run could not be loaded — ${reason}.`
+				: 'Loading the archived run…';
+			elRun.textContent = msg;
+			const appRun = root.querySelector('[data-conditions-app]');
+			if (appRun) appRun.textContent = msg;
+			const box = root.querySelector('[data-failed]');
+			if (box) (box as HTMLElement).hidden = !on;
+		}
+
 		async function load(key: string) {
 			const embedded = (window as unknown as {
 				__REPLAY_BUNDLES__?: Record<string, Bundle>;
@@ -879,11 +909,25 @@ const SCENARIOS = [
 			if (embedded && embedded[key]) {
 				bundle = embedded[key];
 			} else {
-				const res = await fetch(`/black-box/runs/${key}.json`);
-				if (!res.ok) { elRun.textContent = 'The archived run could not be loaded.'; return; }
-				bundle = await res.json();
+				// A THROWN FETCH USED TO TAKE THE WHOLE LOAD WITH IT. Only `!res.ok` was
+				// handled, so a network failure, a blocked script or an interception — a
+				// hosting challenge page, say — rejected the promise unhandled and the
+				// console sat on "Loading the archived run…" for ever. Everything around it
+				// still rendered, which is worse than an error: a dark screen with a
+				// scrubber, empty readouts and no explanation reads as the product being
+				// broken rather than a file not arriving.
+				setFailed(null);
+				try {
+					const res = await fetch(`/black-box/runs/${key}.json`);
+					if (!res.ok) { setFailed(`the server answered ${res.status}`); return; }
+					bundle = await res.json();
+				} catch (err) {
+					setFailed(err instanceof Error ? err.message : 'the request did not complete');
+					return;
+				}
 			}
 			if (!bundle) return;
+			setFailed(null);
 
 			engine?.destroy();
 			engine = new ReplayEngine(bundle);
@@ -1758,6 +1802,27 @@ const SCENARIOS = [
 		.rp-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 		.rp--app .rp-panel { height: auto; min-height: 200px; }
 	}
+
+	/* ── the failure state ── */
+	.rp-failed {
+		margin: var(--space-md) var(--space-lg);
+		padding: var(--space-md) var(--space-lg);
+		border: 1px solid var(--warn);
+		border-radius: 4px;
+		background: color-mix(in oklab, var(--warn) 8%, transparent);
+		max-width: 68ch;
+	}
+	.rp-failed-title { margin: 0 0 4px; font-weight: 700; color: var(--fg); }
+	.rp-failed-body { margin: 0 0 var(--space-sm); font-size: var(--text-small); color: var(--fg-mid); }
+	/* Nothing below the bar is meaningful without the run, so it goes rather than sitting
+	   there empty pretending to be an instrument. */
+	.rp.is-failed .rp-plain,
+	.rp.is-failed .rp-stageband,
+	.rp.is-failed .rp-controls,
+	.rp.is-failed .rp-tabs,
+	.rp.is-failed .rp-metrics,
+	.rp.is-failed .rp-recordband { display: none; }
+	.rp.is-failed .rp-shell { height: auto; min-height: 0; }
 
 	/* ── plain-language strip ── */
 	.rp-plain {
