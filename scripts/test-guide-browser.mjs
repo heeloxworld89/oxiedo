@@ -291,6 +291,30 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
+// ── THE HERO TRUST BAR ───────────────────────────────────────────────────────────────────
+//
+// Five sector names on one line. The column gap was --space-xl, which pushed the fifth name
+// onto its own row at every width from 1100px to 1512px — most desktops — so one market read
+// as demoted below the other four. Reported on 2026-09-18, and it had been there a while:
+// reverting every button and nav change made that day did not affect it.
+//
+// The names need ~543px; four 40px gaps took the total past the 674px the list gets at
+// 1440px. Now 24px, and below 1280px the label stacks above so the list runs full width.
+{
+	const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	await page.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });
+	for (const w of [768, 1024, 1200, 1280, 1366, 1440, 1512, 1600, 1728, 1920]) {
+		await page.setViewportSize({ width: w, height: 900 });
+		await page.waitForTimeout(120);
+		const rows = await page.evaluate(() => new Set(
+			[...document.querySelectorAll('.hero-trust-list li')]
+				.map((e) => Math.round(e.getBoundingClientRect().top)),
+		).size);
+		ok(rows === 1, `hero trust bar ${w}px: the five sectors stay on one line (${rows} rows)`);
+	}
+	await page.close();
+}
+
 await browser.close();
 server.close();
 

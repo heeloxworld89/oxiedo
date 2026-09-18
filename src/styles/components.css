@@ -1349,7 +1349,13 @@ main > section:last-child.band--dark {
 	margin: 0;
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--space-md) var(--space-xl);
+	/* COLUMN GAP WAS --space-xl AND WRAPPED THE LAST SECTOR ONTO ITS OWN LINE from 1100px all
+	   the way to 1512px — which is most desktops, and it read as one market demoted below the
+	   other four. The five names need ~543px; four 40px gaps take the total to 703px against
+	   the 674px the list gets at 1440px, so it missed by 29px. At 24px the total is 639px and
+	   the row holds from 1280px up, measured at nine widths. Below 1280 the label and the list
+	   stack, so the names get the full width rather than breaking 4-and-1. */
+	gap: var(--space-md) var(--space-lg);
 }
 
 /* base.css gives every non-button link inside .hero the accent colour, which turned this bar into
@@ -1374,7 +1380,10 @@ main > section:last-child.band--dark {
 	text-underline-offset: 4px;
 }
 
-@media (min-width: 900px) {
+/* 1280px, not 900px. Side by side, the label takes 462px of the row and the five names need
+   639px more, which does not fit under 1280px however the gap is tuned. Below that they stack
+   and the list runs full width on one line, which is the layout the band is for. */
+@media (min-width: 1280px) {
 	.hero-trust-inner {
 		flex-direction: row;
 		align-items: center;
