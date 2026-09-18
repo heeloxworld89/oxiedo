@@ -133,7 +133,10 @@ const SCENARIOS = [
 		    else — not how far it runs, and not how to get back to one they had passed. */}
 		<nav class="rp-guide-rail" data-guide-rail aria-label="Guided read progress"></nav>
 		<div class="rp-guide-text">
-			<p class="rp-guide-eyebrow"><span data-guide-count></span><span data-guide-where></span></p>
+			<p class="rp-guide-eyebrow">
+				<span data-guide-count></span><span data-guide-where></span>
+				<span class="rp-guide-live" data-guide-live></span>
+			</p>
 			<h4 class="rp-guide-title" data-guide-title></h4>
 			<p class="rp-guide-body" data-guide-body></p>
 		</div>
@@ -421,6 +424,7 @@ const SCENARIOS = [
 		let guide: GuideStep[] = [];
 		let guideAt = -1;          // -1 = not running
 		let guideWaiting = -1;     // epoch the engine is currently travelling towards
+		let travelFrom = -1;       // epoch the current travel started from, for the rail fill
 
 		function guideRunning() { return guideAt >= 0; }
 
@@ -477,13 +481,16 @@ const SCENARIOS = [
 			lit?.classList.add('is-lit');
 
 			// The dock does not move; the panel comes to the reader.
-			lit?.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
 			elGuide.hidden = false;
+			if (lit) scrollToBand(lit);
 		}
 
 		function guideStop() {
 			guideAt = -1;
 			guideWaiting = -1;
+			travelFrom = -1;
+			elGuide.classList.remove('is-travelling');
+			elGuide.style.removeProperty('--travel');
 			elGuide.hidden = true;
 			// Back where the markup put it, so a client-side navigation cannot leave a
 			// detached dock on the body of the next page.
@@ -496,20 +503,56 @@ const SCENARIOS = [
 
 		/** Travel to a stop. Under reduced motion the run does not play between stops —
 		 *  it seeks, because the motion IS the thing being suppressed. */
-		function guideGoTo(i: number) {
+		/** Centre the lit panel in the band between the fixed nav and the dock.
+		 *
+		 *  scrollIntoView({block:'center'}) centres against the VIEWPORT, which knows nothing
+		 *  about either fixture — measured in a browser, it left the verdict table at y=1093
+		 *  in a 900px window, entirely below the fold, on the one stop whose whole point is
+		 *  that the table changes. This computes the free band and centres in that. A panel
+		 *  taller than the band is aligned to its top instead, because centring something
+		 *  that cannot fit hides both of its ends. */
+		function scrollToBand(lit: Element) {
+			const navH = document.querySelector('.nav')?.getBoundingClientRect().height ?? 0;
+			const dockH = elGuide.hidden ? 0 : elGuide.getBoundingClientRect().height;
+			const bandTop = navH + 16;
+			const band = window.innerHeight - dockH - 16 - bandTop;
+			const r = lit.getBoundingClientRect();
+			const offset = r.height > band ? bandTop : bandTop + (band - r.height) / 2;
+			window.scrollTo({
+				top: Math.max(0, r.top + window.scrollY - offset),
+				behavior: reduced ? 'auto' : 'smooth',
+			});
+		}
+
+		/** Travel to a stop.
+		 *
+		 *  THE DOCK IS NEVER HIDDEN. The first version hid it while the run travelled, and
+		 *  travelling from epoch 101 to 199 takes several seconds — so the reader got a dimmed
+		 *  component and no controls at all, which is indistinguishable from the thing having
+		 *  crashed. The destination stop is painted immediately, the dock says it is running,
+		 *  the rail segment fills as the epochs pass, and pressing Next again arrives at once.
+		 *
+		 *  `instant` skips the travel: used by the rail, by Back, and by a second Next. */
+		function guideGoTo(i: number, instant = false) {
 			if (!engine || i < 0 || i >= guide.length) return guideStop();
 			const target = guide[i].epoch;
 			const here = Math.round(Number(elScrub.value));
 			guideAt = i;
-			if (reduced || target <= here) {
+
+			if (reduced || instant || target <= here) {
 				engine.seekEpoch(target);
 				guideWaiting = -1;
+				travelFrom = -1;
+				elGuide.classList.remove('is-travelling');
 				paintGuide();
 				setPlayLabel();
 				return;
 			}
-			elGuide.hidden = true;
+
 			guideWaiting = target;
+			travelFrom = here;
+			paintGuide();                       // destination copy is up before the travel starts
+			elGuide.classList.add('is-travelling');
 			engine.play();
 			setPlayLabel();
 		}
@@ -540,16 +583,18 @@ const SCENARIOS = [
 		btnGuide.addEventListener('click', () => (guideRunning() ? guideStop() : guideStart()));
 		gq('[data-guide-skip]')!.addEventListener('click', guideStop);
 		gq('[data-guide-next]')!.addEventListener('click', () => {
+			// Pressed while the run is still travelling: arrive now rather than queueing.
+			if (guideWaiting >= 0) { guideGoTo(guideAt, true); return; }
 			if (guideAt >= guide.length - 1) { guideStop(); showRecord(); return; }
 			guideGoTo(guideAt + 1);
 		});
 		gq('[data-guide-back]')!.addEventListener('click', () => {
-			if (guideAt > 0) guideGoTo(guideAt - 1);
+			if (guideAt > 0) guideGoTo(guideAt - 1, true);
 		});
 		// Delegated: the rail's segments are rebuilt on every paint.
 		elGuide.addEventListener('click', (e) => {
 			const seg = (e.target as HTMLElement)?.closest?.('[data-seg]') as HTMLElement | null;
-			if (seg) guideGoTo(Number(seg.dataset.seg));
+			if (seg) guideGoTo(Number(seg.dataset.seg), true);
 		});
 		// Escape leaves it, the same key that closes every other overlay on the site.
 		root.addEventListener('keydown', (e) => {
@@ -573,11 +618,23 @@ const SCENARIOS = [
 			engine = new ReplayEngine(bundle);
 			engine.onFrame = (e) => {
 				render(e);
-				// The guide is travelling towards a stop; arrive, hold, and show the card.
+				// Travelling: fill the live rail segment so the wait reads as motion rather
+				// than as the thing having stopped responding.
+				if (guideWaiting >= 0) {
+					const span = Math.max(1, guideWaiting - travelFrom);
+					const pct = Math.max(0, Math.min(1, (e - travelFrom) / span));
+					elGuide.style.setProperty('--travel', `${(pct * 100).toFixed(1)}%`);
+					const live = elGuide.querySelector('[data-guide-live]');
+					if (live) live.textContent = `running · epoch ${Math.round(e)}`;
+				}
+				// Arrive, hold, and settle the card.
 				if (guideWaiting >= 0 && e >= guideWaiting) {
 					guideWaiting = -1;
+					travelFrom = -1;
 					engine?.pause();
 					engine?.seekEpoch(guide[guideAt].epoch);
+					elGuide.classList.remove('is-travelling');
+					elGuide.style.removeProperty('--travel');
 					setPlayLabel();
 					paintGuide();
 				}
@@ -1192,6 +1249,11 @@ const SCENARIOS = [
 		background: var(--bg-surface);
 		box-shadow: 0 12px 40px rgb(0 0 0 / 0.16);
 		color: var(--text-primary);
+		/* Measured tallest is 224px on a 390×844 phone and 158px on a 1280×640 laptop, so this
+		   never engages in practice. It is here for the viewport nobody tested: a long stop on
+		   a short window must scroll inside the dock rather than push Next off the bottom. */
+		max-height: 46vh;
+		overflow-y: auto;
 	}
 
 	/* THE RAIL. Full width across the top, one segment per stop, clickable. */
@@ -1274,6 +1336,29 @@ const SCENARIOS = [
 		background: var(--chart-ormas);
 		border-color: var(--chart-ormas);
 		color: var(--text-on-dark);
+	}
+
+	/* TRAVELLING. The run takes several seconds to cross from one stop to the next, and the
+	   first version hid the dock for the whole of it — a dimmed component with no controls,
+	   which is indistinguishable from a crash. The dock now stays, says what it is doing, and
+	   the live segment fills with the epochs so the wait reads as motion. */
+	.rp-guide-live {
+		display: none;
+		margin-left: 10px;
+		padding-left: 10px;
+		border-left: 1px solid var(--border-hairline);
+		color: var(--text-muted);
+		font-variant-numeric: tabular-nums;
+	}
+	.rp-guide.is-travelling .rp-guide-live { display: inline; }
+	.rp-guide.is-travelling .rp-guide-title,
+	.rp-guide.is-travelling .rp-guide-body { opacity: 0.45; transition: opacity 200ms ease; }
+	.rp-guide.is-travelling :global(.rp-guide-seg[aria-current='true']) {
+		background: linear-gradient(
+			to right,
+			var(--chart-ormas) var(--travel, 0%),
+			color-mix(in oklab, var(--chart-ormas) 20%, transparent) var(--travel, 0%)
+		);
 	}
 
 	/* ONLY WHERE THE GUTTER ACTUALLY FITS IT. A 360px panel needs 24px of clearance from the
