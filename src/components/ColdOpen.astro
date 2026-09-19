@@ -28,8 +28,7 @@
 <div
 	class="co"
 	data-coldopen-root
-	role="dialog"
-	aria-modal="true"
+	role="region"
 	aria-label="Introduction to the Black Box"
 	hidden
 >
@@ -196,8 +195,12 @@
 			// Capped at 2. A 3x phone painting 385 edges a frame at full density spends the
 			// whole budget on pixels nobody can resolve.
 			dpr = Math.min(window.devicePixelRatio || 1, 2);
-			VW = window.innerWidth;
-			VH = window.innerHeight;
+			// The overlay's own box, not the viewport — it starts below the nav now, and
+			// sizing the canvas to innerHeight drew the sequence one nav taller than the
+			// space it had and pushed the type off the bottom.
+			const r = root!.getBoundingClientRect();
+			VW = Math.round(r.width);
+			VH = Math.round(r.height);
 			cv.width = Math.round(VW * dpr);
 			cv.height = Math.round(VH * dpr);
 			cv.style.width = VW + 'px';
@@ -222,8 +225,16 @@
 			const svg = document.querySelector('[data-anatomy-ormas] svg');
 			if (!svg) return null;
 			const r = svg.getBoundingClientRect();
-			if (r.width < 40 || r.bottom < 0 || r.top > VH) return null;
-			return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, s: r.width / NET_W };
+			// Both rects are viewport-relative; the canvas is not, since the overlay is
+			// offset by the nav. Subtracting the overlay's own origin puts the target back
+			// in canvas space — without this the network landed a nav-height too low.
+			const o = root!.getBoundingClientRect();
+			if (r.width < 40 || r.bottom < o.top || r.top > o.bottom) return null;
+			return {
+				cx: r.left + r.width / 2 - o.left,
+				cy: r.top + r.height / 2 - o.top,
+				s: r.width / NET_W,
+			};
 		}
 
 		function draw(t: number) {
@@ -477,6 +488,7 @@
 		let start = 0;
 		let raf = 0;
 		let ending = false;
+		const mounted = performance.now();
 
 		function finish() {
 			if (ending) return;
@@ -489,13 +501,31 @@
 				root!.remove();
 				window.removeEventListener('resize', size);
 				document.removeEventListener('keydown', onKey);
+				window.removeEventListener('wheel', onGesture);
+				window.removeEventListener('touchmove', onGesture);
 				// Hand back to the component, which has been holding its autostart.
 				document.dispatchEvent(new CustomEvent('coldopen:done'));
 			}, 420);
 		}
 
+		/* SCROLLING GETS OUT OF IT, rather than being locked out of it.
+		   The curtain is fixed and the nav is fixed, so a reader who scrolls during the
+		   sequence sees nothing move — a dead control, and then the page lands mid-article
+		   when the curtain lifts. Locking the scroll instead would mean hiding the scrollbar,
+		   which shifts the layout under it on every platform that still reserves a gutter.
+		   Reading a scroll as "the console, please" costs nothing and is what the gesture
+		   means. With Escape, the button, a click and this, there are four ways out.
+
+		   wheel and touchmove rather than scroll: a scroll event also fires when a browser
+		   restores a position on reload, which would dismiss the sequence before its first
+		   frame. These two are only ever a person. */
+		const GESTURE_GRACE = 350;
+		function onGesture() {
+			if (performance.now() - mounted > GESTURE_GRACE) finish();
+		}
 		function onKey(e: KeyboardEvent) {
-			if (e.key === 'Escape') { e.preventDefault(); finish(); }
+			if (e.key === 'Escape') { e.preventDefault(); return finish(); }
+			if ([' ', 'PageDown', 'ArrowDown', 'End'].includes(e.key)) return finish();
 		}
 
 		function frame(now: number) {
@@ -510,6 +540,8 @@
 		skip.addEventListener('click', finish);
 		root.addEventListener('click', (e) => { if (e.target === root || e.target === canvas) finish(); });
 		document.addEventListener('keydown', onKey);
+		window.addEventListener('wheel', onGesture, { passive: true });
+		window.addEventListener('touchmove', onGesture, { passive: true });
 		skip.focus({ preventScroll: true });
 		raf = requestAnimationFrame(frame);
 	}
@@ -521,10 +553,26 @@
 	   audit flags an author display on an element that ships the hidden attribute, and that
 	   audit exists because exactly this pattern once rendered an empty annotation card on
 	   every page of the site. Belt and braces costs one pseudo-class. */
+	/* IT COVERS THE INSTRUMENT, NOT THE SITE.
+	   The first version was inset:0 — a full-bleed takeover with no chrome at all, which is
+	   more cinematic and worse in every other way. A stranger who lands on a black rectangle
+	   with no masthead cannot tell where they are, whether the page is broken, or how to
+	   leave, and a full-screen interstitial with no visible way out is the pattern every
+	   guideline warns about.
+	   Starting at --nav-h — the same expression .rp-console uses — makes the curtain occupy
+	   precisely the box the console will occupy, so this reads as an instrument that has not
+	   finished coming up rather than as an advert playing over a website. The nav keeps its
+	   own z-index:100 above this, which also means every link stays live: the way out is
+	   never more than one click, and it is always on screen.
+	   The happy accident is that the sign in the nav already says BLACKBOX · OPENED while
+	   act three is opening it. */
 	.co:not([hidden]) {
 		position: fixed;
-		inset: 0;
-		z-index: 999;
+		top: var(--nav-h, 89px);
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 90;
 		background: #07080F;
 		display: grid;
 		grid-template-rows: 1fr auto;
@@ -599,15 +647,23 @@
 		background: rgba(241,239,232,0.13);
 		border-block: 1px solid rgba(241,239,232,0.13);
 	}
+	/* THE CELLS STAY, THE CONTENTS ARRIVE. Fading the cell itself meant an unfilled slot
+	   showed the grid's divider colour through it — two grey holes sitting beside the first
+	   two figures for most of the act. Four dark plates that fill in one at a time is both
+	   tidier and the same behaviour as the console's own metric strip directly below. */
 	.co-fig {
 		background: #07080F;
 		padding: 15px 16px 16px;
 		min-width: 0;
-		opacity: 0;
-		transform: translateY(10px);
-		transition: opacity 420ms var(--ease-out, ease), transform 420ms var(--ease-out, ease);
 	}
-	.co-fig.is-in { opacity: 1; transform: none; }
+	.co-fig > span {
+		opacity: 0;
+		transform: translateY(9px);
+		transition: opacity 400ms var(--ease-out, ease), transform 400ms var(--ease-out, ease);
+	}
+	.co-fig.is-in > span { opacity: 1; transform: none; }
+	.co-fig.is-in .co-fig-u { transition-delay: 70ms; }
+	.co-fig.is-in .co-fig-s { transition-delay: 130ms; }
 	.co-fig-n {
 		display: block;
 		font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;

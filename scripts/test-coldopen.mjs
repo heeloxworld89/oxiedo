@@ -83,6 +83,29 @@ const watch = (page, tag) => {
 	ok(early.consoleBehind, 'the console is rendered behind the overlay, not replaced by it');
 	ok(early.skipFocused, 'Skip takes focus, so a keyboard reader is not trapped');
 
+	// THE NAV STAYS. The sequence covers the instrument, not the site — a full-bleed
+	// takeover with no masthead leaves a stranger unable to tell where they are or how to
+	// leave. The overlay must begin at the nav and the nav must remain hit-testable, or the
+	// way out has quietly gone away.
+	const frame = await page.evaluate(() => {
+		const nav = document.querySelector('.nav').getBoundingClientRect();
+		const co = document.querySelector('[data-coldopen-root]').getBoundingClientRect();
+		const hit = document.elementFromPoint(Math.round(nav.width / 2), Math.round(nav.height / 2));
+		return {
+			seam: Math.round(co.top - nav.bottom),
+			reachesBottom: Math.round(co.bottom) >= window.innerHeight - 1,
+			navOnTop: !!(hit && hit.closest('.nav')),
+			navLinkClickable: !!(document.elementFromPoint(
+				Math.round(document.querySelector('.nav a').getBoundingClientRect().left) + 4,
+				Math.round(document.querySelector('.nav a').getBoundingClientRect().top) + 8,
+			)?.closest('.nav')),
+		};
+	});
+	ok(Math.abs(frame.seam) <= 2, `the curtain meets the nav with no seam (${frame.seam}px)`);
+	ok(frame.reachesBottom, 'and runs to the bottom of the viewport');
+	ok(frame.navOnTop, 'the nav paints above the curtain');
+	ok(frame.navLinkClickable, 'and its links are still hit-testable — the way out stays open');
+
 	// Act two's figures are quoted from src/data/markets.ts. If that file is corrected and
 	// this is not, the cold open starts citing a number the rest of the site disagrees with.
 	const figs = await page.evaluate(() =>
@@ -162,6 +185,20 @@ const watch = (page, tag) => {
 		return l ? l.textContent : '';
 	});
 	ok(/epoch\s+[1-9]/.test(playing), `the console takes over after a skip (epoch readout: "${playing.trim()}")`);
+	await ctx.close();
+}
+
+/* ── 3b. a scroll is read as "the console, please" ─────────────────────────── */
+{
+	const ctx = await browser.newContext({ viewport: VP });
+	const page = await ctx.newPage();
+	watch(page, 'scroll');
+	await page.goto(`${ORIGIN}/black-box`);
+	await page.waitForTimeout(1400);
+	await page.mouse.wheel(0, 400);
+	await page.waitForTimeout(900);
+	ok(await page.evaluate(() => !document.querySelector('[data-coldopen-root]')),
+		'scrolling dismisses the sequence rather than doing nothing visible');
 	await ctx.close();
 }
 
