@@ -85,7 +85,9 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 							href={link.href}
 							class={link.mark ? 'nav-link nav-link--mark' : 'nav-link'}
 							aria-current={isCurrent(link.href) ? 'page' : undefined}
-							{...(link.mark && !isCurrent(link.href) ? { 'aria-label': link.label } : {})}
+							{...(link.mark
+								? { 'aria-label': isCurrent(link.href) ? 'BlackBox opened' : link.label }
+								: {})}
 						>
 							{/* TWO STATES, AND THEY SAY DIFFERENT THINGS.
 							    Off this page it is a shop sign: the bracket carries the first words and
@@ -100,7 +102,12 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 							    aria-label overrides it. */}
 							{link.mark ? (
 								isCurrent(link.href)
-									? <span class="nav-sign-opened">Black box opened</span>
+									? (
+										<span class="nav-sign-opened">
+											<span class="nav-sign-name">BlackBox</span>
+											<span class="nav-sign-state">Opened</span>
+										</span>
+									)
 									: (
 										<>
 											<span class="nav-sign-field">Open the</span>

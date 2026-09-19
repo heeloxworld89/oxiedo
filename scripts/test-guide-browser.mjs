@@ -252,7 +252,20 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 			.map((e) => Math.round(e.getBoundingClientRect().height));
 		return {
 			missing: !pill,
-			text: pill?.textContent.trim(),
+			// THE TWO PARTS, NOT THEIR CONCATENATION. The spans sit side by side with no
+			// whitespace node between them — the gap is flex and the divider is a border — so
+			// textContent reads "BlackBoxOpened" while the page shows "BlackBox | OPENED".
+			// The accessible name is stated separately for the same reason.
+			parts: pill ? [pill.querySelector('.nav-sign-name').textContent.trim(),
+				pill.querySelector('.nav-sign-state').textContent.trim()] : [],
+			// The two halves carry different faces on purpose — the name in the display serif,
+			// the state as a mono tag. If either falls back to the nav's sans the lockup is
+			// gone and it is a word in a box again.
+			faces: pill ? [
+				getComputedStyle(pill.querySelector('.nav-sign-name')).fontFamily.split(',')[0].replace(/["']/g, ''),
+				getComputedStyle(pill.querySelector('.nav-sign-state')).fontFamily.split(',')[0].replace(/["']/g, ''),
+			] : [],
+			ariaName: a.getAttribute('aria-label'),
 			stillHanging: !!document.querySelector('.nav-sign-plate'),
 			current: a.getAttribute('aria-current') === 'page',
 			heights: [...new Set(heights)],
@@ -261,8 +274,13 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		};
 	});
 	ok(!here.missing, 'sign on its own page: the opened pill exists');
-	ok(here.text === 'Black box opened',
-		`sign on its own page: it reads "Black box opened" (got "${here.text}")`);
+	ok(here.parts[0] === 'BlackBox' && here.parts[1] === 'Opened',
+		`sign on its own page: it reads BlackBox / Opened (got "${here.parts.join(' / ')}")`);
+	ok(here.faces[0] === 'Fraunces' && here.faces[1] === 'JetBrains Mono',
+		`sign on its own page: name in the display serif, state in mono (${here.faces.join(' + ')})`);
+	// The two spans concatenate to "BlackBoxOpened" with no space, so the name is stated.
+	ok(here.ariaName === 'BlackBox opened',
+		`sign on its own page: the accessible name has its space ("${here.ariaName}")`);
 	ok(!here.stillHanging, 'sign on its own page: nothing is left hanging');
 	ok(here.current, 'sign on its own page: it is marked as the current page');
 	ok(here.heights.length === 1,

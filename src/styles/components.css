@@ -6037,25 +6037,52 @@ main > section:last-child.band--dark {
 	100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
+/* A NAMEPLATE, NOT A LABEL. Two parts doing two jobs: the name is set in the site's display
+   serif — the face otherwise reserved for H1s, and the only place it appears in the chrome —
+   and the state is a mono tag beside it, which is how an instrument prints a condition next
+   to the thing it belongs to. One face saying both would have been a word in a box.
+
+   A hairline divides them rather than a space, so the pair reads as one object with a
+   divider instead of two words that happen to sit together.
+
+   Padding keeps the pill at 42px, matching every other item in the row. */
 .nav-sign-opened {
 	display: inline-flex;
-	align-items: center;
-	gap: 7px;
-	/* 42px, matching every other item in the row. At 7px it came out 40px and sat two pixels
-	   short of its neighbours — the kind of difference that reads as "slightly wrong" without
-	   being nameable. */
-	padding: 8px 15px;
-	border-radius: 4px;
+	align-items: baseline;
+	gap: 9px;
+	/* The serif sets its own line box at line-height 1, so the padding is what makes the 42px
+	   — 17px of type plus 12 above and 13 below. At the previous 7/8 the pill came out 32px
+	   and sat a full ten pixels short of the row. */
+	padding: 12px 14px 13px;
+	border-radius: 5px;
 	background: var(--sign-amber);
 	color: var(--text-primary);
-	font-weight: 700;
-	font-size: var(--text-nav);
 	white-space: nowrap;
 	box-shadow:
 		0 0 0 1px color-mix(in oklab, var(--text-primary) 45%, transparent),
 		0 2px 8px rgb(0 0 0 / 0.22),
 		inset 0 1px 0 rgb(255 255 255 / 0.32);
 	animation: nav-box-open 720ms var(--ease-out) both;
+}
+
+.nav-sign-name {
+	font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+	font-weight: 600;
+	font-size: 17px;
+	letter-spacing: -0.005em;
+	line-height: 1;
+}
+
+.nav-sign-state {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+	font-size: 9.5px;
+	font-weight: 500;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	line-height: 1;
+	padding-left: 9px;
+	border-left: 1px solid color-mix(in oklab, var(--text-primary) 38%, transparent);
+	color: color-mix(in oklab, var(--text-primary) 82%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
