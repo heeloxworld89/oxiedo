@@ -31,6 +31,26 @@ Five sectors. One question about data, asked five ways.
 
 Nothing in a standard network can answer any of them. Not because a standard network is opaque, but because no part of it can be named.
 
+What that costs today
+
+- $15M
+
+  Of computing burned on one training run that failed.
+
+- 419
+
+  Times that run stopped in 54 days. Nobody knew why.
+
+- 7%
+
+  Of worldwide revenue. The EU fine ceiling, from August 2026.
+
+- 92%
+
+  Of approved medical AI can never be updated at all.
+
+Published figures · one per sector
+
 feature
 
 The Proofreader
@@ -247,31 +267,9 @@ Reaches Medical AI · Data Obligation
 
 [Read the page →](/technology)
 
-> One bounded node · six capabilities · seven features · five sectors Drag to turn it
-
-What that costs today
-
-Published figures · one per sector
-
-- $15M
-
-  Of computing burned on one training run that failed.
-
-- 419
-
-  Times that run stopped in 54 days. Nobody knew why.
-
-- 7%
-
-  Of worldwide revenue. The EU fine ceiling, from August 2026.
-
-- 92%
-
-  Of approved medical AI can never be updated at all.
+> One unit of a neural network · six capabilities · seven features · five sectors Drag to turn it
 
 What replaces it
-
-Built in, not bolted on
 
 - Keep the run
 
@@ -288,6 +286,8 @@ Built in, not bolted on
 - It can change
 
   Every change capped and logged against a limit declared in advance.
+
+Built in, not bolted on
 
 Five sectors where the data is locked and worth the most
 

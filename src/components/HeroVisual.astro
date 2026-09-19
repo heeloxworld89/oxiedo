@@ -345,14 +345,6 @@ const ghostEdges: [number, number][] = [
 		</p>
 	</div>
 
-	{/* THE MODEL GETS THE WHOLE WIDTH.
-	    It used to be the middle cell of a three-column row, which gave a 1240-wide
-	    drawing about a third of the page — its labels came out at four or five pixels
-	    and the two stat columns, being taller, left a tall void underneath it. A
-	    diagram that cannot be read is not a diagram. It is a band of its own now, and
-	    the two columns pair up beneath it where they are the same shape as each other
-	    and read as a comparison, which is what they are. */}
-	<HeroModel />
 
 	{/* ── THE BOARD ───────────────────────────────────────────────────────────
 	    Two columns of four rows became four columns of two, and the change is not
@@ -366,38 +358,55 @@ const ghostEdges: [number, number][] = [
 	    casts a shadow, it hangs slightly crooked, and it can be picked up and moved.
 	    Eight of them on the wall read as evidence someone collected. Eight rows of
 	    a definition list read as a table of contents. */}
-	<div class="board" data-board>
-		<div class="board-head">
-			<p class="board-label">What that costs today</p>
-			<p class="board-note">Published figures · one per sector</p>
-		</div>
-		<ul class="board-notes">
-			{failureRows.map((r) => (
-				<li class="note note--cost">
-					<span class="note-pin" aria-hidden="true"></span>
-					<p class="note-figure">
-						<span class="note-num">{r.figure}</span>{r.unit && <span class="note-unit">{r.unit}</span>}
-					</p>
-					<p class="note-body">{r.body}</p>
-				</li>
-			))}
-		</ul>
+	{/* ── THE COST, THE MACHINE, THE OUTCOME ──────────────────────────────────
+	    The two columns of notes stand either side of the opened node, and the node
+	    is between them because that is the actual relationship: the left column is
+	    what a network that cannot be named costs today, the right is what is true
+	    instead, and the thing in the middle is what turns one into the other. Read
+	    across any row and it is a sentence — $15M burned on a failed run · this ·
+	    keep the run.
 
-		<div class="board-head board-head--lit">
-			<p class="board-label">What replaces it</p>
+	    The pairing survives the move. Four rows, cost on the left and its own answer
+	    on the right, so the comparison is a glance across rather than a hunt down
+	    two lists. */}
+	<div class="board" data-board>
+		<section class="board-col">
+			<div class="board-head">
+				<p class="board-label">What that costs today</p>
+			</div>
+			<ul class="board-notes">
+				{failureRows.map((r) => (
+					<li class="note note--cost">
+						<span class="note-pin" aria-hidden="true"></span>
+						<p class="note-figure">
+							<span class="note-num">{r.figure}</span>{r.unit && <span class="note-unit">{r.unit}</span>}
+						</p>
+						<p class="note-body">{r.body}</p>
+					</li>
+				))}
+			</ul>
+			<p class="board-note">Published figures · one per sector</p>
+		</section>
+
+		<div class="board-model"><HeroModel /></div>
+
+		<section class="board-col">
+			<div class="board-head board-head--lit">
+				<p class="board-label">What replaces it</p>
+			</div>
+			<ul class="board-notes">
+				{resultRows.map((r) => (
+					<li class="note note--answer">
+						<span class="note-pin" aria-hidden="true"></span>
+						<p class="note-figure">
+							<span class="note-num">{r.figure}</span>{r.unit && <span class="note-unit">{r.unit}</span>}
+						</p>
+						<p class="note-body">{r.body}</p>
+					</li>
+				))}
+			</ul>
 			<p class="board-note">Built in, not bolted on</p>
-		</div>
-		<ul class="board-notes">
-			{resultRows.map((r) => (
-				<li class="note note--answer">
-					<span class="note-pin" aria-hidden="true"></span>
-					<p class="note-figure">
-						<span class="note-num">{r.figure}</span>{r.unit && <span class="note-unit">{r.unit}</span>}
-					</p>
-					<p class="note-body">{r.body}</p>
-				</li>
-			))}
-		</ul>
+		</section>
 
 		{/* Appears only once a note has been moved, and only where dragging is on. */}
 		<button type="button" class="board-tidy" data-board-tidy hidden>Straighten the board</button>
@@ -607,7 +616,21 @@ const ghostEdges: [number, number][] = [
 	}
 
 	/* ── the board ───────────────────────────────────────────────────────────── */
-	.board { display: grid; gap: var(--space-md); }
+	/* One column until there is room for three. Stacked, the order is the reading
+	   order of the argument: what it costs, the thing, what replaces it. */
+	.board {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--space-2xl) var(--space-xl);
+		align-items: start;
+	}
+	.board-col { min-width: 0; display: grid; gap: var(--space-md); align-content: start; }
+	/* STACKED, THE NODE IS CAPPED AND CENTRED. Given the full width of the page its
+	   box goes wider than its own proportions, and preserveAspectRatio fits by the
+	   short edge — so the drawing stops growing and the extra width becomes two
+	   bands of empty navy either side of it. Capped to something close to the
+	   artboard's own shape, the box and the drawing are the same object again. */
+	.board-model { min-width: 0; width: 100%; max-width: 940px; margin-inline: auto; }
 
 	.board-head {
 		display: flex;
@@ -618,9 +641,6 @@ const ghostEdges: [number, number][] = [
 		padding-bottom: 2px;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.09);
 	}
-	/* Between the two groups only. Applied to every .board-notes it also padded the
-	   bottom of the section, leaving a band of empty wall above the footer. */
-	.board-notes:first-of-type { margin-bottom: var(--space-2xl); }
 	.board-head--lit .board-label { color: var(--accent-on-dark); opacity: 0.9; }
 	.board-label { opacity: 0.6; }
 	.board-note { opacity: 0.34; }
@@ -667,10 +687,12 @@ const ghostEdges: [number, number][] = [
 	.board-notes > :nth-child(2) { --tilt: 1.1deg; }
 	.board-notes > :nth-child(3) { --tilt: -0.7deg; }
 	.board-notes > :nth-child(4) { --tilt: 1.5deg; }
-	.board-notes + .board-head + .board-notes > :nth-child(1) { --tilt: 1.2deg; }
-	.board-notes + .board-head + .board-notes > :nth-child(2) { --tilt: -1.5deg; }
-	.board-notes + .board-head + .board-notes > :nth-child(3) { --tilt: 0.8deg; }
-	.board-notes + .board-head + .board-notes > :nth-child(4) { --tilt: -1deg; }
+	/* The right-hand column hangs the other way, so the two sides do not read as one
+	   repeated stamp. */
+	.board-col:last-of-type .board-notes > :nth-child(1) { --tilt: 1.2deg; }
+	.board-col:last-of-type .board-notes > :nth-child(2) { --tilt: -1.5deg; }
+	.board-col:last-of-type .board-notes > :nth-child(3) { --tilt: 0.8deg; }
+	.board-col:last-of-type .board-notes > :nth-child(4) { --tilt: -1deg; }
 
 	/* THE PIN. A brass head catching light from the upper left, with its own small
 	   shadow on the paper below it — without that shadow it reads as a printed dot
@@ -778,16 +800,28 @@ const ghostEdges: [number, number][] = [
 
 	/* Side columns only flank the diagram once there is room for all three. Below that they stack,
 	   which is the correct mobile behaviour and costs nothing to get. */
-	@media (min-width: 620px) {
+	/* Two notes across while the columns are still stacked, so a phone-to-tablet
+	   width is not eight tall notes in a single file. */
+	@media (min-width: 620px) and (max-width: 1099px) {
 		.board-notes {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: var(--space-2xl) var(--space-lg);
+			gap: var(--space-xl) var(--space-lg);
 		}
 	}
 
-	/* Four across, so each answer lands under the cost it answers. */
-	@media (min-width: 1000px) {
-		.board-notes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+	/* THREE ACROSS. The node takes a little over twice a note column: it is an object
+	   with eighteen names orbiting it, and a column the width of a note would print
+	   them at five pixels — the mistake this figure has already made once. Each note
+	   column holds its four in a single file, so row by row a cost faces its answer. */
+	@media (min-width: 1100px) {
+		.board {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 2.8fr) minmax(0, 1fr);
+			gap: var(--space-xl);
+			align-items: stretch;
+		}
+		.board-notes { gap: var(--space-xl); }
+		.board-model { align-self: center; max-width: none; }
+		.board-tidy { grid-column: 1 / -1; }
 	}
 
 	/* PICKING ONE UP. Only on a device with a real pointer: on a touch screen the

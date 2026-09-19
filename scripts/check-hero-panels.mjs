@@ -59,13 +59,22 @@ try {
 }
 
 const OPEN = '.hm-panel:popover-open, .hm-panel.is-open';
+
+/* AIM AT THE INK, NOT AT THE GROUP. An orb's <g> holds the label AND the anchor dot
+   marking its true place on the shell, and the label slides away from that anchor
+   when something else wants the same pixels. The group's bounding box therefore
+   spans the two, and its centre is frequently empty space between them — clicking
+   there hit nothing, or hit whichever neighbour happened to be under that point,
+   which is what "opened the wrong panel" was. The label is the chip, the pill, or
+   the capability's text. */
+const INK = { caps: '.hm-cap-text', feat: '.hm-chip', mkt: '.hm-pill' };
 const fails = [];
 
 // Reading a label off a turning model is a moving target, and Playwright's own
 // "wait until it stops moving" never returns on something that turns forever.
 // Hovering a label stops the spin — that is how the model behaves for a visitor
 // too — so hover it, then confirm it has actually come to rest before clicking.
-const settle = async (page, sel) => {
+const settle = async (page, sel, hoverSel) => {
 	const read = () => page.evaluate((s) => {
 		const n = document.querySelector(s);
 		if (!n) return null;
@@ -79,7 +88,15 @@ const settle = async (page, sel) => {
 	for (let i = 0; i < 10; i++) {
 		const a = await read();
 		if (!a || a.w < 2) return null;
-		await page.mouse.move(a.x + a.w / 2, a.y + a.h / 2);
+		// Hover the group, so its pointerenter fires and pins the label in place.
+		const h = await page.evaluate((s) => {
+			const n = document.querySelector(s);
+			if (!n) return null;
+			const r = n.getBoundingClientRect();
+			return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+		}, hoverSel);
+		if (!h) return null;
+		await page.mouse.move(h.x, h.y);
 		await page.waitForTimeout(220);
 		const b = await read();
 		if (b && Math.abs(b.x - a.x) < 1 && Math.abs(b.y - a.y) < 1) return b;
@@ -115,8 +132,24 @@ for (const vp of [
 	if (picks.length !== 3) fails.push(`${tag}: expected all three orbits to offer a clickable label, found ${picks.length}`);
 
 	for (const { orb, id } of picks) {
-		const sel = `[data-hm-panel="${id}"]`;
-		const b = await settle(page, sel);
+		const group = `[data-hm-panel="${id}"]`;
+		/* Below about 620px the figure drops the names and keeps the object, so a
+		   capability has no text to aim at — what is left is its transparent hit
+		   rect, which is still there and still opens the panel. Never fall back to
+		   the group itself: it spans from the hit area to the anchor dot and its
+		   centre is the empty space between the two, which is how this arrived as
+		   "label never came to rest". First of these that is actually drawn. */
+		const sel = await page.evaluate(([g, ink]) => {
+			for (const part of [ink, '.hm-hit']) {
+				const n = document.querySelector(`${g} ${part}`);
+				if (!n) continue;
+				const r = n.getBoundingClientRect();
+				if (r.width > 2 && r.height > 2) return `${g} ${part}`;
+			}
+			return null;
+		}, [group, INK[orb]]);
+		if (!sel) { fails.push(`${tag} ${orb}: nothing drawn to aim at`); continue; }
+		const b = await settle(page, sel, sel);
 		if (!b || !b.onScreen) { fails.push(`${tag} ${orb}: label never came to rest on screen`); continue; }
 
 		await page.mouse.click(b.x + b.w / 2, b.y + b.h / 2);

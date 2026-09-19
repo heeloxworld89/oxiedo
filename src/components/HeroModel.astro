@@ -37,51 +37,35 @@ import { sectors } from '../data/sectors';
 /* A WIDE ARTBOARD, because the column is wide. The previous figure was 820x820 in a
    container capped by height, so preserveAspectRatio fitted it by the short edge and
    left a third of the frame empty on each side. */
-/* SIZED TO THE WORST CASE, MEASURED OVER A FULL TURN. The shells rotate, so the
-   silhouette is not the one the build happens to bake — sampled across a rotation the
-   drawing reaches x 66..1294 and y -25..529 against a 1240x470 box. It was running 54
-   past the right edge, 25 above the top and 59 below, and overflow:visible meant those
-   labels were not clipped by the SVG but by the page: "Certified Deletion" behind the
-   masthead, "Medical AI" off the side. 12px of margin on the measured extent. */
-const W = 1320;
-/* Measured, not guessed: the drawing occupies y 15..455 of this box. An artboard
-   taller than its content is dead space that the page cannot see and cannot close,
-   because preserveAspectRatio centres the whole viewBox — 570 was putting 77px of
-   nothing above the figure and 66 below, which read on the page as a gap under the
-   paragraph that no margin was responsible for. */
-const H = 590;
+/* THE ARTBOARD IS THE NODE, AND NOTHING ELSE.
+   The network that used to stand at the left is gone: the figure sits between the two
+   columns of notes now, and a second drawing in the same frame was competing with the
+   thing the frame is for. What that buys is proportion — an 1320x590 box holding one
+   object 800 wide wasted a third of its width on context, and the same object in a
+   900x580 box is the whole picture.
 
-/* THE MESH IS A SHALLOW HORIZONTAL STRIP NOW, not a third of the frame.
-   It is context — "the opened node is one unit of an ordinary network" — and it was
-   spending 330 units of width to say that while the subject of the picture made do
-   with what was left. Compressed to 220, which buys the node a 400 outer shell in
-   place of 340: eighteen percent more room between labels, and the cull has that
-   much less to hide. */
-/* IT STANDS UP AND RUNS UPWARD. Laid out left to right it read as a second diagram
-   competing with the node for the horizontal axis, and the reader's eye ran along it
-   away from the subject instead of arriving at it. Upright, the network is a column
-   the signal climbs, and the unit that gets magnified is the one at the top of the
-   climb — the callout leaves from the apex, which is where the eye already is. */
-const NET_CX = 134;
-const NET_Y0 = 508;   // the input layer, at the foot
-const NET_Y1 = 156;   // the output layer, at the head
-/* THE UNIT IS ONE OF THE NETWORK'S OWN NODES, not a marker parked beside them.
-   Sixteen pixels to the left of the output layer, it read as a stray ring that had
-   missed what it was pointing at, and the whole callout depends on the reader
-   believing the magnified object came out of this mesh. Middle node, last layer. */
-const SRC = { x: NET_CX, y: NET_Y1 };
+   Sized to the worst case over a full turn, not to the pose the build happens to bake:
+   a sector pill is 184 wide, so its centre can sit 92 short of either edge, and the
+   solver clamps anything that would run past. */
+/* A TIGHTER BOX MAKES BIGGER LABELS. A label is 11 units wide in the viewBox, so on
+   screen it measures 11 x (box width / viewBox width) — shrinking the viewBox around
+   the same object is the only lever that makes the names larger without making the
+   object smaller. Measured in the three-column layout: at a 900-unit box the labels
+   came out at 8.1px on a 1600px screen, which is the four-or-five-pixel mistake this
+   figure has already made once, in slower motion. */
+const W = 780;
+const H = 560;
 
 // The opened node.
-const CX = 790;
-const CY = 300;
-const R_CORE = 96;
-/* Wider than the first pass. Eighteen labels on three shells of 118/196/272 bunched
-   badly enough that the cull was hiding a third of them at rest, and a hero that
-   hides a third of its content at rest is not finished. The artboard is 1240 wide
-   and the opened node was only using 540 of it. */
-const R_CAPS = 178;
-const R_FEAT = 296;
-const R_MKT = 400;
+const CX = 390;
+const CY = 278;
+const R_CORE = 88;
+/* Three shells that clear each other's labels: a chip is 28 tall and a pill 26, so
+   94 units of gap between rings leaves room for a label on each without the solver
+   having to fling them. */
+const R_CAPS = 132;
+const R_FEAT = 208;
+const R_MKT = 280;
 
 const CHIP_W = 146;
 const CHIP_H = 28;
@@ -166,45 +150,6 @@ const entries = mktPts
 	})
 	.filter((e): e is NonNullable<typeof e> => Boolean(e));
 
-/* ── the network on the left ──────────────────────────────────────────────────
-   Four layers, drawn small and dim. It is context, not the subject: it says the
-   opened node is one unit of an ordinary network rather than a diagram floating on
-   its own. */
-const NET_LAYERS = [3, 5, 5, 3];
-const netNodes = NET_LAYERS.map((count, li) => {
-	const y = NET_Y0 + (li / (NET_LAYERS.length - 1)) * (NET_Y1 - NET_Y0);
-	const span = 26 + count * 16;
-	return Array.from({ length: count }, (_, k) => ({
-		x: NET_CX + (count === 1 ? 0 : (k / (count - 1) - 0.5) * span),
-		y,
-	}));
-});
-const netEdges = netNodes.flatMap((layer, li) =>
-	li === netNodes.length - 1
-		? []
-		: layer.flatMap((a, ai) =>
-			netNodes[li + 1].map((b, bi) => ({ key: `${li}-${ai}-${bi}`, l: li, x1: a.x, y1: a.y, x2: b.x, y2: b.y })),
-		),
-);
-
-/* THE CALLOUT IS A CONE, AND A CONE HAS TO TOUCH. Both lines used to run to the top
-   and bottom of the outer shell, which is an ellipse that changes size as the model
-   turns, so the cone breathed and at some angles pointed past the thing it was
-   magnifying. These are the two tangents from the apex node to the core disc: the
-   exact lines a magnifier casts, and the core does not move. */
-const tangents = (() => {
-	const dx = CX - SRC.x;
-	const dy = CY - SRC.y;
-	const d = Math.hypot(dx, dy);
-	const a = Math.atan2(dy, dx);
-	const spread = Math.asin(Math.min(1, R_CORE / d));
-	const len = Math.sqrt(Math.max(0, d * d - R_CORE * R_CORE));
-	return [a - spread, a + spread].map((t) => ({
-		x: SRC.x + Math.cos(t) * len,
-		y: SRC.y + Math.sin(t) * len,
-	}));
-})();
-
 const ops = ['LayerNorm', 'Linear ↓', 'PReLU', 'Linear ↑'];
 
 /* ── WHAT EACH THING IS, FOR THE PANEL THAT OPENS WHEN IT IS CLICKED ───────────
@@ -285,49 +230,12 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		preserveAspectRatio="xMidYMid meet"
 	>
 		<desc id="hm-desc">
-			A neural network on the left. One of its units is magnified on the right and shown open:
-			at its centre the bounded four-operation chain — LayerNorm, Linear down, PReLU, Linear up
-			— and around it three shells carrying the six capabilities the bound makes possible, the
-			seven features built from those capabilities, and the five sectors each feature serves.
-			Lines between the shells are the capability matrix and each sector's lead feature.
+			One unit of a neural network, magnified and shown open: at its centre the bounded
+			four-operation chain — LayerNorm, Linear down, PReLU, Linear up — and around it three
+			shells carrying the six capabilities the bound makes possible, the seven features built
+			from those capabilities, and the five sectors each feature serves. Lines between the
+			shells are the capability matrix and each sector's lead feature.
 		</desc>
-
-		{/* ── the network ─────────────────────────────────────────────────────── */}
-		<g>
-			{/* TWO STROKES PER EDGE, and the first one is the important one. A single
-			    dashed stroke that is only visible while a dash is passing does not draw
-			    a network — it draws scattered tick marks with nothing joining them, and
-			    that is exactly how it looked on screen. The solid stroke is the
-			    connection; the dashed one travelling over it is the signal. */}
-			{netEdges.map((e) => (
-				<line x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="hm-net-wire" data-l={e.l} />
-			))}
-			{netEdges.map((e) => (
-				<line x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="hm-net-edge" data-l={e.l} />
-			))}
-			{netNodes.flatMap((layer, li) =>
-				layer.map((n) => (
-					<circle
-						cx={n.x} cy={n.y}
-						r={li === netNodes.length - 1 ? 4.5 : 3.6}
-						class="hm-net-node" data-l={li}
-					/>
-				)),
-			)}
-		</g>
-
-		{/* THE CALLOUT. Two lines from the unit to the opened view: the oldest device in
-		    technical drawing for "this, magnified", and it is what makes the right-hand
-		    object legible as one node rather than as a second diagram. */}
-		<g>
-			<line x1={SRC.x} y1={SRC.y} x2={tangents[0].x} y2={tangents[0].y} class="hm-lead" />
-			<line x1={SRC.x} y1={SRC.y} x2={tangents[1].x} y2={tangents[1].y} class="hm-lead" />
-			<circle cx={SRC.x} cy={SRC.y} r="9" class="hm-src-ring" />
-			<circle cx={SRC.x} cy={SRC.y} r="4" class="hm-src-dot" />
-			{/* Above the apex. The cone leaves to the right and the mesh hangs below, so
-			    the only clear air around this node is over its head. */}
-			<text x={SRC.x} y={SRC.y - 20} text-anchor="middle" class="hm-src-label">one unit</text>
-		</g>
 
 		{/* ── shells ──────────────────────────────────────────────────────────── */}
 		<g>
@@ -486,7 +394,10 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	</div>
 
 	<figcaption class="hm-legend">
-		<span>One bounded node · six capabilities · seven features · five sectors</span>
+		{/* THE LEGEND CARRIES WHAT THE MESH USED TO SAY. The network beside the node was
+		    the thing that made "one unit" true rather than asserted, and it has gone;
+		    the words have to do that work now, in real text at a real size. */}
+		<span>One unit of a neural network · six capabilities · seven features · five sectors</span>
 		<span class="hm-drive" data-hm-hint hidden>Drag to turn it</span>
 	</figcaption>
 </figure>
@@ -494,11 +405,11 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 <script>
 	/* The same geometry the build baked, re-solved every frame into the same elements.
 	   One source of shape, two renderers, no duplicated DOM. */
-	const CX = 790;
-	const CY = 300;
-	const R_CORE = 96;
-	const W = 1320;
-	const H = 590;
+	const CX = 390;
+	const CY = 278;
+	const R_CORE = 88;
+	const W = 780;
+	const H = 560;
 	const YAW0 = -0.35;
 	const PITCH0 = 0.42;
 	const SHELLS: Record<string, { tilt: number; roll: number }> = {
@@ -666,8 +577,8 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 				   diagonal still has its own dot touching the last letter — ISOLATE● .
 				   Straight up by eighteen clears the text at every angle and gives it a
 				   short vertical leader instead of a stub poking out of a corner. */
-				if (o.shell === 'caps') return { o, p, w, h, x: p.x, y: p.y - 18 };
-				return { o, p, w, h, x: p.x + (vx / m) * 5, y: p.y + (vy / m) * 5 };
+				if (o.shell === 'caps') return { o, p, w, h, x: p.x, y: p.y - 18, rx: 0, ry: 0, held: false };
+				return { o, p, w, h, x: p.x + (vx / m) * 5, y: p.y + (vy / m) * 5, rx: 0, ry: 0, held: false };
 			});
 
 			const core = { l: CX - R_CORE, r: CX + R_CORE, t: CY - R_CORE, b: CY + R_CORE };
@@ -718,62 +629,96 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 				}
 			}
 
+			/* ── EASE, THEN ENFORCE ON WHAT IS ACTUALLY DRAWN ────────────────────
+			   The solver answers where a label SHOULD be; the easing decides where it
+			   IS, a few frames behind. Every invariant therefore has to be checked
+			   twice: once on the answer, and once on the pixel.
+
+			   This was not a theory. The nucleus clearance was applied per label after
+			   the easing, each one evicted along its nearest edge in ignorance of the
+			   other seventeen — so two labels evicted off the same side of the disc
+			   landed on the same spot, and ACCOUNT sat one hundred percent inside the
+			   AI Training pill while the solver was perfectly correct about both of
+			   them. Forty passes did not help, because the fault was downstream of the
+			   passes. The fix is not a bigger solve, it is the same solve run again on
+			   the eased positions: separation, artboard, nucleus, in that order, on the
+			   coordinates about to be written into the DOM.
+
+			   The label under the pointer is excluded from the moves. It has been
+			   promised it will hold still, and everything else can go round it. */
 			for (const it of items) {
 				const { o, p } = it;
-				/* EASED, NOT SNAPPED. The solved position jumps as the model turns and
-				   two labels trade places; followed exactly, the text flickers between
-				   two answers. Chasing it at a fifth of the distance per frame turns
-				   that into a drift the eye reads as the label getting out of the way. */
-				/* THE LABEL YOU ARE POINTING AT IS NAILED DOWN.
-				   Labels move now, and the model takes a moment to coast to a stop, so
-				   between deciding to click a chip and clicking it the chip could slide
-				   out from under the cursor. Measured: a click on a sector at 1180 wide
-				   opened nothing, because by the time the button went down the pill had
-				   left. Freezing the OFFSET is not enough — the anchor is still coasting
-				   and the label rides along with it — so what is held is the absolute
-				   position, and the offset is rewritten from it each frame so that
-				   letting go continues from where the label actually is. */
-				let lx: number;
-				let ly: number;
+				/* THE LABEL YOU ARE POINTING AT IS NAILED DOWN. Labels move, and the
+				   model takes a moment to coast to a stop, so between deciding to click
+				   a chip and clicking it the chip could slide out from under the cursor
+				   — measured: a sector click at 1180 wide opened nothing. Freezing the
+				   OFFSET is not enough, because the anchor is still coasting and the
+				   label rides along with it, so the absolute position is what is held. */
 				if (o.el === frozenEl) {
 					if (o.fx === null || o.fy === null) {
 						o.fx = p.x + o.ox;
 						o.fy = p.y + o.oy;
 					}
-					lx = o.fx;
-					ly = o.fy;
-					o.ox = lx - p.x;
-					o.oy = ly - p.y;
+					it.rx = o.fx;
+					it.ry = o.fy;
+					it.held = true;
 				} else {
 					o.fx = null;
 					o.fy = null;
+					/* Chasing the target at a third of the distance per frame. Followed
+					   exactly, a label flickers between two answers the moment it trades
+					   places with a neighbour; eased, the same thing reads as it getting
+					   out of the way. */
 					o.ox += (it.x - p.x - o.ox) * 0.3;
 					o.oy += (it.y - p.y - o.oy) * 0.3;
-					lx = p.x + o.ox;
-					ly = p.y + o.oy;
+					it.rx = p.x + o.ox;
+					it.ry = p.y + o.oy;
+					it.held = false;
 				}
+			}
 
-				/* THE NUCLEUS, ENFORCED AFTER THE EASING AND NOT BEFORE IT.
-				   The solver already keeps labels off the disc, but the solver answers
-				   about where a label should BE and the easing decides where it IS. When
-				   an anchor sweeps directly across the core the solved position flips
-				   from one side to the other, and a position eased between those two
-				   endpoints travels straight over the middle. Measured: ACCOUNT lying
-				   across the nucleus at one moment of the turn while the solver was
-				   perfectly correct about it. A guarantee that holds only between frames
-				   is not a guarantee, so it is applied last, to the pixel actually used,
-				   and written back so the easing does not spend the next frame undoing
-				   it. The label slides around the disc rather than through it. */
-				const hw = (o.w || o.textW) / 2 + 5;
-				const hh = (o.h || 22) / 2 + 5;
-				const cx2 = hw + R_CORE - Math.abs(lx - CX);
-				const cy3 = hh + R_CORE - Math.abs(ly - CY);
-				if (cx2 > 0 && cy3 > 0) {
-					if (cx2 < cy3) lx += (lx < CX ? -1 : 1) * cx2;
-					else ly += (ly < CY ? -1 : 1) * cy3;
-					o.ox = lx - p.x;
-					o.oy = ly - p.y;
+			for (let pass = 0; pass < 8; pass++) {
+				for (let i = 0; i < items.length; i++) {
+					for (let j = i + 1; j < items.length; j++) {
+						const a = items[i];
+						const b = items[j];
+						if (a.held && b.held) continue;
+						const dx = b.rx - a.rx;
+						const dy = b.ry - a.ry;
+						const ox = (a.w + b.w) / 2 - Math.abs(dx);
+						const oy = (a.h + b.h) / 2 - Math.abs(dy);
+						if (ox <= 0 || oy <= 0) continue;
+						// One of the pair is pinned: the other one does all the moving.
+						const aShare = a.held ? 0 : b.held ? 1 : 0.5;
+						const bShare = 1 - aShare;
+						if (ox < oy) {
+							const push = (dx < 0 ? -1 : 1) * ox;
+							a.rx -= push * aShare; b.rx += push * bShare;
+						} else {
+							const push = (dy < 0 ? -1 : 1) * oy;
+							a.ry -= push * aShare; b.ry += push * bShare;
+						}
+					}
 				}
+				for (const a of items) {
+					if (a.held) continue;
+					a.rx = Math.min(Math.max(a.rx, a.w / 2 + 4), W - a.w / 2 - 4);
+					a.ry = Math.min(Math.max(a.ry, a.h / 2 + 4), H - a.h / 2 - 4);
+					const ox = a.w / 2 + R_CORE - Math.abs(a.rx - CX);
+					const oy = a.h / 2 + R_CORE - Math.abs(a.ry - CY);
+					if (ox <= 0 || oy <= 0) continue;
+					if (ox < oy) a.rx += (a.rx < CX ? -1 : 1) * ox;
+					else a.ry += (a.ry < CY ? -1 : 1) * oy;
+				}
+			}
+
+			for (const it of items) {
+				const { o, p } = it;
+				const lx = it.rx;
+				const ly = it.ry;
+				// Written back so the next frame eases on from where the label really is.
+				o.ox = lx - p.x;
+				o.oy = ly - p.y;
 
 				/* AN ANCHOR IS ONLY WORTH DRAWING WHEN IT DISAGREES WITH THE LABEL.
 				   A chip that has not moved already sits on its anchor, and the dot then
@@ -940,7 +885,26 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		   numbers; one clamp at the end decides, rather than a run of branches
 		   overwriting each other. */
 		const place = (panel: HTMLElement, target: SVGGElement) => {
-			const t = target.getBoundingClientRect();
+			/* ANCHORED TO THE NAME, NOT TO THE GROUP. The group holds the label and the
+			   anchor dot marking its place on the shell, and the label slides away from
+			   that dot when something else wants the same pixels — so the group's box
+			   is as tall as the gap between them, and a panel placed against its edge
+			   floated clear of the thing it explains. Measured: 81px of daylight.
+
+			   Whichever of these is actually drawn. A hidden element still answers
+			   querySelector and still returns a rectangle — a rectangle of zeros — so
+			   asking for the text alone anchored the panel to the origin on a phone,
+			   where the names are off and only the hit area remains. Measured again:
+			   101px. Never the group; its centre is the empty space in between. */
+			const t = (() => {
+				for (const sel of ['.hm-chip', '.hm-pill', '.hm-cap-text', '.hm-hit']) {
+					const el = target.querySelector(sel);
+					if (!el) continue;
+					const r = el.getBoundingClientRect();
+					if (r.width > 2 && r.height > 2) return r;
+				}
+				return target.getBoundingClientRect();
+			})();
 			const w = panel.offsetWidth || 300;
 			const h = panel.offsetHeight || 170;
 			const M = 12;
@@ -1027,23 +991,18 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		   underneath carries the words in real text at a real size. Cropping rather
 		   than shrinking, because the thing this figure has to say on a phone is
 		   "a node, opened", not "here are eighteen names you cannot read". */
-		/* THREE TIERS, SET BY WHAT A LABEL ACTUALLY MEASURES ON SCREEN.
-		   A label is 11 units in the viewBox, so its rendered size is
-		   11 x (box width / viewBox width). The full scene is 1240 wide, so at a
-		   1020px box the labels land at 9px and at a 780px box at 6.3 — measured.
-		   Cropping to the node narrows the viewBox to 800, which makes labels BIGGER
-		   for the same box: 10.7px at 780. So the middle tier crops rather than
-		   shrinks, and only the narrowest tier gives the labels up. */
-		const FULL_VB = '0 0 1320 590';
-		const NODE_VB = `${CX - 500} ${CY - 285} 1000 570`;
-		const MIN_LABEL_PX = 9;
+		/* TWO TIERS NOW, NOT THREE. The middle tier existed to crop the network out
+		   of frame on a narrow screen; with the network gone the artboard is already
+		   the node, so there is nothing to crop to and one viewBox serves every width.
+		   What remains is the point below which a label cannot be read at all: a label
+		   is 11 units in a 780-unit box, so at a 560px box it lands at 7.9px. Under
+		   that the names come off and the object stays, which is the right trade —
+		   "a node, opened" is what this has to say on a phone, not eighteen names
+		   nobody can read. */
+		const MIN_LABEL_PX = 8;
 		const fitViewBox = () => {
 			const w = svg.getBoundingClientRect().width;
-			const cropped = (11 * w) / 1320 < MIN_LABEL_PX;
-			svg.setAttribute('viewBox', cropped ? NODE_VB : FULL_VB);
-			// Even cropped, below about 580px the labels fall under 8px.
-			fig.classList.toggle('is-compact', (11 * w) / 1000 < 8);
-			fig.classList.toggle('is-cropped', cropped);
+			fig.classList.toggle('is-compact', (11 * w) / W < MIN_LABEL_PX);
 		};
 		fitViewBox();
 		window.addEventListener('resize', fitViewBox);
@@ -1191,84 +1150,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	}
 	.hm.is-turning svg { cursor: grabbing; }
 
-	/* ── the network ─────────────────────────────────────────────────────────── */
-	/* THE MESH RUNS. It is the ordinary network the opened node came out of, and a
-	   still one reads as a diagram of a network rather than as a network. The signal
-	   is a dash travelling each edge — one CSS animation on a shared property, GPU
-	   work, no JavaScript per frame for sixty edges — and the edges take the accent
-	   rather than grey, so the left of the frame stops looking like a placeholder. */
-	/* GRADED BY DEPTH, and the grade means something: the signal brightens as it goes
-	   forward, from deep indigo at the input to the near-white the opened node is
-	   drawn in. The dash travels from x1 to x2, and every edge is authored input-side
-	   first, so the direction of travel is the direction of the forward pass. Two
-	   accent tokens and the mix between them — no hue invented for decoration. */
-	.hm-net-wire {
-		stroke: var(--accent-on-dark);
-		stroke-opacity: 0.14;
-		stroke-width: 0.7;
-	}
-	.hm-net-wire[data-l='0'] { stroke: color-mix(in oklab, var(--accent-on-dark) 45%, var(--accent-mid)); }
-	.hm-net-wire[data-l='1'] { stroke: color-mix(in oklab, var(--accent-on-dark) 72%, var(--accent-mid)); }
-	.hm-net-wire[data-l='2'] { stroke-opacity: 0.2; }
-
-	.hm-net-edge {
-		stroke: var(--accent-on-dark);
-		stroke-opacity: 0.55;
-		stroke-width: 1.1;
-		stroke-linecap: round;
-		stroke-dasharray: 4 30;
-		animation: hm-flow 2.6s linear infinite;
-	}
-	.hm-net-edge[data-l='0'] {
-		stroke: color-mix(in oklab, var(--accent-on-dark) 55%, var(--accent-mid));
-		animation-duration: 3.4s;
-		animation-delay: -0.7s;
-	}
-	.hm-net-edge[data-l='1'] {
-		animation-duration: 2.8s;
-		animation-delay: -1.3s;
-	}
-	.hm-net-edge[data-l='2'] {
-		stroke: color-mix(in oklab, var(--accent-soft) 60%, var(--accent-on-dark));
-		stroke-opacity: 0.75;
-		animation-duration: 2.1s;
-	}
-	@keyframes hm-flow { to { stroke-dashoffset: -34; } }
-
-	.hm-net-node {
-		fill: var(--accent-on-dark);
-		fill-opacity: 0.55;
-		animation: hm-breathe 3.2s ease-in-out infinite;
-	}
-	.hm-net-node[data-l='0'] { fill: color-mix(in oklab, var(--accent-on-dark) 40%, var(--accent-mid)); animation-delay: -2.2s; }
-	.hm-net-node[data-l='1'] { fill: color-mix(in oklab, var(--accent-on-dark) 65%, var(--accent-mid)); animation-delay: -1.1s; }
-	.hm-net-node[data-l='2'] { fill: var(--accent-on-dark); animation-delay: -0.4s; }
-	.hm-net-node[data-l='3'] {
-		fill: color-mix(in oklab, var(--accent-soft) 70%, var(--accent-on-dark));
-		animation-delay: 0s;
-	}
-	@keyframes hm-breathe {
-		0%, 100% { fill-opacity: 0.38; }
-		50%      { fill-opacity: 0.85; }
-	}
-
-	.hm-lead {
-		stroke: var(--accent-on-dark);
-		stroke-opacity: 0.28;
-		stroke-width: 1;
-		stroke-dasharray: 3 5;
-	}
-	.hm-src-ring { fill: none; stroke: var(--accent-on-dark); stroke-opacity: 0.7; stroke-width: 1.2; }
-	.hm-src-dot { fill: var(--accent-on-dark); }
-	.hm-src-label {
-		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
-		font-size: 10px;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		fill: var(--text-on-dark);
-		fill-opacity: 0.6;
-	}
-
 	/* ── shells ──────────────────────────────────────────────────────────────── */
 	.hm-shell { fill: none; stroke: var(--text-on-dark); stroke-opacity: 0.16; stroke-width: 1; }
 
@@ -1314,27 +1195,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	/* Only the feature shell is interactive: hovering one traces its capabilities. */
 	[data-orb="feat"] { cursor: pointer; }
 
-	/* Cropped to the node: the network and its callout are outside the frame, so they
-	   come off rather than being sliced by the viewBox edge — a half-drawn network
-	   bleeding off the side looks like a rendering fault, not like a crop. */
-	.hm.is-cropped .hm-net-node,
-	.hm.is-cropped .hm-net-wire,
-	.hm.is-cropped .hm-net-edge,
-	.hm.is-cropped .hm-lead,
-	.hm.is-cropped .hm-src-ring,
-	.hm.is-cropped .hm-src-dot,
-	.hm.is-cropped .hm-src-label { display: none; }
-
-	/* Cropped to the node: the network on the left is out of frame, so the legend
-	   carries that part. Worth the trade — the subject is the opened node. */
-	/* Inside the first line, not after the whole caption: appended to the figcaption
-	   it landed under "drag to turn it" as a line of its own, opening with a stray
-	   separator — "· ONE UNIT OF A NETWORK" reading as a fragment left behind. */
-	.hm.is-cropped .hm-legend > span:first-child::after {
-		content: ' · one unit of a network';
-		opacity: 0.7;
-	}
-
 	/* SVG defaults an unfilled shape to black, which on this ground is a hole. The
 	   three shells keep the colours they carry at full width: the feature chip's
 	   hairline, the sector pill's accent, so the object still distinguishes its
@@ -1362,7 +1222,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	   appears, and the rect stays in place as an invisible 44px-wide target — a phone
 	   still gets to tap any of the eighteen and read what it is. */
 	.hm.is-compact [data-orb] text,
-	.hm.is-compact .hm-src-label,
 	.hm.is-compact .hm-op-text { display: none; }
 	.hm.is-compact .hm-leader { display: none; }
 	.hm.is-compact .hm-chip,
@@ -1386,12 +1245,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	@media (prefers-reduced-motion: reduce) {
 		.hm-chord, .hm-entry { transition: none; }
 		/* The mesh keeps its colour and its dash; it just stops travelling. */
-		/* With motion off the travelling dash has nothing to say, so drop it entirely
-		   and let the solid wire carry the network on its own. */
-		.hm-net-edge { display: none; }
-		.hm-net-wire { stroke-opacity: 0.28; }
-		.hm-net-node { animation: none; }
-		.hm-net-node { fill-opacity: 0.6; }
 		.hm-panel:popover-open, .hm-panel.is-open { animation: none; }
 	}
 </style>
