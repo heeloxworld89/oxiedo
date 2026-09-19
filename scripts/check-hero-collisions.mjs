@@ -59,13 +59,24 @@ const page = await (await browser.newContext({ viewport: { width: 1600, height: 
 await page.goto(`${ORIGIN}/`);
 // The figure builds outward over ~3.2s and only then is at its final geometry.
 await page.waitForTimeout(4200);
-const res = await page.evaluate(() => {
-	const grab = (sel) => [...document.querySelectorAll(sel)]
+
+const probe = () => page.evaluate(() => {
+	/* MEASURE THE INK, NOT THE GROUP. An orb's <g> holds the label, the anchor dot
+	   that marks its true place on the shell, and — before the leaders were moved out
+	   — the line joining the two. Its bounding box therefore spanned from the shell to
+	   wherever the label had slid, which is not a thing anybody can see. Measured that
+	   way this check reported four labels lying across the nucleus when what crossed
+	   the nucleus was four hairlines. The label is the chip, the pill, or the
+	   capability's text; that is what must not collide. */
+	const grab = (sel, inkSel) => [...document.querySelectorAll(sel)]
 		.filter((e) => parseFloat(getComputedStyle(e).opacity || '1') > 0.02)
-		.map((e) => ({ t: (e.textContent || '').trim(), b: e.getBoundingClientRect() }));
-	const caps = grab('[data-orb="caps"]');
-	const feats = grab('[data-orb="feat"]');
-	const mkts = grab('[data-orb="mkt"]');
+		.map((e) => {
+			const ink = inkSel ? e.querySelector(inkSel) : e;
+			return { t: (e.textContent || '').trim(), b: (ink || e).getBoundingClientRect() };
+		});
+	const caps = grab('[data-orb="caps"]', '.hm-cap-text');
+	const feats = grab('[data-orb="feat"]', '.hm-chip');
+	const mkts = grab('[data-orb="mkt"]', '.hm-pill');
 	const core = grab('.hm-core-disc');
 	const all = [...caps, ...feats, ...mkts];
 
@@ -96,9 +107,37 @@ const res = await page.evaluate(() => {
 	const missing = [];
 	if (caps.length + feats.length + mkts.length < 8) missing.push(`only ${all.length} labels found`);
 	if (!core.length) missing.push('no nucleus found');
+	/* NOTHING MAY BE HIDDEN. The figure used to solve crowding by deleting labels —
+	   five of the eighteen at a typical angle, and because hovering stops the model,
+	   whatever was hidden at that moment stayed hidden while the reader looked at it.
+	   Labels move out of each other's way now, so the count is the whole point: all
+	   eighteen are on screen at every angle, or this is not finished. */
+	const drawn = [...document.querySelectorAll('[data-orb]')]
+		.filter((e) => parseFloat(getComputedStyle(e).opacity || '1') > 0.02).length;
+	const total18 = document.querySelectorAll('[data-orb]').length;
+	if (drawn < total18) missing.push(`${total18 - drawn} of ${total18} labels are hidden`);
 
 	return { stacked, onCore, missing };
 });
+
+/* SAMPLED ACROSS A ROTATION, NOT AT ONE INSTANT. The shells turn, and the labels
+   now slide out of each other's way as they do, so a single frame proves nothing
+   about the other three hundred and fifty-nine. A still frame is how an earlier
+   pass of this file reported itself clean while the figure was visibly stacking
+   labels on screen. Twelve moments spread over a full turn. */
+const res = { stacked: [], onCore: [], missing: [] };
+const seen = new Set();
+for (let i = 0; i < 12; i++) {
+	const r = await probe();
+	for (const k of ['stacked', 'onCore', 'missing']) {
+		for (const m of r[k]) {
+			if (seen.has(m)) continue;
+			seen.add(m);
+			res[k].push(m);
+		}
+	}
+	await page.waitForTimeout(340);
+}
 
 const total = Object.values(res).flat().length;
 if (total) {

@@ -57,18 +57,24 @@ const H = 590;
    with what was left. Compressed to 220, which buys the node a 400 outer shell in
    place of 340: eighteen percent more room between labels, and the cull has that
    much less to hide. */
-const NET_X0 = 34;
-const NET_X1 = 252;
+/* IT STANDS UP AND RUNS UPWARD. Laid out left to right it read as a second diagram
+   competing with the node for the horizontal axis, and the reader's eye ran along it
+   away from the subject instead of arriving at it. Upright, the network is a column
+   the signal climbs, and the unit that gets magnified is the one at the top of the
+   climb — the callout leaves from the apex, which is where the eye already is. */
+const NET_CX = 134;
+const NET_Y0 = 508;   // the input layer, at the foot
+const NET_Y1 = 156;   // the output layer, at the head
 /* THE UNIT IS ONE OF THE NETWORK'S OWN NODES, not a marker parked beside them.
    Sixteen pixels to the left of the output layer, it read as a stray ring that had
    missed what it was pointing at, and the whole callout depends on the reader
    believing the magnified object came out of this mesh. Middle node, last layer. */
-const SRC = { x: NET_X1, y: 300 };
+const SRC = { x: NET_CX, y: NET_Y1 };
 
 // The opened node.
 const CX = 790;
 const CY = 300;
-const R_CORE = 76;
+const R_CORE = 96;
 /* Wider than the first pass. Eighteen labels on three shells of 118/196/272 bunched
    badly enough that the cull was hiding a third of them at rest, and a hero that
    hides a third of its content at rest is not finished. The artboard is 1240 wide
@@ -166,11 +172,11 @@ const entries = mktPts
    its own. */
 const NET_LAYERS = [3, 5, 5, 3];
 const netNodes = NET_LAYERS.map((count, li) => {
-	const x = NET_X0 + (li / (NET_LAYERS.length - 1)) * (NET_X1 - NET_X0);
-	const span = 26 + count * 17;
+	const y = NET_Y0 + (li / (NET_LAYERS.length - 1)) * (NET_Y1 - NET_Y0);
+	const span = 26 + count * 16;
 	return Array.from({ length: count }, (_, k) => ({
-		x,
-		y: CY + (count === 1 ? 0 : (k / (count - 1) - 0.5) * span),
+		x: NET_CX + (count === 1 ? 0 : (k / (count - 1) - 0.5) * span),
+		y,
 	}));
 });
 const netEdges = netNodes.flatMap((layer, li) =>
@@ -180,6 +186,24 @@ const netEdges = netNodes.flatMap((layer, li) =>
 			netNodes[li + 1].map((b, bi) => ({ key: `${li}-${ai}-${bi}`, l: li, x1: a.x, y1: a.y, x2: b.x, y2: b.y })),
 		),
 );
+
+/* THE CALLOUT IS A CONE, AND A CONE HAS TO TOUCH. Both lines used to run to the top
+   and bottom of the outer shell, which is an ellipse that changes size as the model
+   turns, so the cone breathed and at some angles pointed past the thing it was
+   magnifying. These are the two tangents from the apex node to the core disc: the
+   exact lines a magnifier casts, and the core does not move. */
+const tangents = (() => {
+	const dx = CX - SRC.x;
+	const dy = CY - SRC.y;
+	const d = Math.hypot(dx, dy);
+	const a = Math.atan2(dy, dx);
+	const spread = Math.asin(Math.min(1, R_CORE / d));
+	const len = Math.sqrt(Math.max(0, d * d - R_CORE * R_CORE));
+	return [a - spread, a + spread].map((t) => ({
+		x: SRC.x + Math.cos(t) * len,
+		y: SRC.y + Math.sin(t) * len,
+	}));
+})();
 
 const ops = ['LayerNorm', 'Linear ↓', 'PReLU', 'Linear ↑'];
 
@@ -246,15 +270,20 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 ---
 
 <figure class="hm" data-hm>
+	{/* aria-label, NOT <title>. An SVG <title> is the accessible name AND a native
+	    browser tooltip, so "One node of a neural network, opened" followed the cursor
+	    around the figure and sat on top of the drawing it was describing — clipped by
+	    the frame on the way out. The same mistake is written up at the top of
+	    HeroVisual, which is where this should have been read first. aria-label gives
+	    assistive technology the identical name and draws nothing. */}
 	<svg
 		data-hm-svg
 		viewBox={`0 0 ${W} ${H}`}
 		role="img"
-		aria-labelledby="hm-title"
+		aria-label="One node of a neural network, opened"
 		aria-describedby="hm-desc"
 		preserveAspectRatio="xMidYMid meet"
 	>
-		<title id="hm-title">One node of a neural network, opened</title>
 		<desc id="hm-desc">
 			A neural network on the left. One of its units is magnified on the right and shown open:
 			at its centre the bounded four-operation chain — LayerNorm, Linear down, PReLU, Linear up
@@ -291,13 +320,13 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		    technical drawing for "this, magnified", and it is what makes the right-hand
 		    object legible as one node rather than as a second diagram. */}
 		<g>
-			<line data-callout="a" x1={SRC.x} y1={SRC.y} x2={CX} y2={CY - R_MKT} class="hm-lead" />
-			<line data-callout="b" x1={SRC.x} y1={SRC.y} x2={CX} y2={CY + R_MKT} class="hm-lead" />
+			<line x1={SRC.x} y1={SRC.y} x2={tangents[0].x} y2={tangents[0].y} class="hm-lead" />
+			<line x1={SRC.x} y1={SRC.y} x2={tangents[1].x} y2={tangents[1].y} class="hm-lead" />
 			<circle cx={SRC.x} cy={SRC.y} r="9" class="hm-src-ring" />
 			<circle cx={SRC.x} cy={SRC.y} r="4" class="hm-src-dot" />
-			{/* In the throat of the callout, where the two lines are still close together
-			    and nothing else is drawn. Above the node it lay across the mesh wiring. */}
-			<text x={SRC.x + 16} y={SRC.y + 4} text-anchor="start" class="hm-src-label">one unit</text>
+			{/* Above the apex. The cone leaves to the right and the mesh hangs below, so
+			    the only clear air around this node is over its head. */}
+			<text x={SRC.x} y={SRC.y - 20} text-anchor="middle" class="hm-src-label">one unit</text>
 		</g>
 
 		{/* ── shells ──────────────────────────────────────────────────────────── */}
@@ -324,26 +353,53 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			))}
 		</g>
 
-		{/* ── the nucleus: the bounded chain ──────────────────────────────────── */}
+		{/* ── the leaders ───────────────────────────────────────────────────────
+		    IN THEIR OWN GROUP, AND BEFORE THE NUCLEUS. A leader runs from a label to
+		    its anchor on a shell, and when that anchor is behind the disc the line has
+		    to cross it. Drawn inside the label's own group — which is painted after the
+		    core so the names stay on top — every one of those crossings was a hairline
+		    ruled straight over the subject of the picture. Here they slide behind the
+		    disc instead, which is also where they are in space.
+
+		    It has a second effect worth naming: an orb's group no longer stretches from
+		    its anchor to its label, so the collision check measures the label rather
+		    than a box the size of the leader. It was reporting four labels "covering
+		    the nucleus" when what crossed the nucleus was four lines. */}
+		<g>
+			{[...capPts.map((c) => ({ id: `p-cap-${c.name.toLowerCase()}`, x: c.x, y: c.y })),
+			  ...featPts.map((fp) => ({ id: `p-${fp.feature.id}`, x: fp.x, y: fp.y })),
+			  ...mktPts.map((mp) => ({ id: `p-${mp.sector.id}`, x: mp.x, y: mp.y }))].map((a) => (
+				<line class="hm-leader" data-leader={a.id} x1={a.x} y1={a.y} x2={a.x} y2={a.y} />
+			))}
+		</g>
+
+		{/* ── the nucleus: the bounded chain ────────────────────────────────────
+		    A CHAIN, DRAWN AS A CHAIN. Four boxes in a two-by-two grid says "here are
+		    four things" — a set, in no order, with no relationship between them. The
+		    claim is the opposite of that: these four operations are a *chain*, and the
+		    fact that it is bounded at four is the entire thesis. A grid was not a
+		    weaker picture of the idea, it was a picture of a different idea. So: one
+		    column, top to bottom, with the arrows that make it a sequence. */}
 		<g data-core>
 			<circle cx={CX} cy={CY} r={R_CORE} class="hm-core-disc" />
 			<circle cx={CX} cy={CY} r={R_CORE} class="hm-core-ring" />
+			{/* A DISC IS NARROW AT THE TOP. The caption was set at the width of the
+			    diameter and placed 24 below the crown, where the chord it actually has
+			    is 126 wide — so it ran out over the ring and printed across a shell
+			    anchor. Lower, smaller, and measured against the chord at that height. */}
+			<text x={CX} y={CY - R_CORE + 26} text-anchor="middle" class="hm-core-cap">the bounded chain</text>
 			{ops.map((op, i) => {
-				const col = i % 2;
-				const row = i < 2 ? 0 : 1;
-				const bx = CX - 52 + col * 54;
-				const by = CY - 24 + row * 24;
+				const by = CY - 58 + i * 32;
 				return (
 					<g>
-						<rect x={bx} y={by} width="50" height="20" rx="3" class="hm-op" />
-						<text x={bx + 25} y={by + 14} text-anchor="middle" class="hm-op-text">{op}</text>
+						<rect x={CX - 50} y={by} width="100" height="20" rx="3" class="hm-op" />
+						<text x={CX} y={by + 14} text-anchor="middle" class="hm-op-text">{op}</text>
+						{i < ops.length - 1 && (
+							<path d={`M${CX},${by + 20} v8 m-3.5,-3.5 l3.5,3.5 l3.5,-3.5`} class="hm-op-arrow" />
+						)}
 					</g>
 				);
 			})}
-			{/* Inside the disc, not under it. Outside, it sat in the shells' airspace and
-			    a sector pill printed straight across it — and unlike the pills it is not
-			    in the cull, so nothing was ever going to move out of its way. */}
-			<text x={CX} y={CY - R_CORE + 27} text-anchor="middle" class="hm-core-cap">4 BOUNDED OPS</text>
 		</g>
 
 		{/* ── capabilities ────────────────────────────────────────────────────── */}
@@ -363,7 +419,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 					    transparent rect gives the label one target, which is also what turns
 					    a nine-pixel dot into something a thumb can hit. */}
 					<rect class="hm-hit" x={c.x - 52} y={c.y - 22} width="104" height="34" />
-					<circle cx={c.x} cy={c.y} r="4.5" class="hm-cap-dot" />
+					<circle cx={c.x} cy={c.y} r="4.5" class="hm-cap-dot hm-anchor" />
 					<text x={c.x} y={c.y - 10} text-anchor="middle" class="hm-cap-text" data-cull>{c.name}</text>
 				</g>
 			))}
@@ -380,10 +436,13 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 					aria-label={`${fp.feature.name} — what this feature does`}
 					style={`opacity:${fmtDep(fp.dep)}`}
 				>
+					{/* THE ANCHOR IS THE TRUTH. The dot is where this feature actually sits on
+					    its shell; the chip is only the name, free to slide aside when another
+					    name wants the same pixels. The leader that joins them is drawn in a
+					    group of its own, further up — see the note there. */}
 					<rect x={fp.x - CHIP_W / 2} y={fp.y - CHIP_H / 2} width={CHIP_W} height={CHIP_H} rx="5" class="hm-chip" data-cull />
 					<text x={fp.x} y={fp.y + 4} text-anchor="middle" class="hm-chip-text">{fp.feature.name}</text>
-					{/* Shown only on a narrow screen — see .hm.is-compact. */}
-					<circle cx={fp.x} cy={fp.y} r="4" class="hm-chip-dot" />
+					<circle cx={fp.x} cy={fp.y} r="3.6" class="hm-chip-dot hm-anchor" />
 				</g>
 			))}
 		</g>
@@ -400,7 +459,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 					style={`opacity:${fmtDep(mp.dep)}`}
 				>
 					<rect x={mp.x - PILL_W / 2} y={mp.y - PILL_H / 2} width={PILL_W} height={PILL_H} rx="14" class="hm-pill" data-cull />
-					<circle cx={mp.x} cy={mp.y} r="4.5" class="hm-chip-dot" />
+					<circle cx={mp.x} cy={mp.y} r="4" class="hm-chip-dot hm-anchor" />
 					<text x={mp.x} y={mp.y + 4} text-anchor="middle" class="hm-pill-text">{mp.sector.name}</text>
 				</g>
 			))}
@@ -437,6 +496,9 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	   One source of shape, two renderers, no duplicated DOM. */
 	const CX = 790;
 	const CY = 300;
+	const R_CORE = 96;
+	const W = 1320;
+	const H = 590;
 	const YAW0 = -0.35;
 	const PITCH0 = 0.42;
 	const SHELLS: Record<string, { tilt: number; roll: number }> = {
@@ -477,8 +539,18 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			id: el.getAttribute('data-id') || '',
 			rect: el.querySelector<SVGRectElement>('rect:not(.hm-hit)'),
 			hit: el.querySelector<SVGRectElement>('rect.hm-hit'),
-			dot: el.querySelector<SVGCircleElement>('circle'),
-			chipDot: el.querySelector<SVGCircleElement>('circle.hm-chip-dot'),
+			anchor: el.querySelector<SVGCircleElement>('circle.hm-anchor'),
+			leader: svg.querySelector<SVGLineElement>(
+				`line.hm-leader[data-leader="${el.getAttribute('data-hm-panel')}"]`,
+			),
+			/* How far this label currently sits from its anchor. Carried between frames
+			   so the solved position can be eased into rather than jumped to. */
+			ox: 0,
+			oy: 0,
+			/* Where it was nailed down when the pointer arrived on it, if it is the one
+			   being pointed at. Absolute, not an offset — see the note at the freeze. */
+			fx: null as number | null,
+			fy: null as number | null,
 			text: el.querySelector<SVGTextElement>('text'),
 			cull: el.querySelector<SVGElement>('[data-cull]'),
 			/* Measured, not assumed. The caps carry no rect, so their width was a flat
@@ -507,19 +579,24 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		const shellEls = [...svg.querySelectorAll<SVGEllipseElement>('[data-shell]')].map((el) => ({
 			el, shell: el.getAttribute('data-shell') as string, r: num(el, 'data-r'),
 		}));
-		const leadA = svg.querySelector<SVGLineElement>('[data-callout="a"]');
-		const leadB = svg.querySelector<SVGLineElement>('[data-callout="b"]');
 
 		let yaw = 0;
 		let aimYaw = 0;
 		let pitch = 0;
 		let aimPitch = 0;
+		let frozenEl: Element | null = null;   // the label the pointer is resting on
 		let hovered = '';    // a feature id: lights the chords leaving that feature
 		let hoverCap = '';   // a capability name: lights the chords arriving at it
 		let dragging = false;
 		let lastX = 0;
 		let lastY = 0;
-		let spin = reduced ? 0 : 1;
+		/* THE MODEL SLOWS TO A STOP, IT DOES NOT SEIZE. Hovering a label used to set the
+		   rate to zero on the frame the pointer arrived, and a turning object that halts
+		   between one frame and the next does not read as "held" — it reads as stuck,
+		   which is the word that came back. Easing the rate over about a fifth of a
+		   second makes the same behaviour legible as the figure waiting for you. */
+		let spinAim = reduced ? 0 : 1;
+		let spin = spinAim;
 		const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
 
 		const project = (r: number, a: number, shell: string) => {
@@ -545,6 +622,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		};
 
 		function frame(now: number) {
+			spin += (spinAim - spin) * 0.09;
 			if (!dragging) aimYaw += 0.0016 * spin;
 			yaw += (aimYaw - yaw) * 0.08;
 			pitch += (aimPitch - pitch) * 0.08;
@@ -559,76 +637,188 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			const placed = [...orbs].map((o) => ({ o, p: project(o.r, o.a, o.shell) }))
 				.sort((m, n) => m.p.dep - n.p.dep);
 
-			/* Move everything first, then decide what is visible, then paint. Doing all
-			   three in one pass is what made the last two attempts wrong in ways that
-			   only showed up while it was turning. */
-			for (const { o, p } of placed) {
-				if (o.hit) {
-					o.hit.setAttribute('x', String(p.x - 52));
-					o.hit.setAttribute('y', String(p.y - 22));
+			/* ── NOTHING DISAPPEARS ──────────────────────────────────────────────
+			   THE CULL IS GONE. It hid any label that would land on one already
+			   placed, which at a typical angle was five of the eighteen — and because
+			   hovering stops the model, whatever happened to be hidden at that instant
+			   stayed hidden for as long as the reader looked. What that produces on
+			   screen is a figure that deletes a third of itself the moment you touch
+			   it and then freezes that way. Reported exactly so, and correctly.
+
+			   A label that is in the way does not have to be destroyed; it has to move.
+			   Each label keeps an anchor on its shell — the dot, which is the true
+			   position and never moves off the geometry — and the text is free to slide
+			   until it has room, joined back to its anchor by a leader. This is how a
+			   technical illustration has always solved it, and it has the property the
+			   cull could never have: every one of the eighteen is legible at every
+			   angle, because being in the way costs a label a few pixels instead of its
+			   existence. */
+			const items = placed.map(({ o, p }) => {
+				const w = (o.w || o.textW) + 8;
+				const h = (o.h || 22) + 8;
+				// Nudged outward to begin with, so the solver starts on the side of the
+				// anchor with the open space rather than pushing through the nucleus.
+				const vx = p.x - CX;
+				const vy = p.y - CY;
+				const m = Math.hypot(vx, vy) || 1;
+				/* A CAPABILITY SITS ABOVE ITS DOT, SQUARELY. Lifted radially like the
+				   others it landed on a diagonal, and a 74-wide word displaced 17 along a
+				   diagonal still has its own dot touching the last letter — ISOLATE● .
+				   Straight up by eighteen clears the text at every angle and gives it a
+				   short vertical leader instead of a stub poking out of a corner. */
+				if (o.shell === 'caps') return { o, p, w, h, x: p.x, y: p.y - 18 };
+				return { o, p, w, h, x: p.x + (vx / m) * 5, y: p.y + (vy / m) * 5 };
+			});
+
+			const core = { l: CX - R_CORE, r: CX + R_CORE, t: CY - R_CORE, b: CY + R_CORE };
+
+			/* Pairwise separation along the shorter axis: a label that overlaps by 40
+			   across and 6 down is one that wants to move down, and moving it down is
+			   both the smaller lie about where it belongs and the shorter trip. Six
+			   passes settles eighteen boxes; it is 153 pairs, which is nothing. */
+			/* FOURTEEN PASSES, NOT SIX. Six left labels wedged: measured, SUPPRESS still
+			   sat 67% across AI Training and four labels were still on the nucleus. The
+			   work is 153 pairs a pass and the whole solve is under a tenth of a
+			   millisecond, so the cost of being generous here is nothing and the cost of
+			   being stingy is a label printed through another one. */
+			for (let pass = 0; pass < 14; pass++) {
+				for (let i = 0; i < items.length; i++) {
+					for (let j = i + 1; j < items.length; j++) {
+						const a = items[i];
+						const b = items[j];
+						const dx = b.x - a.x;
+						const dy = b.y - a.y;
+						const ox = (a.w + b.w) / 2 - Math.abs(dx);
+						const oy = (a.h + b.h) / 2 - Math.abs(dy);
+						if (ox <= 0 || oy <= 0) continue;
+						if (ox < oy) {
+							const push = ((dx < 0 ? -1 : 1) * ox) / 2;
+							a.x -= push; b.x += push;
+						} else {
+							const push = ((dy < 0 ? -1 : 1) * oy) / 2;
+							a.y -= push; b.y += push;
+						}
+					}
 				}
-				if (o.chipDot) {
-					o.chipDot.setAttribute('cx', String(p.x));
-					o.chipDot.setAttribute('cy', String(p.y));
+				// Inside the artboard, or the page clips what the solver just saved.
+				for (const a of items) {
+					a.x = Math.min(Math.max(a.x, a.w / 2 + 4), W - a.w / 2 - 4);
+					a.y = Math.min(Math.max(a.y, a.h / 2 + 4), H - a.h / 2 - 4);
 				}
-				if (o.rect) {
-					o.rect.setAttribute('x', String(p.x - o.w / 2));
-					o.rect.setAttribute('y', String(p.y - o.h / 2));
-				} else if (o.dot) {
-					o.dot.setAttribute('cx', String(p.x));
-					o.dot.setAttribute('cy', String(p.y));
-				}
-				if (o.text) {
-					o.text.setAttribute('x', String(p.x));
-					o.text.setAttribute('y', String(o.rect ? p.y + 4 : p.y - 10));
+				/* THE NUCLEUS IS ABSOLUTE, AND IT GOES LAST. It is the subject of the
+				   picture and gets no tolerance. Running it before the artboard clamp
+				   meant the clamp could push a label straight back onto it on the final
+				   pass, which is exactly what four of them did. */
+				for (const a of items) {
+					const ox = (a.w / 2 + R_CORE) - Math.abs(a.x - CX);
+					const oy = (a.h / 2 + R_CORE) - Math.abs(a.y - CY);
+					if (ox <= 0 || oy <= 0) continue;
+					if (ox < oy) a.x += (a.x < CX ? -1 : 1) * ox;
+					else a.y += (a.y < CY ? -1 : 1) * oy;
 				}
 			}
 
-			const boxes: Array<{ l: number; r: number; t: number; b: number }> = [];
-			/* THE NUCLEUS IS ABSOLUTE. A third of a 184px pill is sixty pixels of label
-			   lying across the subject of the picture, so it gets no tolerance at all. */
-			const core = { l: CX - 76, r: CX + 76, t: CY - 76, b: CY + 76 };
-			const onCore = (bx: { l: number; r: number; t: number; b: number }) =>
-				bx.r > core.l && bx.l < core.r && bx.b > core.t && bx.t < core.b;
+			for (const it of items) {
+				const { o, p } = it;
+				/* EASED, NOT SNAPPED. The solved position jumps as the model turns and
+				   two labels trade places; followed exactly, the text flickers between
+				   two answers. Chasing it at a fifth of the distance per frame turns
+				   that into a drift the eye reads as the label getting out of the way. */
+				/* THE LABEL YOU ARE POINTING AT IS NAILED DOWN.
+				   Labels move now, and the model takes a moment to coast to a stop, so
+				   between deciding to click a chip and clicking it the chip could slide
+				   out from under the cursor. Measured: a click on a sector at 1180 wide
+				   opened nothing, because by the time the button went down the pill had
+				   left. Freezing the OFFSET is not enough — the anchor is still coasting
+				   and the label rides along with it — so what is held is the absolute
+				   position, and the offset is rewritten from it each frame so that
+				   letting go continues from where the label actually is. */
+				let lx: number;
+				let ly: number;
+				if (o.el === frozenEl) {
+					if (o.fx === null || o.fy === null) {
+						o.fx = p.x + o.ox;
+						o.fy = p.y + o.oy;
+					}
+					lx = o.fx;
+					ly = o.fy;
+					o.ox = lx - p.x;
+					o.oy = ly - p.y;
+				} else {
+					o.fx = null;
+					o.fy = null;
+					o.ox += (it.x - p.x - o.ox) * 0.3;
+					o.oy += (it.y - p.y - o.oy) * 0.3;
+					lx = p.x + o.ox;
+					ly = p.y + o.oy;
+				}
 
-			/* GREEDY CULL, NEAREST FIRST. Eighteen labels on three shells will cross at
-			   some rotation whatever offsets they are given — that is geometry. So the
-			   nearest wins the space and anything that would sit on one already placed
-			   is hidden until the model turns. */
-			for (let i = placed.length - 1; i >= 0; i--) {
-				const { o, p } = placed[i];
-				/* THE BOX HAS TO BE WHERE THE INK IS. A capability label has no rect and
-				   is drawn at p.y - 10, but the cull was testing a box centred on p.y —
-				   thirteen pixels below the glyphs, so it cleared collisions the label
-				   was actually in. That is why SUPPRESS kept printing through The Update
-				   Engine while the check reported nothing. */
-				/* A CAPABILITY IS A DOT AND A LABEL, and the box has to cover both. The
-				   group holds a circle at p.y and text at p.y - 10, so its real extent
-				   runs from about p.y - 20 to p.y + 6 — twenty-six tall. Modelling it as
-				   thirteen, centred fourteen above, described a box that missed the dot
-				   entirely, which is why SUPPRESS kept clipping The Update Engine
-				   through three different thresholds: the rule was never wrong, it was
-				   being asked about the wrong rectangle. */
-				const w = o.w || o.textW;
-				const h = o.h || 26;
-				const cy2 = o.rect ? p.y : p.y - 7;
-				const box = { l: p.x - w / 2, r: p.x + w / 2, t: cy2 - h / 2, b: cy2 + h / 2 };
+				/* THE NUCLEUS, ENFORCED AFTER THE EASING AND NOT BEFORE IT.
+				   The solver already keeps labels off the disc, but the solver answers
+				   about where a label should BE and the easing decides where it IS. When
+				   an anchor sweeps directly across the core the solved position flips
+				   from one side to the other, and a position eased between those two
+				   endpoints travels straight over the middle. Measured: ACCOUNT lying
+				   across the nucleus at one moment of the turn while the solver was
+				   perfectly correct about it. A guarantee that holds only between frames
+				   is not a guarantee, so it is applied last, to the pixel actually used,
+				   and written back so the easing does not spend the next frame undoing
+				   it. The label slides around the disc rather than through it. */
+				const hw = (o.w || o.textW) / 2 + 5;
+				const hh = (o.h || 22) / 2 + 5;
+				const cx2 = hw + R_CORE - Math.abs(lx - CX);
+				const cy3 = hh + R_CORE - Math.abs(ly - CY);
+				if (cx2 > 0 && cy3 > 0) {
+					if (cx2 < cy3) lx += (lx < CX ? -1 : 1) * cx2;
+					else ly += (ly < CY ? -1 : 1) * cy3;
+					o.ox = lx - p.x;
+					o.oy = ly - p.y;
+				}
 
-				/* SEPARATION, NOT A FRACTION OF AREA. Two thresholds were tried — a third
-				   of the label's own area, then a twentieth — and both left grazes on
-				   screen while reporting themselves satisfied, because a corner clip of
-				   9x9 is a rounding error as an area and a visibly broken word to a
-				   reader. Overlapping text does not get less overlapping when the
-				   rectangle is large. So: no two labels may come within 3px, full stop.
-				   It costs a label or two at some angles and it is never ambiguous. */
-				const PAD = 3;
-				const hit = onCore(box) || boxes.some((q) =>
-					box.r + PAD > q.l && box.l - PAD < q.r && box.b + PAD > q.t && box.t - PAD < q.b);
+				/* AN ANCHOR IS ONLY WORTH DRAWING WHEN IT DISAGREES WITH THE LABEL.
+				   A chip that has not moved already sits on its anchor, and the dot then
+				   prints in the middle of the name — "The ●Diary" — which reads as a
+				   rendering fault rather than as a mark. And a dot whose projection lands
+				   inside the disc is one the disc is in front of or behind: either way it
+				   ends up stamped on the nucleus, and it put a dot through the middle of
+				   the caption. Neither is drawn. */
+				/* OUTSIDE THE LABEL'S OWN BOX, measured, not guessed at with a radius. A
+				   chip is 146 by 28: an anchor eight pixels from its centre is still well
+				   inside the name, and "seven pixels" drew a dot in the middle of The
+				   Update Engine. The dot is worth drawing exactly when it is somewhere
+				   the label is not. */
+				const outside = Math.abs(p.x - lx) > (o.w || o.textW) / 2 ||
+					Math.abs(p.y - ly) > (o.h || 22) / 2;
+				const behindCore = Math.hypot(p.x - CX, p.y - CY) < R_CORE;
+				const showAnchor = outside && !behindCore;
+				if (o.anchor) {
+					o.anchor.setAttribute('cx', String(p.x));
+					o.anchor.setAttribute('cy', String(p.y));
+					o.anchor.style.opacity = showAnchor ? '1' : '0';
+				}
+				if (o.leader) {
+					o.leader.setAttribute('x1', String(p.x));
+					o.leader.setAttribute('y1', String(p.y));
+					o.leader.setAttribute('x2', String(lx));
+					o.leader.setAttribute('y2', String(ly));
+					o.leader.style.opacity = showAnchor ? '1' : '0';
+				}
+				if (o.hit) {
+					o.hit.setAttribute('x', String(lx - 52));
+					o.hit.setAttribute('y', String(ly - 22));
+				}
+				if (o.rect) {
+					o.rect.setAttribute('x', String(lx - o.w / 2));
+					o.rect.setAttribute('y', String(ly - o.h / 2));
+				}
+				if (o.text) {
+					o.text.setAttribute('x', String(lx));
+					o.text.setAttribute('y', String(o.rect ? ly + 4 : ly + 3));
+				}
 
+				// Depth reads as weight now, and only as weight. Never as absence.
 				const near = (p.dep + 1) / 2;
-				o.el.style.opacity = hit ? '0' : String(0.45 + near * 0.55);
-				o.el.style.pointerEvents = hit ? 'none' : '';
-				if (!hit) boxes.push(box);
+				o.el.style.opacity = String(0.5 + near * 0.5);
 			}
 
 			/* Painter's order: FAR FIRST, so the near ones are appended last and end up
@@ -653,11 +843,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 				const b = project(e.fr, e.fa, 'feat');
 				e.el.setAttribute('x1', String(a.x)); e.el.setAttribute('y1', String(a.y));
 				e.el.setAttribute('x2', String(b.x)); e.el.setAttribute('y2', String(b.y));
-			}
-			if (leadA && leadB) {
-				const g = shellPath(shellEls.find((s) => s.shell === 'mkt')?.r ?? 340, 'mkt');
-				leadA.setAttribute('y2', String(CY - Math.max(g.ry, 120)));
-				leadB.setAttribute('y2', String(CY + Math.max(g.ry, 120)));
 			}
 			raf = requestAnimationFrame(frame);
 		}
@@ -716,15 +901,17 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		for (const o of orbs) {
 			if (!o.el.hasAttribute('data-hm-panel')) continue;
 			o.el.addEventListener('pointerenter', () => {
-				spin = 0;
+				spinAim = 0;
+				frozenEl = o.el;
 				if (o.shell === 'feat') hovered = o.id;
 				else if (o.shell === 'caps') hoverCap = o.id;
 			});
 			o.el.addEventListener('pointerleave', () => {
 				if (openPanel) return;   // an open panel keeps its own subject lit
+				frozenEl = null;
 				hovered = '';
 				hoverCap = '';
-				spin = reduced ? 0 : 1;
+				spinAim = reduced ? 0 : 1;
 			});
 		}
 
@@ -782,9 +969,10 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			if (supportsPopover) { try { openPanel.hidePopover(); } catch { /* already closed */ } }
 			openPanel.classList.remove('is-open');
 			openPanel = null;
+			frozenEl = null;
 			hovered = '';
 			hoverCap = '';
-			spin = reduced ? 0 : 1;
+			spinAim = reduced ? 0 : 1;
 		};
 
 		const openFor = (el: SVGGElement) => {
@@ -795,7 +983,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			if (openPanel === panel) { closePanel(); return; }
 			closePanel();
 			openPanel = panel;
-			spin = 0;
+			spinAim = 0;
 			const who = el.getAttribute('data-id') || '';
 			hovered = el.getAttribute('data-orb') === 'feat' ? who : '';
 			hoverCap = el.getAttribute('data-orb') === 'caps' ? who : '';
@@ -1094,11 +1282,19 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	.hm-core-disc { fill: var(--bg-dark); fill-opacity: 0.94; }
 	.hm-core-ring { fill: none; stroke: var(--accent-on-dark); stroke-opacity: 0.75; stroke-width: 1.4; }
 	.hm-op { fill: none; stroke: var(--accent-on-dark); stroke-opacity: 0.5; stroke-width: 0.9; }
+	.hm-op-arrow {
+		fill: none;
+		stroke: var(--accent-on-dark);
+		stroke-opacity: 0.55;
+		stroke-width: 1;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
 	.hm-op-text { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); font-size: 9px; fill: var(--accent-on-dark); }
 	.hm-core-cap {
 		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
-		font-size: 9px;
-		letter-spacing: 0.14em;
+		font-size: 8px;
+		letter-spacing: 0.08em;
 		fill: var(--accent-on-dark);
 		fill-opacity: 0.8;
 	}
@@ -1143,12 +1339,20 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	   three shells keep the colours they carry at full width: the feature chip's
 	   hairline, the sector pill's accent, so the object still distinguishes its
 	   three orbits once the names are gone. */
-	.hm-chip-dot { display: none; }
-	[data-orb='feat'] .hm-chip-dot { fill: var(--rule-on-dark); }
-	[data-orb='mkt'] .hm-chip-dot {
-		fill: var(--accent-on-dark);
-		fill-opacity: 0.85;
+	/* The anchor is always drawn: it is the label's real position on the shell, and
+	   the only thing that makes a leader line mean anything. */
+	.hm-chip-dot { fill: var(--accent-on-dark); fill-opacity: 0.75; }
+	.hm-leader {
+		stroke: var(--accent-on-dark);
+		stroke-opacity: 0.4;
+		stroke-width: 0.8;
+		transition: opacity 160ms linear;
 	}
+	/* An anchor is shown only while it is somewhere its own label is not, and hidden
+	   again when the disc passes in front of it, so it is switched several times a
+	   turn. Fading is the difference between a mark appearing and a pixel blinking. */
+	.hm-anchor { transition: opacity 160ms linear; }
+	[data-orb='feat'] .hm-chip-dot { fill: var(--rule-on-dark); fill-opacity: 1; }
 
 	/* COMPACT: THE OBJECT, WITHOUT THE NAMES IT HAS NO ROOM FOR — but not a field of
 	   empty boxes, which is what hiding the text alone produced. Measured on a 390px
@@ -1160,7 +1364,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	.hm.is-compact [data-orb] text,
 	.hm.is-compact .hm-src-label,
 	.hm.is-compact .hm-op-text { display: none; }
-	.hm.is-compact .hm-chip-dot { display: block; }
+	.hm.is-compact .hm-leader { display: none; }
 	.hm.is-compact .hm-chip,
 	.hm.is-compact .hm-pill {
 		fill: transparent;
