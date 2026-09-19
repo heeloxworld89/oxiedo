@@ -159,11 +159,28 @@ export function buildGuide(bundle: Bundle): GuideStep[] {
 				'. The rows above now answer differently, and the record below is the reason.',
 	});
 
-	// SAYS WHAT THE BUTTON ACTUALLY DOES. It used to promise the record, and Finish
-	// now rewinds the run and hands the controls over instead — a stop that describes
-	// a different button than the one under it is worse than a stop that says nothing.
-	steps[steps.length - 1].body +=
-		' Finish puts the run back to the first epoch at normal speed, and the controls are yours.';
+	/* THE HANDOVER IS A STOP OF ITS OWN.
+	   The read used to end by closing, which leaves a reader who has just been walked
+	   through an argument sitting in front of an instrument with no instruction to use
+	   it — and the single most useful thing they can do next is watch the run
+	   themselves, at their own speed, now that they know what they are looking at.
+	   Saying so costs one stop.
+
+	   Its epoch is 0, so arriving here rewinds the console while the invitation is on
+	   screen: the reader reads "press Play" with the scrubber already back at the start
+	   and the button already pulsing, rather than being told to press a control that
+	   looks like it has nothing left to do. */
+	steps.push({
+		epoch: 0,
+		target: '.rp-controls',
+		eyebrow: 'YOUR TURN',
+		title: 'Run it yourself',
+		body:
+			'That is the argument. The run is back at the first epoch at normal speed, so ' +
+			'press Play to watch the whole thing end to end — or drag the epoch bar straight ' +
+			'to the moment it breaks. The scenario buttons at the top run three other ' +
+			'failures through the same instrument, including one where ORMAS finishes behind.',
+	});
 
 	/* THE FRAME, WRITTEN LAST AND SHOWN FIRST.
 	   A reader arrives here straight out of the title sequence and the first thing they

@@ -860,7 +860,26 @@ const SCENARIOS = [
 			for (const el of root.querySelectorAll('.is-lit')) el.classList.remove('is-lit');
 			engine?.pause();
 			applyRate(1);
-			if (rewind) engine?.seekEpoch(0);
+			if (rewind) {
+				engine?.seekEpoch(0);
+				/* AND PUT THE READER BACK AT THE TOP OF IT.
+				   The last stop lights the verdict table, which is most of the way down
+				   the component, and the guide scrolls the page to whatever it lights. So
+				   finishing left the reader parked mid-console with the masthead over the
+				   top of it: no scenario tabs, no headline counters, no sense of what the
+				   thing they were just walked through actually is. Rewinding the run and
+				   not the page is only half a reset.
+
+				   Cleared of the site header rather than flush to the viewport, because
+				   the header is fixed and block:'start' tucks the first band underneath
+				   it. */
+				const navH = document.querySelector('.nav')?.getBoundingClientRect().height ?? 0;
+				const r = root.getBoundingClientRect();
+				window.scrollTo({
+					top: Math.max(0, r.top + window.scrollY - navH - 16),
+					behavior: reduced ? 'auto' : 'smooth',
+				});
+			}
 			setPlayLabel();
 		}
 
