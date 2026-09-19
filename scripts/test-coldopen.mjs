@@ -111,7 +111,7 @@ const watch = (page, tag) => {
 	// disagrees with — in front of the exact audience most likely to check.
 	const figs = await page.evaluate(() =>
 		[...document.querySelectorAll('[data-co-fig] .co-fig-n')].map((e) => e.textContent.trim()));
-	for (const want of ['419', '$15M', '~8%', 'Aug 2026', '2026–2032', 'Mar 2029']) {
+	for (const want of ['419', '$15M', '~8%', 'Aug 2026']) {
 		ok(figs.includes(want), `the sequence still cites ${want} (got ${figs.join(' · ')})`);
 	}
 
@@ -129,12 +129,10 @@ const watch = (page, tag) => {
 		`both quotations carry an attribution (${quoted.count} quotes, ${quoted.captions} captions)`);
 	for (const want of [
 		'This lack of understanding is essentially unprecedented in the history of technology.',
-		'Dario Amodei',
-		'“The Urgency of Interpretability”, April 2025',
+		'Dario Amodei, Anthropic · 2025',
 		'We don’t really understand exactly how they do those things.',
-		'Geoffrey Hinton',
-		'CBS, 60 Minutes, 8 October 2023',
-		'None of the people quoted here is affiliated with Oxiedo, and none has endorsed this work.',
+		'Geoffrey Hinton · 60 Minutes, 2023',
+		'Neither is affiliated with Oxiedo.',
 	]) {
 		ok(quoted.text.includes(want), `act three reproduces exactly: "${want.slice(0, 64)}"`);
 	}
@@ -275,78 +273,104 @@ const watch = (page, tag) => {
 	await ctx.close();
 }
 
-/* ── 3b. THE ONLY WAYS OUT ARE THE BUTTON AND ESCAPE ───────────────────────── */
+/* ── 3b. THE EMPTY SCREEN IS AN EXIT; THE WORDS ARE NOT ───────────────────── */
 {
-	// Every one of these used to end the sequence. A click anywhere and a scroll are both
-	// things a reader does by accident — reaching for the rail and missing, selecting a
-	// quotation to copy its attribution, nudging a trackpad while reading act three — and
-	// being thrown out with no idea what you pressed is worse than a control that does
-	// nothing. The exit is a button that looks like one.
+	/* Clicking anywhere dismisses the sequence, as asked. What must not happen is the
+	   version of that which drops the curtain on somebody engaging with it — clicking a
+	   quotation, an attribution, or a segment of the rail. The copy block is transparent
+	   to the pointer so the space AROUND the words is part of the exit and its children
+	   are not, a distinction only a test will keep honest: it shipped broken once, because
+	   pointer-events:none on the block sent a click on a blockquote through to the
+	   backdrop and dismissed the sequence out from under the reader. */
 	const ctx = await browser.newContext({ viewport: VP });
 	const page = await ctx.newPage();
 	watch(page, 'exits');
 	await page.goto(`${ORIGIN}/black-box`);
-	await page.waitForTimeout(1300);
+	await page.waitForTimeout(1200);
 	const alive = () => page.evaluate(() => !!document.querySelector('[data-coldopen-root]'));
 
-	await page.mouse.click(Math.round(VP.width / 2), 300);   // the canvas itself
+	await page.click('[data-co-seg="2"]');
+	await page.waitForTimeout(1300);
+	const q = await page.locator('.co-quote blockquote').first().boundingBox();
+	await page.mouse.click(Math.round(q.x + 40), Math.round(q.y + 12));
 	await page.waitForTimeout(500);
-	ok(await alive(), 'clicking the canvas does not dismiss it');
+	ok(await alive(), 'clicking a quotation does NOT dismiss it');
 
-	await page.mouse.click(VP.width - 90, VP.height - 40);   // empty chrome
+	await page.click('[data-co-seg="5"]');
 	await page.waitForTimeout(500);
-	ok(await alive(), 'clicking the backdrop does not dismiss it');
+	ok(await alive(), 'clicking the rail does NOT dismiss it');
+	ok((await page.evaluate(() => document.querySelector('[data-co-act]')?.textContent ?? '')).startsWith('06'),
+		'and it seeks to that act instead');
 
+	// Scrolling is held rather than treated as an exit, so the page behind cannot slide
+	// away and strand the reader mid-article the moment the curtain lifts.
 	const before = await page.evaluate(() => window.scrollY);
 	await page.mouse.wheel(0, 600);
-	await page.waitForTimeout(600);
-	const scrolled = await page.evaluate(() => window.scrollY);
+	await page.waitForTimeout(500);
 	ok(await alive(), 'scrolling does not dismiss it');
-	// And it is held rather than merely ignored, so the page behind cannot slide away and
-	// strand the reader mid-article the moment the curtain lifts.
-	ok(before === scrolled, `the page behind is held (scrollY ${before} → ${scrolled})`);
+	ok(before === (await page.evaluate(() => window.scrollY)), 'and the page behind is held');
 
-	// The one control, and it has to look like the one control.
+	// THE CONTROL: filled, real size, names its key, lifted well clear of the bottom edge.
+	// 22px off it is what "very low, hard to see" measured as.
 	const btn = await page.evaluate(() => {
 		const el = document.querySelector('[data-co-skip]');
 		const cs = getComputedStyle(el);
 		const r = el.getBoundingClientRect();
+		const co = document.querySelector('[data-coldopen-root]').getBoundingClientRect();
+		const rail = document.querySelector('[data-co-seg="0"]').getBoundingClientRect();
 		return {
 			label: el.textContent.replace(/\s+/g, ' ').trim(),
 			bg: cs.backgroundColor,
-			w: Math.round(r.width),
-			h: Math.round(r.height),
-			onScreen: r.bottom <= window.innerHeight + 1 && r.right <= window.innerWidth + 1,
+			w: Math.round(r.width), h: Math.round(r.height),
+			offBottom: Math.round(co.bottom - r.bottom),
+			clearOfRail: r.left > rail.right + 40,
+			onScreen: r.bottom <= co.bottom + 1 && r.right <= co.right + 1,
 		};
 	});
-	ok(btn.bg !== 'rgba(0, 0, 0, 0)' && btn.bg !== 'transparent',
-		`Skip is a filled control, not a ghost outline (${btn.bg})`);
+	ok(btn.bg !== 'rgba(0, 0, 0, 0)', `Skip is a filled control, not a ghost outline (${btn.bg})`);
 	ok(btn.h >= 36 && btn.w >= 120, `Skip is a real target (${btn.w}×${btn.h})`);
+	ok(btn.offBottom >= 40, `Skip is lifted clear of the bottom edge (${btn.offBottom}px)`);
+	ok(btn.clearOfRail, 'Skip is at the other end of the control row from the rail');
 	ok(btn.onScreen, 'Skip is on screen');
-
-	// WHERE IT SITS IS PART OF WHETHER IT WORKS. In the footer it measured 94–96% of the
-	// way down the curtain and 22px off the bottom edge — present, and about as far from
-	// where anyone is looking as a control can be put. It belongs under the masthead.
-	const place = await page.evaluate(() => {
-		const co = document.querySelector('[data-coldopen-root]').getBoundingClientRect();
-		const nav = document.querySelector('.nav').getBoundingClientRect();
-		const sk = document.querySelector('[data-co-skip]').getBoundingClientRect();
-		const rail = document.querySelector('[data-co-seg="0"]').getBoundingClientRect();
-		return {
-			pctDown: Math.round((100 * ((sk.top + sk.height / 2) - co.top)) / co.height),
-			belowNav: Math.round(sk.top - nav.bottom),
-			clearOfRail: sk.top < rail.top,
-		};
-	});
-	ok(place.pctDown <= 20, `Skip sits in the top fifth of the curtain (${place.pctDown}% down)`);
-	ok(place.belowNav >= 8 && place.belowNav <= 48,
-		`Skip tucks under the masthead without touching it (${place.belowNav}px)`);
-	ok(place.clearOfRail, 'Skip is nowhere near the rail — the way out and the way around are separate controls');
 	ok(/Esc/.test(btn.label), `Skip names its keyboard equivalent ("${btn.label}")`);
 
-	await page.click('[data-co-skip]');
+	await page.mouse.click(Math.round(VP.width / 2), 240);
+	await page.waitForTimeout(700);
+	ok(!(await alive()), 'clicking the empty screen dismisses it');
+	await ctx.close();
+}
+
+/* ── 3b-i. ONE LINE AND A FRAGMENT, NOT A PARAGRAPH ────────────────────────── */
+{
+	/* Reported as "the content is dense… you essentially put paragraphs in it", and it
+	   was: three-sentence subs, three-line figure cells, a fine-print disclaimer
+	   paragraph. A title sequence is read at a glance or not at all. A ceiling, so the
+	   copy cannot creep back up. */
+	const ctx = await browser.newContext({ viewport: VP });
+	const page = await ctx.newPage();
+	watch(page, 'density');
+	await page.goto(`${ORIGIN}/black-box`);
 	await page.waitForTimeout(800);
-	ok(!(await alive()), 'the Skip button dismisses it');
+	// Two ceilings, because they guard different things. The PROSE — the line and its
+	// fragment — is what turned into paragraphs, and it is capped hard. The evidence
+	// blocks are a quotation with its attribution and a row of figures; those are read by
+	// scanning, not by reading, and counting their words as prose would push the fix in
+	// the wrong direction: cutting an attribution short, or a quotation.
+	for (let act = 0; act < 7; act++) {
+		await page.click(`[data-co-seg="${act}"]`);
+		await page.waitForTimeout(1300);
+		const n = await page.evaluate(() => {
+			const count = (el) => el && el.innerText
+				? el.innerText.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean).length : 0;
+			const vis = (sel) => { const e = document.querySelector(sel); return e && !e.hidden ? e : null; };
+			return {
+				prose: count(vis('.co-line')) + count(vis('.co-sub')),
+				total: count(document.querySelector('.co-copy')),
+			};
+		});
+		ok(n.prose <= 22, `act ${act + 1}: the prose stays a line and a fragment (${n.prose} words)`);
+		ok(n.total <= 45, `act ${act + 1} stays glanceable overall (${n.total} words)`);
+	}
 	await ctx.close();
 }
 

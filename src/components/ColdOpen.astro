@@ -34,83 +34,51 @@
 >
 	<canvas class="co-stage" data-co-canvas aria-hidden="true"></canvas>
 
-	{/* THE EXIT IS FIRST, in the document and on the screen.
-	    It sat in the footer, which measured at 94–96% of the way down the curtain and 22px
-	    off the bottom edge at every viewport — about as far from where anyone is looking as
-	    it is possible to put a control, on a tall monitor especially. It is now top right,
-	    directly under the masthead: the first place a reader's eye goes after the logo, the
-	    place every interface in thirty years has put "get me out of this", and nowhere near
-	    the copy or the diagram.
-	    It also separates the two controls by their jobs, which the footer had muddled. The
-	    rail is navigation WITHIN the sequence and stays with the progress it belongs to,
-	    bottom left. This is the way OUT, and it is on its own.
-	    First in the DOM as well as on screen, so a keyboard reader reaches the escape hatch
-	    before anything else. */}
-	<button type="button" class="co-skip" data-co-skip>
-		Skip to the console <kbd>Esc</kbd>
-	</button>
 
 	<div class="co-copy">
 		<p class="co-act" data-co-act></p>
 		<p class="co-line" data-co-line></p>
 		<p class="co-sub" data-co-sub></p>
 
-		{/* ACT 03. Public statements, quoted exactly, about the problem and never about us.
-		    The disclaimer is not decoration: a named warning one screen above a product claim
-		    reads as endorsement however carefully it is fenced, and none of these people have
-		    endorsed anything here. Both quotations are verified to source. */}
+		{/* ACT 03. Two statements, verified to source, and an attribution each. The
+		    fine-print paragraph that used to sit under them is one short line now: it has
+		    to be there, it does not have to be an essay. */}
 		<div class="co-quotes" data-co-quotes hidden>
 			<figure class="co-quote" data-co-item>
+				{/* The whole sentence. Shortening it to "Essentially unprecedented in the
+				    history of technology" read better and was a misquotation: it drops the
+				    subject and presents a fragment as a complete statement, under a named
+				    attribution. Density is not a good enough reason to put words in
+				    somebody's mouth that they did not arrange that way. */}
 				<blockquote>This lack of understanding is essentially unprecedented in the history of technology.</blockquote>
-				<figcaption>Dario Amodei · co-founder and CEO, Anthropic<span>“The Urgency of Interpretability”, April 2025</span></figcaption>
+				<figcaption>Dario Amodei, Anthropic · 2025</figcaption>
 			</figure>
 			<figure class="co-quote" data-co-item>
 				<blockquote>We don’t really understand exactly how they do those things.</blockquote>
-				<figcaption>Geoffrey Hinton · Turing Award, 2018<span>CBS, 60 Minutes, 8 October 2023</span></figcaption>
+				<figcaption>Geoffrey Hinton · 60 Minutes, 2023</figcaption>
 			</figure>
-			<p class="co-fine" data-co-item>
-				In <i>Science</i>, 2024, Bengio, Hinton, Russell and Kahneman among others asked that at
-				least a third of AI research budgets go to safety and interpretability. None of the people
-				quoted here is affiliated with Oxiedo, and none has endorsed this work.
-			</p>
+			<p class="co-fine" data-co-item>Neither is affiliated with Oxiedo.</p>
 		</div>
 
-		{/* ACT 04. Every figure already on this site with its source attached — src/data/markets.ts
-		    for the first three, EU AI Act Article 12 for the fourth. Nothing written for the occasion. */}
+		{/* ACT 04. A number and four words. The sourcing lives on the page underneath, which
+		    is where somebody checking it will go anyway; three lines a cell turned a glance
+		    into homework. */}
 		<ul class="co-figs" data-co-figs="cost" hidden>
 			<li class="co-fig" data-co-fig>
 				<span class="co-fig-n">419</span>
-				<span class="co-fig-u">unexpected interruptions in a single 54-day run</span>
-				<span class="co-fig-s">Meta · Llama 3 405B, on 16,384 H100s. Nobody could say why</span>
+				<span class="co-fig-u">interruptions in one 54-day run</span>
 			</li>
 			<li class="co-fig" data-co-fig>
 				<span class="co-fig-n">$15M</span>
-				<span class="co-fig-u">of compute wasted on that one run</span>
-				<span class="co-fig-s">At 30-minute checkpointing, repeated across 419 failures</span>
+				<span class="co-fig-u">of compute burned on it</span>
 			</li>
 			<li class="co-fig" data-co-fig>
 				<span class="co-fig-n">~8%</span>
-				<span class="co-fig-u">of AI medical devices that can be changed after authorisation</span>
-				<span class="co-fig-s">1,451 authorised by end-2025. The rest are frozen as approved</span>
+				<span class="co-fig-u">of medical AI can be updated</span>
 			</li>
 			<li class="co-fig" data-co-fig>
 				<span class="co-fig-n">Aug 2026</span>
-				<span class="co-fig-u">EU AI Act Article 12 applies in full</span>
-				<span class="co-fig-s">Automatic logging across the lifecycle; deployers keep logs six months</span>
-			</li>
-		</ul>
-
-		{/* ACT 05. The thesis of the company, which the first version of this sequence never said. */}
-		<ul class="co-figs co-figs--pair" data-co-figs="locked" hidden>
-			<li class="co-fig" data-co-fig>
-				<span class="co-fig-n">2026–2032</span>
-				<span class="co-fig-u">when the stock of public human text is projected to run out</span>
-				<span class="co-fig-s">Epoch AI. What is left after that is owned by somebody</span>
-			</li>
-			<li class="co-fig" data-co-fig>
-				<span class="co-fig-n">Mar 2029</span>
-				<span class="co-fig-u">EHDS secondary-use provisions apply to health data</span>
-				<span class="co-fig-s">Institutions choose training infrastructure about three years ahead</span>
+				<span class="co-fig-u">EU logging rules apply</span>
 			</li>
 		</ul>
 	</div>
@@ -128,7 +96,9 @@
 				<li><button type="button" data-co-seg={i} aria-label={`Go to ${name}`}><i></i></button></li>
 			))}
 		</ol>
-		<p class="co-hint">Click to jump · ← → to step</p>
+		<button type="button" class="co-skip" data-co-skip>
+			Skip to the console <kbd>Esc</kbd>
+		</button>
 	</footer>
 </div>
 
@@ -229,66 +199,73 @@
 		   version. Auto-advance is the default, not the only option. */
 		const T = {
 			ignite: 0,
-			machine: 800,
-			arch: 4000,
-			words: 7400,
-			cost: 12000,
-			locked: 16400,
-			brk: 20000,
-			hand: 23400,
-			end: 25800,
+			machine: 700,
+			arch: 3200,
+			words: 5700,
+			cost: 9000,
+			locked: 12200,
+			brk: 14900,
+			hand: 17400,
+			end: 19600,
 		};
 
 		type Act = {
 			at: number; label: string; line: string; sub: string;
-			quotes?: boolean; figs?: 'cost' | 'locked';
+			quotes?: boolean; figs?: 'cost';
 		};
 
+		/* ONE LINE, THEN A FRAGMENT. Nothing longer.
+		   The previous cut put three-sentence paragraphs on screen — the sort of thing that
+		   belongs on the page underneath, where a reader has chosen to read and can take
+		   their time. Over a title sequence, at a size you can take in at a glance, a
+		   paragraph is not information, it is a wall, and the reader's answer to a wall is
+		   to stop looking. Prose went down, type size went up, and the runtime came down
+		   from 25.8s to 19.6s on the strength of it. The pictures carry the argument now;
+		   the words name it. */
 		const ACTS: Act[] = [
 			{
 				at: T.machine,
 				label: '01 — The machine',
-				line: 'A neural network is damaged partway through training.',
-				sub: 'The run continues. Nothing inside the network can say which part failed, or when, or by how much.',
+				line: 'A network breaks mid-training.',
+				sub: 'Nothing inside it can say which part.',
 			},
 			{
 				at: T.arch,
-				label: '02 — Not a fault. The architecture.',
-				line: 'Nothing was hidden. There was never anything to hide.',
-				sub: 'In a standard network every error signal reaches every parameter on every step. By the time training ends there is no component left that a question can be put to. The information was not lost — it was never separable.',
+				label: '02 — The architecture',
+				line: 'Nothing was hidden.',
+				sub: 'Every signal touches every parameter. There was never a part to point at.',
 			},
 			{
 				at: T.words,
-				label: '03 — The field’s own words',
-				line: 'This is not a minority view.',
+				label: '03 — Not a minority view',
+				line: '',
 				sub: '',
 				quotes: true,
 			},
 			{
 				at: T.cost,
-				label: '04 — What it costs, and when it comes due',
-				line: 'The bill is already on the record. So are the dates.',
+				label: '04 — What it costs',
+				line: 'The bill is already on the record.',
 				sub: '',
 				figs: 'cost',
 			},
 			{
 				at: T.locked,
 				label: '05 — What stays locked',
-				line: 'The most valuable data in the world is never trained on.',
-				sub: 'Not because it is secret, and not because anyone holding it is careless. It stays where it is because releasing it means putting it inside a model that afterwards cannot say what it took — and no custodian signs that.',
-				figs: 'locked',
+				line: 'The best data is never trained on.',
+				sub: 'No custodian hands data to a model that cannot say what it took.',
 			},
 			{
 				at: T.brk,
 				label: '06 — The break',
-				line: 'ORMAS bounds each component’s learning path to four operations.',
-				sub: 'The chain cannot grow with the network, so each component stays individually addressable for the whole run. Measured on the way past, not estimated afterwards by a second model.',
+				line: 'Four operations. A fixed chain.',
+				sub: 'Every component stays addressable for the whole run.',
 			},
 			{
 				at: T.hand,
 				label: '07 — The console',
-				line: 'One archived run, replayed in full.',
-				sub: 'Every figure on the screen below is read from it. Nothing is computed in the browser.',
+				line: 'One archived run, replayed.',
+				sub: 'Every figure below is read from it.',
 			},
 		];
 
@@ -320,6 +297,21 @@
 
 		// Captured so the closures below keep the narrowing the guard above established.
 		const cv = canvas;
+		/* WHERE THE COPY STARTS, in curtain coordinates.
+		   The diagram used to be placed at a fraction of the viewport height while the copy
+		   block is anchored to the bottom, so the two drifted apart as the screen grew: at
+		   1500×940 there were 57–115px between the last of the diagram and the first line
+		   of type, and at 2000×1225 there were 217–295px — a hole through the middle of the
+		   frame, which is what made the control row at the bottom look stranded rather than
+		   placed. The diagram hangs off the copy now, so the composition holds at any height.
+		   Cached, not read per frame: it is a forced layout, and the answer only changes
+		   when the act changes or the window resizes. */
+		const elCopy = root.querySelector<HTMLElement>('.co-copy')!;
+		let copyTop = 0;
+		function measureCopy() {
+			copyTop = elCopy.getBoundingClientRect().top - root!.getBoundingClientRect().top;
+		}
+
 		const ctx = cv.getContext('2d')!;
 		let dpr = 1;
 		let VW = 0;
@@ -339,6 +331,7 @@
 			cv.height = Math.round(VH * dpr);
 			cv.style.width = VW + 'px';
 			cv.style.height = VH + 'px';
+			measureCopy();
 		}
 		size();
 		window.addEventListener('resize', size);
@@ -389,10 +382,10 @@
 
 			const baseS = Math.min(1, (VW - 80) / NET_W) * (1 - 0.14 * back);
 			const baseCx = VW / 2;
-			// Acts three to five carry a heading, a paragraph and a grid, which is a much
-			// taller block than acts one and two — the network has to climb further out of
-			// the way or the type reads across it.
-			const baseCy = VH * (0.4 - 0.15 * back);
+			// Sit the diagram just above the copy, clamped so it can neither ride up under
+			// the masthead on a short window nor sink into the type on a tall one.
+			const halfH = (NET_H / 2) * baseS;
+			const baseCy = Math.max(halfH + 34, Math.min(copyTop - 56 - halfH, VH * 0.52));
 			const cx = tgt ? baseCx + (tgt.cx - baseCx) * land : baseCx;
 			const cy = tgt ? baseCy + (tgt.cy - baseCy) * land : baseCy;
 			const s = tgt ? baseS + (tgt.s - baseS) * land : baseS;
@@ -716,6 +709,8 @@
 				elSub.hidden = !a || !a.sub;
 				quotes.hidden = !a?.quotes;
 				for (const [name, el] of figSets) el.hidden = a?.figs !== name;
+				// The block just changed height — quotes, a four-cell grid or neither.
+				measureCopy();
 				segs.forEach((seg, i) => seg.classList.toggle('is-on', i <= idx));
 			}
 
@@ -835,12 +830,19 @@
 			raf = requestAnimationFrame(frame);
 		}
 
-		/* NO CLICK-ANYWHERE-TO-SKIP. An invisible full-screen exit means every attempt to
-		   interact — reaching for the rail and missing, selecting a quotation to copy the
-		   attribution, a stray click while reading — throws the reader out of the sequence
-		   with nothing to tell them why. The exit is a button that looks like one. */
+		/* CLICKING THE EMPTY SCREEN DISMISSES IT, requested.
+		   Scoped to the backdrop and the canvas by target, not bound to the whole overlay:
+		   a click on a quotation, an attribution or the rail is somebody engaging with the
+		   thing rather than asking to leave, and dropping the curtain on them would be the
+		   trap this originally was. So most of the screen is an exit, and the parts that
+		   hold something to read or press are not. */
 		skip.addEventListener('click', finish);
 		segs.forEach((seg, i) => seg.addEventListener('click', (e) => { e.stopPropagation(); seek(i); }));
+		root.addEventListener('click', (e) => {
+			if (e.target === root || e.target === canvas || (e.target as HTMLElement).closest('.co-foot')) {
+				finish();
+			}
+		});
 		document.addEventListener('keydown', onKey);
 		window.addEventListener('wheel', onGesture, { passive: false });
 		window.addEventListener('touchmove', onGesture, { passive: false });
@@ -918,6 +920,11 @@
 		padding-bottom: clamp(18px, 4vh, 44px);
 		pointer-events: none;
 	}
+	/* The block is transparent to the pointer so the empty space around the words is part
+	   of the exit; the words themselves are not. Without this a click on a quotation fell
+	   straight through to the backdrop and dropped the curtain on somebody who was reading
+	   it — measured, not theorised: clicking a blockquote dismissed the sequence. */
+	.co-copy > * { pointer-events: auto; }
 
 	.co-act {
 		margin: 0 0 14px;
@@ -927,23 +934,26 @@
 		text-transform: uppercase;
 		color: #E0A233;
 	}
+	/* One short line earns a much bigger setting than three sentences could. This is the
+	   whole trade: fewer words, said louder. */
 	.co-line {
 		margin: 0;
 		font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 		font-weight: 600;
-		font-size: clamp(1.45rem, 3.4vw, 2.6rem);
-		line-height: 1.14;
-		letter-spacing: -0.02em;
+		font-size: clamp(1.9rem, 4.6vw, 3.5rem);
+		line-height: 1.05;
+		letter-spacing: -0.028em;
 		color: #F1EFE8;
-		max-width: 22ch;
+		max-width: 20ch;
 		text-wrap: balance;
 	}
+	.co-line:empty { display: none; }
 	.co-sub {
-		margin: 16px 0 0;
-		font-size: clamp(0.9rem, 1.3vw, 1.0625rem);
-		line-height: 1.55;
+		margin: 18px 0 0;
+		font-size: clamp(0.95rem, 1.35vw, 1.125rem);
+		line-height: 1.5;
 		color: #A9AEC4;
-		max-width: 58ch;
+		max-width: 46ch;
 	}
 
 	/* Entrance. Transform and opacity only — nothing here triggers layout, and the whole
@@ -974,37 +984,30 @@
 	   more panel of the instrument — which is the exact confusion to avoid here. */
 	.co-quote blockquote {
 		margin: 0;
-		padding-left: 15px;
-		border-left: 2px solid rgba(224,162,51,0.5);
+		padding-left: 16px;
+		border-left: 2px solid rgba(224,162,51,0.55);
 		font-family: 'Fraunces', ui-serif, Georgia, serif;
-		font-size: clamp(1rem, 1.55vw, 1.3rem);
-		line-height: 1.34;
+		font-size: clamp(1.15rem, 2vw, 1.7rem);
+		line-height: 1.24;
 		color: #F1EFE8;
-		text-wrap: pretty;
+		text-wrap: balance;
 	}
 	.co-quote figcaption {
-		margin: 9px 0 0 17px;
-		font-size: 12px;
-		line-height: 1.45;
-		color: #A9AEC4;
-	}
-	.co-quote figcaption span {
-		display: block;
+		margin: 10px 0 0 18px;
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 10.5px;
-		letter-spacing: 0.04em;
+		letter-spacing: 0.06em;
 		color: #828AA8;
-		margin-top: 2px;
 	}
 	.co-fine {
 		grid-column: 1 / -1;
-		margin: 2px 0 0;
-		font-size: 11.5px;
-		line-height: 1.5;
-		color: #828AA8;
-		max-width: 92ch;
+		margin: 0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 10px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: #6E7492;
 	}
-	.co-fine i { font-style: italic; }
 
 	.co-quote, .co-fine {
 		opacity: 0;
@@ -1045,14 +1048,13 @@
 		display: block;
 		font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 		font-weight: 700;
-		font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+		font-size: clamp(1.5rem, 2.9vw, 2.3rem);
 		line-height: 1;
 		letter-spacing: -0.02em;
 		font-variant-numeric: tabular-nums;
 		color: #E0A233;
 	}
-	.co-fig-u { display: block; margin-top: 8px; font-size: 12.5px; line-height: 1.4; color: #F1EFE8; }
-	.co-fig-s { display: block; margin-top: 6px; font-size: 11px; line-height: 1.4; color: #828AA8; }
+	.co-fig-u { display: block; margin-top: 9px; font-size: 13px; line-height: 1.35; color: #A9AEC4; }
 
 	/* AFTER the four-column rule, not before it. Both selectors are (0,2,0) — one class
 	   plus :not([hidden]) — so this is decided purely on source order, and declared first
@@ -1073,7 +1075,8 @@
 		flex-wrap: wrap;
 		width: min(1080px, 100% - 48px);
 		margin-inline: auto;
-		padding-block: 18px 22px;
+		/* 22px off the bottom edge is what "very low, hard to see" measured as. */
+		padding-block: 26px 56px;
 	}
 	/* The rail is seven buttons. The hit target is 22px tall with the mark itself at 2px —
 	   a 2px control is not a control — and the segment lights on hover so it reads as one. */
@@ -1113,10 +1116,13 @@
 	   primary action: the Play control on the console, and the sign in the nav above it.
 	   Computed: the ink reads 8.93:1 on the fill, the fill 8.93:1 on the ground, and the
 	   key chip 6.07:1 — every one of them a real number rather than a hope. */
+	/* NOT THE TOP-RIGHT CORNER EITHER. Pinned under the masthead it read as a banner
+	   bolted over the page — two filled buttons stacked in the same corner, one of them
+	   floating free of everything around it. It belongs in the control row at the bottom,
+	   opposite the rail: the same row, the two things a reader can do, balanced. What was
+	   wrong the first time was not the row, it was sitting 22px off the bottom edge of the
+	   screen; the row is lifted well clear of it now. */
 	.co-skip {
-		position: absolute;
-		top: 22px;
-		right: 24px;
 		z-index: 3;
 		pointer-events: auto;
 		display: inline-flex;
@@ -1152,21 +1158,11 @@
 		padding: 1px 5px;
 	}
 
-	/* The rail stopped being self-evident the moment the backdrop stopped being clickable,
-	   so it says what it is. Mono, small, and beside the thing it describes. */
-	.co-hint {
-		/* margin-right:auto rather than relying on space-between: with three items the
-		   hint landed in the middle of the row, nearer the button than the rail it is
-		   describing. It belongs beside the control it explains. */
-		margin: 0 auto 0 0;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 10px;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: #828AA8;
-		white-space: nowrap;
-	}
-	@media (max-width: 860px) { .co-hint { display: none; } }
+	/* The hint that used to sit here is gone. It explained the rail, and it was one more
+	   thing in a row that already had a progress indicator and a button in it — "boring
+	   seeing all of those" was the note, and it was right. With the whole empty screen now
+	   an exit, the rail does not need explaining in words: it is a progress bar that
+	   lights under the cursor, which is enough to try. */
 
 	@media (max-width: 900px) {
 		.co-figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
