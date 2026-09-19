@@ -508,13 +508,15 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 
 		function frame(now: number) {
 			spin += (spinAim - spin) * 0.09;
-			/* A THIRD OF THE OLD RATE. At 0.0016 radians a frame the object came all the
-			   way round in about forty seconds, which is fast enough to be movement the
-			   eye keeps returning to rather than something a reader can ignore while
-			   reading the notes either side of it. This is a hero figure, not an
-			   animation: it should look alive if you watch it and be invisible if you
-			   do not. A full turn now takes a little under two minutes. */
-			if (!dragging) aimYaw += 0.00055 * spin;
+			/* SLOW, BUT NOT BELOW THE THRESHOLD OF LOOKING ALIVE.
+			   0.0016 a frame came round in forty seconds and kept pulling the eye off
+			   the notes either side. 0.00055 was the overcorrection: under two degrees a
+			   second is slower than a clock's minute hand, and a figure moving that
+			   little does not read as calm, it reads as frozen — which is how it was
+			   reported. This is a shade over three degrees a second, about a hundred
+			   seconds a revolution: obvious within a second of watching it, and not
+			   competing with anything while you read. */
+			if (!dragging) aimYaw += 0.00105 * spin;
 			yaw += (aimYaw - yaw) * 0.08;
 			pitch += (aimPitch - pitch) * 0.08;
 
@@ -733,10 +735,27 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 				   inside the name, and "seven pixels" drew a dot in the middle of The
 				   Update Engine. The dot is worth drawing exactly when it is somewhere
 				   the label is not. */
-				const outside = Math.abs(p.x - lx) > (o.w || o.textW) / 2 ||
+				/* AN ANCHOR IS HIDDEN BY ANY NAME IT LANDS ON, not only its own.
+				   The rule used to ask whether the dot had cleared the label it belongs
+				   to, which misses the case that actually shows: thirteen anchors and
+				   thirteen labels in one frame, and a dot that has properly left its own
+				   chip can come to rest in the middle of somebody else's — "Certified
+				   ●Deletion", "The ●iary". The fast rotation hid that by never leaving
+				   it there for long; slowing the figure down froze the configuration and
+				   made it permanent, which is how a change to the speed surfaced a fault
+				   in the drawing.
+
+				   A dot is worth drawing exactly where it is not sitting on a word. */
+				const own = Math.abs(p.x - lx) > (o.w || o.textW) / 2 ||
 					Math.abs(p.y - ly) > (o.h || 22) / 2;
+				const onAName = items.some((q) => {
+					// q.w/q.h are the padded box the solver used, already the label's size.
+					const qw = q.w / 2 + 2;
+					const qh = q.h / 2 + 2;
+					return Math.abs(p.x - q.rx) < qw && Math.abs(p.y - q.ry) < qh;
+				});
 				const behindCore = Math.hypot(p.x - CX, p.y - CY) < R_CORE;
-				const showAnchor = outside && !behindCore;
+				const showAnchor = own && !onAName && !behindCore;
 				if (o.anchor) {
 					o.anchor.setAttribute('cx', String(p.x));
 					o.anchor.setAttribute('cy', String(p.y));
