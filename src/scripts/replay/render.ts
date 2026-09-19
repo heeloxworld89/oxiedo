@@ -111,13 +111,20 @@ export function draw(cv: HTMLCanvasElement, bundle: Bundle, upto: number, theme:
 	const x = (e: number) => PAD.left + (n === 0 ? 0 : (e / n) * plotW);
 	const cur = Math.max(0, Math.min(n, upto));
 
-	// Panel order puts the baseline on top: it is the status quo, and the eye
-	// travelling downward arrives at the recovery rather than leaving it.
+	/* ORMAS ON TOP, THE BASELINE UNDERNEATH.
+	   The order used to be the other way round, on the reasoning that the status quo
+	   comes first and the eye travelling down arrives at the recovery. That reads well
+	   as an argument and badly as a chart: the top panel is the one a reader takes as
+	   the subject, and it was giving that position to the network the page is not
+	   about. The upper band is also the one that survives a crop — in a screenshot, a
+	   narrow window, or a glance — and what was surviving was the flat line at 10%.
+
+	   The subject goes first, and the comparison sits beneath it. */
 	const panels = [
-		{ series: b, colour: theme.baseline, dashed: true, name: 'Standard CNN',
-		  top: PAD.top, corrections: null as number[] | null },
 		{ series: o, colour: theme.ormas, dashed: false, name: 'ORMAS',
-		  top: PAD.top + bandH + GAP, corrections: bundle.series.ormas.corrections },
+		  top: PAD.top, corrections: bundle.series.ormas.corrections },
+		{ series: b, colour: theme.baseline, dashed: true, name: 'Standard CNN',
+		  top: PAD.top + bandH + GAP, corrections: null as number[] | null },
 	];
 
 	const ev = bundle.event;

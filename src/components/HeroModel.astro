@@ -508,7 +508,13 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 
 		function frame(now: number) {
 			spin += (spinAim - spin) * 0.09;
-			if (!dragging) aimYaw += 0.0016 * spin;
+			/* A THIRD OF THE OLD RATE. At 0.0016 radians a frame the object came all the
+			   way round in about forty seconds, which is fast enough to be movement the
+			   eye keeps returning to rather than something a reader can ignore while
+			   reading the notes either side of it. This is a hero figure, not an
+			   animation: it should look alive if you watch it and be invisible if you
+			   do not. A full turn now takes a little under two minutes. */
+			if (!dragging) aimYaw += 0.00055 * spin;
 			yaw += (aimYaw - yaw) * 0.08;
 			pitch += (aimPitch - pitch) * 0.08;
 

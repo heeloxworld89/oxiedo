@@ -598,7 +598,16 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		await ctx.close();
 	}
 
-	// The guided read opens itself once, on a first visit to this page only.
+	/* THE GUIDED READ OPENS ON EVERY LANDING, AND THIS TEST USED TO REQUIRE THE
+	   OPPOSITE. It asserted that a second visit does not open it, which was the old
+	   once-per-browser rule — and that rule is precisely the bug that was reported:
+	   come back to the page to look at it properly and you got no walkthrough, with
+	   no way to know one existed. The title sequence plays on every landing and the
+	   read is its continuation, so it belongs to the landing too.
+
+	   Which leaves the thing that rule was protecting against, and it still has to
+	   hold: dismissing the read has to stick for as long as the reader stays on the
+	   page, or Skip means nothing. That is the second half below. */
 	const first = await newCtx({ viewport: { width: 1440, height: 900 } });
 	const fp = await first.newPage();
 	await fp.goto(BLACKBOX, { waitUntil: 'networkidle' });
@@ -609,8 +618,19 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await fp.goto(BLACKBOX, { waitUntil: 'networkidle' });
 	await fp.evaluate(() => document.querySelector('.rp').scrollIntoView({ block: 'center' }));
 	await fp.waitForTimeout(1500);
+	ok(await fp.evaluate(() => !document.querySelector('[data-guide]').hidden),
+		'second visit: it opens again');
+
+	// Skipped, it stays shut for this landing — scrolling away and back must not
+	// spring it open again on somebody who has just dismissed it.
+	await fp.click('[data-guide-skip]');
+	await fp.waitForTimeout(300);
+	await fp.evaluate(() => window.scrollTo(0, 0));
+	await fp.waitForTimeout(400);
+	await fp.evaluate(() => document.querySelector('.rp').scrollIntoView({ block: 'center' }));
+	await fp.waitForTimeout(1200);
 	ok(await fp.evaluate(() => document.querySelector('[data-guide]').hidden),
-		'second visit: it does not open again');
+		'once skipped, it stays shut for the rest of the landing');
 	await first.close();
 
 	const home = await newCtx({ viewport: { width: 1440, height: 900 } });
