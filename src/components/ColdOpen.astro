@@ -384,9 +384,25 @@
 			const cy = tgt ? baseCy + (tgt.cy - baseCy) * land : baseCy;
 			const s = tgt ? baseS + (tgt.s - baseS) * land : baseS;
 
+			/* NOTHING ON THIS SCREEN IS EVER COMPLETELY STILL.
+			   Acts three to five froze solid — the pulse loop was gated behind the recede,
+			   the draw-in was long finished and the break had not started, so twelve of the
+			   twenty-five seconds were a static JPEG with text sliding over it. A frozen
+			   instrument reads as a crashed instrument.
+			   Three things run underneath everything now: a breath on the scale, a scan
+			   passing through the network, and the signal itself, which never stops. All
+			   three are pure functions of t, like everything else in here, because seek()
+			   depends on a jump backwards replaying an act exactly rather than approximately. */
+			const breathe = 1 + Math.sin(t / 2600) * 0.006 * (1 - land);
+
+			// The scan is the "this is powered" signal, and it costs one gradient and one
+			// line. It crosses in a little over five seconds so it is always somewhere.
+			const SWEEP_MS = 5200;
+			const sweepX = -140 + ((t % SWEEP_MS) / SWEEP_MS) * (NET_W + 280);
+
 			ctx.save();
 			ctx.translate(cx, cy);
-			ctx.scale(s, s);
+			ctx.scale(s * breathe, s * breathe);
 			ctx.translate(-NET_W / 2, -NET_H / 2);
 
 			// 0.82 left the network at 0.18 and it simply disappeared behind act two's
@@ -401,6 +417,8 @@
 			   to. It is the only moment in the sequence where the picture is deliberately
 			   illegible, because illegibility is the point being made. */
 			const flood = span(t, T.arch - 200, T.arch + 900) * (1 - span(t, T.words - 700, T.words));
+			const costBeat = span(t, T.cost - 200, T.cost + 300) * (1 - span(t, T.locked - 500, T.locked));
+			const sweepLit = drawn * (1 - land);
 			const opened = span(t, T.brk + 300, T.brk + 1500);
 
 			/* ── edges, drawn in two passes ──────────────────────────────────────────
@@ -451,16 +469,21 @@
 				ctx.stroke();
 			}
 
-			// ── signal, flowing left to right and indifferent to the damage ─────────
-			if (drawn > 0.6 && back < 0.6) {
-				const phase = (t / 1400) % 1;
+			/* ── signal, flowing left to right and indifferent to the damage ─────────
+			   The `back < 0.6` that used to be on this line is what killed acts three to
+			   five. Behind the reading acts the flow is quieter and slower — it must not
+			   compete with a quotation — but it does not stop, because the one thing this
+			   picture must never say is that the run has ended. */
+			if (drawn > 0.6) {
+				const phase = (t / (1400 + 1100 * back)) % 1;
+				const pulseA = 0.3 * (1 - 0.4 * back);
 				for (let c = 0; c < layout.length - 1; c++) {
 					const a = layout[c];
 					const b = layout[c + 1];
 					const f = (phase + c * 0.12) % 1;
 					const lit = f > 0.5 ? 1 - (f - 0.5) * 2 : f * 2;
 					if (lit <= 0.02) continue;
-					ctx.strokeStyle = `rgba(${CREAM},${0.3 * lit * dim})`;
+					ctx.strokeStyle = `rgba(${CREAM},${pulseA * lit * dim})`;
 					ctx.lineWidth = 1.1;
 					ctx.beginPath();
 					for (let i = 0; i < a.length; i += 2) {
@@ -470,6 +493,66 @@
 						ctx.lineTo(p.x + (q.x - p.x) * f, p.y + (q.y - p.y) * f);
 					}
 					ctx.stroke();
+				}
+			}
+
+			// ── the scan ────────────────────────────────────────────────────────────
+			const sweepOn = drawn * (1 - land);
+			if (sweepOn > 0.02) {
+				const g = ctx.createLinearGradient(sweepX - 74, 0, sweepX + 16, 0);
+				g.addColorStop(0, `rgba(${SLATE},0)`);
+				g.addColorStop(0.78, `rgba(${SLATE},${0.055 * sweepOn * dim})`);
+				g.addColorStop(1, `rgba(${SLATE},0)`);
+				ctx.fillStyle = g;
+				ctx.fillRect(sweepX - 74, NET_H / 2 - 152, 90, 304);
+				ctx.strokeStyle = `rgba(${CREAM},${0.09 * sweepOn * dim})`;
+				ctx.lineWidth = 1;
+				ctx.beginPath();
+				ctx.moveTo(sweepX, NET_H / 2 - 152);
+				ctx.lineTo(sweepX, NET_H / 2 + 152);
+				ctx.stroke();
+			}
+
+			/* ── act five: the data that cannot get in ───────────────────────────────
+			   The one act whose motion is an argument rather than atmosphere. Sources
+			   arrive from outside, reach a boundary and are turned back — which is the
+			   act's own sentence, drawn: the data is not secret and nobody is careless,
+			   it simply cannot be let in. Deterministic from t and the index, so stepping
+			   back to this act replays it rather than restarting it somewhere else. */
+			const lockOn = span(t, T.locked - 250, T.locked + 500)
+				* (1 - span(t, T.brk - 800, T.brk - 250));
+			if (lockOn > 0.02) {
+				const wallX = layout[0][0].x - 54;
+				ctx.setLineDash([3, 7]);
+				ctx.strokeStyle = `rgba(${AMBER},${0.2 * lockOn})`;
+				ctx.lineWidth = 1;
+				ctx.beginPath();
+				ctx.moveTo(wallX, NET_H / 2 - 150);
+				ctx.lineTo(wallX, NET_H / 2 + 150);
+				ctx.stroke();
+				ctx.setLineDash([]);
+
+				for (let i = 0; i < 26; i++) {
+					const seed = (i * 0.61803398875) % 1;
+					const dur = 2400 + seed * 1500;
+					const ph = ((t + seed * 4000) % dur) / dur;
+					const y = NET_H / 2 + (seed - 0.5) * 258 + Math.sin(i * 2.7) * 12;
+					const travel = Math.min(1, ph / 0.72);
+					const x = -175 + (wallX + 175) * travel;
+					const hit = clamp01((ph - 0.72) / 0.28);
+					const a = lockOn * (1 - hit) * (0.3 + 0.55 * travel);
+					if (a <= 0.012) continue;
+					ctx.fillStyle = `rgba(${SLATE},${a})`;
+					ctx.beginPath();
+					ctx.arc(x - hit * 9, y, 2.2, 0, Math.PI * 2);
+					ctx.fill();
+					if (hit > 0.02 && hit < 0.98) {
+						ctx.strokeStyle = `rgba(${AMBER},${lockOn * (1 - hit) * 0.55})`;
+						ctx.lineWidth = 1.1;
+						ctx.beginPath();
+						ctx.arc(wallX, y, 3 + hit * 10, -0.85, 0.85);
+						ctx.stroke();
+					}
 				}
 			}
 
@@ -522,8 +605,12 @@
 						fill = `rgba(${AMBER},${(0.2 + 0.75 * opened) * dim})`;
 						r = 3.1 + 0.5 * opened;
 					} else if (isDead && killed > 0) {
+						// A slow beat while the cost is on screen. The failure is not a past
+						// event being reported, it is still running up the bill in act four —
+						// and a stage that had simply stopped moving read as resolved.
 						const flash = killed < 1 ? Math.sin(killed * Math.PI) : 0;
-						fill = `rgba(${WARN},${(0.22 + 0.6 * flash) * dim})`;
+						const beat = costBeat * (0.5 + 0.5 * Math.sin(t / 620));
+						fill = `rgba(${WARN},${(0.22 + 0.6 * flash + 0.3 * beat) * dim})`;
 					} else {
 						fill = `rgba(${SLATE},${0.82 * dim})`;
 					}
@@ -536,6 +623,16 @@
 					ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
 					ctx.fill();
 					ctx.shadowBlur = 0;
+
+					// The scan lights what it crosses. Without this the sweep is a bar
+					// sliding over a picture; with it, the picture is being read.
+					const touched = sweepLit * Math.max(0, 1 - Math.abs(p.x - sweepX) / 58);
+					if (touched > 0.02) {
+						ctx.fillStyle = `rgba(${CREAM},${0.55 * touched * dim})`;
+						ctx.beginPath();
+						ctx.arc(p.x, p.y, r + 1.1 * touched, 0, Math.PI * 2);
+						ctx.fill();
+					}
 				});
 			});
 

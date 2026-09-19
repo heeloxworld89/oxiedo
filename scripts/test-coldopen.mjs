@@ -331,6 +331,49 @@ const watch = (page, tag) => {
 	await ctx.close();
 }
 
+/* ── 3b-ii. NO ACT IS ALLOWED TO FREEZE ────────────────────────────────────── */
+{
+	/* Acts three to five once ran for twelve seconds as a static image: the pulse loop was
+	   gated behind the recede, the draw-in had finished and the break had not begun, so
+	   nothing on the canvas moved while the text slid over it. Measured at the time, 17 of
+	   37 sampled frames across those three acts were identical to the one before them. A
+	   frozen instrument reads as a crashed instrument, and nobody reports it as a bug —
+	   they just leave.
+	   This samples the canvas twice, a third of a second apart, on every act. */
+	let sharp;
+	try { ({ default: sharp } = await import('sharp')); } catch { sharp = null; }
+	if (!sharp) {
+		console.log('  cold open: motion check SKIPPED (sharp not installed)');
+	} else {
+		const ctx = await browser.newContext({ viewport: VP });
+		const page = await ctx.newPage();
+		watch(page, 'motion');
+		await page.goto(`${ORIGIN}/black-box`);
+		await page.waitForTimeout(700);
+		const clip = await page.evaluate(() => {
+			const r = document.querySelector('[data-co-canvas]').getBoundingClientRect();
+			return { x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width), height: Math.round(r.height) };
+		});
+		// A clipped page screenshot, not locator.screenshot(): the latter waits for the
+		// element to be "stable", which a canvas repainting every frame never is.
+		const frame = async () => sharp(await page.screenshot({ clip }))
+			.resize({ width: 260 }).greyscale().raw().toBuffer();
+
+		for (let act = 0; act < 7; act++) {
+			await page.click(`[data-co-seg="${act}"]`);
+			await page.waitForTimeout(900);
+			const a = await frame();
+			await page.waitForTimeout(340);
+			const b2 = await frame();
+			let moved = 0;
+			for (let i = 0; i < a.length; i++) if (Math.abs(a[i] - b2[i]) > 3) moved++;
+			const pct = (100 * moved) / a.length;
+			ok(pct > 0.05, `act ${act + 1} is still moving (${pct.toFixed(2)}% of the canvas changed in 340ms)`);
+		}
+		await ctx.close();
+	}
+}
+
 /* ── 3c. ?intro=0 goes straight to the console ─────────────────────────────── */
 {
 	const ctx = await browser.newContext({ viewport: VP });
