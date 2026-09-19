@@ -342,12 +342,11 @@ const watch = (page, tag) => {
 
 /* ── 3b-0. THE FIRST THREE ACTS CANNOT BE CLICKED AWAY ─────────────────────── */
 {
-	/* Acts one to three are the argument: a neural network that cannot report on itself,
-	   why that is the arithmetic of how it trains rather than a fault, and the field
-	   saying so in its own words. A stray click in the first two seconds should not cost
-	   a reader the whole case, so the empty screen is inert until act four, which is the
-	   evidence. The deliberate exits — the button and Escape — are never gated; this
-	   governs the accidental one only. */
+	/* Acts one and two are the setup: a neural network that cannot report on itself, and
+	   why that is the arithmetic of how it trains rather than a fault. A stray click in
+	   the first two seconds should not cost a reader the case, so the empty screen is
+	   inert until act three, where the field speaks for itself. The deliberate exits —
+	   the button and Escape — are never gated; this governs the accidental one only. */
 	const ctx = await browser.newContext({ viewport: VP });
 	for (let act = 0; act < 7; act++) {
 		const page = await ctx.newPage();
@@ -360,7 +359,7 @@ const watch = (page, tag) => {
 		await page.mouse.click(VP.width - 120, 240);
 		await page.waitForTimeout(600);
 		const alive = await page.evaluate(() => !!document.querySelector('[data-coldopen-root]'));
-		if (act < 3) {
+		if (act < 2) {
 			ok(alive, `act ${act + 1}: a click on the empty screen is ignored`);
 		} else {
 			ok(!alive, `act ${act + 1}: a click on the empty screen dismisses it`);
@@ -369,7 +368,7 @@ const watch = (page, tag) => {
 	}
 
 	// The cursor must not promise what the gate will not honour.
-	for (const [act, want] of [[0, false], [2, false], [3, true], [6, true]]) {
+	for (const [act, want] of [[0, false], [1, false], [2, true], [6, true]]) {
 		const page = await ctx.newPage();
 		await page.goto(`${ORIGIN}/black-box`);
 		await page.waitForTimeout(800);

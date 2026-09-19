@@ -214,6 +214,16 @@
 			quotes?: boolean; figs?: 'cost';
 		};
 
+		/* FROM WHICH ACT A CLICK ON THE EMPTY SCREEN DISMISSES THE SEQUENCE.
+		   Zero-based, so 2 is act three. Before it, a click does nothing: the opening
+		   acts are the argument and a stray click should not cost a reader the case.
+		   The button and Escape are never gated — this governs the accidental exit
+		   only.
+		   One constant, because the gate and the cursor that advertises it were two
+		   separate literals and nothing stopped them drifting into disagreeing — a
+		   backdrop that shows a pointer and does nothing is a broken page to a reader. */
+		const DISMISS_FROM = 2;
+
 		/* ONE LINE, THEN A FRAGMENT. Nothing longer.
 		   The previous cut put three-sentence paragraphs on screen — the sort of thing that
 		   belongs on the page underneath, where a reader has chosen to read and can take
@@ -716,7 +726,7 @@
 				// a reader clicks during act one, nothing happens, and the reasonable
 				// conclusion is that the page is broken rather than that the control is
 				// not live yet.
-				root!.classList.toggle('can-dismiss', idx >= 3);
+				root!.classList.toggle('can-dismiss', idx >= DISMISS_FROM);
 				// The block just changed height — quotes, a four-cell grid or neither.
 				measureCopy();
 				segs.forEach((seg, i) => seg.classList.toggle('is-on', i <= idx));
@@ -838,23 +848,21 @@
 			raf = requestAnimationFrame(frame);
 		}
 
-		/* CLICKING THE EMPTY SCREEN DISMISSES IT — FROM ACT FOUR ONWARDS.
+		/* CLICKING THE EMPTY SCREEN DISMISSES IT — FROM ACT THREE ONWARDS.
 		   Two rules layered, and they answer different problems.
 
 		   Scoped by target, so the backdrop and the canvas are an exit but a quotation, an
 		   attribution and the rail are not. A click on those is somebody engaging with the
 		   sequence, and dropping the curtain on them is the trap this started out as.
 
-		   Gated by act, so the first three cannot be dismissed by a click at all. Those
-		   three are the argument — a network that cannot report on itself, why that is the
-		   arithmetic rather than a fault, and the field saying so in its own words — and a
-		   stray click in the first two seconds should not cost a reader the whole case.
-		   From act four, which is the evidence, the screen is an exit.
+		   Gated by act, so the first two cannot be dismissed by a click at all. Those
+		   two are the setup — a neural network that cannot report on itself, and why that
+		   is the arithmetic of how it trains rather than a fault — and a stray click in
+		   the first two seconds should not cost a reader the case. From act three, where
+		   the field speaks for itself, the screen is an exit.
 
 		   The deliberate ways out are never gated: the button and Escape work from the
 		   first frame. This only governs the accidental one. */
-		const DISMISS_FROM = 3; // zero-based: act four
-
 		skip.addEventListener('click', finish);
 		segs.forEach((seg, i) => seg.addEventListener('click', (e) => { e.stopPropagation(); seek(i); }));
 		root.addEventListener('click', (e) => {

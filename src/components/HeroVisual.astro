@@ -209,7 +209,11 @@ const chords = featPts.flatMap((fp) =>
 		.filter((c): c is NonNullable<typeof c> => Boolean(c))
 		.map((c) => {
 			const from = at(R_FEAT - CHIP_H / 2 - 4, fp.a, Z_FEAT);
-			return { key: `${fp.feature.id}-${c.name}`, x1: from.x, y1: from.y, x2: c.x, y2: c.y };
+			return {
+				key: `${fp.feature.id}-${c.name}`,
+				aa: fp.a, ba: c.a,
+				x1: from.x, y1: from.y, x2: c.x, y2: c.y,
+			};
 		})
 );
 
@@ -221,7 +225,11 @@ const entries = mktPts
 		if (!target) return null;
 		const from = at(R_MKT - PILL_H / 2 - 4, mp.a, Z_MKT);
 		const to = at(R_FEAT + CHIP_H / 2 + 4, target.a, Z_FEAT);
-		return { key: mp.sector.id, x1: from.x, y1: from.y, x2: to.x, y2: to.y };
+		return {
+			key: mp.sector.id,
+			aa: mp.a, ba: target.a,
+			x1: from.x, y1: from.y, x2: to.x, y2: to.y,
+		};
 	})
 	.filter((e): e is NonNullable<typeof e> => Boolean(e));
 
@@ -352,6 +360,7 @@ const ghostEdges: [number, number][] = [
 
 		<figure class="hero-visual">
 			<svg
+				data-hv-svg
 				viewBox={`0 0 ${W} ${H}`}
 				role="img"
 				aria-label="ORMAS as one system"
@@ -368,23 +377,37 @@ const ghostEdges: [number, number][] = [
 		{/* Each guide is its ring's plane seen edge-on-ish: an exact ellipse, lifted by
 		    that ring's own height. Three of them at three heights is what makes the
 		    structure read as tiers rather than as one flat target. */}
+		{/* data-r / data-z is this element's place on the tilted plane. The build bakes
+		    one camera into x/y so the figure is three-dimensional with JavaScript off;
+		    the model script re-solves the same numbers every frame once it mounts. One
+		    source of geometry, two renderers. */}
 		<g class="hv-guides">
-			<ellipse cx={CX} cy={CY - Z_CAPS * ST} rx={R_CAPS} ry={R_CAPS * CT} class="hv-guide hv-stage-caps" />
-			<ellipse cx={CX} cy={CY - Z_FEAT * ST} rx={R_FEAT} ry={R_FEAT * CT} class="hv-guide hv-stage-feat" />
-			<ellipse cx={CX} cy={CY - Z_MKT * ST} rx={R_MKT} ry={R_MKT * CT} class="hv-guide hv-stage-mkt" />
+			<ellipse data-ring data-r={R_CAPS} data-z={Z_CAPS} cx={CX} cy={CY - Z_CAPS * ST} rx={R_CAPS} ry={R_CAPS * CT} class="hv-guide hv-stage-caps" />
+			<ellipse data-ring data-r={R_FEAT} data-z={Z_FEAT} cx={CX} cy={CY - Z_FEAT * ST} rx={R_FEAT} ry={R_FEAT * CT} class="hv-guide hv-stage-feat" />
+			<ellipse data-ring data-r={R_MKT} data-z={Z_MKT} cx={CX} cy={CY - Z_MKT * ST} rx={R_MKT} ry={R_MKT * CT} class="hv-guide hv-stage-mkt" />
 		</g>
 
 		{/* the capability matrix, drawn behind the core */}
 		<g class="hv-matrix hv-stage-matrix">
 			{chords.map((c) => (
-				<line x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2} class="hv-chord" />
+				<line
+					data-chord={c.key}
+					data-ar={R_FEAT - CHIP_H / 2 - 4} data-aa={c.aa} data-az={Z_FEAT}
+					data-br={R_CAPS} data-ba={c.ba} data-bz={Z_CAPS}
+					x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2} class="hv-chord"
+				/>
 			))}
 		</g>
 
 		{/* market entry lines */}
 		<g class="hv-entries hv-stage-mkt">
 			{entries.map((e) => (
-				<line x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="hv-entry" />
+				<line
+					data-chord={e.key}
+					data-ar={R_MKT - PILL_H / 2 - 4} data-aa={e.aa} data-az={Z_MKT}
+					data-br={R_FEAT + CHIP_H / 2 + 4} data-ba={e.ba} data-bz={Z_FEAT}
+					x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="hv-entry"
+				/>
 			))}
 		</g>
 
@@ -393,8 +416,8 @@ const ghostEdges: [number, number][] = [
 		    tilted with them; the four operation boxes stand upright on it, because type
 		    laid into the plane would be type read at 46 degrees. */}
 		<g class="hv-core hv-stage-core">
-			<ellipse cx={CX} cy={CY - Z_CORE * ST} rx={R_CORE} ry={R_CORE * CT} class="hv-core-disc" />
-			<ellipse cx={CX} cy={CY - Z_CORE * ST} rx={R_CORE} ry={R_CORE * CT} class="hv-core-ring" />
+			<ellipse data-ring data-r={R_CORE} data-z={Z_CORE} cx={CX} cy={CY - Z_CORE * ST} rx={R_CORE} ry={R_CORE * CT} class="hv-core-disc" />
+			<ellipse data-ring data-r={R_CORE} data-z={Z_CORE} cx={CX} cy={CY - Z_CORE * ST} rx={R_CORE} ry={R_CORE * CT} class="hv-core-ring" />
 			{ops.map((op, i) => {
 				const col = i % 2;
 				const row = i < 2 ? 0 : 1;
@@ -414,8 +437,12 @@ const ghostEdges: [number, number][] = [
 		<g class="hv-caps hv-stage-caps">
 			{capPts.map((c) => (
 				<>
-					<circle cx={c.x} cy={c.y} r="4" class="hv-cap-dot" />
-					<text x={c.lx} y={c.ly} text-anchor="middle" class="hv-cap-text">{c.name}</text>
+					<circle data-node data-r={R_CAPS} data-a={c.a} data-z={Z_CAPS} cx={c.x} cy={c.y} r="4" class="hv-cap-dot" />
+					<text
+						data-node data-label data-r={R_CAPS} data-a={c.a} data-z={Z_CAPS}
+						data-ox={c.lx - c.x} data-oy={c.ly - c.y}
+						x={c.lx} y={c.ly} text-anchor="middle" class="hv-cap-text"
+					>{c.name}</text>
 				</>
 			))}
 		</g>
@@ -423,7 +450,8 @@ const ghostEdges: [number, number][] = [
 		{/* RING 2 · the seven features */}
 		<g class="hv-feats hv-stage-feat">
 			{featDraw.map((fp) => (
-				<g style={`opacity:${depthFade(fp.dep)}`}>
+				<g data-card data-r={R_FEAT} data-a={fp.a} data-z={Z_FEAT} data-w={CHIP_W} data-h={CHIP_H}
+					data-id={fp.feature.id} style={`opacity:${depthFade(fp.dep)}`}>
 					<rect
 						x={fp.x - CHIP_W / 2}
 						y={fp.y - CHIP_H / 2}
@@ -440,7 +468,8 @@ const ghostEdges: [number, number][] = [
 		{/* RING 3 · the five markets */}
 		<g class="hv-mkts hv-stage-mkt">
 			{mktDraw.map((mp) => (
-				<g style={`opacity:${depthFade(mp.dep)}`}>
+				<g data-card data-r={R_MKT} data-a={mp.a} data-z={Z_MKT} data-w={PILL_W} data-h={PILL_H}
+					data-id={mp.sector.id} style={`opacity:${depthFade(mp.dep)}`}>
 					<rect
 						x={mp.x - PILL_W / 2}
 						y={mp.y - PILL_H / 2}
@@ -455,7 +484,9 @@ const ghostEdges: [number, number][] = [
 		</g>
 			</svg>
 			<figcaption class="hero-fig-legend">
-				One primitive · six capabilities · seven features · five sectors
+				<span>One primitive · six capabilities · seven features · five sectors</span>
+				{/* Unhidden by the model script, so it only ever promises what is live. */}
+				<span class="hero-fig-drive" data-hv-hint hidden>Drag to turn · scroll to open it up</span>
 			</figcaption>
 		</figure>
 
@@ -473,6 +504,239 @@ const ghostEdges: [number, number][] = [
 		</section>
 	</div>
 </div>
+
+<script>
+	/* ── THE SYSTEM, AS A MODEL YOU CAN TURN ─────────────────────────────────────
+	 * The build bakes one camera into the SVG so the figure is three-dimensional
+	 * with JavaScript off — that is this component's Law 3 and it still holds. This
+	 * re-solves the same geometry every frame and gives it back to the SAME
+	 * elements, so there is one source of truth for the shape and one set of DOM
+	 * nodes for it. Nothing is duplicated and nothing is drawn twice.
+	 *
+	 * WHY THE SVG AND NOT A CANVAS OR WebGL. The eighteen labels here are the seven
+	 * product names and the five sector names — navigational content, not
+	 * decoration. Painted into a canvas they stop being text: no find-in-page, no
+	 * translation, no screen reader, no selection. The research on hybrid
+	 * renderers is unanimous that geometry belongs in the fast layer and text
+	 * belongs in the DOM, and here the whole diagram is small enough — about forty
+	 * elements — that the DOM can carry all of it at sixty frames.
+	 *
+	 * WHAT IT DOES. Drag turns it. Scrolling past opens the tiers apart, which is
+	 * the exploded view the reader gets for free by doing the one thing they were
+	 * going to do anyway. Hovering a feature lights the capabilities it actually
+	 * consumes — that is a row of the capability matrix, read from the data.
+	 *
+	 * prefers-reduced-motion: it never moves on its own and never opens on scroll.
+	 * It still turns if a reader drags it, because that is a response to a request.
+	 */
+	const TILT_BASE = 46 * (Math.PI / 180);
+
+	function mountHeroModel() {
+		const svg = document.querySelector<SVGSVGElement>('[data-hv-svg]');
+		if (!svg || svg.dataset.hvLive === '1') return;
+		const fig = svg.closest('.hero-fig');
+		if (!fig) return;
+
+		const CX = 410;
+		const CY = 410;
+		const rings = [...svg.querySelectorAll<SVGEllipseElement>('[data-ring]')];
+		const nodes = [...svg.querySelectorAll<SVGElement>('[data-node]')];
+		const cards = [...svg.querySelectorAll<SVGGElement>('[data-card]')];
+		const chords = [...svg.querySelectorAll<SVGLineElement>('[data-chord]')];
+		if (!rings.length || !cards.length) return;
+
+		svg.dataset.hvLive = '1';
+		const hint = fig.querySelector<HTMLElement>('[data-hv-hint]');
+		if (hint) hint.hidden = false;
+		fig.classList.add('is-live');
+
+		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const num = (el: Element, k: string, d = 0) => {
+			const v = Number(el.getAttribute(k));
+			return Number.isFinite(v) ? v : d;
+		};
+
+		/* Read once. These never change — the shape is fixed, only the camera moves. */
+		const ringDefs = rings.map((el) => ({ el, r: num(el, 'data-r'), z: num(el, 'data-z') }));
+		const nodeDefs = nodes.map((el) => ({
+			el,
+			r: num(el, 'data-r'), a: num(el, 'data-a'), z: num(el, 'data-z'),
+			ox: num(el, 'data-ox'), oy: num(el, 'data-oy'),
+			label: el.hasAttribute('data-label'),
+		}));
+		const cardDefs = cards.map((el) => ({
+			el,
+			r: num(el, 'data-r'), a: num(el, 'data-a'), z: num(el, 'data-z'),
+			w: num(el, 'data-w'), h: num(el, 'data-h'),
+			rect: el.querySelector<SVGRectElement>('rect'),
+			text: el.querySelector<SVGTextElement>('text'),
+			id: el.getAttribute('data-id') || '',
+		}));
+		const coreGroup = svg.querySelector<SVGGElement>('.hv-core');
+		const Z_CORE_LIFT = 70;
+
+		const chordDefs = chords.map((el) => ({
+			el,
+			ar: num(el, 'data-ar'), aa: num(el, 'data-aa'), az: num(el, 'data-az'),
+			br: num(el, 'data-br'), ba: num(el, 'data-ba'), bz: num(el, 'data-bz'),
+			key: el.getAttribute('data-chord') || '',
+		}));
+
+		let yaw = 0;
+		let pitch = 0;
+		let open = 0;           // 0 closed, 1 fully exploded
+		let aimYaw = 0;
+		let aimPitch = 0;
+		let aimOpen = 0;
+		let dragging = false;
+		let lastX = 0;
+		let lastY = 0;
+		let hovered = '';
+
+		const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
+
+		/* One projection, used by everything. `open` pushes the tiers apart along the
+		   lift axis — the core rises, the outer ring stays put — which is the exploded
+		   view, and it reads as the system coming apart into its layers rather than as
+		   a diagram being scaled. */
+		const project = (r: number, a: number, z: number) => {
+			const tilt = TILT_BASE + pitch;
+			const ct = Math.cos(tilt);
+			const st = Math.sin(tilt);
+			const lift = z * (1 + open * 2.1);
+			const fx = r * Math.cos(a + yaw);
+			const fy = r * Math.sin(a + yaw);
+			return { x: CX + fx, y: CY + fy * ct - lift * st, dep: r === 0 ? 0 : fy / r };
+		};
+
+		function frame() {
+			yaw += (aimYaw - yaw) * 0.09;
+			pitch += (aimPitch - pitch) * 0.09;
+			open += (aimOpen - open) * 0.08;
+
+			const tilt = TILT_BASE + pitch;
+			const ct = Math.cos(tilt);
+			const st = Math.sin(tilt);
+
+			// The core's caption and its four operation boxes sit on the core's plane,
+			// so they rise with it when the model opens. Left behind, the primitive
+			// lifts off and its own label stays on the floor.
+			const coreLift = -Z_CORE_LIFT * (1 + open * 2.1) * st + Z_CORE_LIFT * st;
+			if (coreGroup) coreGroup.setAttribute('transform', `translate(0 ${coreLift})`);
+
+			for (const d of ringDefs) {
+				d.el.setAttribute('cy', String(CY - d.z * (1 + open * 2.1) * st));
+				d.el.setAttribute('ry', String(Math.max(1, d.r * ct)));
+			}
+			for (const d of nodeDefs) {
+				const p = project(d.r, d.a, d.z);
+				if (d.label) {
+					d.el.setAttribute('x', String(p.x + d.ox));
+					d.el.setAttribute('y', String(p.y + d.oy));
+				} else {
+					d.el.setAttribute('cx', String(p.x));
+					d.el.setAttribute('cy', String(p.y));
+				}
+			}
+			/* Painter's order every frame: turning the model changes which chip is in
+			   front, and SVG paints in document order, so the order has to be rewritten
+			   rather than computed once at build. */
+			const sorted = [...cardDefs].map((d) => ({ d, p: project(d.r, d.a, d.z) }))
+				.sort((m, n2) => m.p.dep - n2.p.dep);
+			for (const { d, p } of sorted) {
+				if (d.rect) {
+					d.rect.setAttribute('x', String(p.x - d.w / 2));
+					d.rect.setAttribute('y', String(p.y - d.h / 2));
+				}
+				if (d.text) {
+					d.text.setAttribute('x', String(p.x));
+					d.text.setAttribute('y', String(p.y + (d.h > 32 ? 5 : 4)));
+				}
+				/* A much wider range than the static figure needed. At rest the labels
+				   are solved so none overlaps; once it turns, a far chip WILL pass
+				   behind a near one, and the only thing that makes that read as depth
+				   rather than as a collision is the far one visibly receding. */
+				const near = (p.dep + 1) / 2;
+				d.el.style.opacity = String(0.3 + near * 0.7);
+				const k = 0.9 + near * 0.16;
+				d.el.setAttribute('transform', `translate(${p.x} ${p.y}) scale(${k}) translate(${-p.x} ${-p.y})`);
+				d.el.parentNode?.appendChild(d.el);
+			}
+			for (const d of chordDefs) {
+				const a = project(d.ar, d.aa, d.az);
+				const b = project(d.br, d.ba, d.bz);
+				d.el.setAttribute('x1', String(a.x));
+				d.el.setAttribute('y1', String(a.y));
+				d.el.setAttribute('x2', String(b.x));
+				d.el.setAttribute('y2', String(b.y));
+				const lit = hovered !== '' && d.key.startsWith(hovered);
+				d.el.classList.toggle('is-lit', lit);
+				d.el.classList.toggle('is-dim', hovered !== '' && !lit);
+			}
+			raf = requestAnimationFrame(frame);
+		}
+
+		/* ── turning ─────────────────────────────────────────────────────────────── */
+		const onDown = (e: PointerEvent) => {
+			dragging = true;
+			lastX = e.clientX;
+			lastY = e.clientY;
+			svg.setPointerCapture(e.pointerId);
+			fig.classList.add('is-turning');
+		};
+		const onMove = (e: PointerEvent) => {
+			if (!dragging) return;
+			aimYaw += (e.clientX - lastX) * 0.006;
+			// Clamped: past about 25 degrees either way the rings pass edge-on and the
+			// whole figure collapses to a line.
+			aimPitch = clamp(aimPitch + (e.clientY - lastY) * 0.0035, -0.44, 0.34);
+			lastX = e.clientX;
+			lastY = e.clientY;
+		};
+		const onUp = (e: PointerEvent) => {
+			dragging = false;
+			try { svg.releasePointerCapture(e.pointerId); } catch { /* already gone */ }
+			fig.classList.remove('is-turning');
+		};
+
+		/* ── opening ─────────────────────────────────────────────────────────────
+		   Driven by where the figure sits in the viewport, not by a wheel listener:
+		   scrolling the page must never be captured by a graphic. */
+		const onScroll = () => {
+			if (reduced) return;
+			const r = fig.getBoundingClientRect();
+			const seen = clamp((window.innerHeight - r.top) / (window.innerHeight + r.height), 0, 1);
+			aimOpen = clamp((seen - 0.35) / 0.4, 0, 1);
+		};
+
+		const feats = [...svg.querySelectorAll<SVGGElement>('.hv-feats [data-card]')];
+		for (const g of feats) {
+			const id = g.getAttribute('data-id') || '';
+			g.addEventListener('pointerenter', () => { hovered = id; });
+			g.addEventListener('pointerleave', () => { hovered = ''; });
+		}
+
+		svg.addEventListener('pointerdown', onDown);
+		svg.addEventListener('pointermove', onMove);
+		svg.addEventListener('pointerup', onUp);
+		svg.addEventListener('pointercancel', onUp);
+		window.addEventListener('scroll', onScroll, { passive: true });
+		window.addEventListener('resize', onScroll);
+		onScroll();
+
+		let raf = requestAnimationFrame(frame);
+
+		document.addEventListener('astro:before-swap', () => {
+			cancelAnimationFrame(raf);
+			window.removeEventListener('scroll', onScroll);
+			window.removeEventListener('resize', onScroll);
+		}, { once: true });
+	}
+
+	document.addEventListener('astro:page-load', mountHeroModel);
+	if (document.readyState !== 'loading') mountHeroModel();
+	else document.addEventListener('DOMContentLoaded', mountHeroModel);
+</script>
 
 <style>
 	.hero-visual {
@@ -823,6 +1087,45 @@ const ghostEdges: [number, number][] = [
 	/* ── the diagram ── */
 	.hero-visual { margin: 0; min-width: 0; }
 	.hero-visual svg { display: block; width: 100%; height: auto; }
+
+	/* ── the model's own affordances ─────────────────────────────────────────── */
+	/* user-select:none, because a drag is a drag. Without it, pulling the model
+	   sideways selects every label it passes and leaves the figure strewn with
+	   highlight boxes — which looks like the page broke, not like it turned. */
+	.hero-fig.is-live svg {
+		cursor: grab;
+		touch-action: pan-y;
+		user-select: none;
+		-webkit-user-select: none;
+	}
+	.hero-fig.is-turning svg { cursor: grabbing; }
+	/* :not([hidden]) — the hint ships hidden and the model script unhides it, and an
+	   author display:block outranks the UA [hidden] rule. check.py catches this
+	   exact pattern; it is the third time in this codebase. */
+	.hero-fig-drive:not([hidden]) {
+		display: block;
+		margin-top: 4px;
+		font-family: var(--mono);
+		font-size: 10px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+	/* Hovering a feature traces the capability rows it actually consumes. The unlit
+	   chords drop rather than the lit ones brightening: on a diagram this dense,
+	   taking light away is the only way to add contrast. */
+	.hv-chord.is-lit, .hv-entry.is-lit {
+		stroke: var(--accent-on-dark);
+		stroke-opacity: 0.95;
+		stroke-width: 1.4;
+	}
+	.hv-chord.is-dim, .hv-entry.is-dim { stroke-opacity: 0.06; }
+	.hv-chord, .hv-entry { transition: stroke-opacity 180ms ease, stroke 180ms ease; }
+	.hv-feats [data-card] { cursor: pointer; }
+
+	@media (prefers-reduced-motion: reduce) {
+		.hv-chord, .hv-entry { transition: none; }
+	}
 
 	.hero-fig-legend {
 		margin-top: var(--space-md);

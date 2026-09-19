@@ -40,7 +40,7 @@ What that costs today
 
 Published figures · one per industry
 
-> One primitive · six capabilities · seven features · five sectors
+> One primitive · six capabilities · seven features · five sectors Drag to turn · scroll to open it up
 
 What replaces it
 
