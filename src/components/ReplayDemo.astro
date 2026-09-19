@@ -115,7 +115,8 @@ const SCENARIOS = [
 					</ol>
 				</nav>
 			)}
-			<div class="rp-opts" role="group" aria-label="Scenario">
+			<p class="rp-opts-label" id="rp-opts-label">Scenario</p>
+			<div class="rp-opts" role="group" aria-labelledby="rp-opts-label">
 				{SCENARIOS.map((s) => (
 					<button
 						type="button"
@@ -551,23 +552,48 @@ const SCENARIOS = [
 				`${c.run_id_ormas} · seed ${c.seed} · ${c.dataset} · generated during training`;
 
 			const m = rec.mission ?? {}, shock = rec.shock ?? null, rcv = rec.recovery ?? null;
-			const items: [string, string][] = [
-				['Epochs', String(m.epochs ?? '—')],
-				['Peak', m.peak != null ? `${pct(m.peak)} at ${m.peak_epoch}` : '—'],
-				['Final', m.final != null ? pct(m.final) : '—'],
-				['Corrections', String(m.corrections ?? '—')],
-				['Epochs with corrections', String(m.epochs_with_corrections ?? '—')],
+			// THREE GROUPS, NOT NINE LOOSE CELLS. As a flat auto-fit grid these wrapped into
+			// ragged rows — "epochs with corrections" took two lines while its neighbours took
+			// one — and nine equal-weight labels in a line say nothing about which belong
+			// together. They are the run, the event, and the recovery, which is the order the
+			// thing actually happened in, and a run with no event simply has no middle group.
+			//
+			// Values carry a unit or a qualifier as a separate span rather than inside the
+			// number, so the figures align down the column instead of each one starting
+			// wherever its prose ended.
+			type Cell = [string, string, string?];
+			const groups: [string, Cell[]][] = [
+				['The run', [
+					['Epochs', String(m.epochs ?? '—')],
+					['Peak accuracy', m.peak != null ? pct(m.peak) : '—', m.peak != null ? `at epoch ${m.peak_epoch}` : ''],
+					['Final accuracy', m.final != null ? pct(m.final) : '—'],
+					['Corrections', String(m.corrections ?? '—'),
+						m.epochs_with_corrections != null ? `across ${m.epochs_with_corrections} epochs` : ''],
+				]],
 			];
 			if (shock) {
-				items.push(['Event at epoch', String(shock.epoch)]);
-				items.push(['Before → after', `${pct(shock.pre)} → ${pct(shock.post)}`]);
+				groups.push(['The event', [
+					['At epoch', String(shock.epoch)],
+					['Accuracy before', pct(shock.pre)],
+					['Accuracy after', pct(shock.post), `a fall of ${(shock.severity_pp ?? 0).toFixed(2)} points`],
+				]]);
 			}
 			if (rcv) {
-				items.push(['Recovered to', `${pct(rcv.to)} by ${rcv.by_epoch}`]);
-				items.push(['Of what was lost', `${rcv.reclaimed_pct}%`]);
+				groups.push(['The recovery', [
+					['Recovered to', pct(rcv.to), `by epoch ${rcv.by_epoch}`],
+					['Of what was lost', `${rcv.reclaimed_pct}%`],
+				]]);
 			}
-			q('[data-record-grid]')!.innerHTML = items.map(([k, v]) =>
-				`<div class="rp-record-cell"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+			q('[data-record-grid]')!.innerHTML = groups.map(([name, cells]) => `
+				<section class="rp-rec-group">
+					<h5 class="rp-rec-group-name">${name}</h5>
+					<dl class="rp-rec-cells">${cells.map(([k, v, note]) => `
+						<div class="rp-record-cell">
+							<dt>${k}</dt>
+							<dd>${v}${note ? `<span class="rp-rec-note">${note}</span>` : ''}</dd>
+						</div>`).join('')}
+					</dl>
+				</section>`).join('');
 
 			const rows = upto == null
 				? (bundle.corrections as Correction[])
@@ -1586,44 +1612,99 @@ const SCENARIOS = [
 		background: var(--plate-sunk);
 		flex: none;
 	}
+	/* NOTHING IN THE BAR WRAPS. The segmented control is wider than the four words it
+	   replaced, and the mark and the breadcrumb broke onto second lines rather than giving
+	   way — a two-line product bar in a one-line bar's height. Everything here is a single
+	   line; the run identifier is the one that may be clipped, because it is the only item
+	   whose tail is not load-bearing. */
 	.rp-appbar-mark {
 		margin: 0;
 		font-family: var(--mono);
 		font-size: 11px;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
+		white-space: nowrap;
+		flex: none;
 		color: var(--fg);
 	}
 	.rp-appbar-mark span { margin: 0 8px; color: var(--ormas); }
-	.rp-appbar-trail { margin-right: var(--space-lg); }
+	.rp-appbar-trail { margin-right: var(--space-lg); flex: none; }
+	.rp-appbar-trail ol { white-space: nowrap; }
 
-	/* SEGMENTED OPTIONS, in the bar. Four scenarios on one line where a 220px column used to
-	   hold them, so the working area keeps the width. */
+	/* ── THE SCENARIO SWITCH ──────────────────────────────────────────────────────
+	   These read as four words printed on the bar rather than as four things to press:
+	   flat, unlit, the same ink as the label beside them. Nothing said they were controls.
+
+	   Built as a proper segmented control instead — the pattern's job is to say "one of
+	   these, and you may change it", and it does that with three signals rather than one:
+
+	     a RECESSED TRACK, darker than the bar, so the group reads as a slot holding
+	       something rather than as text sitting on a surface;
+	     a RAISED SELECTED PILL, filled and shadowed, which is the one that looks pressed in
+	       and therefore implies the others can be;
+	     UNSELECTED ITEMS THAT ARE PROPERLY LIT — --fg-mid at 8.14:1, not --fg-dim — because
+	       an option nobody can read is not an option.
+
+	   A standing "SCENARIO" label names what is being switched. Hover lifts, active depresses
+	   by a pixel, and focus-visible rings, so a pointer and a keyboard both get an answer. */
+	.rp-opts-label {
+		flex: none;
+		white-space: nowrap;
+		font-family: var(--mono);
+		font-size: 10px;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+		margin: 0 10px 0 0;
+		align-self: center;
+	}
 	.rp-opts {
 		display: flex;
-		gap: 1px;
+		flex: none;
+		align-items: center;
+		gap: 2px;
 		margin-right: auto;
-		background: var(--rule);
+		padding: 3px;
+		background: color-mix(in oklab, #000 34%, var(--plate));
 		border: 1px solid var(--rule);
-		border-radius: 4px;
-		overflow: hidden;
+		border-radius: 6px;
+		box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
 	}
 	.rp-opt {
 		font: inherit;
 		font-family: var(--mono);
 		font-size: 10.5px;
-		letter-spacing: 0.06em;
+		font-weight: 600;
+		letter-spacing: 0.07em;
 		text-transform: uppercase;
 		white-space: nowrap;
-		padding: 5px 11px;
-		border: 0;
-		background: var(--plate);
-		color: var(--fg-dim);
+		padding: 5px 12px;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		background: transparent;
+		color: var(--fg-mid);
 		cursor: pointer;
-		transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+		transition:
+			background var(--duration-fast) var(--ease-out),
+			color var(--duration-fast) var(--ease-out),
+			border-color var(--duration-fast) var(--ease-out),
+			transform var(--duration-fast) var(--ease-out);
 	}
-	.rp-opt:hover { color: var(--fg); background: color-mix(in oklab, var(--fg) 7%, var(--plate)); }
-	.rp-opt[aria-pressed='true'] { background: var(--ormas); color: var(--plate); font-weight: 700; }
+	.rp-opt:hover {
+		color: var(--fg);
+		background: color-mix(in oklab, var(--fg) 10%, transparent);
+		border-color: color-mix(in oklab, var(--fg) 16%, transparent);
+	}
+	.rp-opt:active { transform: translateY(1px); }
+	.rp-opt:focus-visible { outline: 2px solid var(--ormas); outline-offset: 1px; }
+	.rp-opt[aria-pressed='true'] {
+		background: var(--ormas);
+		border-color: color-mix(in oklab, #000 22%, var(--ormas));
+		color: var(--plate);
+		font-weight: 700;
+		box-shadow: 0 1px 3px rgb(0 0 0 / 0.40);
+	}
+	.rp-opt[aria-pressed='true']:hover { background: var(--ormas); color: var(--plate); }
 	.rp-appbar-trail ol {
 		display: flex;
 		gap: 6px;
@@ -1642,6 +1723,9 @@ const SCENARIOS = [
 	.rp-appbar-trail [aria-current='page'] { color: var(--fg-mid); }
 	.rp-appbar-run {
 		margin: 0;
+		flex: 1 1 auto;
+		text-align: right;
+		min-width: 0;
 		font-family: var(--mono);
 		font-size: 11px;
 		color: var(--fg-dim);
@@ -1746,13 +1830,26 @@ const SCENARIOS = [
 		background: var(--rule);
 		border-top: 1px solid var(--rule);
 	}
+	/* THE CONTENT FILLS THE PANEL. Each readout stopped where its content stopped and left
+	   93px, 93px and 139px of dead ground beneath it — measured — because the panels were
+	   sized for the four-up row they were in before the record moved out. They are flex
+	   columns now and the thing inside each one grows. */
 	.rp--app .rp-panel {
 		height: auto;
 		min-height: 0;
 		overflow-y: auto;
 		background: var(--plate);
-		padding: 12px var(--space-md) 8px;
+		padding: 12px var(--space-md) 10px;
+		display: flex;
+		flex-direction: column;
 	}
+	.rp--app .rp-panel > * { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+
+	/* The chart was a fixed 196px box in a 326px panel. It takes what it is given. */
+	.rp--app .rp-chart-box { height: auto; flex: 1 1 auto; min-height: 150px; }
+
+	/* The ledger scrolls, so it simply needs the height. */
+	.rp--app .rp-alarms { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 
 	/* The ledger is a LOG and scrolls by nature — 85 corrections will never fit a band. The
 	   other two are readouts and must not. */
@@ -1766,9 +1863,30 @@ const SCENARIOS = [
 	   once corrections accumulate ("41 bounded corrections, each inside its declared
 	   ceiling"), and at rest-height padding that pushed the last row — "test accuracy right
 	   now" — out of the cell. */
-	.rp--app .rp-verdict-table { font-size: 11.5px; }
-	.rp--app .rp-verdict-table :global(tbody th) { padding: 2px 9px 2px 0; font-size: 12px; line-height: 1.3; }
-	.rp--app .rp-verdict-table :global(tbody td) { padding: 2px 9px; font-size: 11px; line-height: 1.35; }
+	/* TYPE BACK UP. It was shrunk to 11px to survive the four-up row; with the record gone
+	   and the panel filling, there is room to read comfortably again. The rows distribute
+	   down the panel rather than bunching at the top. */
+	/* 12.5px, not 13.5px. Bigger type was the point — it was 11px to survive the old
+	   four-up row — but the ceiling is the TALLEST state, not the resting one: at 13.5px the
+	   ORMAS cell's two lines pushed the table 76px past its panel at 1440. Measured back
+	   down until six rows clear the band at the end of the run. */
+	.rp--app .rp-verdict-table { font-size: 12.5px; height: 100%; }
+	.rp--app .rp-verdict-table :global(tbody) { height: 100%; }
+	.rp--app .rp-verdict-table :global(tbody th) { padding: 3px 10px 3px 0; font-size: 12.5px; line-height: 1.28; }
+	.rp--app .rp-verdict-table :global(tbody td) { padding: 3px 10px; font-size: 12px; line-height: 1.32; }
+	.rp--app .rp-chart-label { font-size: 11px; letter-spacing: 0.1em; }
+
+	/* THE SHORTEST WINDOW PAYS, NOT EVERY WINDOW. At 900px of viewport the readout band is
+	   281px and six rows of a comparison table with wrapping cells want 315px at full size.
+	   Shrinking the type everywhere to satisfy the smallest screen is how it ended up at 11px
+	   in the first place, so the notch is scoped to the heights that need it. */
+	@media (max-height: 920px) {
+		.rp--app .rp-verdict-table { font-size: 11.5px; }
+		.rp--app .rp-verdict-table :global(tbody th) { padding: 2px 9px 2px 0; font-size: 11.5px; line-height: 1.25; }
+		.rp--app .rp-verdict-table :global(tbody td) { padding: 2px 9px; font-size: 11px; line-height: 1.28; }
+		.rp--app .rp-panel { padding: 10px var(--space-md) 8px; }
+	}
+
 	.rp--app .rp-verdict-table thead th { padding-bottom: 5px; }
 	.rp--app .rp-chart-label { margin-bottom: 6px; }
 
@@ -1779,8 +1897,15 @@ const SCENARIOS = [
 	   not fit in the 711px a 800px window leaves — measured, each cell came out 92px tall,
 	   which is not a panel. The console releases its fixed height and the page scrolls; the
 	   band keeps a floor so a cell is always something you can read. */
+	@media (max-width: 1400px) {
+		/* The control needs the room more than the identifiers do. */
+		.rp-appbar-trail, .rp-opts-label { display: none; }
+	}
+
 	@media (max-width: 1240px) {
 		.rp--app { height: auto; }
+		.rp-appbar { height: auto; flex-wrap: wrap; gap: 8px; padding-block: 8px; }
+		.rp-appbar-run { flex-basis: 100%; text-align: left; }
 		.rp--app .rp-tabs { grid-template-columns: 1.4fr 1fr; }
 		.rp--app .rp-panel { min-height: 230px; }
 	}
@@ -2368,14 +2493,94 @@ const SCENARIOS = [
 		background: var(--plate-sunk);
 	}
 	.rp-record-head { margin-bottom: var(--space-md); }
-	/* ── THE RECORD STRIP ──────────────────────────────────────────────────────── */
+	/* ── THE RECORD STRIP ────────────────────────────────────────────────────────
+	   Three named groups across the top — the run, the event, the recovery — then the table.
+	   As a flat auto-fit grid of nine cells this wrapped raggedly and gave every figure the
+	   same weight, which is how a record of "a network broke and repaired itself" ended up
+	   reading as a spreadsheet header.
+
+	   Numbers are tabular and right-aligned in the table, text is left-aligned, and the
+	   qualifier under each figure ("at epoch 99", "by epoch 199") is a separate line so the
+	   figures align with each other rather than each starting where its prose ended. */
+	.rp--app .rp-record-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+		gap: 0;
+		margin: 0 0 var(--space-lg);
+		border: 1px solid var(--rule);
+		border-radius: 5px;
+		overflow: hidden;
+		background: var(--rule);
+		row-gap: 1px;
+		column-gap: 1px;
+	}
+	.rp--app :global(.rp-rec-group) { background: var(--plate); padding: 12px var(--space-md) 14px; }
+	.rp--app :global(.rp-rec-group-name) {
+		margin: 0 0 10px;
+		font-family: var(--mono);
+		font-size: 10px;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--ormas);
+		font-weight: 400;
+	}
+	.rp--app :global(.rp-rec-cells) { display: grid; gap: 9px; margin: 0; }
+	.rp--app :global(.rp-record-cell) { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: var(--space-md); }
+	.rp--app :global(.rp-record-cell dt) {
+		font-size: 12px;
+		color: var(--fg-mid);
+		margin: 0;
+	}
+	.rp--app :global(.rp-record-cell dd) {
+		margin: 0;
+		text-align: right;
+		font-family: var(--mono);
+		font-size: 15px;
+		font-variant-numeric: tabular-nums;
+		color: var(--fg);
+		white-space: nowrap;
+	}
+	.rp--app :global(.rp-rec-note) {
+		display: block;
+		font-size: 10.5px;
+		letter-spacing: 0;
+		color: var(--fg-dim);
+		margin-top: 1px;
+	}
+
 	.rp-recordband {
 		border-top: 1px solid var(--rule);
 		background: var(--plate-sunk);
 		padding: var(--space-lg);
 		overflow: visible;
 	}
-	.rp--app .rp-recordband .rp-table-wrap { max-height: 320px; overflow-y: auto; }
+	.rp--app .rp-recordband .rp-table-wrap {
+		max-height: 300px;
+		overflow-y: auto;
+		border: 1px solid var(--rule);
+		border-radius: 5px;
+	}
+	/* Left for text, right for numbers, and fixed columns so five headings do not sprawl
+	   across 1500px with the data lost somewhere in the middle of it. */
+	.rp--app .rp-recordband :global(.rp-table) { width: 100%; table-layout: fixed; }
+	.rp--app .rp-recordband :global(.rp-table) :global(th),
+	.rp--app .rp-recordband :global(.rp-table) :global(td) { padding: 6px var(--space-md); }
+	.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(1)),
+	.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(1)) { width: 12%; text-align: right; font-variant-numeric: tabular-nums; }
+	.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(2)),
+	.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(2)) { width: 16%; }
+	.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(3)),
+	.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(3)) { width: 24%; }
+	.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(4)),
+	.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(4)),
+	.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(5)),
+	.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(5)) { width: 24%; text-align: right; font-variant-numeric: tabular-nums; }
+	.rp--app .rp-recordband :global(.rp-table) :global(thead th) {
+		position: sticky;
+		top: 0;
+		background: var(--plate-sunk);
+		z-index: 1;
+	}
 	.rp--app .rp-recordband .rp-record-actions { margin-top: var(--space-md); }
 	/* The download is the console's own action, so it wears the console's accent rather than
 	   the site's indigo — which on this ground read as a button from another application. */

@@ -209,6 +209,9 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	// whatever is behind it.
 	for (const [route, expectCurrent] of [['/technology', false], ['/black-box', true], ['/insights', false]]) {
 		await page.goto(`${ORIGIN}${route}`, { waitUntil: 'networkidle' });
+		// The raise runs for 820ms and the cords retract over 520ms, both with fill-mode
+		// forwards. Measuring before they land reads the starting values, not the design.
+		await page.waitForTimeout(1200);
 		const m = await page.evaluate(() => {
 			const nav = document.querySelector('.nav').getBoundingClientRect();
 			const a = document.querySelector('.nav-link--mark');
@@ -240,24 +243,42 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 					return +(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2));
 				})(),
 				current: a.getAttribute('aria-current') === 'page',
+				// WIDTH for "is it drawn" — a cord is 1px wide. HEIGHT for "has it retracted" —
+				// the raise animates height to 0, and checking width there reported 1px for
+				// ever and failed a design that was working.
 				cords: [getComputedStyle(plate, '::before').width, getComputedStyle(plate, '::after').width],
+				cordLen: [getComputedStyle(plate, '::before').height, getComputedStyle(plate, '::after').height],
 			};
 		});
 		ok(m.anchorH === 42 && m.otherH.length === 1 && m.otherH[0] === m.anchorH,
 			`sign ${route}: the bracket is the same height as every other link (${m.anchorH} vs ${m.otherH})`);
 		ok(m.rows === 1, `sign ${route}: the bracket stays on the nav's row (${m.rows})`);
-		ok(m.hangsBy > 12, `sign ${route}: the plate hangs clear below the bar (${m.hangsBy}px)`);
+		// TWO STATES NOW, and they are the point of the design. Off its own page the plate
+		// hangs below the bar on two cords. On /black-box it has been RAISED: the cords
+		// retract to nothing and the plate sits flush under the bracket, so arriving on the
+		// page it names shows the thing opened. Asserting "hangs clear" everywhere was
+		// asserting the old design.
+		if (expectCurrent) {
+			ok(m.hangsBy <= 6,
+				`sign ${route}: the plate is raised flush, not hanging (${m.hangsBy}px below the bar)`);
+			ok(m.cordLen.every((c) => parseFloat(c) <= 1),
+				`sign ${route}: the cords have retracted (${m.cordLen.join(', ')})`);
+		} else {
+			ok(m.hangsBy > 12, `sign ${route}: the plate hangs clear below the bar (${m.hangsBy}px)`);
+			ok(m.cords[0] === '1px' && m.cords[1] === '1px',
+				`sign ${route}: both cords are drawn (${m.cords.join(', ')})`);
+		}
 		ok(m.name === 'Open the Black Box',
 			`sign ${route}: the accessible name is the whole phrase, not the two spans run together ("${m.name}")`);
 		ok(m.resolves === '/black-box', `sign ${route}: the plate itself resolves to the link (${m.resolves})`);
 		ok(m.ring, `sign ${route}: the plate keeps its separating ring`);
-		ok(m.clearsBar >= 0,
-			`sign ${route}: the plate hangs CLEAR of the bar rather than straddling it (${m.clearsBar}px). ` +
-			'Straddling put half of it on a banner of its own colour, at 1.0:1.');
+		if (!expectCurrent) {
+			ok(m.clearsBar >= 0,
+				`sign ${route}: the plate hangs CLEAR of the bar rather than straddling it (${m.clearsBar}px). ` +
+				'Straddling put half of it on a banner of its own colour, at 1.0:1.');
+		}
 		ok(m.textContrast >= 4.5,
 			`sign ${route}: the plate's label is ${m.textContrast}:1 against the plate`);
-		ok(m.cords[0] === '1px' && m.cords[1] === '1px',
-			`sign ${route}: both cords are drawn (${m.cords.join(', ')})`);
 		ok(m.current === expectCurrent, `sign ${route}: aria-current is ${expectCurrent}`);
 	}
 	await page.close();

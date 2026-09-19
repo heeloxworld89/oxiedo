@@ -516,8 +516,11 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 	   point, and only the state chip distinguishes them. */
 	.demo-half--semantic { }
 
-	/* The app screen runs edge to edge; the prose above and below keeps the page's measure. */
-	.demo-app { margin-block: var(--space-lg) 0; }
+	/* FLUSH TO THE NAV. A 24px top margin here put page background between the header and
+	   the console, so the cream band read as 112px on this page against 89px everywhere
+	   else — the nav looked taller when the nav had not changed at all. An application
+	   screen starts where the chrome above it ends. */
+	.demo-app { margin-block: 0; }
 
 	.demo-note {
 		max-width: 68ch;

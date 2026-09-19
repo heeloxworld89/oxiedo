@@ -7,6 +7,8 @@
 ---
 ORMAS·replay console
 
+Scenario
+
 Loading the archived run…
 
 Sealed network

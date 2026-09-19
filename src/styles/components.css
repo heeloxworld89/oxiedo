@@ -6010,19 +6010,61 @@ main > section:last-child.band--dark {
 	color: var(--text-primary);
 }
 
-/* ON ITS OWN PAGE the plate keeps the amber and gains a solid ink ring. Changing the hue was
-   tried and is wrong twice over: indigo measures 2.21:1 against the banner, so the sign stops
-   being an object, and the amber is doing semantic work that "you are here" should not
-   override. A ring says selected without arguing with the colour. */
+/* ON ITS OWN PAGE THE SIGN HAS BEEN LIFTED.
+   ============================================================
+   Everywhere else the plate hangs from the bar on two cords. Arriving on the page it names,
+   it is raised: the cords pay out to nothing, the plate swings up on its own weight,
+   overshoots by a couple of pixels and settles flush under the bracket. What was a sign
+   hanging outside a closed thing becomes a label sitting on an open one.
+
+   It is the state change doing the work, not an added ornament — nothing appears that was
+   not already there, and the difference between the two pages is legible in one glance
+   without reading a word.
+
+   The animation runs once per arrival. ClientRouter re-renders the header on a client-side
+   navigation, so walking to this page from anywhere else plays it; a reload plays it too.
+   forwards holds the raised position so it does not drop back when the animation ends. */
 .nav-link--mark[aria-current='page'] {
 	background: transparent;
 	color: var(--text-primary);
 }
+
+@keyframes nav-sign-raise {
+	0%   { top: calc(100% + var(--cord)); rotate: 0deg; }
+	55%  { top: calc(100% - 4px); rotate: -1.4deg; }
+	78%  { top: calc(100% + 1px); rotate: 0.6deg; }
+	100% { top: 100%; rotate: 0deg; }
+}
+@keyframes nav-cord-retract {
+	0%   { height: var(--cord); opacity: 1; }
+	60%  { height: 2px; opacity: 0.35; }
+	100% { height: 0; opacity: 0; }
+}
+
 .nav-link--mark[aria-current='page'] .nav-sign-plate {
+	animation: nav-sign-raise 820ms var(--ease-out) forwards;
+	/* Raised, it is resting ON the bar rather than swinging under it: the shadow tightens
+	   and an ink ring takes over from the cords as the thing that separates it. */
 	box-shadow:
 		0 0 0 2px var(--text-primary),
-		0 7px 18px rgb(0 0 0 / 0.30),
-		inset 0 1px 0 rgb(255 255 255 / 0.30);
+		0 2px 6px rgb(0 0 0 / 0.22),
+		inset 0 1px 0 rgb(255 255 255 / 0.35);
+}
+.nav-link--mark[aria-current='page'] .nav-sign-plate::before,
+.nav-link--mark[aria-current='page'] .nav-sign-plate::after {
+	animation: nav-cord-retract 520ms var(--ease-out) forwards;
+}
+
+/* A raised sign does not swing. */
+.nav-link--mark[aria-current='page']:hover .nav-sign-plate,
+.nav-link--mark[aria-current='page']:focus-visible .nav-sign-plate {
+	animation: nav-sign-raise 820ms var(--ease-out) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.nav-link--mark[aria-current='page'] .nav-sign-plate { animation: none; top: 100%; }
+	.nav-link--mark[aria-current='page'] .nav-sign-plate::before,
+	.nav-link--mark[aria-current='page'] .nav-sign-plate::after { animation: none; height: 0; opacity: 0; }
 }
 
 /* The bar's hover underline would draw across the bracket text and read as a second

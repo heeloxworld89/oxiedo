@@ -205,8 +205,15 @@ export function draw(cv: HTMLCanvasElement, bundle: Bundle, upto: number, theme:
 		ctx.beginPath();
 		ctx.arc(x(cur), y(v), 3, 0, Math.PI * 2);
 		ctx.fill();
-		const lx = Math.min(x(cur) + 9, w - LABEL_W + 4);
-		ctx.font = `700 14px ${MONO}`;
+		// THE VALUE LABEL CANNOT REVERSE INTO THE SERIES NAME. It follows the leading point,
+		// and early in a run that point is a few pixels from the left edge — where the series
+		// name is already printed. They were drawn on top of each other for the first fifth
+		// of every run. The label now starts no further left than the name it would collide
+		// with, measured rather than guessed at, so it parks beside the name until the line
+		// has moved past and then tracks the point as before.
+		ctx.font = `700 ${tight ? 12 : 14}px ${MONO}`;
+		const nameEnd = PAD.left + 4 + ctx.measureText(p.name.toUpperCase()).width * 0.86 + 10;
+		const lx = Math.min(Math.max(x(cur) + 9, nameEnd), w - LABEL_W + 4);
 		ctx.textAlign = 'left';
 		ctx.textBaseline = 'middle';
 		ctx.fillText(`${(v * 100).toFixed(1)}%`, lx, y(v));
