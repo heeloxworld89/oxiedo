@@ -51,48 +51,6 @@ What that costs today
 
 Published figures · one per sector
 
-Six capabilities
-
-- ACCOUNT
-
-- PROTECT
-
-- REPAIR
-
-- DETECT
-
-- ISOLATE
-
-- SUPPRESS
-
-Seven features
-
-- The Proofreader
-
-- The Warning Light
-
-- The Diary
-
-- The Separator
-
-- Certified Deletion
-
-- The Federated Node
-
-- The Update Engine
-
-Five sectors
-
-- AI Training
-
-- Regulated Finance
-
-- Medical AI
-
-- Data Obligation
-
-- Defense & Safety-Critical
-
 feature
 
 The Proofreader
@@ -309,7 +267,7 @@ Reaches Medical AI · Data Obligation
 
 [Read the page →](/technology)
 
-> One unit of a neural network, opened. Point at any name to see what it joins.
+> One unit of a neural network · six capabilities · seven features · five sectors Drag to turn it
 
 What replaces it
 
