@@ -1,0 +1,684 @@
+---
+/* THE COLD OPEN — /black-box only.
+ *
+ * WHAT THIS IS NOT. It is not a preloader. This page loads in roughly 300ms, so a progress
+ * bar here would be measuring nothing and saying so in a way that looked like measurement.
+ * On a site whose entire claim is that a machine should not be able to misreport itself,
+ * a lying progress indicator is the one ornament we cannot afford. So this is a title
+ * sequence: it plays OVER a page that has already finished loading, it never gates content,
+ * and it is skippable from the first frame.
+ *
+ * WHAT IT MUST NOT BREAK.
+ *   · The crawler. The document is complete and rendered underneath; this is a fixed overlay
+ *     added on top, and it removes itself from the DOM when it ends.
+ *   · Reduced motion. A vestibular trigger is not a style preference. Under
+ *     prefers-reduced-motion this never runs and never mounts — the console is right there,
+ *     and the same four claims are in the page body as text.
+ *   · The guided read. ReplayDemo opens its guide the first time the console scrolls into
+ *     view, and the console IS in view behind this overlay — so without coordination the
+ *     guide would open behind the curtain, burn its once-per-browser showing, and the
+ *     reader would surface into a dock mid-sequence. <html data-coldopen> is the interlock:
+ *     "running" suppresses the autostart entirely, "done" lets autoplay through but skips
+ *     the guide, because one onboarding at a time is the whole point.
+ *
+ * ONCE PER SESSION. A cover on every navigation turns a site into a slideshow.
+ */
+---
+
+<div
+	class="co"
+	data-coldopen-root
+	role="dialog"
+	aria-modal="true"
+	aria-label="Introduction to the Black Box"
+	hidden
+>
+	<canvas class="co-stage" data-co-canvas aria-hidden="true"></canvas>
+
+	<div class="co-copy">
+		<p class="co-act" data-co-act></p>
+		<p class="co-line" data-co-line></p>
+		<p class="co-sub" data-co-sub></p>
+
+		{/* ACT II. Every figure here is already on this site with its source attached — see
+		    src/data/markets.ts. Nothing is written for the occasion, and no individual is
+		    quoted: the record is the citation. */}
+		<ul class="co-figs" data-co-figs hidden>
+			<li class="co-fig" data-co-fig>
+				<span class="co-fig-n">419</span>
+				<span class="co-fig-u">unexpected interruptions in a single 54-day run</span>
+				<span class="co-fig-s">Meta · Llama 3 405B, on 16,384 H100s</span>
+			</li>
+			<li class="co-fig" data-co-fig>
+				<span class="co-fig-n">$15M</span>
+				<span class="co-fig-u">of compute wasted on that one run</span>
+				<span class="co-fig-s">At 30-minute checkpointing, repeated across 419 failures</span>
+			</li>
+			<li class="co-fig" data-co-fig>
+				<span class="co-fig-n">1,451</span>
+				<span class="co-fig-u">AI-enabled medical devices authorised by end-2025</span>
+				<span class="co-fig-s">Around 8% can be changed after authorisation. The rest are locked</span>
+			</li>
+			<li class="co-fig" data-co-fig>
+				<span class="co-fig-n">Apr 2026</span>
+				<span class="co-fig-u">SR 26-2 supersedes SR 11-7</span>
+				<span class="co-fig-s">Federal Reserve, FDIC and OCC · validation and change control</span>
+			</li>
+		</ul>
+	</div>
+
+	<footer class="co-foot">
+		<ol class="co-rail" aria-hidden="true">
+			<li data-co-seg><i></i></li>
+			<li data-co-seg><i></i></li>
+			<li data-co-seg><i></i></li>
+			<li data-co-seg><i></i></li>
+		</ol>
+		<button type="button" class="co-skip" data-co-skip>
+			Skip <kbd>Esc</kbd>
+		</button>
+	</footer>
+</div>
+
+{/* THE GATE RUNS DURING PARSE, before the console below it paints, so there is no frame in
+    which the page is visible and the cover is not. It only unhides; the sequence itself is
+    in the module script and can take its time arriving. If that module never loads, this
+    element is still removed by the fallback timer, so a bundling failure cannot leave a
+    reader staring at a black rectangle. */}
+<script is:inline>
+	(function () {
+		var el = document.querySelector('[data-coldopen-root]');
+		if (!el) return;
+		var kill = function () { el.remove(); };
+		try {
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return kill();
+			if (sessionStorage.getItem('oxiedo.blackbox.coldopen') === '1') return kill();
+		} catch (e) { /* storage blocked — play it; failing open is the safe direction here */ }
+		document.documentElement.setAttribute('data-coldopen', 'running');
+		el.hidden = false;
+		// If the sequence module never runs, do not hold the page hostage.
+		window.setTimeout(function () {
+			if (document.documentElement.getAttribute('data-coldopen') === 'running') {
+				document.documentElement.setAttribute('data-coldopen', 'done');
+				el.remove();
+				document.dispatchEvent(new CustomEvent('coldopen:done'));
+			}
+		}, 20000);
+	})();
+</script>
+
+<script>
+	type Act = { at: number; label: string; line: string; sub: string };
+
+	/* NOT '[data-coldopen]'. The inline gate above stamps data-coldopen="running" on <html>
+	   for the ReplayDemo interlock, and <html> precedes this element in document order — so
+	   that selector returned documentElement, and root.remove() at the end of the sequence
+	   deleted the entire document. The overlay and the flag get separate hooks, permanently. */
+	const root = document.querySelector<HTMLElement>('[data-coldopen-root]');
+	const canvas = document.querySelector<HTMLCanvasElement>('[data-co-canvas]');
+	if (root && canvas && !root.hidden) {
+		const elAct = root.querySelector<HTMLElement>('[data-co-act]')!;
+		const elLine = root.querySelector<HTMLElement>('[data-co-line]')!;
+		const elSub = root.querySelector<HTMLElement>('[data-co-sub]')!;
+		const elFigs = root.querySelector<HTMLElement>('[data-co-figs]')!;
+		const figs = [...root.querySelectorAll<HTMLElement>('[data-co-fig]')];
+		const segs = [...root.querySelectorAll<HTMLElement>('[data-co-seg]')];
+		const skip = root.querySelector<HTMLButtonElement>('[data-co-skip]')!;
+
+		/* ── the score ──────────────────────────────────────────────────────────────
+		   Four acts over 14.6s. Long for a web animation and deliberately so — this is
+		   a narrative, not a spinner — which is exactly why Skip is present in frame one
+		   and the rail shows how much is left. A reader who wants the console can have it
+		   in under a second. */
+		const T = { ignite: 0, machine: 900, record: 4700, brk: 9100, hand: 12700, end: 14600 };
+
+		const ACTS: Act[] = [
+			{
+				at: T.machine,
+				label: '01 — The machine',
+				line: 'A neural network is damaged partway through training.',
+				sub: 'The run continues. Nothing inside the network can say which part failed, or when, or by how much.',
+			},
+			{
+				at: T.record,
+				label: '02 — What that costs',
+				line: 'The bill is already on the record.',
+				sub: '',
+			},
+			{
+				at: T.brk,
+				label: '03 — The break',
+				line: 'ORMAS makes the network write the account as it trains.',
+				sub: 'Per component, per step, by arithmetic it cannot route around — and every correction bounded by a ceiling declared before the run starts.',
+			},
+			{
+				at: T.hand,
+				label: '04 — The console',
+				line: 'One archived run, replayed in full.',
+				sub: 'Every figure on the screen below is read from it. Nothing is computed in the browser.',
+			},
+		];
+
+		/* ── geometry ───────────────────────────────────────────────────────────────
+		   The same vocabulary the console draws in, so act four can resolve INTO the real
+		   diagram rather than cut to it: five columns, eleven marks to a stage, the true
+		   channel count printed beside a capped column. anatomy.ts holds the original —
+		   UNIT_CAP is 11 there and 11 here, and if that ever changes these drift. */
+		const COLS = [
+			{ n: 3, name: 'input', sub: '32×32×3' },
+			{ n: 11, name: '3→32', sub: '960 params' },
+			{ n: 11, name: '32→64', sub: '18,624 params' },
+			{ n: 11, name: '64→128', sub: '74,112 params' },
+			{ n: 10, name: 'output', sub: '10 classes' },
+		];
+		const NET_W = 900;
+		const NET_H = 300;
+		const DEAD = 3; // the column that dies in act one — stage 2 in the console's naming
+
+		type Pt = { x: number; y: number };
+		const layout: Pt[][] = COLS.map((c, i) => {
+			const x = (i / (COLS.length - 1)) * (NET_W - 120) + 60;
+			const span = c.n === 3 ? 70 : c.n === 10 ? 150 : 190;
+			return Array.from({ length: c.n }, (_, j) => ({
+				x,
+				y: NET_H / 2 + (c.n === 1 ? 0 : (j / (c.n - 1) - 0.5) * span),
+			}));
+		});
+
+		// Captured so the closures below keep the narrowing the guard above established.
+		const cv = canvas;
+		const ctx = cv.getContext('2d')!;
+		let dpr = 1;
+		let VW = 0;
+		let VH = 0;
+
+		function size() {
+			// Capped at 2. A 3x phone painting 385 edges a frame at full density spends the
+			// whole budget on pixels nobody can resolve.
+			dpr = Math.min(window.devicePixelRatio || 1, 2);
+			VW = window.innerWidth;
+			VH = window.innerHeight;
+			cv.width = Math.round(VW * dpr);
+			cv.height = Math.round(VH * dpr);
+			cv.style.width = VW + 'px';
+			cv.style.height = VH + 'px';
+		}
+		size();
+		window.addEventListener('resize', size);
+
+		const ease = (t: number) => (t < 0 ? 0 : t > 1 ? 1 : 1 - Math.pow(1 - t, 3));
+		const clamp01 = (t: number) => (t < 0 ? 0 : t > 1 ? 1 : t);
+		const span = (t: number, a: number, b: number) => clamp01((t - a) / (b - a));
+
+		const AMBER = '224,162,51';
+		const SLATE = '127,163,220';
+		const WARN = '224,100,95';
+		const CREAM = '241,239,232';
+
+		/* Where the real console's ORMAS diagram sits, so the network can land on it. If the
+		   bundle has not arrived yet there is nothing to land on, and the sequence simply
+		   fades instead — a handoff that depends on a fetch cannot be allowed to fail loudly. */
+		function target(): { cx: number; cy: number; s: number } | null {
+			const svg = document.querySelector('[data-anatomy-ormas] svg');
+			if (!svg) return null;
+			const r = svg.getBoundingClientRect();
+			if (r.width < 40 || r.bottom < 0 || r.top > VH) return null;
+			return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, s: r.width / NET_W };
+		}
+
+		function draw(t: number) {
+			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+			ctx.clearRect(0, 0, VW, VH);
+
+			// ── ignition: one mark, then the field ──────────────────────────────────
+			const ig = span(t, 0, T.machine);
+
+			// where the network sits, and how big
+			const recede = span(t, T.record - 250, T.record + 350);      // act two pushes it back
+			const restore = span(t, T.brk - 350, T.brk + 250);
+			const back = Math.max(0, recede - restore);
+			const land = ease(span(t, T.hand + 300, T.end - 150));
+			const tgt = land > 0 ? target() : null;
+
+			const baseS = Math.min(1, (VW - 80) / NET_W) * (1 - 0.14 * back);
+			const baseCx = VW / 2;
+			const baseCy = VH * (0.4 - 0.06 * back);
+			const cx = tgt ? baseCx + (tgt.cx - baseCx) * land : baseCx;
+			const cy = tgt ? baseCy + (tgt.cy - baseCy) * land : baseCy;
+			const s = tgt ? baseS + (tgt.s - baseS) * land : baseS;
+
+			ctx.save();
+			ctx.translate(cx, cy);
+			ctx.scale(s, s);
+			ctx.translate(-NET_W / 2, -NET_H / 2);
+
+			// 0.82 left the network at 0.18 and it simply disappeared behind act two's
+			// figures. It is meant to recede, not to exit.
+			const dim = 1 - 0.62 * back;
+			const drawn = ease(span(t, T.machine - 200, T.machine + 1100));
+			const killed = span(t, T.machine + 2500, T.machine + 2900);
+			const opened = span(t, T.brk + 300, T.brk + 1500);
+
+			/* ── edges, drawn in two passes ──────────────────────────────────────────
+			   One pass of every-to-every at very low alpha, and one of a near-neighbour
+			   lattice on top at four times that. A single all-to-all pass at a legible
+			   alpha is what the first version did, and 385 straight lines between two
+			   eleven-mark columns at this width moiré into a grey smear — the eye reads
+			   texture, not structure.
+
+			   It also happens to be the true picture. The dim wash IS the network: in a
+			   standard arm every error signal reaches every parameter, which is exactly
+			   why no component can be isolated. The bright lattice is only what a reader
+			   can follow. Density as the argument, rather than density as decoration. */
+			for (let c = 0; c < layout.length - 1; c++) {
+				const a = layout[c];
+				const b = layout[c + 1];
+				const reach = clamp01(drawn * (layout.length - 1) - c);
+				if (reach <= 0) continue;
+				const dead = killed > 0 && (c === DEAD - 1 || c === DEAD);
+				// The repair has to reach the edges too. Restoring the marks to amber while
+				// their connections stayed dead drew a stage that was named but still severed.
+				const fade = dead ? 1 - 0.78 * killed * (1 - opened) : 1;
+
+				ctx.strokeStyle = `rgba(${CREAM},${0.05 * fade * dim})`;
+				ctx.lineWidth = 0.6;
+				ctx.beginPath();
+				for (const p of a) {
+					for (const q of b) {
+						ctx.moveTo(p.x, p.y);
+						ctx.lineTo(p.x + (q.x - p.x) * reach, p.y + (q.y - p.y) * reach);
+					}
+				}
+				ctx.stroke();
+
+				ctx.strokeStyle = `rgba(${CREAM},${0.2 * fade * dim})`;
+				ctx.lineWidth = 0.9;
+				ctx.beginPath();
+				for (let i = 0; i < a.length; i++) {
+					const p = a[i];
+					const j = Math.round((i / Math.max(1, a.length - 1)) * (b.length - 1));
+					for (const k of [j - 1, j, j + 1]) {
+						const q = b[k];
+						if (!q) continue;
+						ctx.moveTo(p.x, p.y);
+						ctx.lineTo(p.x + (q.x - p.x) * reach, p.y + (q.y - p.y) * reach);
+					}
+				}
+				ctx.stroke();
+			}
+
+			// ── signal, flowing left to right and indifferent to the damage ─────────
+			if (drawn > 0.6 && back < 0.6) {
+				const phase = (t / 1400) % 1;
+				for (let c = 0; c < layout.length - 1; c++) {
+					const a = layout[c];
+					const b = layout[c + 1];
+					const f = (phase + c * 0.12) % 1;
+					const lit = f > 0.5 ? 1 - (f - 0.5) * 2 : f * 2;
+					if (lit <= 0.02) continue;
+					ctx.strokeStyle = `rgba(${CREAM},${0.3 * lit * dim})`;
+					ctx.lineWidth = 1.1;
+					ctx.beginPath();
+					for (let i = 0; i < a.length; i += 2) {
+						const p = a[i];
+						const q = b[Math.min(i, b.length - 1)];
+						ctx.moveTo(p.x + (q.x - p.x) * Math.max(0, f - 0.12), p.y + (q.y - p.y) * Math.max(0, f - 0.12));
+						ctx.lineTo(p.x + (q.x - p.x) * f, p.y + (q.y - p.y) * f);
+					}
+					ctx.stroke();
+				}
+			}
+
+			// ── the sealed volume, and the seam it breaks along ─────────────────────
+			if (t > T.brk - 400 && land < 1) {
+				const box = ease(span(t, T.brk - 400, T.brk + 200));
+				const split = ease(span(t, T.brk + 500, T.brk + 1600));
+				const pad = 26;
+				const x0 = layout[1][0].x - pad;
+				const x1 = layout[3][0].x + pad;
+				const y0 = NET_H / 2 - 120;
+				const y1 = NET_H / 2 + 120;
+				const mid = (x0 + x1) / 2;
+				ctx.lineWidth = 1.2;
+				for (const [a, b, dir] of [[x0, mid, -1], [mid, x1, 1]] as [number, number, number][]) {
+					ctx.save();
+					ctx.translate(dir * split * 170, 0);
+					ctx.globalAlpha = box * (1 - split) * (1 - split);
+					ctx.strokeStyle = `rgba(${CREAM},0.30)`;
+					ctx.fillStyle = 'rgba(7,8,15,0.88)';
+					ctx.beginPath();
+					ctx.rect(a, y0, b - a, y1 - y0);
+					ctx.fill();
+					ctx.stroke();
+					ctx.restore();
+				}
+				if (split > 0 && split < 1) {
+					const g = ctx.createLinearGradient(mid - 40, 0, mid + 40, 0);
+					g.addColorStop(0, `rgba(${AMBER},0)`);
+					g.addColorStop(0.5, `rgba(${AMBER},${0.5 * Math.sin(split * Math.PI)})`);
+					g.addColorStop(1, `rgba(${AMBER},0)`);
+					ctx.fillStyle = g;
+					ctx.fillRect(mid - 40, y0, 80, y1 - y0);
+				}
+			}
+
+			// ── marks ───────────────────────────────────────────────────────────────
+			layout.forEach((col, c) => {
+				const reach = clamp01(drawn * (layout.length - 1) - (c - 1));
+				if (reach <= 0) return;
+				const isStage = c >= 1 && c <= 3;
+				const isDead = c === DEAD;
+				col.forEach((p) => {
+					let fill: string;
+					let r = 3.1;
+					// ORDER MATTERS. `opened` is tested before `isDead`, because act three is
+					// the stage being named and repaired — leaving it red through the break
+					// says the opposite of the act it appears in, and it did.
+					if (isStage && opened > 0) {
+						fill = `rgba(${AMBER},${(0.2 + 0.75 * opened) * dim})`;
+						r = 3.1 + 0.5 * opened;
+					} else if (isDead && killed > 0) {
+						const flash = killed < 1 ? Math.sin(killed * Math.PI) : 0;
+						fill = `rgba(${WARN},${(0.22 + 0.6 * flash) * dim})`;
+					} else {
+						fill = `rgba(${SLATE},${0.82 * dim})`;
+					}
+					if ((isStage && opened > 0.2) || (isDead && killed > 0 && killed < 1)) {
+						ctx.shadowBlur = 11 * (isDead ? Math.sin(killed * Math.PI) : opened);
+						ctx.shadowColor = isDead ? `rgba(${WARN},0.9)` : `rgba(${AMBER},0.75)`;
+					}
+					ctx.fillStyle = fill;
+					ctx.beginPath();
+					ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+					ctx.fill();
+					ctx.shadowBlur = 0;
+				});
+			});
+
+			// ── names, only once the box is open: the point of the act ──────────────
+			if (opened > 0.35 && land < 0.7) {
+				const a = (opened - 0.35) / 0.65 * (1 - land / 0.7);
+				ctx.font = '600 10px ui-monospace, SFMono-Regular, Menlo, monospace';
+				ctx.textAlign = 'center';
+				for (let c = 1; c <= 3; c++) {
+					ctx.fillStyle = `rgba(${AMBER},${0.95 * a})`;
+					ctx.fillText(`stage ${c - 1}`, layout[c][0].x, NET_H / 2 - 108);
+					ctx.fillStyle = `rgba(${CREAM},${0.45 * a})`;
+					ctx.fillText(COLS[c].sub, layout[c][0].x, NET_H / 2 + 136);
+				}
+				ctx.fillStyle = `rgba(${AMBER},${0.5 * a})`;
+				ctx.fillRect(layout[1][0].x - 26, NET_H / 2 + 152, layout[3][0].x - layout[1][0].x + 52, 1);
+				ctx.fillStyle = `rgba(${CREAM},${0.55 * a})`;
+				ctx.font = '400 9.5px ui-monospace, SFMono-Regular, Menlo, monospace';
+				ctx.fillText(
+					'one shared bottleneck · the chain cannot grow with the network',
+					NET_W / 2,
+					NET_H / 2 + 168,
+				);
+			}
+
+			// ── act one's caption: the absence, stated where it happens ─────────────
+			if (killed > 0.6 && back < 0.4 && t < T.brk - 300) {
+				const a = clamp01((killed - 0.6) / 0.4) * (1 - back / 0.4)
+					* (1 - clamp01((t - (T.brk - 1200)) / 900));
+				ctx.font = '400 10px ui-monospace, SFMono-Regular, Menlo, monospace';
+				ctx.textAlign = 'center';
+				ctx.fillStyle = `rgba(${WARN},${0.85 * a})`;
+				ctx.fillText('no per-component quantity is computed here', NET_W / 2, NET_H / 2 + 150);
+			}
+
+			ctx.restore();
+
+			// ── the first mark, before anything else exists ─────────────────────────
+			if (ig < 1) {
+				const a = 1 - ease(span(t, 250, T.machine));
+				ctx.fillStyle = `rgba(${AMBER},${a})`;
+				ctx.beginPath();
+				ctx.arc(VW / 2, VH * 0.4, 3 + 2 * Math.sin(t / 120), 0, Math.PI * 2);
+				ctx.fill();
+			}
+		}
+
+		/* ── type ───────────────────────────────────────────────────────────────── */
+		let shown = -1;
+		function paintType(t: number) {
+			let idx = -1;
+			for (let i = 0; i < ACTS.length; i++) if (t >= ACTS[i].at - 150) idx = i;
+			if (idx !== shown) {
+				shown = idx;
+				const a = ACTS[idx];
+				root!.classList.remove('is-typing');
+				void root!.offsetWidth; // restart the entrance
+				root!.classList.add('is-typing');
+				elAct.textContent = a ? a.label : '';
+				elLine.textContent = a ? a.line : '';
+				elSub.textContent = a ? a.sub : '';
+				elSub.hidden = !a || !a.sub;
+				elFigs.hidden = idx !== 1;
+				segs.forEach((s, i) => s.classList.toggle('is-on', i <= idx));
+			}
+			if (idx === 1) {
+				const each = (T.brk - T.record - 400) / figs.length;
+				figs.forEach((f, i) => {
+					const st = T.record + 300 + i * each;
+					f.classList.toggle('is-in', t >= st);
+				});
+			}
+			segs.forEach((s, i) => {
+				const a = ACTS[i];
+				const b = ACTS[i + 1];
+				const to = b ? b.at : T.end;
+				const p = a ? clamp01((t - a.at) / (to - a.at)) : 0;
+				(s.firstElementChild as HTMLElement).style.transform = `scaleX(${p})`;
+			});
+		}
+
+		/* ── run ────────────────────────────────────────────────────────────────── */
+		let start = 0;
+		let raf = 0;
+		let ending = false;
+
+		function finish() {
+			if (ending) return;
+			ending = true;
+			cancelAnimationFrame(raf);
+			try { sessionStorage.setItem('oxiedo.blackbox.coldopen', '1'); } catch { /* blocked */ }
+			root!.classList.add('is-out');
+			window.setTimeout(() => {
+				document.documentElement.setAttribute('data-coldopen', 'done');
+				root!.remove();
+				window.removeEventListener('resize', size);
+				document.removeEventListener('keydown', onKey);
+				// Hand back to the component, which has been holding its autostart.
+				document.dispatchEvent(new CustomEvent('coldopen:done'));
+			}, 420);
+		}
+
+		function onKey(e: KeyboardEvent) {
+			if (e.key === 'Escape') { e.preventDefault(); finish(); }
+		}
+
+		function frame(now: number) {
+			if (!start) start = now;
+			const t = now - start;
+			draw(t);
+			paintType(t);
+			if (t >= T.end) return finish();
+			raf = requestAnimationFrame(frame);
+		}
+
+		skip.addEventListener('click', finish);
+		root.addEventListener('click', (e) => { if (e.target === root || e.target === canvas) finish(); });
+		document.addEventListener('keydown', onKey);
+		skip.focus({ preventScroll: true });
+		raf = requestAnimationFrame(frame);
+	}
+</script>
+
+<style>
+	/* :not([hidden]) on both display:grid rules below. reset.css already carries
+	   [hidden]{display:none!important} so these would hide anyway, but check.py's hidden
+	   audit flags an author display on an element that ships the hidden attribute, and that
+	   audit exists because exactly this pattern once rendered an empty annotation card on
+	   every page of the site. Belt and braces costs one pseudo-class. */
+	.co:not([hidden]) {
+		position: fixed;
+		inset: 0;
+		z-index: 999;
+		background: #07080F;
+		display: grid;
+		grid-template-rows: 1fr auto;
+		overflow: hidden;
+		cursor: pointer;
+		opacity: 1;
+		transition: opacity 400ms var(--ease-out, ease);
+	}
+	.co.is-out { opacity: 0; pointer-events: none; }
+
+	.co-stage { position: absolute; inset: 0; display: block; }
+
+	/* The type sits in the lower third, clear of the network in the upper two. */
+	.co-copy {
+		position: relative;
+		align-self: end;
+		width: min(1080px, 100% - 48px);
+		margin-inline: auto;
+		padding-bottom: clamp(18px, 4vh, 44px);
+		pointer-events: none;
+	}
+
+	.co-act {
+		margin: 0 0 14px;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: #E0A233;
+	}
+	.co-line {
+		margin: 0;
+		font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+		font-weight: 600;
+		font-size: clamp(1.45rem, 3.4vw, 2.6rem);
+		line-height: 1.14;
+		letter-spacing: -0.02em;
+		color: #F1EFE8;
+		max-width: 22ch;
+		text-wrap: balance;
+	}
+	.co-sub {
+		margin: 16px 0 0;
+		font-size: clamp(0.9rem, 1.3vw, 1.0625rem);
+		line-height: 1.55;
+		color: #A9AEC4;
+		max-width: 58ch;
+	}
+
+	/* Entrance. Transform and opacity only — nothing here triggers layout, and the whole
+	   block is behind the reduced-motion gate in the inline script anyway. */
+	.co.is-typing .co-act,
+	.co.is-typing .co-line,
+	.co.is-typing .co-sub {
+		animation: co-rise 620ms var(--ease-out, cubic-bezier(0.25,0.46,0.45,0.94)) both;
+	}
+	.co.is-typing .co-line { animation-delay: 70ms; }
+	.co.is-typing .co-sub { animation-delay: 150ms; }
+	@keyframes co-rise {
+		from { opacity: 0; transform: translateY(14px); }
+		to   { opacity: 1; transform: none; }
+	}
+
+	/* ── act two ──────────────────────────────────────────────────────────────── */
+	.co-figs:not([hidden]) {
+		list-style: none;
+		margin: 22px 0 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 1px;
+		background: rgba(241,239,232,0.13);
+		border-block: 1px solid rgba(241,239,232,0.13);
+	}
+	.co-fig {
+		background: #07080F;
+		padding: 15px 16px 16px;
+		min-width: 0;
+		opacity: 0;
+		transform: translateY(10px);
+		transition: opacity 420ms var(--ease-out, ease), transform 420ms var(--ease-out, ease);
+	}
+	.co-fig.is-in { opacity: 1; transform: none; }
+	.co-fig-n {
+		display: block;
+		font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+		font-weight: 700;
+		font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+		line-height: 1;
+		letter-spacing: -0.02em;
+		font-variant-numeric: tabular-nums;
+		color: #E0A233;
+	}
+	.co-fig-u { display: block; margin-top: 8px; font-size: 12.5px; line-height: 1.4; color: #F1EFE8; }
+	.co-fig-s { display: block; margin-top: 6px; font-size: 11px; line-height: 1.4; color: #828AA8; }
+
+	/* ── chrome ───────────────────────────────────────────────────────────────── */
+	.co-foot {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+		width: min(1080px, 100% - 48px);
+		margin-inline: auto;
+		padding-block: 18px 22px;
+	}
+	.co-rail { list-style: none; display: flex; gap: 6px; margin: 0; padding: 0; flex: 1 1 auto; max-width: 420px; }
+	.co-rail li { flex: 1; height: 2px; background: rgba(241,239,232,0.16); overflow: hidden; }
+	.co-rail i { display: block; height: 100%; background: #828AA8; transform: scaleX(0); transform-origin: left; }
+	.co-rail li.is-on i { background: #E0A233; }
+
+	.co-skip {
+		pointer-events: auto;
+		display: inline-flex;
+		align-items: center;
+		gap: 9px;
+		font: inherit;
+		font-size: 13px;
+		font-weight: 600;
+		color: #F1EFE8;
+		background: transparent;
+		border: 1px solid rgba(241,239,232,0.28);
+		border-radius: 3px;
+		padding: 9px 15px;
+		cursor: pointer;
+		transition: border-color 150ms ease, background-color 150ms ease;
+	}
+	.co-skip:hover { border-color: rgba(241,239,232,0.6); background: rgba(241,239,232,0.06); }
+	.co-skip:focus-visible { outline: 2px solid #E0A233; outline-offset: 2px; }
+	.co-skip kbd {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 10px;
+		letter-spacing: 0.08em;
+		color: #A9AEC4;
+		border: 1px solid rgba(241,239,232,0.22);
+		border-radius: 2px;
+		padding: 1px 5px;
+	}
+
+	@media (max-width: 900px) {
+		.co-figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		.co-copy, .co-foot { width: calc(100% - 32px); }
+		.co-line { max-width: none; }
+	}
+	@media (max-width: 560px) {
+		.co-figs { grid-template-columns: 1fr; }
+		.co-fig { padding: 11px 13px 12px; }
+		.co-fig-s { display: none; }
+	}
+
+	/* Belt and braces. The inline gate already removes the element under reduced motion;
+	   this means that even if it is somehow mounted, nothing here moves. */
+	@media (prefers-reduced-motion: reduce) {
+		.co, .co-fig, .co-act, .co-line, .co-sub { transition: none !important; animation: none !important; }
+	}
+</style>

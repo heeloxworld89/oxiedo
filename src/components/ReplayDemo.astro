@@ -1199,8 +1199,21 @@ const SCENARIOS = [
 			try { localStorage.setItem(GUIDE_SEEN, '1'); } catch { /* storage unavailable */ }
 		}
 
+		// THE COLD OPEN INTERLOCK. /black-box plays a title sequence over the loaded page, and
+		// the console is in view BEHIND it — the IntersectionObserver cannot tell the
+		// difference. Without this the guided read would open behind the curtain, spend its
+		// once-per-browser showing on nobody, and the reader would surface into a dock
+		// halfway through a sentence.
+		//   'running' — hold everything; the curtain is up.
+		//   'done'    — the reader has just been walked through the whole argument, so let
+		//               autoplay through but skip the guide. One onboarding at a time is the
+		//               same rule that put a single prose band on this screen instead of two.
+		// The flag is never set on any other page, so nothing here changes elsewhere.
+		const coldOpen = () => document.documentElement.getAttribute('data-coldopen');
+
 		function maybeAutoStart() {
 			if (autoStarted) return;
+			if (coldOpen() === 'running') return;   // before autoStarted, so it can retry after
 			if (root.dataset.openRecord === 'true') return;
 			if (!inView || !engine || engine.isPlaying) return;
 			autoStarted = true;
@@ -1212,7 +1225,8 @@ const SCENARIOS = [
 			// moving, not a request to be told less: guideGoTo already seeks between stops
 			// instead of playing when it is set, so the guide reads as a series of stills.
 			// Autoplay stays suppressed, because that IS motion nobody asked for.
-			if (root.dataset.guideMode === 'auto' && !guideAlreadySeen() && !guideRunning()) {
+			if (root.dataset.guideMode === 'auto' && coldOpen() !== 'done'
+				&& !guideAlreadySeen() && !guideRunning()) {
 				guideStart();
 				// WRITTEN AFTER, NOT BEFORE. The flag used to be set first, so a start that
 				// bailed — no bundle yet, a scenario with no stops — burned the single
@@ -1243,6 +1257,10 @@ const SCENARIOS = [
 		}, { threshold: 0.4 });
 		io.observe(root);
 
+		// The curtain has come down: take over.
+		const onColdOpenDone = () => maybeAutoStart();
+		document.addEventListener('coldopen:done', onColdOpenDone);
+
 		const onVisibility = () => {
 			if (document.hidden) { engine?.pause(); setPlayLabel(); }
 		};
@@ -1270,6 +1288,7 @@ const SCENARIOS = [
 			io.disconnect();
 			window.removeEventListener('resize', onResize);
 			document.removeEventListener('visibilitychange', onVisibility);
+			document.removeEventListener('coldopen:done', onColdOpenDone);
 			clearTimeout(rt);
 			delete root.dataset.replayReady;
 		});

@@ -37,6 +37,7 @@ import Page from '../layouts/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Accordion from '../components/Accordion.astro';
 import ReplayDemo from '../components/ReplayDemo.astro';
+import ColdOpen from '../components/ColdOpen.astro';
 
 // The social card is generated from the bundle by scripts/build-replay-cards.py
 // and rasterised by scripts/rasterise-cards.sh, which needs librsvg. Point
@@ -186,6 +187,9 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 	    inside a column — it is the screen. Wrapping it in .container would box an application
 	    into a 1280px measure with cream either side, which is the "boxed into a place on a
 	    website" look this replaces. */}
+	{/* /black-box only. It mounts nowhere else, and it removes itself when it ends. */}
+	<ColdOpen />
+
 	<div class="demo-app">
 		<ReplayDemo scenario="dead-layer-lesion" guide="auto" app trail={trail} />
 	</div>

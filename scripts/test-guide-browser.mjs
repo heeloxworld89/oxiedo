@@ -52,6 +52,28 @@ const ORIGIN = `http://localhost:${server.address().port}`;
 let fail = 0;
 const ok = (cond, msg) => { if (!cond) { console.log('  FAIL', msg); fail++; } };
 
+// THE COLD OPEN IS SUPPRESSED FOR EVERY CONTEXT IN THIS FILE.
+//
+// /black-box now plays a title sequence on the first landing of a session, and it deliberately
+// holds the guided read while it runs — two onboardings at once is how a reader learns to
+// dismiss both. That is correct behaviour and it is asserted in test-coldopen.mjs. It is also
+// why this suite started timing out: it lands on /black-box, waits two seconds and expects the
+// dock, and was getting a curtain.
+//
+// Pre-setting the session flag is the honest isolation. It reproduces the state of a reader
+// who has already seen the sequence, which is exactly the state in which the guided read is
+// supposed to behave the way every assertion below describes.
+const newCtx = async (opts) => {
+	const ctx = await browser.newContext(opts);
+	await ctx.addInitScript(() => {
+		try { sessionStorage.setItem('oxiedo.blackbox.coldopen', '1'); } catch { /* blocked */ }
+	});
+	return ctx;
+};
+
+// Same isolation for the pages created straight off the browser.
+const newPg = async (opts) => (await newCtx(opts)).newPage();
+
 let browser;
 try {
 	browser = await chromium.launch();
@@ -72,7 +94,7 @@ const VIEWPORTS = [
 ];
 
 for (const vp of VIEWPORTS) {
-	const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
+	const page = await newPg({ viewport: { width: vp.width, height: vp.height } });
 	const errors = [];
 	page.on('pageerror', (e) => errors.push(String(e)));
 	page.on('console', (m) => { if (m.type() === 'error') errors.push(`console: ${m.text()}`); });
@@ -162,7 +184,7 @@ for (const vp of VIEWPORTS) {
 }
 
 // The homepage embed loops and must never offer the guided read over the top of itself.
-const home = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const home = await newPg({ viewport: { width: 1440, height: 900 } });
 await home.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });
 await home.waitForTimeout(600);
 ok(
@@ -179,7 +201,7 @@ await home.close();
 // them into the CTA, and neither shows up in any stylesheet check. The border also sat the
 // pill 1px proud of its neighbours until the padding was compensated.
 for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
-	const page = await browser.newPage({ viewport: { width: w, height: 800 } });
+	const page = await newPg({ viewport: { width: w, height: 800 } });
 	await page.goto(`${ORIGIN}/technology`, { waitUntil: 'networkidle' });
 	const m = await page.evaluate(() => {
 		const links = [...document.querySelectorAll('.nav-links > li > .nav-link')];
@@ -209,7 +231,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 // sentence has to change with the state or the motion is decoration, so the test checks the
 // WORDS as well as the geometry.
 {
-	const page = await browser.newPage({ viewport: { width: 1512, height: 800 } });
+	const page = await newPg({ viewport: { width: 1512, height: 800 } });
 
 	// Elsewhere: hanging.
 	await page.goto(`${ORIGIN}/technology`, { waitUntil: 'networkidle' });
@@ -313,7 +335,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 // breakpoint that crushes cells to nothing are all invisible to a stylesheet check.
 {
 	for (const vp of [{ w: 1680, h: 1050 }, { w: 1512, h: 945 }, { w: 1440, h: 900 }]) {
-		const page = await browser.newPage({ viewport: { width: vp.w, height: vp.h } });
+		const page = await newPg({ viewport: { width: vp.w, height: vp.h } });
 		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(1100);
 		await page.evaluate(() => {
@@ -435,7 +457,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	// Below 1240 the panels wrap and the screen releases its fixed height rather than
 	// crushing the cells — measured at 1200×800 they came out 92px tall before this.
 	{
-		const page = await browser.newPage({ viewport: { width: 1200, height: 800 } });
+		const page = await newPg({ viewport: { width: 1200, height: 800 } });
 		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(900);
 		const m = await page.evaluate(() => {
@@ -458,7 +480,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	// to find the button — reported exactly that way. Reduced motion asks for things to stop
 	// moving, not to be told less; the guide seeks between stops instead of playing.
 	{
-		const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+		const ctx = await newCtx({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
 		const page = await ctx.newPage();
 		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(2000);
@@ -472,7 +494,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	// nothing inside the component has focus when the guide has opened by itself.
 	for (const [how, act] of [['Escape', async (pg) => pg.keyboard.press('Escape')],
 		['Skip', async (pg) => pg.click('[data-guide-skip]')]]) {
-		const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+		const ctx = await newCtx({ viewport: { width: 1440, height: 900 } });
 		const page = await ctx.newPage();
 		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(2000);
@@ -487,7 +509,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	// before guideStart, so a run that failed to load burned it and the reader never got
 	// the guide on any later visit either.
 	{
-		const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+		const ctx = await newCtx({ viewport: { width: 1440, height: 900 } });
 		const page = await ctx.newPage();
 		await page.route('**/runs/*.json', (r) => r.abort());
 		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
@@ -498,7 +520,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	}
 
 	// The guided read opens itself once, on a first visit to this page only.
-	const first = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+	const first = await newCtx({ viewport: { width: 1440, height: 900 } });
 	const fp = await first.newPage();
 	await fp.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
 	await fp.evaluate(() => document.querySelector('.rp').scrollIntoView({ block: 'center' }));
@@ -512,7 +534,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		'second visit: it does not open again');
 	await first.close();
 
-	const home = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+	const home = await newCtx({ viewport: { width: 1440, height: 900 } });
 	const hp = await home.newPage();
 	await hp.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });
 	await hp.waitForTimeout(900);
@@ -532,7 +554,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 // not arriving, and it was reported exactly that way.
 {
 	// Blocked outright.
-	const p1 = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	const p1 = await newPg({ viewport: { width: 1440, height: 900 } });
 	const thrown = [];
 	p1.on('pageerror', (e) => thrown.push(String(e)));
 	await p1.route('**/runs/*.json', (r) => r.abort());
@@ -552,7 +574,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await p1.close();
 
 	// Answered, badly.
-	const p2 = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	const p2 = await newPg({ viewport: { width: 1440, height: 900 } });
 	await p2.route('**/runs/*.json', (r) => r.fulfill({ status: 500, body: 'nope' }));
 	await p2.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
 	await p2.waitForTimeout(1800);
@@ -561,7 +583,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await p2.close();
 
 	// And it recovers.
-	const p3 = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	const p3 = await newPg({ viewport: { width: 1440, height: 900 } });
 	let block = true;
 	await p3.route('**/runs/*.json', (r) => (block ? r.abort() : r.continue()));
 	await p3.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
@@ -591,7 +613,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 // console's dark ground while it is closed and reports five phantom failures. And the floor
 // is 3:1 for large text, 4.5:1 otherwise, because most of this screen is 10-12px labels.
 {
-	const page = await browser.newPage({ viewport: { width: 1512, height: 945 } });
+	const page = await newPg({ viewport: { width: 1512, height: 945 } });
 	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(1300);
 
@@ -653,7 +675,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 // The names need ~543px; four 40px gaps took the total past the 674px the list gets at
 // 1440px. Now 24px, and below 1280px the label stacks above so the list runs full width.
 {
-	const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+	const page = await newPg({ viewport: { width: 1440, height: 900 } });
 	await page.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });
 	for (const w of [768, 1024, 1200, 1280, 1366, 1440, 1512, 1600, 1728, 1920]) {
 		await page.setViewportSize({ width: w, height: 900 });

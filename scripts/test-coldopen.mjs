@@ -1,0 +1,192 @@
+// THE COLD OPEN, EXERCISED IN A REAL BROWSER.
+//
+// WHY THIS EXISTS. The first working version destroyed the page. The inline gate stamps
+// data-coldopen="running" on <html> so ReplayDemo can hold its guided read, and the module
+// script then looked the overlay up with document.querySelector('[data-coldopen]') — which
+// matches <html> first, because <html> precedes everything. root was therefore
+// documentElement, and root.remove() at the end of the sequence deleted the document. It
+// threw no visible error and the screenshots up to fourteen seconds looked perfect; the page
+// simply went blank afterwards. So the first assertion here is the dullest one imaginable:
+// after the sequence, is there still a document.
+//
+// The rest guards the things that are easy to regress and invisible until someone complains:
+// that it never mounts under reduced motion, that it plays once per session, that Escape gets
+// out of it, that the guided read does not open behind the curtain and burn its one showing,
+// and that act two's figures still match the sourced data in src/data/markets.ts.
+import { createServer } from 'node:http';
+import { readFileSync, existsSync, statSync } from 'node:fs';
+import { extname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const DIST = fileURLToPath(new URL('../dist/', import.meta.url));
+
+let chromium;
+try {
+	({ chromium } = await import('playwright'));
+} catch {
+	console.log('  cold open: SKIPPED (playwright not installed — `npm i`)');
+	process.exit(0);
+}
+
+const MIME = {
+	'.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript',
+	'.json': 'application/json', '.woff2': 'font/woff2', '.svg': 'image/svg+xml',
+	'.png': 'image/png', '.ico': 'image/x-icon', '.xml': 'application/xml', '.txt': 'text/plain',
+};
+const server = createServer((req, res) => {
+	let p = join(DIST, decodeURIComponent(req.url.split('?')[0]));
+	if (existsSync(p) && statSync(p).isDirectory()) p = join(p, 'index.html');
+	if (!existsSync(p)) p += '.html';
+	if (!existsSync(p)) { res.writeHead(404); return res.end('not found'); }
+	res.writeHead(200, { 'Content-Type': MIME[extname(p)] ?? 'application/octet-stream' });
+	res.end(readFileSync(p));
+});
+await new Promise((r) => server.listen(0, r));
+const ORIGIN = `http://localhost:${server.address().port}`;
+
+let fail = 0;
+const ok = (cond, msg) => { if (!cond) { console.log('  FAIL', msg); fail++; } };
+
+let browser;
+try {
+	browser = await chromium.launch();
+} catch {
+	console.log('  cold open: SKIPPED (no browser binary — `npx playwright install chromium`)');
+	server.close();
+	process.exit(0);
+}
+
+const VP = { width: 1400, height: 900 };
+const errors = [];
+const watch = (page, tag) => {
+	page.on('pageerror', (e) => errors.push(`${tag}: ${e.message}`));
+	page.on('console', (m) => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+};
+
+/* ── 1. it plays, it ends, and the document is still standing ──────────────── */
+{
+	const ctx = await browser.newContext({ viewport: VP });
+	const page = await ctx.newPage();
+	watch(page, 'sequence');
+	await page.goto(`${ORIGIN}/black-box`);
+
+	const early = await page.evaluate(() => ({
+		mounted: !!document.querySelector('[data-coldopen-root]'),
+		flag: document.documentElement.getAttribute('data-coldopen'),
+		// The overlay must never be the thing the page is made of: the console has to be
+		// rendered underneath it, or a crawler is served a curtain.
+		consoleBehind: !!document.querySelector('.rp-console'),
+		skipFocused: document.activeElement?.hasAttribute('data-co-skip') ?? false,
+	}));
+	ok(early.mounted, 'the cold open mounts on /black-box');
+	ok(early.flag === 'running', `the interlock flag reads "running" (got ${early.flag})`);
+	ok(early.consoleBehind, 'the console is rendered behind the overlay, not replaced by it');
+	ok(early.skipFocused, 'Skip takes focus, so a keyboard reader is not trapped');
+
+	// Act two's figures are quoted from src/data/markets.ts. If that file is corrected and
+	// this is not, the cold open starts citing a number the rest of the site disagrees with.
+	const figs = await page.evaluate(() =>
+		[...document.querySelectorAll('[data-co-fig] .co-fig-n')].map((e) => e.textContent.trim()));
+	for (const want of ['419', '$15M', '1,451', 'Apr 2026']) {
+		ok(figs.includes(want), `act two still cites ${want} (got ${figs.join(' · ')})`);
+	}
+
+	await page.waitForTimeout(17000);
+	const after = await page.evaluate(() => {
+		const de = document.documentElement;
+		const guide = document.querySelector('.rp-guide');
+		let sess = null;
+		try { sess = sessionStorage.getItem('oxiedo.blackbox.coldopen'); } catch { sess = 'blocked'; }
+		return {
+			// THE ONE THAT MATTERS.
+			documentAlive: !!de && !!document.body && !!document.querySelector('.rp-console'),
+			gone: !document.querySelector('[data-coldopen-root]'),
+			flag: de ? de.getAttribute('data-coldopen') : null,
+			guideAutoOpened: guide ? !guide.hasAttribute('hidden') : false,
+			sess,
+		};
+	});
+	ok(after.documentAlive, 'the document survives the sequence — <html>, <body> and the console are all still there');
+	ok(after.gone, 'the overlay removes itself when it ends');
+	ok(after.flag === 'done', `the interlock flag reads "done" (got ${after.flag})`);
+	ok(!after.guideAutoOpened,
+		'the guided read did NOT open behind the curtain — one onboarding at a time');
+	ok(after.sess === '1', 'the session flag is written');
+
+	await page.reload();
+	await page.waitForTimeout(1200);
+	ok(await page.evaluate(() => !document.querySelector('[data-coldopen-root]')),
+		'a reload in the same tab does not replay it');
+	await ctx.close();
+}
+
+/* ── 2. reduced motion never mounts it at all ──────────────────────────────── */
+{
+	const ctx = await browser.newContext({ viewport: VP, reducedMotion: 'reduce' });
+	const page = await ctx.newPage();
+	watch(page, 'reduced');
+	await page.goto(`${ORIGIN}/black-box`);
+	await page.waitForTimeout(1200);
+	const m = await page.evaluate(() => ({
+		mounted: !!document.querySelector('[data-coldopen-root]'),
+		flag: document.documentElement.getAttribute('data-coldopen'),
+		consoleThere: !!document.querySelector('.rp-console'),
+	}));
+	ok(!m.mounted, 'under prefers-reduced-motion the cold open never mounts');
+	ok(m.flag === null, `and never sets the interlock, so the guided read is untouched (got ${m.flag})`);
+	ok(m.consoleThere, 'and the console is straight there');
+	await ctx.close();
+}
+
+/* ── 3. Escape gets out, and hands over cleanly ────────────────────────────── */
+{
+	const ctx = await browser.newContext({ viewport: VP });
+	const page = await ctx.newPage();
+	watch(page, 'escape');
+	await page.goto(`${ORIGIN}/black-box`);
+	await page.waitForTimeout(1400);
+	await page.keyboard.press('Escape');
+	await page.waitForTimeout(1000);
+	const m = await page.evaluate(() => ({
+		gone: !document.querySelector('[data-coldopen-root]'),
+		alive: !!document.documentElement && !!document.body,
+		flag: document.documentElement.getAttribute('data-coldopen'),
+	}));
+	ok(m.gone, 'Escape ends it at once');
+	ok(m.alive, 'and the document survives an early exit too');
+	ok(m.flag === 'done', `and the interlock is released (got ${m.flag})`);
+	// The handoff: the console must take over rather than sit dead.
+	await page.waitForTimeout(3000);
+	const playing = await page.evaluate(() => {
+		const l = document.querySelector('[data-epoch]');
+		return l ? l.textContent : '';
+	});
+	ok(/epoch\s+[1-9]/.test(playing), `the console takes over after a skip (epoch readout: "${playing.trim()}")`);
+	await ctx.close();
+}
+
+/* ── 4. it belongs to one page only ────────────────────────────────────────── */
+{
+	const ctx = await browser.newContext({ viewport: VP });
+	for (const route of ['/', '/product', '/technology']) {
+		const page = await ctx.newPage();
+		watch(page, route);
+		await page.goto(`${ORIGIN}${route}`);
+		await page.waitForTimeout(500);
+		ok(await page.evaluate(() => !document.querySelector('[data-coldopen-root]')),
+			`no cold open on ${route}`);
+		await page.close();
+	}
+	await ctx.close();
+}
+
+ok(errors.length === 0, `no page errors anywhere (${errors.join(' | ')})`);
+
+await browser.close();
+server.close();
+
+if (fail) {
+	console.log(`  cold open: ${fail} FAILURE${fail === 1 ? '' : 'S'}`);
+	process.exit(1);
+}
+console.log('  cold open: sequence, reduced motion, skip, handoff and scope all hold');
