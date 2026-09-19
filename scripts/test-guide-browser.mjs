@@ -587,9 +587,10 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await p3.waitForTimeout(1800);
 	const back = await p3.evaluate(() => ({
 		failed: document.querySelector('.rp').classList.contains('is-failed'),
-		svgs: document.querySelectorAll('.rp-anatomy svg').length,
+		// The anatomy renders to canvas now, not SVG.
+		arms: document.querySelectorAll('.rp-anatomy canvas').length,
 	}));
-	ok(!back.failed && back.svgs === 2, 'retry loads the run and restores the console');
+	ok(!back.failed && back.arms === 2, 'retry loads the run and restores the console');
 	await p3.close();
 }
 

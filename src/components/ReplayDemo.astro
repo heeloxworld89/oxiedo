@@ -706,7 +706,6 @@ const SCENARIOS = [
 		}
 
 
-
 		/** The four cards at the top of the working area, live with the epoch. A metric strip
 		 *  whose numbers do not move while the run plays is decoration. */
 		function paintMetrics(epoch: number) {
@@ -1448,124 +1447,36 @@ const SCENARIOS = [
 
 	/* ── SVG anatomy internals ────────────────────────────────── */
 
-	.rp :global(.an-name) {
-		font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
-		fill: var(--fg); font-family: var(--font-sans, system-ui);
-	}
-	.rp :global(.an-badge) {
-		font-size: 9px; letter-spacing: 0.14em; font-family: var(--mono);
-		fill: var(--fg-dim);
-	}
-	.rp :global(.an-sub) { font-size: 9px; font-family: var(--mono); fill: var(--fg-dim); }
-	.rp-pane--open :global(.an-badge) { fill: var(--ormas); }
-	.rp :global(.an-sub) { font-size: 9px; font-family: var(--mono); fill: var(--fg-dim); }
-
-	.rp :global(.an-input) {
-		fill: color-mix(in srgb, var(--base) 30%, transparent);
-		stroke: var(--base); stroke-width: 1.1;
-	}
-	.rp :global(.an-output) {
-		fill: color-mix(in srgb, var(--fg) 18%, transparent);
-		stroke: color-mix(in srgb, var(--fg) 45%, transparent); stroke-width: 1.1;
-	}
-	.rp :global(.an-io) { font-size: 9px; font-family: var(--mono); fill: var(--fg-dim); }
-	.rp :global(.an-io-sub) { font-size: 8px; font-family: var(--mono); fill: color-mix(in srgb, var(--fg) 34%, transparent); }
 
 	/* ── the network itself ───────────────────────────────────── */
 
 	/* Edges are recessive: they carry structure, not state. The units and the
 	   signal carry state, and if the web competed with them the drawing would
 	   read as decoration. */
-	.rp :global(.an-edge) {
-		stroke: color-mix(in srgb, var(--fg) 13%, transparent);
-		stroke-width: 0.6;
-		fill: none;
-	}
-	.rp-pane--open :global(.an-edge) { stroke: color-mix(in srgb, var(--ormas) 26%, transparent); }
 
-	.rp :global(.an-spine) {
-		stroke: color-mix(in srgb, var(--fg) 10%, transparent);
-		stroke-width: 1;
-	}
 
 	/* A unit's fill is its stage's health, passed in as --health. Uniform across
 	   the stage on purpose: the telemetry resolves to the stage, not the
 	   channel. */
-	.rp :global(.an-unit) {
-		fill: color-mix(in srgb, var(--ormas) calc(var(--health, 0) * 100%), var(--plate));
-		stroke: color-mix(in srgb, var(--ormas) 70%, transparent);
-		stroke-width: 1.1;
-		transition: fill 260ms var(--ease-out);
-	}
 	/* Sealed: the units are there, drawn at full strength, reporting nothing.
 	   Hollow rather than dim — the stage is working, it is just not observable. */
-	.rp :global(.an-unit.is-sealed) {
-		fill: var(--plate);
-		stroke: color-mix(in srgb, var(--fg) 34%, transparent);
-	}
-	.rp :global(.an-unit.is-destroyed) {
-		fill: var(--plate);
-		stroke: var(--warn);
-		stroke-width: 1.6;
-		stroke-dasharray: 2 1.6;
-	}
 
 	/* Health as a soft field around the column, so a healthy stage reads at a
 	   glance without having to compare eleven small circles. */
-	.rp :global(.an-halo) {
-		fill: var(--ormas);
-		transition: opacity 260ms var(--ease-out);
-	}
-	.rp :global(.an-footnote) {
-		font-size: 7px; font-family: var(--mono); fill: var(--fg-dim);
-	}
 
 	/* A correction fired on this component — the working colour. Not the same
 	   claim as destruction, which has its own outline: drawing both in the
 	   warning colour made a stage that had merely self-corrected read as
 	   wreckage. */
-	.rp :global(.an-strike) { transition: opacity 160ms linear; }
-	.rp :global(.an-strike rect) { fill: none; stroke: var(--ormas); stroke-width: 1.6; }
-	.rp :global(.an-gone) {
-		fill: none; stroke: var(--warn); stroke-width: 1.6;
-		transition: opacity 200ms linear;
-	}
 
 	/* ── stage labels ─────────────────────────────────────────────
 	   Every one of these needs an explicit font-size. SVG text with none
 	   inherits the page's body size and is then multiplied by the viewBox
 	   scale, which is how these once rendered at ~29px. */
-	.rp :global(.an-stage-shape) {
-		font-size: 10px; font-family: var(--mono); font-weight: 700; fill: var(--fg);
-	}
-	.rp :global(.an-stage-params) {
-		font-size: 8px; font-family: var(--mono); fill: var(--fg-dim);
-	}
-	.rp :global(.an-stage-state) {
-		font-size: 9px; font-family: var(--mono); fill: var(--fg-mid);
-	}
-	.rp :global(.an-stage-state.is-destroyed) { fill: var(--warn); font-weight: 700; }
-	.rp :global(.an-stage-metric) {
-		font-size: 8px; font-family: var(--mono); fill: var(--fg-dim);
-	}
 
 	/* THE SIGNAL. One pulse per unit per gap, staggered, travelling forward.
 	   This is the single piece of motion that makes the drawing a network
 	   rather than a diagram of one. */
-	.rp :global(.an-flow) {
-		stroke: var(--base);
-		stroke-width: 2;
-		stroke-linecap: round;
-		fill: none;
-		stroke-dasharray: 5 999;
-		stroke-dashoffset: 0;
-		opacity: 0;
-	}
-	.rp-pane--open :global(.an-flow) { stroke: var(--ormas); }
-	.rp.is-running :global(.an-flow) {
-		opacity: 0.85;
-		animation: rp-pulse 1.5s linear infinite;
-	}
 	@keyframes rp-pulse {
 		0%   { stroke-dashoffset: 5;  opacity: 0; }
 		12%  { opacity: 0.9; }
@@ -1573,32 +1484,6 @@ const SCENARIOS = [
 		100% { stroke-dashoffset: -100; opacity: 0; }
 	}
 
-	.rp :global(.an-tap) { stroke: color-mix(in srgb, var(--ormas) 50%, transparent); stroke-width: 0.9; stroke-dasharray: 2 2; }
-	.rp :global(.an-op) {
-		fill: color-mix(in srgb, var(--ormas) 10%, transparent);
-		stroke: color-mix(in srgb, var(--ormas) 62%, transparent);
-		stroke-width: 0.7;
-	}
-	.rp :global(.an-op-label) { font-size: 6.5px; font-family: var(--mono); fill: var(--ormas); }
-	.rp :global(.an-bottleneck) {
-		fill: color-mix(in srgb, var(--ormas) 8%, transparent);
-		stroke: var(--ormas); stroke-width: 0.9;
-	}
-	.rp :global(.an-bottleneck-label) { font-size: 7.5px; font-family: var(--mono); fill: var(--ormas); }
-	.rp :global(.an-chain-caption) {
-		font-size: 7.5px; font-family: var(--mono);
-		letter-spacing: 0.1em; fill: var(--ormas);
-	}
-	.rp :global(.an-chain-caption--void) { fill: var(--fg-dim); }
-	.rp :global(.an-name) { fill: var(--fg); }
-
-	.rp :global(.an-void) {
-		fill: none;
-		stroke: color-mix(in srgb, var(--fg) 26%, transparent);
-		stroke-width: 0.9; stroke-dasharray: 3 3;
-	}
-	.rp :global(.an-void-label) { font-size: 9px; font-family: var(--mono); fill: var(--fg-mid); }
-	.rp :global(.an-void-sub) { font-size: 7.5px; font-family: var(--mono); fill: var(--fg-dim); }
 
 	/* ── readout row ──────────────────────────────────────────── */
 
@@ -1610,13 +1495,13 @@ const SCENARIOS = [
 	   a worse trade than a short scroll.
 
 	   Two things this rule needs that are easy to miss. The !important is against an inline
-	   style: anatomy.ts sets svg.style.height = "300px" when it draws, so nothing in a
+	   style: anatomy.ts sets canvas.style.height = "300px" when it draws, so nothing in a
 	   stylesheet reaches it otherwise. And the :global() is because that svg is created in
 	   JavaScript and therefore carries no [data-astro-cid] — a bare `> svg` compiles to
 	   `svg[data-astro-cid-…]` and matches nothing, which is exactly how this first shipped:
 	   the padding trims applied, the diagram did not, and the component moved 4px. */
 	@media (max-height: 880px) {
-		.rp-anatomy > :global(svg) { height: 240px !important; }
+		.rp-anatomy > :global(canvas) { height: 240px !important; }
 		.rp-plain { padding-block: 8px; }
 		.rp-orient { padding-block: 9px; }
 		.rp-pane { padding-block: 6px; }
@@ -2049,7 +1934,13 @@ const SCENARIOS = [
 	@container (max-width: 680px) {
 		.rp--app .rp-tabs { grid-template-columns: 1fr; }
 	}
-	.rp--app .rp-anatomy > :global(svg) { height: 240px !important; }
+	/* THE 60px THE PANEL ROW IS BUILT ON. In app mode the diagram gives this up so
+	   the answer table has somewhere to go, and the comment further up spells out
+	   the arithmetic that depends on it. It selected `svg`; the anatomy is a canvas
+	   now, so it silently stopped applying — the stageband went 260 → 320 and the
+	   answer table overflowed by 57px at the end of the run, which is exactly what
+	   the guide suite caught. */
+	.rp--app .rp-anatomy > :global(canvas) { height: 240px !important; }
 
 	/* The pane stacking follows the WORKING AREA, not the viewport, because the rail's width
 	   changes underneath it. .rp already declares container-type: inline-size. */
@@ -2980,7 +2871,5 @@ const SCENARIOS = [
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.rp :global(.an-flow.is-running) { animation: none; opacity: 0.35; }
-			.rp :global(.an-strike) { transition: none; }
 	}
 </style>

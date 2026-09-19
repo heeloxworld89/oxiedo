@@ -349,7 +349,10 @@
 		   bundle has not arrived yet there is nothing to land on, and the sequence simply
 		   fades instead — a handoff that depends on a fetch cannot be allowed to fail loudly. */
 		function target(): { cx: number; cy: number; s: number } | null {
-			const svg = document.querySelector('[data-anatomy-ormas] svg');
+			// The anatomy is a canvas now, not an SVG. Left as `svg` this returned null
+			// for ever, target() bailed on every frame, and act seven silently stopped
+			// landing on the console — a hand-off that fails by doing nothing.
+			const svg = document.querySelector('[data-anatomy-ormas] canvas');
 			if (!svg) return null;
 			const r = svg.getBoundingClientRect();
 			// Both rects are viewport-relative; the canvas is not, since the overlay is
