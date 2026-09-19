@@ -38,16 +38,21 @@ import { sectors } from '../data/sectors';
    container capped by height, so preserveAspectRatio fitted it by the short edge and
    left a third of the frame empty on each side. */
 const W = 1240;
-const H = 570;   // content measured at y 70..510; 620 left sixty pixels of nothing
+/* Measured, not guessed: the drawing occupies y 15..455 of this box. An artboard
+   taller than its content is dead space that the page cannot see and cannot close,
+   because preserveAspectRatio centres the whole viewBox — 570 was putting 77px of
+   nothing above the figure and 66 below, which read on the page as a gap under the
+   paragraph that no margin was responsible for. */
+const H = 470;
 
 // The network on the left, and the node it belongs to.
 const NET_X0 = 70;
 const NET_X1 = 400;
-const SRC = { x: 372, y: 306 };
+const SRC = { x: 372, y: 252 };
 
 // The opened node.
 const CX = 862;
-const CY = 306;
+const CY = 252;
 const R_CORE = 66;
 /* Wider than the first pass. Eighteen labels on three shells of 118/196/272 bunched
    badly enough that the cull was hiding a third of them at rest, and a hero that
@@ -300,7 +305,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	/* The same geometry the build baked, re-solved every frame into the same elements.
 	   One source of shape, two renderers, no duplicated DOM. */
 	const CX = 862;
-	const CY = 306;
+	const CY = 252;
 	const YAW0 = -0.35;
 	const PITCH0 = 0.42;
 	const SHELLS: Record<string, { tilt: number; roll: number }> = {
@@ -509,13 +514,46 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			o.el.addEventListener('pointerleave', () => { hovered = ''; spin = reduced ? 0 : 1; });
 		}
 
+		/* ── NARROW SCREENS GET THE NODE, NOT THE WHOLE SCENE ────────────────────
+		   The artboard is 1240x470. At 390px the rendered box is 350x133, which puts
+		   the labels at about three pixels — measured, and indefensible. There is no
+		   arrangement of eighteen labels that is legible in 350 by 133.
+		   So the viewBox crops to the opened node and the labels come off: what is
+		   left is the object itself, which is worth looking at, and the legend
+		   underneath carries the words in real text at a real size. Cropping rather
+		   than shrinking, because the thing this figure has to say on a phone is
+		   "a node, opened", not "here are eighteen names you cannot read". */
+		/* THREE TIERS, SET BY WHAT A LABEL ACTUALLY MEASURES ON SCREEN.
+		   A label is 11 units in the viewBox, so its rendered size is
+		   11 x (box width / viewBox width). The full scene is 1240 wide, so at a
+		   1020px box the labels land at 9px and at a 780px box at 6.3 — measured.
+		   Cropping to the node narrows the viewBox to 800, which makes labels BIGGER
+		   for the same box: 10.7px at 780. So the middle tier crops rather than
+		   shrinks, and only the narrowest tier gives the labels up. */
+		const FULL_VB = '0 0 1240 470';
+		const NODE_VB = `${CX - 400} ${CY - 232} 800 464`;
+		const MIN_LABEL_PX = 9;
+		const fitViewBox = () => {
+			const w = svg.getBoundingClientRect().width;
+			const cropped = (11 * w) / 1240 < MIN_LABEL_PX;
+			svg.setAttribute('viewBox', cropped ? NODE_VB : FULL_VB);
+			// Even cropped, below about 580px the labels fall under 8px.
+			fig.classList.toggle('is-compact', (11 * w) / 800 < 8);
+			fig.classList.toggle('is-cropped', cropped);
+		};
+		fitViewBox();
+		window.addEventListener('resize', fitViewBox);
+
 		svg.addEventListener('pointerdown', onDown);
 		svg.addEventListener('pointermove', onMove);
 		svg.addEventListener('pointerup', onUp);
 		svg.addEventListener('pointercancel', onUp);
 
 		let raf = requestAnimationFrame(frame);
-		document.addEventListener('astro:before-swap', () => cancelAnimationFrame(raf), { once: true });
+		document.addEventListener('astro:before-swap', () => {
+			cancelAnimationFrame(raf);
+			window.removeEventListener('resize', fitViewBox);
+		}, { once: true });
 	}
 
 	document.addEventListener('astro:page-load', mountHeroModel);
@@ -529,7 +567,10 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		display: block;
 		width: 100%;
 		height: auto;
-		max-height: min(56vh, 620px);
+		/* With the full width to work in, the cap can be generous: the artboard is
+		   1240x570, so at 1240 wide this is 570 tall and the labels render at their
+		   designed 11px instead of the four or five they were getting. */
+		max-height: min(62vh, 640px);
 		overflow: visible;
 	}
 	.hm.is-live svg {
@@ -598,8 +639,22 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	/* Only the feature shell is interactive: hovering one traces its capabilities. */
 	[data-orb="feat"] { cursor: pointer; }
 
+	/* Cropped to the node: the network on the left is out of frame, so the legend
+	   carries that part. Worth the trade — the subject is the opened node. */
+	.hm.is-cropped .hm-legend::after {
+		content: ' · one unit of a network';
+		opacity: 0.7;
+	}
+
+	/* Compact: the object, without the names it has no room for. */
+	.hm.is-compact [data-orb] text,
+	.hm.is-compact .hm-src-label,
+	.hm.is-compact .hm-op-text { display: none; }
+	.hm.is-compact .hm-core-cap { font-size: 7px; }
+
 	.hm-legend {
 		margin-top: var(--space-md);
+		text-align: center;
 		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 		font-size: var(--text-eyebrow);
 		letter-spacing: 0.1em;

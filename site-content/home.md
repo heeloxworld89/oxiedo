@@ -31,6 +31,8 @@ Five sectors. One question about data, asked five ways.
 
 Nothing in a standard network can answer any of them. Not because a standard network is opaque, but because no part of it can be named.
 
+> One bounded node · six capabilities · seven features · five sectors Drag to turn it
+
 What that costs today
 
 - **$15M** — Of computing burned on one training run that failed.
@@ -39,8 +41,6 @@ What that costs today
 - **92%** — Of approved medical AI can never be updated at all.
 
 Published figures · one per industry
-
-> One bounded node · six capabilities · seven features · five sectors Drag to turn it
 
 What replaces it
 

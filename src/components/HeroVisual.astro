@@ -345,6 +345,15 @@ const ghostEdges: [number, number][] = [
 		</p>
 	</div>
 
+	{/* THE MODEL GETS THE WHOLE WIDTH.
+	    It used to be the middle cell of a three-column row, which gave a 1240-wide
+	    drawing about a third of the page — its labels came out at four or five pixels
+	    and the two stat columns, being taller, left a tall void underneath it. A
+	    diagram that cannot be read is not a diagram. It is a band of its own now, and
+	    the two columns pair up beneath it where they are the same shape as each other
+	    and read as a comparison, which is what they are. */}
+	<HeroModel />
+
 	<div class="hero-fig-body">
 		<section class="hero-fig-col">
 			<p class="hero-fig-col-title">What that costs today</p>
@@ -358,8 +367,6 @@ const ghostEdges: [number, number][] = [
 			</dl>
 			<p class="hero-fig-src">Published figures · one per industry</p>
 		</section>
-
-		<HeroModel />
 
 		<section class="hero-fig-col">
 			<p class="hero-fig-col-title hero-fig-col-title--lit">What replaces it</p>
@@ -584,7 +591,11 @@ const ghostEdges: [number, number][] = [
 	   which is the correct mobile behaviour and costs nothing to get. */
 	@media (min-width: 1080px) {
 		.hero-fig-body {
-			grid-template-columns: minmax(230px, 0.85fr) minmax(0, 1.9fr) minmax(230px, 0.85fr);
+			/* Two equal columns. They carry the same shape of content — a heading, four
+			   figures, a source line — so equal tracks let them read as the comparison
+			   they are; the old 0.85 / 1.9 / 0.85 existed only to leave room for the
+			   diagram between them. */
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 			gap: var(--space-3xl);
 		}
 	}
