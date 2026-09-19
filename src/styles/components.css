@@ -6058,20 +6058,6 @@ main > section:last-child.band--dark {
 	animation: nav-box-open 720ms var(--ease-out) both;
 }
 
-/* The lid, drawn open. Two strokes: the box, and its lid standing up off the back edge. */
-.nav-sign-opened::before {
-	content: '';
-	width: 13px;
-	height: 11px;
-	flex: none;
-	border: 1.5px solid var(--text-primary);
-	border-top-color: transparent;
-	border-radius: 1px;
-	background:
-		linear-gradient(to right, var(--text-primary), var(--text-primary)) top left / 13px 1.5px no-repeat;
-	transform: translateY(1px);
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.nav-sign-opened { animation: none; }
 }
