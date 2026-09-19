@@ -223,15 +223,38 @@ for (const vp of [
 		   because the path length does not care about direction; a held one accumulates
 		   almost nothing. The two are three orders of magnitude apart, so the band
 		   between them is wide rather than tuned. */
-		const rx = () => page.evaluate(() =>
-			parseFloat(document.querySelector('[data-shell="feat"]').getAttribute('rx')));
+		/* ALL THREE OF THE SHELL'S NUMBERS, NOT JUST rx.
+		   Total variation in rx alone was the third wrong answer here. It is still a
+		   periodic quantity, and near a turning point a whole sampling window can sit
+		   almost flat — which was survivable while the figure started at an arbitrary
+		   angle and merely flaky, and became a guaranteed false failure the moment the
+		   opening pose was fixed: every run now begins at the same yaw, so if that yaw
+		   is near a turning point, every run lands in the flat part. Measured 0.13 at
+		   all four widths while the model was demonstrably turning.
+
+		   rx and ry are a quarter cycle apart and the rotation angle is a third
+		   quantity again, so they cannot all three be stationary at once. Summing the
+		   distance travelled across all of them has no flat spots to fall into. */
+		const pose = () => page.evaluate(() => {
+			const e = document.querySelector('[data-shell="feat"]');
+			const rot = /rotate\(([-0-9.]+)/.exec(e.getAttribute('transform') || '');
+			return [
+				parseFloat(e.getAttribute('rx')),
+				parseFloat(e.getAttribute('ry')),
+				rot ? parseFloat(rot[1]) : 0,
+			];
+		});
 		const travelled = async () => {
-			let prev = await rx();
+			let prev = await pose();
 			let sum = 0;
 			for (let i = 0; i < 8; i++) {
 				await page.waitForTimeout(170);
-				const now = await rx();
-				sum += Math.abs(now - prev);
+				const now = await pose();
+				for (let k = 0; k < now.length; k++) {
+					const d = Math.abs(now[k] - prev[k]);
+					// The rotation wraps at 180; a wrap is not a thousand units of travel.
+					sum += d > 90 ? 0 : d;
+				}
 				prev = now;
 			}
 			return sum;

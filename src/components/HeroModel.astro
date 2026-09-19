@@ -484,15 +484,69 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		let spin = spinAim;
 		const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
 
-		const project = (r: number, a: number, shell: string) => {
+		const project = (r: number, a: number, shell: string, atYaw = yaw) => {
 			const s = SHELLS[shell] ?? SHELLS.caps;
 			let p: V3 = { x: r * Math.cos(a), y: 0, z: r * Math.sin(a) };
 			p = rotX(p, s.tilt);
 			p = rotZ(p, s.roll);
-			p = rotY(p, YAW0 + yaw);
+			p = rotY(p, YAW0 + atYaw);
 			p = rotX(p, PITCH0 + pitch);
 			return { x: CX + p.x, y: CY + p.y, dep: r === 0 ? 0 : p.z / r };
 		};
+
+		/* ── WHERE IT STARTS ─────────────────────────────────────────────────────
+		   DECLARED AFTER project(), BECAUSE IT CALLS IT. Written above the projection
+		   this threw "Cannot access before initialization" on load — a const is in the
+		   temporal dead zone until its own line runs, and the throw took the entire
+		   mount down with it. The figure then sat at the positions the build had baked,
+		   which look close enough to working that the fault showed up only as the
+		   solver appearing to ignore every change made to it: a clearance of 200 units
+		   moved nothing, because nothing was running.
+		   THE OPENING POSE IS CHOSEN, NOT INHERITED. It used to begin at whatever
+		   angle the constant happened to name, and thirteen labels around two tilted
+		   rings are not equally comfortable at every angle: some poses hand each name
+		   its own airspace, others bunch four of them into one quadrant and leave the
+		   solver shoving. The first thing a reader sees should be the good one.
+
+		   So it is measured rather than guessed. For seventy-two candidate angles,
+		   every label's box is projected and the closest pair is scored — normalised
+		   by their own sizes, so a wide chip beside a wide chip counts as tight and a
+		   short word beside a short word does not. The angle whose worst pair is the
+		   least bad wins. That is the pose with the most room in it, and it is derived
+		   from the data: add a feature and the opening angle moves to suit.
+
+		   It also survives a rewrite of the geometry, which a hand-tuned number would
+		   not — the last three times these radii changed, any constant chosen by eye
+		   would have quietly stopped being the right one. */
+		const startYaw = (() => {
+			const boxes = orbs.map((o) => ({
+				o,
+				w: (o.w || o.textW) + 8,
+				h: (o.h || 22) + 8,
+			}));
+			let best = 0;
+			let bestScore = -Infinity;
+			for (let k = 0; k < 72; k++) {
+				const y = (k / 72) * Math.PI * 2;
+				const pts = boxes.map((b) => project(b.o.r, b.o.a, b.o.shell, y));
+				let worst = Infinity;
+				for (let i = 0; i < pts.length; i++) {
+					for (let j = i + 1; j < pts.length; j++) {
+						// Chebyshev, normalised: 1 means exactly touching, more is clear air.
+						const sep = Math.max(
+							Math.abs(pts[i].x - pts[j].x) / ((boxes[i].w + boxes[j].w) / 2),
+							Math.abs(pts[i].y - pts[j].y) / ((boxes[i].h + boxes[j].h) / 2),
+						);
+						if (sep < worst) worst = sep;
+					}
+				}
+				if (worst > bestScore) { bestScore = worst; best = y; }
+			}
+			return best;
+		})();
+		yaw = startYaw;
+		aimYaw = startYaw;
+
 
 		/* A SHELL'S SILHOUETTE. Under an orthographic camera a tilted circle is still an
 		   exact ellipse; these are its axes, found by projecting two perpendicular
@@ -548,6 +602,13 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			   existence. */
 			/* How far a label may travel from the dot it names. */
 			const LEASH = 78;
+			/* AIR AROUND THE BODY, THE SAME AT EVERY ANGLE. The eviction used to push a
+			   label just past the disc's edge, so at some rotations a chip came to rest
+			   touching it and at others it sat well clear — the figure looked composed
+			   at one moment and cramped the next, with nothing the reader could point
+			   at. A fixed clearance makes the ring of space around the sphere a
+			   constant of the drawing rather than an accident of where things landed. */
+			const CORE_GAP = 26;
 			const items = placed.map(({ o, p }) => {
 				const w = (o.w || o.textW) + 8;
 				const h = (o.h || 22) + 8;
@@ -617,8 +678,8 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 				   meant the clamp could push a label straight back onto it on the final
 				   pass, which is exactly what four of them did. */
 				for (const a of items) {
-					const ox = (a.w / 2 + R_CORE) - Math.abs(a.x - CX);
-					const oy = (a.h / 2 + R_CORE) - Math.abs(a.y - CY);
+					const ox = (a.w / 2 + R_CORE + CORE_GAP) - Math.abs(a.x - CX);
+					const oy = (a.h / 2 + R_CORE + CORE_GAP) - Math.abs(a.y - CY);
 					if (ox <= 0 || oy <= 0) continue;
 					if (ox < oy) a.x += (a.x < CX ? -1 : 1) * ox;
 					else a.y += (a.y < CY ? -1 : 1) * oy;
@@ -707,11 +768,37 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 					}
 					a.rx = Math.min(Math.max(a.rx, a.w / 2 + 4), W - a.w / 2 - 4);
 					a.ry = Math.min(Math.max(a.ry, a.h / 2 + 4), H - a.h / 2 - 4);
-					const ox = a.w / 2 + R_CORE - Math.abs(a.rx - CX);
-					const oy = a.h / 2 + R_CORE - Math.abs(a.ry - CY);
+					const ox = a.w / 2 + R_CORE + CORE_GAP - Math.abs(a.rx - CX);
+					const oy = a.h / 2 + R_CORE + CORE_GAP - Math.abs(a.ry - CY);
 					if (ox <= 0 || oy <= 0) continue;
 					if (ox < oy) a.rx += (a.rx < CX ? -1 : 1) * ox;
 					else a.ry += (a.ry < CY ? -1 : 1) * oy;
+				}
+			}
+
+			/* THE RING OF AIR IS RADIAL, AND IT IS THE LAST WORD.
+			   Inside the passes the clearance is a box test, which is cheap and helps
+			   the labels converge — but it is one constraint among several, and the
+			   leash on the next pass can pull a label straight back in. Measured:
+			   ACCOUNT sixteen pixels inside the disc, SUPPRESS fourteen, with the
+			   solver behaving exactly as written. A constraint that other constraints
+			   are allowed to undo is a preference.
+
+			   The body is a circle, so the guarantee is a circle: pushed straight out
+			   along its own bearing, by its own half-extent in that direction plus the
+			   gap. Radial also looks right — a label slides around the sphere rather
+			   than stepping sideways off a corner of an imaginary square — and running
+			   after every pass means nothing gets to undo it. */
+			for (const a of items) {
+				if (a.held) continue;
+				const dx = a.rx - CX;
+				const dy = a.ry - CY;
+				const d = Math.hypot(dx, dy) || 1;
+				const half = (Math.abs(dx / d) * a.w + Math.abs(dy / d) * a.h) / 2;
+				const need = R_CORE + CORE_GAP + half;
+				if (d < need) {
+					a.rx = CX + (dx / d) * need;
+					a.ry = CY + (dy / d) * need;
 				}
 			}
 
