@@ -60,44 +60,44 @@ await page.goto(`${ORIGIN}/`);
 // The figure builds outward over ~3.2s and only then is at its final geometry.
 await page.waitForTimeout(4200);
 const res = await page.evaluate(() => {
-  const grab = (sel) => [...document.querySelectorAll(sel)]
-    .map((e) => ({ t: (e.textContent || '').trim(), b: e.getBoundingClientRect() }));
-  const caps = grab('.hv-cap-text');
-  const chips = grab('.hv-chip');
-  const pills = grab('.hv-pill');
-  const chipTexts = grab('.hv-chip-text');
-  const pillTexts = grab('.hv-pill-text');
-  const coreCap = grab('.hv-core-caption');
-  const coreDisc = grab('.hv-core-disc');
-  const inter = (a, z) => ({
-    w: Math.min(a.right, z.right) - Math.max(a.left, z.left),
-    h: Math.min(a.bottom, z.bottom) - Math.max(a.top, z.top),
-  });
-  const pairs = (A, B, na, nb) => {
-    const out = [];
-    for (const a of A) for (const z of B) {
-      const i = inter(a.b, z.b);
-      if (i.w > 3 && i.h > 3) out.push(`${na}:${a.t || '·'} x ${nb}:${z.t || '·'} [${Math.round(i.w)}x${Math.round(i.h)}]`);
-    }
-    return out;
-  };
-  const self = (A, n) => {
-    const out = [];
-    for (let i = 0; i < A.length; i++) for (let j = i + 1; j < A.length; j++) {
-      const k = inter(A[i].b, A[j].b);
-      if (k.w > 3 && k.h > 3) out.push(`${n}:${A[i].t} x ${A[j].t} [${Math.round(k.w)}x${Math.round(k.h)}]`);
-    }
-    return out;
-  };
-  return {
-    capVsChip: pairs(caps, chips, 'cap', 'chip'),
-    capVsPill: pairs(caps, pills, 'cap', 'pill'),
-    capVsCore: pairs(caps, coreDisc, 'cap', 'core'),
-    coreCapVsChip: pairs(coreCap, chips, 'coreCap', 'chip'),
-    chipTextSelf: self(chipTexts, 'chip'),
-    pillTextSelf: self(pillTexts, 'pill'),
-    pillTextVsChip: pairs(pillTexts, chips, 'pill', 'chip'),
-  };
+	const grab = (sel) => [...document.querySelectorAll(sel)]
+		.filter((e) => parseFloat(getComputedStyle(e).opacity || '1') > 0.02)
+		.map((e) => ({ t: (e.textContent || '').trim(), b: e.getBoundingClientRect() }));
+	const caps = grab('[data-orb="caps"]');
+	const feats = grab('[data-orb="feat"]');
+	const mkts = grab('[data-orb="mkt"]');
+	const core = grab('.hm-core-disc');
+	const all = [...caps, ...feats, ...mkts];
+
+	const frac = (a, z) => {
+		const w = Math.min(a.right, z.right) - Math.max(a.left, z.left);
+		const h = Math.min(a.bottom, z.bottom) - Math.max(a.top, z.top);
+		if (w <= 0 || h <= 0) return 0;
+		return (w * h) / Math.min(a.width * a.height, z.width * z.height);
+	};
+
+	const stacked = [];
+	for (let i = 0; i < all.length; i++) {
+		for (let j = i + 1; j < all.length; j++) {
+			const f = frac(all[i].b, all[j].b);
+			if (f > 0.4) stacked.push(`${all[i].t} x ${all[j].t} (${Math.round(f * 100)}%)`);
+		}
+	}
+	const onCore = [];
+	for (const a2 of all) for (const c of core) {
+		const w = Math.min(a2.b.right, c.b.right) - Math.max(a2.b.left, c.b.left);
+		const h = Math.min(a2.b.bottom, c.b.bottom) - Math.max(a2.b.top, c.b.top);
+		if (w > 6 && h > 6) onCore.push(`${a2.t} covers the nucleus`);
+	}
+
+	// A guard that can pass on an empty page is not a guard. The class names changed
+	// once already when the figure was rewritten, and the old selectors matched
+	// nothing and reported clean.
+	const missing = [];
+	if (caps.length + feats.length + mkts.length < 8) missing.push(`only ${all.length} labels found`);
+	if (!core.length) missing.push('no nucleus found');
+
+	return { stacked, onCore, missing };
 });
 
 const total = Object.values(res).flat().length;
@@ -108,6 +108,6 @@ if (total) {
 	server.close();
 	process.exit(1);
 }
-console.log('  hero diagram: 6 capability labels, 7 chips, 5 pills, no overlaps');
+console.log(`  hero model: ${'' }no stacked labels, nucleus clear`);
 await browser.close();
 server.close();

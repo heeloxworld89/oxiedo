@@ -40,7 +40,7 @@ What that costs today
 
 Published figures · one per industry
 
-> One primitive · six capabilities · seven features · five sectors Drag to turn · scroll to open it up
+> One bounded node · six capabilities · seven features · five sectors Drag to turn it
 
 What replaces it
 
