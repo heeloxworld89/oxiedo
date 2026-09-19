@@ -53,19 +53,23 @@ import { sectors } from '../data/sectors';
    object smaller. Measured in the three-column layout: at a 900-unit box the labels
    came out at 8.1px on a 1600px screen, which is the four-or-five-pixel mistake this
    figure has already made once, in slower motion. */
-const W = 780;
-const H = 560;
+const W = 760;
+/* Measured against the worst case the leash allows: an outer anchor reaches
+   0.76 x 272 above or below the centre, a label may travel 78 further, and half a
+   chip is 14 more — 306 either side of CY. Anything taller is dead artboard, which
+   preserveAspectRatio centres and the page cannot close. */
+const H = 650;
 
 // The opened node.
-const CX = 390;
-const CY = 278;
+const CX = 380;
+const CY = 326;
 const R_CORE = 88;
 /* Three shells that clear each other's labels: a chip is 28 tall and a pill 26, so
    94 units of gap between rings leaves room for a label on each without the solver
    having to fling them. */
-const R_CAPS = 132;
-const R_FEAT = 208;
-const R_MKT = 280;
+const R_CAPS = 126;
+const R_FEAT = 200;
+const R_MKT = 272;
 
 const CHIP_W = 146;
 const CHIP_H = 28;
@@ -78,7 +82,15 @@ const PILL_H = 26;
    it land where the geometry says. Depth is carried by scale and opacity, which the
    eye reads first anyway. */
 const YAW0 = -0.35;
-const PITCH0 = 0.42;
+/* THE RINGS STAND MORE UPRIGHT NOW, and this is the fix for the crowding rather
+   than any change to the solver. At a shallow pitch the three ellipses flatten to
+   about four tenths of their width, which puts all eighteen anchors inside one thin
+   horizontal band across the middle of the frame — so every label had to be flung
+   a long way vertically to find room, and a label two hundred pixels from the thing
+   it names has stopped being attached to it. Opening the pitch spreads the anchors
+   over the height of the figure, and labels that start apart do not have to be
+   thrown apart. */
+const PITCH0 = 0.86;
 
 /** Each shell has its OWN orientation. Coplanar rings are a target; rings at
  *  different tilts are an object with an interior, which is the entire point. */
@@ -239,9 +251,9 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 
 		{/* ── shells ──────────────────────────────────────────────────────────── */}
 		<g>
-			<ellipse data-shell="caps" data-r={R_CAPS} cx={CX} cy={CY} rx={R_CAPS} ry={R_CAPS * 0.4} class="hm-shell" />
-			<ellipse data-shell="feat" data-r={R_FEAT} cx={CX} cy={CY} rx={R_FEAT} ry={R_FEAT * 0.4} class="hm-shell" />
-			<ellipse data-shell="mkt" data-r={R_MKT} cx={CX} cy={CY} rx={R_MKT} ry={R_MKT * 0.4} class="hm-shell" />
+			<ellipse data-shell="caps" data-r={R_CAPS} cx={CX} cy={CY} rx={R_CAPS} ry={R_CAPS * 0.76} class="hm-shell" />
+			<ellipse data-shell="feat" data-r={R_FEAT} cx={CX} cy={CY} rx={R_FEAT} ry={R_FEAT * 0.76} class="hm-shell" />
+			<ellipse data-shell="mkt" data-r={R_MKT} cx={CX} cy={CY} rx={R_MKT} ry={R_MKT * 0.76} class="hm-shell" />
 		</g>
 
 		<g>
@@ -405,13 +417,13 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 <script>
 	/* The same geometry the build baked, re-solved every frame into the same elements.
 	   One source of shape, two renderers, no duplicated DOM. */
-	const CX = 390;
-	const CY = 278;
+	const CX = 380;
+	const CY = 326;
 	const R_CORE = 88;
-	const W = 780;
-	const H = 560;
+	const W = 760;
+	const H = 650;
 	const YAW0 = -0.35;
-	const PITCH0 = 0.42;
+	const PITCH0 = 0.86;
 	const SHELLS: Record<string, { tilt: number; roll: number }> = {
 		caps: { tilt: 0.0, roll: 0.0 },
 		feat: { tilt: 0.55, roll: 0.42 },
@@ -496,6 +508,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		let pitch = 0;
 		let aimPitch = 0;
 		let frozenEl: Element | null = null;   // the label the pointer is resting on
+		const order: Element[] = [];           // the depth order the DOM is currently in
 		let hovered = '';    // a feature id: lights the chords leaving that feature
 		let hoverCap = '';   // a capability name: lights the chords arriving at it
 		let dragging = false;
@@ -564,6 +577,8 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			   cull could never have: every one of the eighteen is legible at every
 			   angle, because being in the way costs a label a few pixels instead of its
 			   existence. */
+			/* How far a label may travel from the dot it names. */
+			const LEASH = 78;
 			const items = placed.map(({ o, p }) => {
 				const w = (o.w || o.textW) + 8;
 				const h = (o.h || 22) + 8;
@@ -611,8 +626,20 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 						}
 					}
 				}
-				// Inside the artboard, or the page clips what the solver just saved.
+				/* ON A LEASH. Separation on its own will send a label anywhere it fits,
+				   and a name two hundred pixels from the dot it belongs to has stopped
+				   being attached to anything — the figure read as eighteen words
+				   scattered round a circle. Held within reach of its own anchor, a
+				   label that cannot fit nudges its neighbours instead of emigrating. */
 				for (const a of items) {
+					const dx = a.x - a.p.x;
+					const dy = a.y - a.p.y;
+					const d = Math.hypot(dx, dy);
+					if (d > LEASH) {
+						a.x = a.p.x + (dx / d) * LEASH;
+						a.y = a.p.y + (dy / d) * LEASH;
+					}
+					// Inside the artboard, or the page clips what the solver just saved.
 					a.x = Math.min(Math.max(a.x, a.w / 2 + 4), W - a.w / 2 - 4);
 					a.y = Math.min(Math.max(a.y, a.h / 2 + 4), H - a.h / 2 - 4);
 				}
@@ -702,6 +729,13 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 				}
 				for (const a of items) {
 					if (a.held) continue;
+					const dx = a.rx - a.p.x;
+					const dy = a.ry - a.p.y;
+					const d = Math.hypot(dx, dy);
+					if (d > LEASH) {
+						a.rx = a.p.x + (dx / d) * LEASH;
+						a.ry = a.p.y + (dy / d) * LEASH;
+					}
 					a.rx = Math.min(Math.max(a.rx, a.w / 2 + 4), W - a.w / 2 - 4);
 					a.ry = Math.min(Math.max(a.ry, a.h / 2 + 4), H - a.h / 2 - 4);
 					const ox = a.w / 2 + R_CORE - Math.abs(a.rx - CX);
@@ -768,8 +802,26 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 
 			/* Painter's order: FAR FIRST, so the near ones are appended last and end up
 			   on top. The previous pass appended nearest-first, which is the order that
-			   puts the far labels over the near ones — the exact opposite of depth. */
-			for (const { o } of placed) o.el.parentNode?.appendChild(o.el);
+			   puts the far labels over the near ones — the exact opposite of depth.
+
+			   ONLY WHEN IT HAS ACTUALLY CHANGED. Re-appending eighteen nodes every
+			   frame is eighteen removals and eighteen insertions a frame for an order
+			   that changes a few times a second, and each one is a chance for the
+			   browser to lose track of what the pointer is over. While the model is
+			   held still it now touches the DOM not at all. */
+			let sameOrder = order.length === placed.length;
+			if (sameOrder) {
+				for (let i = 0; i < placed.length; i++) {
+					if (order[i] !== placed[i].o.el) { sameOrder = false; break; }
+				}
+			}
+			if (!sameOrder) {
+				order.length = 0;
+				for (const { o } of placed) {
+					o.el.parentNode?.appendChild(o.el);
+					order.push(o.el);
+				}
+			}
 
 			for (const c of chords) {
 				const a = project(c.fr, c.fa, 'feat');
@@ -838,27 +890,46 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			fig.classList.remove('is-turning');
 		};
 
-		/* HOVERING ANY LABEL STOPS THE MODEL, not only a feature chip. It used to be
-		   chips alone, and the result was that a sector or capability label could not
-		   be clicked without chasing it: the reader aims, the model turns, the pointer
-		   lands on nothing. Whatever is under the pointer is what the reader is trying
-		   to reach, so hold still for all of them. */
-		for (const o of orbs) {
-			if (!o.el.hasAttribute('data-hm-panel')) continue;
-			o.el.addEventListener('pointerenter', () => {
-				spinAim = 0;
-				frozenEl = o.el;
-				if (o.shell === 'feat') hovered = o.id;
-				else if (o.shell === 'caps') hoverCap = o.id;
-			});
-			o.el.addEventListener('pointerleave', () => {
-				if (openPanel) return;   // an open panel keeps its own subject lit
-				frozenEl = null;
+		/* ── HOVER IS TRACKED ON THE SVG, NOT ON THE LABELS ──────────────────────
+		   THE STUCK BUG. Hovering a label stops the model so it can be clicked, and
+		   that hold was released by a pointerleave on the label itself. But the
+		   painter's-order pass takes every label out of the DOM and puts it back once
+		   a frame, and moving the node the pointer is sitting on destroys the
+		   browser's record of what is being hovered: the leave never arrives. The
+		   model then stays stopped, with the chords still lit, after the pointer has
+		   long since gone. Reported as "hover on it and it gets stuck", and that is
+		   exactly what it was.
+
+		   Listening on the SVG fixes the class of bug rather than this instance of it.
+		   The SVG is never re-appended, so its events cannot be lost, and what is under
+		   the pointer is read from the event target each time it moves. Leaving the
+		   figure is one event on one stable element.
+
+		   It also behaves better: a label that drifts under a stationary cursor no
+		   longer grabs it and halts the model unasked. The hold now follows the
+		   reader's intent — they moved the pointer there — rather than the geometry. */
+		const hoverOrb = (t: EventTarget | null) => {
+			const el = (t as Element | null)?.closest?.('[data-hm-panel]') ?? null;
+			if (el === frozenEl) return;
+			frozenEl = el as SVGGElement | null;
+			if (!el) {
 				hovered = '';
 				hoverCap = '';
 				spinAim = reduced ? 0 : 1;
-			});
-		}
+				return;
+			}
+			spinAim = 0;
+			const who = el.getAttribute('data-id') || '';
+			hovered = el.getAttribute('data-orb') === 'feat' ? who : '';
+			hoverCap = el.getAttribute('data-orb') === 'caps' ? who : '';
+		};
+		const onHover = (e: PointerEvent) => {
+			if (openPanel || dragging) return;   // an open panel keeps its own subject
+			hoverOrb(e.target);
+		};
+		const onHoverOut = () => { if (!openPanel) hoverOrb(null); };
+		svg.addEventListener('pointermove', onHover);
+		svg.addEventListener('pointerleave', onHoverOut);
 
 		/* ── CLICK A LABEL, READ WHAT IT IS ──────────────────────────────────────
 		   The panel is a native popover: the browser puts it in the top layer, closes
@@ -964,10 +1035,27 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			}
 			// After it is laid out, or offsetWidth is zero and it lands in the corner.
 			requestAnimationFrame(() => place(panel, el));
+		};
+
+		/* ── THE CLOSE THAT NEVER ARRIVED ────────────────────────────────────────
+		   This listener used to be attached inside openFor with { once: true }, and
+		   it was consumed by the wrong event. showPopover() queues a toggle whose
+		   newState is "open"; the listener was registered synchronously right after
+		   that call, so the open toggle reached it first, the handler declined to act
+		   on it — and { once: true } removed it anyway. Nothing was left to hear the
+		   close. openPanel therefore stayed set to a panel that was no longer on
+		   screen, which pins spinAim at zero and makes every hover return early, so
+		   the model stopped turning for the rest of the session after the first time
+		   anyone opened a card and pressed Escape. Measured: still, permanently,
+		   through every phase that followed.
+
+		   Registered once per panel, at mount, with no once flag: it hears every
+		   close and nothing removes it. */
+		for (const panel of fig.querySelectorAll<HTMLElement>('.hm-panel')) {
 			panel.addEventListener('toggle', (e) => {
 				if ((e as ToggleEvent).newState === 'closed' && openPanel === panel) closePanel();
-			}, { once: true });
-		};
+			});
+		}
 
 		for (const o of orbs) {
 			if (!o.el.hasAttribute('data-hm-panel')) continue;

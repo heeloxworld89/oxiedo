@@ -192,6 +192,46 @@ for (const vp of [
 			fails.push(`${tag} ${orb}: Escape did not close the panel`);
 	}
 
+	/* HOVER, THEN LEAVE, AND IT HAS TO START TURNING AGAIN.
+	   Hovering a label holds the model still so it can be clicked. The release used
+	   to be a pointerleave on the label, and the painter's-order pass re-appends
+	   every label as the depth order changes — moving the node under the pointer
+	   loses the browser's record of the hover, so the leave never fired and the
+	   figure stayed frozen with its chords lit long after the pointer had gone.
+	   Measured here because "it gets stuck when you hover it" is not something a
+	   screenshot can show.
+
+	   MEASURED ON THE SHELL, NOT ON A LABEL. The first attempt sampled an anchor
+	   dot via querySelector, which returns whichever element is first in document
+	   order — and document order is exactly what the painter reshuffles, so
+	   consecutive samples were sometimes different features. The outer shell is one
+	   element that is never re-appended and whose rx is the rotation itself.
+
+	   Three samples, widest gap taken: rx is periodic, so two samples alone can
+	   straddle a symmetric pair and read as motionless while the model turns. */
+	{
+		const rx = () => page.evaluate(() =>
+			parseFloat(document.querySelector('[data-shell="mkt"]').getAttribute('rx')));
+		const swing = async () => {
+			const seen = [];
+			for (let i = 0; i < 3; i++) { seen.push(await rx()); await page.waitForTimeout(420); }
+			return Math.max(...seen) - Math.min(...seen);
+		};
+		const spot = await page.evaluate(() => {
+			const n = document.querySelector('[data-orb="feat"] .hm-chip');
+			const r = n.getBoundingClientRect();
+			return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+		});
+		await page.mouse.move(spot.x, spot.y);
+		await page.waitForTimeout(900);          // let it coast to a stop
+		if (await swing() > 0.6) fails.push(`${tag}: hovering a label did not hold the model still`);
+
+		// Off the figure entirely, which is the event that has to release it.
+		await page.mouse.move(4, 4);
+		await page.waitForTimeout(900);
+		if (await swing() < 1.5) fails.push(`${tag}: the model stayed stuck after the pointer left`);
+	}
+
 	// A drag turns the model. It must never also open a panel.
 	const fb = await page.evaluate(() => {
 		const r = document.querySelector('[data-hm]')?.getBoundingClientRect();
