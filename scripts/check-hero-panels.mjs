@@ -67,7 +67,7 @@ const OPEN = '.hm-panel:popover-open, .hm-panel.is-open';
    there hit nothing, or hit whichever neighbour happened to be under that point,
    which is what "opened the wrong panel" was. The label is the chip, the pill, or
    the capability's text. */
-const INK = { caps: '.hm-cap-text', feat: '.hm-chip', mkt: '.hm-pill' };
+const INK = { caps: '.hm-cap-text', feat: '.hm-chip' };
 const fails = [];
 
 // Reading a label off a turning model is a moving target, and Playwright's own
@@ -119,7 +119,7 @@ for (const vp of [
 
 	// One label per orbit: whichever is facing the camera right now, since a label
 	// turned away is faded out and genuinely not clickable — that is the design.
-	const picks = await page.evaluate(() => ['caps', 'feat', 'mkt'].map((orb) => {
+	const picks = await page.evaluate(() => ['caps', 'feat'].map((orb) => {
 		let best = null, bestOp = -1;
 		for (const n of document.querySelectorAll(`[data-orb="${orb}"][data-hm-panel]`)) {
 			const r = n.getBoundingClientRect();
@@ -129,7 +129,7 @@ for (const vp of [
 		}
 		return best && bestOp > 0.15 ? { orb, id: best.dataset.hmPanel } : null;
 	}).filter(Boolean));
-	if (picks.length !== 3) fails.push(`${tag}: expected all three orbits to offer a clickable label, found ${picks.length}`);
+	if (picks.length !== 2) fails.push(`${tag}: expected both orbits to offer a clickable label, found ${picks.length}`);
 
 	for (const { orb, id } of picks) {
 		const group = `[data-hm-panel="${id}"]`;
@@ -211,7 +211,7 @@ for (const vp of [
 	   straddle a symmetric pair and read as motionless while the model turns. */
 	{
 		const rx = () => page.evaluate(() =>
-			parseFloat(document.querySelector('[data-shell="mkt"]').getAttribute('rx')));
+			parseFloat(document.querySelector('[data-shell="feat"]').getAttribute('rx')));
 		const swing = async () => {
 			const seen = [];
 			for (let i = 0; i < 3; i++) { seen.push(await rx()); await page.waitForTimeout(420); }

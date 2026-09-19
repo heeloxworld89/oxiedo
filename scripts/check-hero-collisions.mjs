@@ -76,9 +76,8 @@ const probe = () => page.evaluate(() => {
 		});
 	const caps = grab('[data-orb="caps"]', '.hm-cap-text');
 	const feats = grab('[data-orb="feat"]', '.hm-chip');
-	const mkts = grab('[data-orb="mkt"]', '.hm-pill');
 	const core = grab('.hm-core-disc');
-	const all = [...caps, ...feats, ...mkts];
+	const all = [...caps, ...feats];
 
 	const frac = (a, z) => {
 		const w = Math.min(a.right, z.right) - Math.max(a.left, z.left);
@@ -105,7 +104,7 @@ const probe = () => page.evaluate(() => {
 	// once already when the figure was rewritten, and the old selectors matched
 	// nothing and reported clean.
 	const missing = [];
-	if (caps.length + feats.length + mkts.length < 8) missing.push(`only ${all.length} labels found`);
+	if (caps.length + feats.length < 13) missing.push(`only ${all.length} labels found, expected 13`);
 	if (!core.length) missing.push('no nucleus found');
 	/* NOTHING MAY BE HIDDEN. The figure used to solve crowding by deleting labels —
 	   five of the eighteen at a typical angle, and because hovering stops the model,

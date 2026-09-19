@@ -5,7 +5,7 @@
  * connections, the ordinary thing. One of its units is called out and magnified on
  * the right, and it is open: inside is the bounded four-operation chain, and around
  * that, in shells, everything the bound makes possible — the six capabilities, the
- * seven features, the five sectors.
+ * seven features.
  *
  * That is the company's sentence as a picture. A standard unit cannot be opened
  * because its gradient path runs through everything downstream and has no fixed
@@ -53,28 +53,33 @@ import { sectors } from '../data/sectors';
    object smaller. Measured in the three-column layout: at a 900-unit box the labels
    came out at 8.1px on a 1600px screen, which is the four-or-five-pixel mistake this
    figure has already made once, in slower motion. */
-const W = 760;
+/* THIRTEEN NAMES, NOT EIGHTEEN. The five sector pills were the widest things in the
+   picture at 184 apiece, and they sat on the outermost shell, which is where a ring
+   has the least angular room to give. Taking that shell off removes a third of the
+   labels and the worst third at that. The board then closes in around what is left,
+   and because a label is a fixed 11 units of the viewBox, a smaller box is the one
+   lever that makes the names bigger on screen without shrinking the object. The
+   sectors have not gone anywhere: they are the five questions above this figure and
+   they have their own pages. */
+const W = 700;
 /* Measured against the worst case the leash allows: an outer anchor reaches
    0.76 x 272 above or below the centre, a label may travel 78 further, and half a
    chip is 14 more — 306 either side of CY. Anything taller is dead artboard, which
    preserveAspectRatio centres and the page cannot close. */
-const H = 650;
+const H = 540;
 
 // The opened node.
-const CX = 380;
-const CY = 326;
+const CX = 350;
+const CY = 270;
 const R_CORE = 88;
 /* Three shells that clear each other's labels: a chip is 28 tall and a pill 26, so
    94 units of gap between rings leaves room for a label on each without the solver
    having to fling them. */
-const R_CAPS = 126;
-const R_FEAT = 200;
-const R_MKT = 272;
+const R_CAPS = 124;
+const R_FEAT = 196;
 
 const CHIP_W = 146;
 const CHIP_H = 28;
-const PILL_W = 184;
-const PILL_H = 26;
 
 /* ── the camera ─────────────────────────────────────────────────────────────────
    Orthographic. A perspective divide turns a circle into a shape SVG has no
@@ -97,7 +102,6 @@ const PITCH0 = 0.86;
 const SHELLS = {
 	caps: { tilt: 0.0, roll: 0.0 },
 	feat: { tilt: 0.55, roll: 0.42 },
-	mkt: { tilt: -0.42, roll: -0.5 },
 };
 
 interface P3 { x: number; y: number; z: number }
@@ -138,7 +142,6 @@ const CAP_ORDER = ['ACCOUNT', 'PROTECT', 'REPAIR', 'DETECT', 'ISOLATE', 'SUPPRES
 
 const capPts = CAP_ORDER.map((name, i) => ({ name, ...ring(R_CAPS, i, CAP_ORDER.length, SHELLS.caps) }));
 const featPts = features.map((f, i) => ({ feature: f, ...ring(R_FEAT, i, features.length, SHELLS.feat) }));
-const mktPts = sectors.map((s, i) => ({ sector: s, ...ring(R_MKT, i, sectors.length, SHELLS.mkt) }));
 
 /* THE MATRIX, as chords: one per cell of the capability matrix. */
 const chords = featPts.flatMap((fp) =>
@@ -151,16 +154,6 @@ const chords = featPts.flatMap((fp) =>
 			x1: fp.x, y1: fp.y, x2: c.x, y2: c.y,
 		})),
 );
-
-/* Each sector enters through one feature. Two lead with The Diary, so two lines
-   converge on it — that convergence is true and worth seeing. */
-const entries = mktPts
-	.map((mp) => {
-		const target = featPts.find((fp) => fp.feature.id === mp.sector.primaryFeature);
-		if (!target) return null;
-		return { key: mp.sector.id, ma: mp.a, fa: target.a, x1: mp.x, y1: mp.y, x2: target.x, y2: target.y };
-	})
-	.filter((e): e is NonNullable<typeof e> => Boolean(e));
 
 const ops = ['LayerNorm', 'Linear ↓', 'PReLU', 'Linear ↑'];
 
@@ -186,18 +179,17 @@ const panels: Panel[] = [
 		name: f.name,
 		question: f.question,
 		body: f.summary,
-		meta: `Needs: ${f.requires}`,
+		meta: (() => {
+			const serves = sectors.filter((s) => s.primaryFeature === f.id).map((s) => s.name);
+			return serves.length
+				? `Needs: ${f.requires} · Way in for ${serves.join(' · ')}`
+				: `Needs: ${f.requires}`;
+		})(),
 		href: `/product/${f.id}`,
 	})),
-	...sectors.map((sec) => ({
-		id: `p-${sec.id}`,
-		kind: 'sector' as const,
-		name: sec.name,
-		question: sec.question,
-		body: sec.cost,
-		meta: `Enters through ${features.find((f) => f.id === sec.primaryFeature)?.name ?? '—'}`,
-		href: `/sectors/${sec.id}`,
-	})),
+	/* NO SECTOR CARDS. Nothing on the object opens one any more, and a popover in the
+	   markup that no control can reach is dead weight in the page. The five sectors
+	   are the five questions above this figure, each with its own page. */
 	/* A CAPABILITY IS NOT WRITTEN ANYWHERE, so it is not written here either. There is
 	   no prose for the six in data/, and a definition composed for a tooltip would be
 	   a claim about the architecture that nothing in the archive backs. What a
@@ -244,16 +236,15 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		<desc id="hm-desc">
 			One unit of a neural network, magnified and shown open: at its centre the bounded
 			four-operation chain — LayerNorm, Linear down, PReLU, Linear up — and around it three
-			shells carrying the six capabilities the bound makes possible, the seven features built
-			from those capabilities, and the five sectors each feature serves. Lines between the
-			shells are the capability matrix and each sector's lead feature.
+			shells carrying the six capabilities the bound makes possible and the seven features
+			built from those capabilities. Each line between the shells is one row of the
+			capability matrix.
 		</desc>
 
 		{/* ── shells ──────────────────────────────────────────────────────────── */}
 		<g>
 			<ellipse data-shell="caps" data-r={R_CAPS} cx={CX} cy={CY} rx={R_CAPS} ry={R_CAPS * 0.76} class="hm-shell" />
 			<ellipse data-shell="feat" data-r={R_FEAT} cx={CX} cy={CY} rx={R_FEAT} ry={R_FEAT * 0.76} class="hm-shell" />
-			<ellipse data-shell="mkt" data-r={R_MKT} cx={CX} cy={CY} rx={R_MKT} ry={R_MKT * 0.76} class="hm-shell" />
 		</g>
 
 		<g>
@@ -262,13 +253,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 					data-chord={c.key} data-fa={c.fa} data-ca={c.ca}
 					data-fr={R_FEAT} data-cr={R_CAPS}
 					x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2} class="hm-chord"
-				/>
-			))}
-			{entries.map((e) => (
-				<line
-					data-entry={e.key} data-ma={e.ma} data-fa={e.fa}
-					data-mr={R_MKT} data-fr={R_FEAT}
-					x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="hm-entry"
 				/>
 			))}
 		</g>
@@ -288,7 +272,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		<g>
 			{[...capPts.map((c) => ({ id: `p-cap-${c.name.toLowerCase()}`, x: c.x, y: c.y })),
 			  ...featPts.map((fp) => ({ id: `p-${fp.feature.id}`, x: fp.x, y: fp.y })),
-			  ...mktPts.map((mp) => ({ id: `p-${mp.sector.id}`, x: mp.x, y: mp.y }))].map((a) => (
+			  ].map((a) => (
 				<line class="hm-leader" data-leader={a.id} x1={a.x} y1={a.y} x2={a.x} y2={a.y} />
 			))}
 		</g>
@@ -367,23 +351,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			))}
 		</g>
 
-		{/* ── sectors ─────────────────────────────────────────────────────────── */}
-		<g>
-			{mktPts.map((mp) => (
-				<g
-					data-orb="mkt" data-a={mp.a} data-r={R_MKT}
-					data-w={PILL_W} data-h={PILL_H} data-id={mp.sector.id}
-					data-hm-panel={`p-${mp.sector.id}`}
-					role="button" tabindex="0"
-					aria-label={`${mp.sector.name} — what this sector asks`}
-					style={`opacity:${fmtDep(mp.dep)}`}
-				>
-					<rect x={mp.x - PILL_W / 2} y={mp.y - PILL_H / 2} width={PILL_W} height={PILL_H} rx="14" class="hm-pill" data-cull />
-					<circle cx={mp.x} cy={mp.y} r="4" class="hm-chip-dot hm-anchor" />
-					<text x={mp.x} y={mp.y + 4} text-anchor="middle" class="hm-pill-text">{mp.sector.name}</text>
-				</g>
-			))}
-		</g>
 	</svg>
 
 	{/* ONE PANEL PER THING, IN THE MARKUP.
@@ -409,7 +376,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		{/* THE LEGEND CARRIES WHAT THE MESH USED TO SAY. The network beside the node was
 		    the thing that made "one unit" true rather than asserted, and it has gone;
 		    the words have to do that work now, in real text at a real size. */}
-		<span>One unit of a neural network · six capabilities · seven features · five sectors</span>
+		<span>One unit of a neural network · six capabilities · seven features</span>
 		<span class="hm-drive" data-hm-hint hidden>Drag to turn it</span>
 	</figcaption>
 </figure>
@@ -417,18 +384,17 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 <script>
 	/* The same geometry the build baked, re-solved every frame into the same elements.
 	   One source of shape, two renderers, no duplicated DOM. */
-	const CX = 380;
-	const CY = 326;
+	const CX = 350;
+	const CY = 270;
 	const R_CORE = 88;
-	const W = 760;
-	const H = 650;
+	const W = 700;
+	const H = 540;
 	const YAW0 = -0.35;
 	const PITCH0 = 0.86;
 	const SHELLS: Record<string, { tilt: number; roll: number }> = {
 		caps: { tilt: 0.0, roll: 0.0 },
 		feat: { tilt: 0.55, roll: 0.42 },
-		mkt: { tilt: -0.42, roll: -0.5 },
-	};
+		};
 
 	interface V3 { x: number; y: number; z: number }
 	const rotX = (p: V3, a: number): V3 =>
@@ -493,11 +459,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			el, fa: num(el, 'data-fa'), ca: num(el, 'data-ca'),
 			fr: num(el, 'data-fr'), cr: num(el, 'data-cr'),
 			key: el.getAttribute('data-chord') || '',
-		}));
-		const entryDefs = [...svg.querySelectorAll<SVGLineElement>('[data-entry]')].map((el) => ({
-			el, ma: num(el, 'data-ma'), fa: num(el, 'data-fa'),
-			mr: num(el, 'data-mr'), fr: num(el, 'data-fr'),
-			key: el.getAttribute('data-entry') || '',
 		}));
 		const shellEls = [...svg.querySelectorAll<SVGEllipseElement>('[data-shell]')].map((el) => ({
 			el, shell: el.getAttribute('data-shell') as string, r: num(el, 'data-r'),
@@ -835,12 +796,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 				c.el.classList.toggle('is-lit', lit);
 				c.el.classList.toggle('is-dim', (hovered !== '' || hoverCap !== '') && !lit);
 			}
-			for (const e of entryDefs) {
-				const a = project(e.mr, e.ma, 'mkt');
-				const b = project(e.fr, e.fa, 'feat');
-				e.el.setAttribute('x1', String(a.x)); e.el.setAttribute('y1', String(a.y));
-				e.el.setAttribute('x2', String(b.x)); e.el.setAttribute('y2', String(b.y));
-			}
 			raf = requestAnimationFrame(frame);
 		}
 
@@ -968,7 +923,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			   where the names are off and only the hit area remains. Measured again:
 			   101px. Never the group; its centre is the empty space in between. */
 			const t = (() => {
-				for (const sel of ['.hm-chip', '.hm-pill', '.hm-cap-text', '.hm-hit']) {
+				for (const sel of ['.hm-chip', '.hm-cap-text', '.hm-hit']) {
 					const el = target.querySelector(sel);
 					if (!el) continue;
 					const r = el.getBoundingClientRect();
@@ -1242,8 +1197,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	.hm-shell { fill: none; stroke: var(--text-on-dark); stroke-opacity: 0.16; stroke-width: 1; }
 
 	.hm-chord { stroke: var(--accent-on-dark); stroke-opacity: 0.2; stroke-width: 0.8; }
-	.hm-entry { stroke: var(--text-on-dark); stroke-opacity: 0.16; stroke-width: 0.8; }
-	.hm-chord, .hm-entry { transition: stroke-opacity 180ms ease, stroke 180ms ease; }
+	.hm-chord { transition: stroke-opacity 180ms ease, stroke 180ms ease; }
 	.hm-chord.is-lit { stroke-opacity: 0.95; stroke-width: 1.5; }
 	.hm-chord.is-dim { stroke-opacity: 0.05; }
 
@@ -1278,8 +1232,6 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	}
 	.hm-chip { fill: var(--bg-dark); fill-opacity: 0.92; stroke: var(--rule-on-dark); stroke-width: 1; }
 	.hm-chip-text { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); font-size: 11px; fill: var(--text-on-dark); }
-	.hm-pill { fill: var(--bg-dark); fill-opacity: 0.92; stroke: var(--accent-on-dark); stroke-opacity: 0.55; stroke-width: 1; }
-	.hm-pill-text { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); font-size: 11px; fill: var(--accent-on-dark); }
 	/* Only the feature shell is interactive: hovering one traces its capabilities. */
 	[data-orb="feat"] { cursor: pointer; }
 
@@ -1308,12 +1260,11 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	   as a page that failed to load rather than as a deliberate simplification.
 	   So the chip becomes the node it always stood for: the outline goes, a dot
 	   appears, and the rect stays in place as an invisible 44px-wide target — a phone
-	   still gets to tap any of the eighteen and read what it is. */
+	   still gets to tap any of the thirteen and read what it is. */
 	.hm.is-compact [data-orb] text,
 	.hm.is-compact .hm-op-text { display: none; }
 	.hm.is-compact .hm-leader { display: none; }
-	.hm.is-compact .hm-chip,
-	.hm.is-compact .hm-pill {
+	.hm.is-compact .hm-chip {
 		fill: transparent;
 		stroke: transparent;
 	}
@@ -1331,7 +1282,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	.hm-drive:not([hidden]) { display: block; margin-top: 4px; opacity: 0.8; }
 
 	@media (prefers-reduced-motion: reduce) {
-		.hm-chord, .hm-entry { transition: none; }
+		.hm-chord { transition: none; }
 		/* The mesh keeps its colour and its dash; it just stops travelling. */
 		.hm-panel:popover-open, .hm-panel.is-open { animation: none; }
 	}
