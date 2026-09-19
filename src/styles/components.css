@@ -6010,61 +6010,70 @@ main > section:last-child.band--dark {
 	color: var(--text-primary);
 }
 
-/* ON ITS OWN PAGE THE SIGN HAS BEEN LIFTED.
+/* ON ITS OWN PAGE THE BOX IS OPEN, AND THE ITEM SAYS SO.
    ============================================================
-   Everywhere else the plate hangs from the bar on two cords. Arriving on the page it names,
-   it is raised: the cords pay out to nothing, the plate swings up on its own weight,
-   overshoots by a couple of pixels and settles flush under the bracket. What was a sign
-   hanging outside a closed thing becomes a label sitting on an open one.
+   Everywhere else this is a shop sign: a plate hanging from the bar on two cords under the
+   words "Open the". Arriving on the page it names, the plate comes UP into the bar and the
+   two halves become one pill reading "Black box opened".
 
-   It is the state change doing the work, not an added ornament — nothing appears that was
-   not already there, and the difference between the two pages is legible in one glance
-   without reading a word.
+   The first attempt only moved the plate up by 27px and left the bracket reading "Open the",
+   which is the half-measure — an instruction still standing next to a thing that has already
+   happened. Moving an object without changing what it says makes the motion decoration. The
+   sentence changes with the state, and there is nothing left hanging.
 
-   The animation runs once per arrival. ClientRouter re-renders the header on a client-side
-   navigation, so walking to this page from anywhere else plays it; a reload plays it too.
-   forwards holds the raised position so it does not drop back when the animation ends. */
+   The rise starts from where the plate used to hang, so the eye reads it as the same object
+   arriving rather than a different one appearing. It runs once per arrival: ClientRouter
+   re-renders the header, so walking here from anywhere plays it. */
 .nav-link--mark[aria-current='page'] {
 	background: transparent;
 	color: var(--text-primary);
+	padding: 0;
 }
 
-@keyframes nav-sign-raise {
-	0%   { top: calc(100% + var(--cord)); rotate: 0deg; }
-	55%  { top: calc(100% - 4px); rotate: -1.4deg; }
-	78%  { top: calc(100% + 1px); rotate: 0.6deg; }
-	100% { top: 100%; rotate: 0deg; }
-}
-@keyframes nav-cord-retract {
-	0%   { height: var(--cord); opacity: 1; }
-	60%  { height: 2px; opacity: 0.35; }
-	100% { height: 0; opacity: 0; }
+@keyframes nav-box-open {
+	0%   { transform: translateY(42px) scale(0.94); opacity: 0; }
+	45%  { transform: translateY(-4px) scale(1.02); opacity: 1; }
+	72%  { transform: translateY(1px) scale(0.995); }
+	100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-.nav-link--mark[aria-current='page'] .nav-sign-plate {
-	animation: nav-sign-raise 820ms var(--ease-out) forwards;
-	/* Raised, it is resting ON the bar rather than swinging under it: the shadow tightens
-	   and an ink ring takes over from the cords as the thing that separates it. */
+.nav-sign-opened {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	/* 42px, matching every other item in the row. At 7px it came out 40px and sat two pixels
+	   short of its neighbours — the kind of difference that reads as "slightly wrong" without
+	   being nameable. */
+	padding: 8px 15px;
+	border-radius: 4px;
+	background: var(--sign-amber);
+	color: var(--text-primary);
+	font-weight: 700;
+	font-size: var(--text-nav);
+	white-space: nowrap;
 	box-shadow:
-		0 0 0 2px var(--text-primary),
-		0 2px 6px rgb(0 0 0 / 0.22),
-		inset 0 1px 0 rgb(255 255 255 / 0.35);
-}
-.nav-link--mark[aria-current='page'] .nav-sign-plate::before,
-.nav-link--mark[aria-current='page'] .nav-sign-plate::after {
-	animation: nav-cord-retract 520ms var(--ease-out) forwards;
+		0 0 0 1px color-mix(in oklab, var(--text-primary) 45%, transparent),
+		0 2px 8px rgb(0 0 0 / 0.22),
+		inset 0 1px 0 rgb(255 255 255 / 0.32);
+	animation: nav-box-open 720ms var(--ease-out) both;
 }
 
-/* A raised sign does not swing. */
-.nav-link--mark[aria-current='page']:hover .nav-sign-plate,
-.nav-link--mark[aria-current='page']:focus-visible .nav-sign-plate {
-	animation: nav-sign-raise 820ms var(--ease-out) forwards;
+/* The lid, drawn open. Two strokes: the box, and its lid standing up off the back edge. */
+.nav-sign-opened::before {
+	content: '';
+	width: 13px;
+	height: 11px;
+	flex: none;
+	border: 1.5px solid var(--text-primary);
+	border-top-color: transparent;
+	border-radius: 1px;
+	background:
+		linear-gradient(to right, var(--text-primary), var(--text-primary)) top left / 13px 1.5px no-repeat;
+	transform: translateY(1px);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.nav-link--mark[aria-current='page'] .nav-sign-plate { animation: none; top: 100%; }
-	.nav-link--mark[aria-current='page'] .nav-sign-plate::before,
-	.nav-link--mark[aria-current='page'] .nav-sign-plate::after { animation: none; height: 0; opacity: 0; }
+	.nav-sign-opened { animation: none; }
 }
 
 /* The bar's hover underline would draw across the bracket text and read as a second

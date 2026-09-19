@@ -85,18 +85,28 @@ const isCurrent = (href: string) => path === href || path.startsWith(href + '/')
 							href={link.href}
 							class={link.mark ? 'nav-link nav-link--mark' : 'nav-link'}
 							aria-current={isCurrent(link.href) ? 'page' : undefined}
-							{...(link.mark ? { 'aria-label': link.label } : {})}
+							{...(link.mark && !isCurrent(link.href) ? { 'aria-label': link.label } : {})}
 						>
-							{/* THE HANGING SIGN, split exactly as a shop sign is: the bracket carries the
-							    first words and the plate swinging under it carries the name. Both spans
-							    sit inside ONE anchor, so the accessible name is still the whole of
-							    "Open the Black Box" and the link is a single tab stop — the split is
-							    presentational and screen readers never see it. */}
+							{/* TWO STATES, AND THEY SAY DIFFERENT THINGS.
+							    Off this page it is a shop sign: the bracket carries the first words and
+							    the plate swinging under it carries the name, inside one anchor so the
+							    accessible name is the whole of "Open the Black Box" and it is a single
+							    tab stop.
+							    On the page itself the plate has been RAISED INTO THE BAR and the item
+							    reads "Black box opened" — one pill, past tense, no cords. Moving the
+							    sign up and leaving the label saying "open the" was the half-measure:
+							    the sentence has to change with the state, or the animation is
+							    decoration. Here the visible text IS the accessible name, so no
+							    aria-label overrides it. */}
 							{link.mark ? (
-								<>
-									<span class="nav-sign-field">Open the</span>
-									<span class="nav-sign-plate">Black Box</span>
-								</>
+								isCurrent(link.href)
+									? <span class="nav-sign-opened">Black box opened</span>
+									: (
+										<>
+											<span class="nav-sign-field">Open the</span>
+											<span class="nav-sign-plate">Black Box</span>
+										</>
+									)
 							) : link.label}
 							{link.children && <span class="nav-caret" aria-hidden="true">▾</span>}
 						</a>

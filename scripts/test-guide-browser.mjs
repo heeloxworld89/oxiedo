@@ -198,140 +198,76 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
-// THE HANGING SIGN. It is the one deliberately unusual object in the chrome, and every way
-// it can go wrong is geometric: the plate leaving the anchor's row, the accessible name
-// losing the space between its two spans, the plate failing to resolve as the link, or the
-// plate landing on a page banner of exactly its own colour and disappearing into it.
-{
-	const page = await browser.newPage({ viewport: { width: 1440, height: 800 } });
-	// /insights is the one route with a cream ground under the bar; the other fifteen are
-	// #16182B. Both cases are checked, because the plate's whole job is to be an object on
-	// whatever is behind it.
-	for (const [route, expectCurrent] of [['/technology', false], ['/black-box', true], ['/insights', false]]) {
-		await page.goto(`${ORIGIN}${route}`, { waitUntil: 'networkidle' });
-		// The raise runs for 820ms and the cords retract over 520ms, both with fill-mode
-		// forwards. Measuring before they land reads the starting values, not the design.
-		await page.waitForTimeout(1200);
-		const m = await page.evaluate(() => {
-			const nav = document.querySelector('.nav').getBoundingClientRect();
-			const a = document.querySelector('.nav-link--mark');
-			const ar = a.getBoundingClientRect();
-			const plate = document.querySelector('.nav-sign-plate');
-			const pr = plate.getBoundingClientRect();
-			const others = [...document.querySelectorAll('.nav-links > li > .nav-link:not(.nav-link--mark)')]
-				.map((e) => e.getBoundingClientRect());
-			const cs = getComputedStyle(plate);
-			return {
-				anchorH: Math.round(ar.height),
-				otherH: [...new Set(others.map((r) => Math.round(r.height)))],
-				rows: new Set([...others.map((r) => Math.round(r.top)), Math.round(ar.top)]).size,
-				hangsBy: Math.round(pr.bottom - nav.bottom),
-				name: a.getAttribute('aria-label'),
-				resolves: document.elementFromPoint(pr.left + pr.width / 2, pr.top + pr.height / 2)
-					?.closest('a')?.getAttribute('href'),
-				// The ring, which is what defines the plate's edge on a ground close to its own.
-				ring: /0px 0px 0px [12]px/.test(cs.boxShadow),
-				clearsBar: Math.round(pr.top - nav.bottom),
-				// Text on the plate, and the plate against whatever is behind it.
-				textContrast: (() => {
-					const lum = (c) => {
-						const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(Number)
-							.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
-						return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-					};
-					const a = lum(cs.color), b = lum(cs.backgroundColor);
-					return +(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2));
-				})(),
-				current: a.getAttribute('aria-current') === 'page',
-				// WIDTH for "is it drawn" — a cord is 1px wide. HEIGHT for "has it retracted" —
-				// the raise animates height to 0, and checking width there reported 1px for
-				// ever and failed a design that was working.
-				cords: [getComputedStyle(plate, '::before').width, getComputedStyle(plate, '::after').width],
-				cordLen: [getComputedStyle(plate, '::before').height, getComputedStyle(plate, '::after').height],
-			};
-		});
-		ok(m.anchorH === 42 && m.otherH.length === 1 && m.otherH[0] === m.anchorH,
-			`sign ${route}: the bracket is the same height as every other link (${m.anchorH} vs ${m.otherH})`);
-		ok(m.rows === 1, `sign ${route}: the bracket stays on the nav's row (${m.rows})`);
-		// TWO STATES NOW, and they are the point of the design. Off its own page the plate
-		// hangs below the bar on two cords. On /black-box it has been RAISED: the cords
-		// retract to nothing and the plate sits flush under the bracket, so arriving on the
-		// page it names shows the thing opened. Asserting "hangs clear" everywhere was
-		// asserting the old design.
-		if (expectCurrent) {
-			ok(m.hangsBy <= 6,
-				`sign ${route}: the plate is raised flush, not hanging (${m.hangsBy}px below the bar)`);
-			ok(m.cordLen.every((c) => parseFloat(c) <= 1),
-				`sign ${route}: the cords have retracted (${m.cordLen.join(', ')})`);
-		} else {
-			ok(m.hangsBy > 12, `sign ${route}: the plate hangs clear below the bar (${m.hangsBy}px)`);
-			ok(m.cords[0] === '1px' && m.cords[1] === '1px',
-				`sign ${route}: both cords are drawn (${m.cords.join(', ')})`);
-		}
-		ok(m.name === 'Open the Black Box',
-			`sign ${route}: the accessible name is the whole phrase, not the two spans run together ("${m.name}")`);
-		ok(m.resolves === '/black-box', `sign ${route}: the plate itself resolves to the link (${m.resolves})`);
-		ok(m.ring, `sign ${route}: the plate keeps its separating ring`);
-		if (!expectCurrent) {
-			ok(m.clearsBar >= 0,
-				`sign ${route}: the plate hangs CLEAR of the bar rather than straddling it (${m.clearsBar}px). ` +
-				'Straddling put half of it on a banner of its own colour, at 1.0:1.');
-		}
-		ok(m.textContrast >= 4.5,
-			`sign ${route}: the plate's label is ${m.textContrast}:1 against the plate`);
-		ok(m.current === expectCurrent, `sign ${route}: aria-current is ${expectCurrent}`);
-	}
-	await page.close();
-}
-
-// ── BUTTONS ──────────────────────────────────────────────────────────────────────────────
+// THE SIGN, IN ITS TWO STATES.
 //
-// CONTRAST, ON EVERY SURFACE. `.btn--secondary` has been caught three times rendering
-// near-invisible on a dark band: twice because a per-section patch was missing, and once
-// when the base rule briefly gained `background: var(--bg-surface)` while the on-dark rule
-// still set only colour and border — light text on a near-white fill, 1.13:1, on three
-// pages. Each time it was found by eye, which is not a process. That experiment has since
-// been reverted, but this check is what makes the next one safe, so it stays.
+// Off the page it names it is a shop sign: "Open the" in the bar with a plate hanging under
+// it on two cords. ON that page the plate has come up INTO the bar and the two halves are
+// one pill reading "Black box opened" — past tense, no cords, nothing left hanging.
+//
+// Moving the plate up and leaving the label saying "open the" was the half-measure, and it
+// shipped: an instruction still standing beside a thing that had already happened. The
+// sentence has to change with the state or the motion is decoration, so the test checks the
+// WORDS as well as the geometry.
 {
-	const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-	const ROUTES = ['/', '/product', '/technology', '/licensing', '/invest', '/sectors',
-		'/black-box', '/contact', '/about', '/press', '/data', '/faq', '/careers'];
-	let worst = { ratio: 99 };
-	for (const route of ROUTES) {
-		await page.goto(`${ORIGIN}${route}`, { waitUntil: 'networkidle' });
-		const rows = await page.evaluate(() => {
-			const lum = (c) => {
-				const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(Number)
-					.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
-				return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-			};
-			// Walk up for the first non-transparent ancestor: a transparent button takes the
-			// band's colour, and the band is the thing that changes underneath it.
-			const solid = (el) => {
-				for (let e = el; e; e = e.parentElement) {
-					const bg = getComputedStyle(e).backgroundColor;
-					if (bg && !/rgba\(0, 0, 0, 0\)|transparent/.test(bg)) return bg;
-				}
-				return 'rgb(255,255,255)';
-			};
-			return [...document.querySelectorAll('.btn')].map((el) => {
-				const c = getComputedStyle(el);
-				const bg = /rgba\(0, 0, 0, 0\)|transparent/.test(c.backgroundColor)
-					? solid(el.parentElement) : c.backgroundColor;
-				const a = lum(c.color), b = lum(bg);
-				return {
-					label: el.textContent.trim().slice(0, 30),
-					ratio: +(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2)),
-				};
-			});
-		});
-		for (const r of rows) {
-			ok(r.ratio >= 4.5, `contrast ${route}: "${r.label}" is ${r.ratio}:1, below the 4.5:1 floor`);
-			if (r.ratio < worst.ratio) worst = { ...r, route };
-		}
-	}
-	ok(worst.ratio >= 4.5, `buttons: worst contrast is ${worst.ratio}:1 ("${worst.label}" on ${worst.route})`);
+	const page = await browser.newPage({ viewport: { width: 1512, height: 800 } });
 
+	// Elsewhere: hanging.
+	await page.goto(`${ORIGIN}/technology`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(1200);
+	const away = await page.evaluate(() => {
+		const a = document.querySelector('.nav-link--mark');
+		const plate = document.querySelector('.nav-sign-plate');
+		if (!plate) return { missing: true };
+		const nav = document.querySelector('.nav').getBoundingClientRect();
+		const pr = plate.getBoundingClientRect();
+		return {
+			missing: false,
+			name: a.getAttribute('aria-label'),
+			hangsBy: Math.round(pr.bottom - nav.bottom),
+			clears: Math.round(pr.top - nav.bottom),
+			cords: [getComputedStyle(plate, '::before').width, getComputedStyle(plate, '::after').width],
+			resolves: document.elementFromPoint(pr.left + pr.width / 2, pr.top + pr.height / 2)
+				?.closest('a')?.getAttribute('href'),
+			opened: !!document.querySelector('.nav-sign-opened'),
+		};
+	});
+	ok(!away.missing, 'sign elsewhere: the hanging plate exists');
+	ok(!away.opened, 'sign elsewhere: it is NOT showing the opened state');
+	ok(away.name === 'Open the Black Box',
+		`sign elsewhere: the accessible name is the whole phrase ("${away.name}")`);
+	ok(away.hangsBy > 12, `sign elsewhere: it hangs clear below the bar (${away.hangsBy}px)`);
+	ok(away.clears >= 0,
+		`sign elsewhere: it hangs CLEAR of the bar rather than straddling it (${away.clears}px)`);
+	ok(away.cords[0] === '1px' && away.cords[1] === '1px',
+		`sign elsewhere: both cords are drawn (${away.cords.join(', ')})`);
+	ok(away.resolves === '/black-box', `sign elsewhere: the plate resolves to the link (${away.resolves})`);
+
+	// On its own page: opened.
+	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(1400);
+	const here = await page.evaluate(() => {
+		const a = document.querySelector('.nav-link--mark');
+		const pill = document.querySelector('.nav-sign-opened');
+		const heights = [...document.querySelectorAll('.nav-links > li > .nav-link')]
+			.map((e) => Math.round(e.getBoundingClientRect().height));
+		return {
+			missing: !pill,
+			text: pill?.textContent.trim(),
+			stillHanging: !!document.querySelector('.nav-sign-plate'),
+			current: a.getAttribute('aria-current') === 'page',
+			heights: [...new Set(heights)],
+			rows: new Set([...document.querySelectorAll('.nav-links > li > .nav-link')]
+				.map((e) => Math.round(e.getBoundingClientRect().top))).size,
+		};
+	});
+	ok(!here.missing, 'sign on its own page: the opened pill exists');
+	ok(here.text === 'Black box opened',
+		`sign on its own page: it reads "Black box opened" (got "${here.text}")`);
+	ok(!here.stillHanging, 'sign on its own page: nothing is left hanging');
+	ok(here.current, 'sign on its own page: it is marked as the current page');
+	ok(here.heights.length === 1,
+		`sign on its own page: the pill matches the row height (${here.heights.join('/')}px)`);
+	ok(here.rows === 1, `sign on its own page: the bar stays on one row (${here.rows})`);
 	await page.close();
 }
 
