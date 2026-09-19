@@ -1209,7 +1209,16 @@ const SCENARIOS = [
 		//               autoplay through but skip the guide. One onboarding at a time is the
 		//               same rule that put a single prose band on this screen instead of two.
 		// The flag is never set on any other page, so nothing here changes elsewhere.
-		const coldOpen = () => document.documentElement.getAttribute('data-coldopen');
+		// THE DOM IS CHECKED FIRST, and deliberately. Both this component and the cold open
+		// re-initialise on astro:page-load, and nothing guarantees which listener the browser
+		// calls first — so on a client-side visit the flag on <html> may not be stamped yet
+		// when this runs. A curtain that is in the document and not hidden is the fact
+		// itself, and it cannot be out of order with itself.
+		const coldOpen = () => (
+			document.querySelector('[data-coldopen-root]:not([hidden])')
+				? 'running'
+				: document.documentElement.getAttribute('data-coldopen')
+		);
 
 		function maybeAutoStart() {
 			if (autoStarted) return;
@@ -1225,8 +1234,15 @@ const SCENARIOS = [
 			// moving, not a request to be told less: guideGoTo already seeks between stops
 			// instead of playing when it is set, so the guide reads as a series of stills.
 			// Autoplay stays suppressed, because that IS motion nobody asked for.
-			if (root.dataset.guideMode === 'auto' && coldOpen() !== 'done'
-				&& !guideAlreadySeen() && !guideRunning()) {
+			// THE GUIDED READ SURVIVES THE COLD OPEN, and the reasoning changed when the
+			// cold open did. While it played once a session, suppressing the guide on the
+			// same landing was free — a reader got the sequence now and the walkthrough on
+			// their next visit. Now that the sequence plays on EVERY landing there is no
+			// next visit without one, so that rule quietly deleted the guided read for
+			// good. It is still gated on its own once-per-browser flag, so a genuinely
+			// first-time reader gets both and nobody ever gets it twice; 'running' above
+			// still keeps it from opening behind the curtain.
+			if (root.dataset.guideMode === 'auto' && !guideAlreadySeen() && !guideRunning()) {
 				guideStart();
 				// WRITTEN AFTER, NOT BEFORE. The flag used to be set first, so a start that
 				// bailed — no bundle yet, a scenario with no stops — burned the single

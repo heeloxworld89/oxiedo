@@ -88,16 +88,17 @@
 	(function () {
 		var el = document.querySelector('[data-coldopen-root]');
 		if (!el) return;
-		var kill = function () { el.remove(); };
+		if (location.search.indexOf('intro=0') > -1) return el.remove();
 		try {
-			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return kill();
-			if (sessionStorage.getItem('oxiedo.blackbox.coldopen') === '1') return kill();
-		} catch (e) { /* storage blocked — play it; failing open is the safe direction here */ }
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return el.remove();
+		} catch (e) { /* matchMedia unavailable — play it */ }
 		document.documentElement.setAttribute('data-coldopen', 'running');
 		el.hidden = false;
-		// If the sequence module never runs, do not hold the page hostage.
+		// ONLY FOR THE FIRST LOAD, and only if the module never arrives. Every later run is
+		// owned by mount(), which carries its own timer. This one exists so a bundling
+		// failure on a cold cache cannot leave a reader facing a black rectangle.
 		window.setTimeout(function () {
-			if (document.documentElement.getAttribute('data-coldopen') === 'running') {
+			if (el.isConnected && el.dataset.coldopenLive !== '1') {
 				document.documentElement.setAttribute('data-coldopen', 'done');
 				el.remove();
 				document.dispatchEvent(new CustomEvent('coldopen:done'));
@@ -113,9 +114,48 @@
 	   for the ReplayDemo interlock, and <html> precedes this element in document order — so
 	   that selector returned documentElement, and root.remove() at the end of the sequence
 	   deleted the entire document. The overlay and the flag get separate hooks, permanently. */
-	const root = document.querySelector<HTMLElement>('[data-coldopen-root]');
-	const canvas = document.querySelector<HTMLCanvasElement>('[data-co-canvas]');
-	if (root && canvas && !root.hidden) {
+	/* EVERY LANDING, NOT ONCE A SESSION.
+	 *
+	 * Two things had to change together. The session flag is gone, so the sequence plays
+	 * whenever someone arrives. And it is now driven by astro:page-load rather than by the
+	 * inline gate, because the site navigates with the ClientRouter: on a client-side visit
+	 * the body is swapped but the document is not, and Astro deduplicates inline script
+	 * execution — so the gate ran on the first arrival and never again. A reader clicking
+	 * "Open the Black Box", leaving, and clicking it a second time got nothing at all, which
+	 * is a state neither of the two policies was supposed to produce.
+	 *
+	 * astro:page-load fires on the first load and after every swap, so one path covers both.
+	 * mount() is idempotent — data-coldopen-live guards a double boot — and returns its own
+	 * teardown, which astro:before-swap calls if someone navigates away mid-sequence.
+	 */
+	let live: (() => void) | null = null;
+
+	function mount(): (() => void) | null {
+		const root = document.querySelector<HTMLElement>('[data-coldopen-root]');
+		const canvas = root?.querySelector<HTMLCanvasElement>('[data-co-canvas]') ?? null;
+		if (!root || !canvas) return null;         // not this page
+		if (root.dataset.coldopenLive === '1') return live;
+
+		/* ?intro=0 SKIPS IT. The sequence runs on every landing, which is right for a
+		   visitor and wrong for everyone who opens this page forty times in an afternoon —
+		   whoever is building it, whoever is demonstrating the console in a meeting, and
+		   the guided-read test suite, which lands here repeatedly and needs the console and
+		   not the curtain. A shareable link that goes straight to the instrument is worth
+		   having on its own account, and it keeps the tests honest: they exercise the real
+		   page rather than a flag invented to get around it. */
+		if (new URLSearchParams(location.search).get('intro') === '0') { root.remove(); return null; }
+
+		// Re-read the preference on every run rather than trusting the first load: a reader
+		// can turn it on between two visits, and this must honour that immediately.
+		let reduced = false;
+		try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+		catch { /* unavailable */ }
+		if (reduced) { root.remove(); return null; }
+
+		root.dataset.coldopenLive = '1';
+		document.documentElement.setAttribute('data-coldopen', 'running');
+		root.hidden = false;
+		{
 		const elAct = root.querySelector<HTMLElement>('[data-co-act]')!;
 		const elLine = root.querySelector<HTMLElement>('[data-co-line]')!;
 		const elSub = root.querySelector<HTMLElement>('[data-co-sub]')!;
@@ -494,7 +534,6 @@
 			if (ending) return;
 			ending = true;
 			cancelAnimationFrame(raf);
-			try { sessionStorage.setItem('oxiedo.blackbox.coldopen', '1'); } catch { /* blocked */ }
 			root!.classList.add('is-out');
 			window.setTimeout(() => {
 				document.documentElement.setAttribute('data-coldopen', 'done');
@@ -503,6 +542,7 @@
 				document.removeEventListener('keydown', onKey);
 				window.removeEventListener('wheel', onGesture);
 				window.removeEventListener('touchmove', onGesture);
+				live = null;
 				// Hand back to the component, which has been holding its autostart.
 				document.dispatchEvent(new CustomEvent('coldopen:done'));
 			}, 420);
@@ -528,11 +568,25 @@
 			if ([' ', 'PageDown', 'ArrowDown', 'End'].includes(e.key)) return finish();
 		}
 
+		/* A THROW IN HERE MUST NOT STRAND THE READER. If draw() raises, the frame loop dies
+		   and the curtain sits over the console for ever with no way to know why. Catching
+		   and handing over is the only safe failure: the console below is fully rendered and
+		   works, so the worst outcome of a broken title sequence should be no title sequence.
+
+		   This replaced a wall-clock bail timer, which guarded the same thing far more
+		   crudely — rAF is throttled to nothing in a background tab, so a reader who tabbed
+		   away at eight seconds and came back would have had the sequence cut off mid-act by
+		   a timer that had kept running without them. */
 		function frame(now: number) {
 			if (!start) start = now;
 			const t = now - start;
-			draw(t);
-			paintType(t);
+			try {
+				draw(t);
+				paintType(t);
+			} catch (err) {
+				console.error('[cold open] frame failed, handing over to the console', err);
+				return finish();
+			}
 			if (t >= T.end) return finish();
 			raf = requestAnimationFrame(frame);
 		}
@@ -544,7 +598,30 @@
 		window.addEventListener('touchmove', onGesture, { passive: true });
 		skip.focus({ preventScroll: true });
 		raf = requestAnimationFrame(frame);
+
+		/* ABORT, not finish. Called when a reader navigates away while the curtain is up:
+		   the body is about to be swapped out from under this, so the job is to stop the
+		   frame loop and release every listener that lives on document and window — those
+		   survive a swap, and a leaked one would accumulate a new copy on every visit. No
+		   coldopen:done here, because there is nothing left on the page to hand over to. */
+		return () => {
+			ending = true;
+			cancelAnimationFrame(raf);
+			window.removeEventListener('resize', size);
+			document.removeEventListener('keydown', onKey);
+			window.removeEventListener('wheel', onGesture);
+			window.removeEventListener('touchmove', onGesture);
+			root.remove();
+			document.documentElement.removeAttribute('data-coldopen');
+		};
+		}
 	}
+
+	const boot = () => { live = mount(); };
+	document.addEventListener('astro:page-load', boot);
+	document.addEventListener('astro:before-swap', () => { live?.(); live = null; });
+	if (document.readyState !== 'loading') boot();
+	else document.addEventListener('DOMContentLoaded', boot);
 </script>
 
 <style>

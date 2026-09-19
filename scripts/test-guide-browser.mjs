@@ -52,7 +52,7 @@ const ORIGIN = `http://localhost:${server.address().port}`;
 let fail = 0;
 const ok = (cond, msg) => { if (!cond) { console.log('  FAIL', msg); fail++; } };
 
-// THE COLD OPEN IS SUPPRESSED FOR EVERY CONTEXT IN THIS FILE.
+// THE COLD OPEN IS ASKED TO STAND ASIDE FOR THIS WHOLE FILE, VIA ?intro=0.
 //
 // /black-box now plays a title sequence on the first landing of a session, and it deliberately
 // holds the guided read while it runs — two onboardings at once is how a reader learns to
@@ -60,19 +60,13 @@ const ok = (cond, msg) => { if (!cond) { console.log('  FAIL', msg); fail++; } }
 // why this suite started timing out: it lands on /black-box, waits two seconds and expects the
 // dock, and was getting a curtain.
 //
-// Pre-setting the session flag is the honest isolation. It reproduces the state of a reader
-// who has already seen the sequence, which is exactly the state in which the guided read is
-// supposed to behave the way every assertion below describes.
-const newCtx = async (opts) => {
-	const ctx = await browser.newContext(opts);
-	await ctx.addInitScript(() => {
-		try { sessionStorage.setItem('oxiedo.blackbox.coldopen', '1'); } catch { /* blocked */ }
-	});
-	return ctx;
-};
-
-// Same isolation for the pages created straight off the browser.
-const newPg = async (opts) => (await newCtx(opts)).newPage();
+// This used to pre-set a session flag, which worked while the sequence played once per
+// session. It plays on every landing now and that flag is gone, so the suppression has to be
+// the product's own documented bypass instead of a back door only the tests know about.
+// BLACKBOX is the URL every assertion below should use.
+const newCtx = (opts) => browser.newContext(opts);
+const newPg = (opts) => browser.newPage(opts);
+const BLACKBOX = `${ORIGIN}/black-box?intro=0`;
 
 let browser;
 try {
@@ -99,7 +93,7 @@ for (const vp of VIEWPORTS) {
 	page.on('pageerror', (e) => errors.push(String(e)));
 	page.on('console', (m) => { if (m.type() === 'error') errors.push(`console: ${m.text()}`); });
 
-	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await page.goto(BLACKBOX, { waitUntil: 'networkidle' });
 	const start = await page.$('[data-guide-start]');
 	ok(!!start, `${vp.name}: the Guided read button exists`);
 	if (!start) { await page.close(); continue; }
@@ -265,7 +259,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	ok(away.resolves === '/black-box', `sign elsewhere: the plate resolves to the link (${away.resolves})`);
 
 	// On its own page: opened.
-	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await page.goto(BLACKBOX, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(1400);
 	const here = await page.evaluate(() => {
 		const a = document.querySelector('.nav-link--mark');
@@ -336,7 +330,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 {
 	for (const vp of [{ w: 1680, h: 1050 }, { w: 1512, h: 945 }, { w: 1440, h: 900 }]) {
 		const page = await newPg({ viewport: { width: vp.w, height: vp.h } });
-		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+		await page.goto(BLACKBOX, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(1100);
 		await page.evaluate(() => {
 			const d = document.querySelector('[data-guide]');
@@ -458,7 +452,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	// crushing the cells — measured at 1200×800 they came out 92px tall before this.
 	{
 		const page = await newPg({ viewport: { width: 1200, height: 800 } });
-		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+		await page.goto(BLACKBOX, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(900);
 		const m = await page.evaluate(() => {
 			const cells = [...document.querySelectorAll('.rp-tabs [data-panel]')].map((e) => e.getBoundingClientRect());
@@ -482,7 +476,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	{
 		const ctx = await newCtx({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
 		const page = await ctx.newPage();
-		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+		await page.goto(BLACKBOX, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(2000);
 		ok(await page.evaluate(() => !document.querySelector('[data-guide]').hidden),
 			'reduced motion: the guided read still opens itself');
@@ -496,7 +490,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		['Skip', async (pg) => pg.click('[data-guide-skip]')]]) {
 		const ctx = await newCtx({ viewport: { width: 1440, height: 900 } });
 		const page = await ctx.newPage();
-		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+		await page.goto(BLACKBOX, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(2000);
 		await act(page);
 		await page.waitForTimeout(400);
@@ -512,7 +506,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		const ctx = await newCtx({ viewport: { width: 1440, height: 900 } });
 		const page = await ctx.newPage();
 		await page.route('**/runs/*.json', (r) => r.abort());
-		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
+		await page.goto(BLACKBOX, { waitUntil: 'domcontentloaded' });
 		await page.waitForTimeout(2000);
 		ok(await page.evaluate(() => localStorage.getItem('oxiedo.blackbox.guideSeen') === null),
 			'a failed run does not spend the first-visit showing');
@@ -522,12 +516,12 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	// The guided read opens itself once, on a first visit to this page only.
 	const first = await newCtx({ viewport: { width: 1440, height: 900 } });
 	const fp = await first.newPage();
-	await fp.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await fp.goto(BLACKBOX, { waitUntil: 'networkidle' });
 	await fp.evaluate(() => document.querySelector('.rp').scrollIntoView({ block: 'center' }));
 	await fp.waitForTimeout(1500);
 	ok(await fp.evaluate(() => !document.querySelector('[data-guide]').hidden),
 		'first visit: the guided read opens by itself');
-	await fp.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await fp.goto(BLACKBOX, { waitUntil: 'networkidle' });
 	await fp.evaluate(() => document.querySelector('.rp').scrollIntoView({ block: 'center' }));
 	await fp.waitForTimeout(1500);
 	ok(await fp.evaluate(() => document.querySelector('[data-guide]').hidden),
@@ -558,7 +552,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	const thrown = [];
 	p1.on('pageerror', (e) => thrown.push(String(e)));
 	await p1.route('**/runs/*.json', (r) => r.abort());
-	await p1.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
+	await p1.goto(BLACKBOX, { waitUntil: 'domcontentloaded' });
 	await p1.waitForTimeout(2200);
 	const blocked = await p1.evaluate(() => ({
 		failed: document.querySelector('.rp').classList.contains('is-failed'),
@@ -576,7 +570,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	// Answered, badly.
 	const p2 = await newPg({ viewport: { width: 1440, height: 900 } });
 	await p2.route('**/runs/*.json', (r) => r.fulfill({ status: 500, body: 'nope' }));
-	await p2.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
+	await p2.goto(BLACKBOX, { waitUntil: 'domcontentloaded' });
 	await p2.waitForTimeout(1800);
 	ok(/answered 500/.test(await p2.evaluate(() => document.querySelector('[data-conditions-app]').textContent)),
 		'a 500 is reported with its status');
@@ -586,7 +580,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	const p3 = await newPg({ viewport: { width: 1440, height: 900 } });
 	let block = true;
 	await p3.route('**/runs/*.json', (r) => (block ? r.abort() : r.continue()));
-	await p3.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
+	await p3.goto(BLACKBOX, { waitUntil: 'domcontentloaded' });
 	await p3.waitForTimeout(1800);
 	block = false;
 	await p3.click('[data-retry]');
@@ -614,7 +608,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 // is 3:1 for large text, 4.5:1 otherwise, because most of this screen is 10-12px labels.
 {
 	const page = await newPg({ viewport: { width: 1512, height: 945 } });
-	await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+	await page.goto(BLACKBOX, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(1300);
 
 	const sweep = () => page.evaluate(() => {

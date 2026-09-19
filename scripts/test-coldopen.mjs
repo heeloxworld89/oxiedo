@@ -118,28 +118,57 @@ const watch = (page, tag) => {
 	const after = await page.evaluate(() => {
 		const de = document.documentElement;
 		const guide = document.querySelector('.rp-guide');
-		let sess = null;
-		try { sess = sessionStorage.getItem('oxiedo.blackbox.coldopen'); } catch { sess = 'blocked'; }
 		return {
 			// THE ONE THAT MATTERS.
 			documentAlive: !!de && !!document.body && !!document.querySelector('.rp-console'),
 			gone: !document.querySelector('[data-coldopen-root]'),
 			flag: de ? de.getAttribute('data-coldopen') : null,
 			guideAutoOpened: guide ? !guide.hasAttribute('hidden') : false,
-			sess,
 		};
 	});
 	ok(after.documentAlive, 'the document survives the sequence — <html>, <body> and the console are all still there');
 	ok(after.gone, 'the overlay removes itself when it ends');
 	ok(after.flag === 'done', `the interlock flag reads "done" (got ${after.flag})`);
-	ok(!after.guideAutoOpened,
-		'the guided read did NOT open behind the curtain — one onboarding at a time');
-	ok(after.sess === '1', 'the session flag is written');
+	// It hands over to the guided read rather than deleting it: the sequence plays on every
+	// landing now, so suppressing the guide on the same landing would mean it never opened
+	// again on any landing. Its own once-per-browser flag still stops it repeating.
+	ok(after.guideAutoOpened, 'the guided read takes over once the curtain is down');
 
+	// EVERY LANDING. This is the behaviour the once-per-session flag used to prevent.
 	await page.reload();
 	await page.waitForTimeout(1200);
-	ok(await page.evaluate(() => !document.querySelector('[data-coldopen-root]')),
-		'a reload in the same tab does not replay it');
+	ok(await page.evaluate(() => {
+		const el = document.querySelector('[data-coldopen-root]');
+		return !!el && !el.hidden;
+	}), 'a reload replays it');
+
+	// AND ON CLIENT-SIDE NAVIGATION, which is the path the nav button actually takes. The
+	// ClientRouter swaps the body without reloading the document, and Astro deduplicates
+	// inline script execution across swaps — so the gate fired on the first arrival and
+	// never again. Leaving and coming back a second time produced no sequence at all.
+	for (const pass of [1, 2, 3]) {
+		await page.click('.nav a[href="/product"]');
+		await page.waitForTimeout(700);
+		await page.click('.nav a[href="/black-box"]');
+		await page.waitForTimeout(1200);
+		const st = await page.evaluate(() => {
+			const el = document.querySelector('[data-coldopen-root]');
+			return { playing: !!el && !el.hidden, flag: document.documentElement.getAttribute('data-coldopen') };
+		});
+		ok(st.playing, `click-through #${pass}: the sequence plays again`);
+		ok(st.flag === 'running', `click-through #${pass}: the interlock is re-armed (${st.flag})`);
+	}
+
+	// Navigating away mid-sequence must tear it down rather than leave a frame loop and a
+	// set of document listeners running against a body that has been swapped out.
+	await page.click('.nav a[href="/product"]');
+	await page.waitForTimeout(800);
+	const gone = await page.evaluate(() => ({
+		el: !!document.querySelector('[data-coldopen-root]'),
+		flag: document.documentElement.getAttribute('data-coldopen'),
+	}));
+	ok(!gone.el && gone.flag === null,
+		`leaving mid-sequence tears it down (el ${gone.el}, flag ${gone.flag})`);
 	await ctx.close();
 }
 
@@ -178,13 +207,21 @@ const watch = (page, tag) => {
 	ok(m.gone, 'Escape ends it at once');
 	ok(m.alive, 'and the document survives an early exit too');
 	ok(m.flag === 'done', `and the interlock is released (got ${m.flag})`);
-	// The handoff: the console must take over rather than sit dead.
+	// THE HANDOFF: something must take over, rather than the console sitting dead behind a
+	// curtain that has just gone. Either is correct and which one depends on the reader —
+	// a first-timer gets the guided read, anyone who has seen it gets plain autoplay — so
+	// this asserts the disjunction rather than pinning the branch.
 	await page.waitForTimeout(3000);
-	const playing = await page.evaluate(() => {
-		const l = document.querySelector('[data-epoch]');
-		return l ? l.textContent : '';
+	const handover = await page.evaluate(() => {
+		const guide = document.querySelector('.rp-guide');
+		const label = document.querySelector('[data-epoch]');
+		return {
+			guided: guide ? !guide.hasAttribute('hidden') : false,
+			epoch: label ? label.textContent.trim() : '',
+		};
 	});
-	ok(/epoch\s+[1-9]/.test(playing), `the console takes over after a skip (epoch readout: "${playing.trim()}")`);
+	ok(handover.guided || /epoch\s+[1-9]/.test(handover.epoch),
+		`the console takes over after a skip (guided: ${handover.guided}, epoch: "${handover.epoch}")`);
 	await ctx.close();
 }
 
@@ -199,6 +236,24 @@ const watch = (page, tag) => {
 	await page.waitForTimeout(900);
 	ok(await page.evaluate(() => !document.querySelector('[data-coldopen-root]')),
 		'scrolling dismisses the sequence rather than doing nothing visible');
+	await ctx.close();
+}
+
+/* ── 3c. ?intro=0 goes straight to the console ─────────────────────────────── */
+{
+	const ctx = await browser.newContext({ viewport: VP });
+	const page = await ctx.newPage();
+	watch(page, 'bypass');
+	await page.goto(`${ORIGIN}/black-box?intro=0`);
+	await page.waitForTimeout(900);
+	const m = await page.evaluate(() => ({
+		mounted: !!document.querySelector('[data-coldopen-root]'),
+		flag: document.documentElement.getAttribute('data-coldopen'),
+		consoleThere: !!document.querySelector('.rp-console'),
+	}));
+	ok(!m.mounted, '?intro=0 skips the sequence entirely');
+	ok(m.flag === null, `and leaves the interlock alone (${m.flag})`);
+	ok(m.consoleThere, 'and lands on the console');
 	await ctx.close();
 }
 
