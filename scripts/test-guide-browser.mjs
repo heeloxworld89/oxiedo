@@ -258,13 +258,24 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 			// The accessible name is stated separately for the same reason.
 			parts: pill ? [pill.querySelector('.nav-sign-name').textContent.trim(),
 				pill.querySelector('.nav-sign-state').textContent.trim()] : [],
-			// The two halves carry different faces on purpose — the name in the display serif,
-			// the state as a mono tag. If either falls back to the nav's sans the lockup is
-			// gone and it is a word in a box again.
+			// IT MUST MATCH THE ROW IT SITS IN. This carried the display serif at 17px beside
+			// a mono tag while every other item is Plus Jakarta Sans at 15px — three faces in
+			// one bar, and the pill read as pasted in from another design. Compared against a
+			// real neighbour rather than against a hard-coded name, so the check survives the
+			// nav's own type changing.
 			faces: pill ? [
-				getComputedStyle(pill.querySelector('.nav-sign-name')).fontFamily.split(',')[0].replace(/["']/g, ''),
-				getComputedStyle(pill.querySelector('.nav-sign-state')).fontFamily.split(',')[0].replace(/["']/g, ''),
+				getComputedStyle(pill.querySelector('.nav-sign-name')).fontFamily,
+				getComputedStyle(pill.querySelector('.nav-sign-state')).fontFamily,
 			] : [],
+			sizes: pill ? [
+				getComputedStyle(pill.querySelector('.nav-sign-name')).fontSize,
+			] : [],
+			neighbour: (() => {
+				const n = [...document.querySelectorAll('.nav-links > li > .nav-link')]
+					.find((e) => !e.classList.contains('nav-link--mark'));
+				const c = getComputedStyle(n);
+				return { font: c.fontFamily, size: c.fontSize };
+			})(),
 			ariaName: a.getAttribute('aria-label'),
 			stillHanging: !!document.querySelector('.nav-sign-plate'),
 			current: a.getAttribute('aria-current') === 'page',
@@ -276,8 +287,10 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	ok(!here.missing, 'sign on its own page: the opened pill exists');
 	ok(here.parts[0] === 'BlackBox' && here.parts[1] === 'Opened',
 		`sign on its own page: it reads BlackBox / Opened (got "${here.parts.join(' / ')}")`);
-	ok(here.faces[0] === 'Fraunces' && here.faces[1] === 'JetBrains Mono',
-		`sign on its own page: name in the display serif, state in mono (${here.faces.join(' + ')})`);
+	ok(here.faces[0] === here.neighbour.font && here.faces[1] === here.neighbour.font,
+		`sign on its own page: both halves use the nav's own face (${here.faces[0].split(',')[0]})`);
+	ok(here.sizes[0] === here.neighbour.size,
+		`sign on its own page: the name is the row's size (${here.sizes[0]} vs ${here.neighbour.size})`);
 	// The two spans concatenate to "BlackBoxOpened" with no space, so the name is stated.
 	ok(here.ariaName === 'BlackBox opened',
 		`sign on its own page: the accessible name has its space ("${here.ariaName}")`);

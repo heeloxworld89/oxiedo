@@ -6050,10 +6050,9 @@ main > section:last-child.band--dark {
 	display: inline-flex;
 	align-items: baseline;
 	gap: 9px;
-	/* The serif sets its own line box at line-height 1, so the padding is what makes the 42px
-	   — 17px of type plus 12 above and 13 below. At the previous 7/8 the pill came out 32px
-	   and sat a full ten pixels short of the row. */
-	padding: 12px 14px 13px;
+	/* line-height 1 means the padding makes the height: 15px of type plus 13 above and 14
+	   below is the row's 42px. Measured, not assumed — the first version came out 32px. */
+	padding: 13px 14px 14px;
 	border-radius: 5px;
 	background: var(--sign-amber);
 	color: var(--text-primary);
@@ -6065,24 +6064,32 @@ main > section:last-child.band--dark {
 	animation: nav-box-open 720ms var(--ease-out) both;
 }
 
+/* THE SAME TYPE AS THE ROW IT SITS IN. This was the site's display serif at 17px next to a
+   mono tag, while every other item in the bar is Plus Jakarta Sans at 15px — three faces in
+   one row, and the pill read as something pasted in from another design rather than the
+   current item of this one.
+
+   Both halves are the nav's own face at the nav's own size now. The emphasis comes from
+   weight and from the amber behind it, which is what distinguishes a current item from its
+   neighbours everywhere else on this site; the state keeps its uppercase and its tracking so
+   it still reads as a condition rather than a second word in the name. */
 .nav-sign-name {
-	font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
-	font-weight: 600;
-	font-size: 17px;
-	letter-spacing: -0.005em;
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-weight: 700;
+	font-size: var(--text-nav);
 	line-height: 1;
 }
 
 .nav-sign-state {
-	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
-	font-size: 9.5px;
-	font-weight: 500;
-	letter-spacing: 0.16em;
+	font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	line-height: 1;
-	padding-left: 9px;
+	padding-left: 8px;
 	border-left: 1px solid color-mix(in oklab, var(--text-primary) 38%, transparent);
-	color: color-mix(in oklab, var(--text-primary) 82%, transparent);
+	color: color-mix(in oklab, var(--text-primary) 78%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
