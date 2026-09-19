@@ -1235,26 +1235,24 @@ const SCENARIOS = [
 		// with site data blocked, and an exception here would take out the autostart with it.
 		// A reader whose storage is unavailable gets the guide every visit, which is the safe
 		// direction to fail in.
-		/* ONCE PER SESSION, NOT ONCE PER BROWSER.
-		   The flag used to live in localStorage, so the guided read opened for a given
-		   reader exactly once, ever. On the page whose entire subject is this component
-		   that is the wrong trade: the second visit — the one where somebody has come
-		   back to look properly — got no walkthrough at all, and the report was simply
-		   that it does not open. sessionStorage gives every fresh visit the read and
-		   still never repeats it inside one, so it cannot interrupt somebody who has
-		   dismissed it and is working.
+		/* ONCE PER LANDING. NOT PER BROWSER, NOT PER TAB.
+		   This has now been wrong in two directions and the storage was the mistake both
+		   times. localStorage meant the guided read opened once ever, so the second visit
+		   — the one where somebody has come back to look properly — got nothing.
+		   sessionStorage looked like the fix and is not: a session is per tab and
+		   survives reload, so reloading the page you are working on still never showed
+		   it, which is exactly how it was reported the second time.
 
-		   Wrapped both ways: storage throws in a private window and with site data
-		   blocked, and an exception here would take the autostart down with it. A reader
-		   whose storage is unavailable gets the read every visit, which is the safe
-		   direction to fail in. */
-		const GUIDE_SEEN = 'oxiedo.blackbox.guideSeen';
-		function guideAlreadySeen() {
-			try { return sessionStorage.getItem(GUIDE_SEEN) === '1'; } catch { return false; }
-		}
-		function rememberGuideSeen() {
-			try { sessionStorage.setItem(GUIDE_SEEN, '1'); } catch { /* storage unavailable */ }
-		}
+		   The title sequence plays on every landing, and the guided read is its
+		   continuation — so it belongs to the landing too. A plain variable inside this
+		   mount is precisely that: it starts false on every page load, including a
+		   client-side one, and no storage means nothing to be wrong about in a private
+		   window or with site data blocked. Dismissing the read sets it, so Skip is
+		   honoured for as long as the reader stays on the page, and a fresh arrival gets
+		   the walkthrough again. */
+		let guideShown = false;
+		function guideAlreadySeen() { return guideShown; }
+		function rememberGuideSeen() { guideShown = true; }
 
 		// THE COLD OPEN INTERLOCK. /black-box plays a title sequence over the loaded page, and
 		// the console is in view BEHIND it — the IntersectionObserver cannot tell the
