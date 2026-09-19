@@ -31,6 +31,222 @@ Five sectors. One question about data, asked five ways.
 
 Nothing in a standard network can answer any of them. Not because a standard network is opaque, but because no part of it can be named.
 
+feature
+
+The Proofreader
+
+Which samples are damaging which component?
+
+Attaches to an already-trained model without modifying it and returns a ranked list of labels judged incorrect, held separate from those that are merely difficult. Broken down by class, and by source where the corpus carries one.
+
+Needs: A model file and a labelled sample
+
+[Read the page →](/product/proofreader)
+
+feature
+
+The Warning Light
+
+Is this run failing, and where?
+
+Watches every component of a model while it trains and raises an alarm when one crosses its own baseline, naming the component rather than the run. The operator rolls back hundreds of steps instead of thousands.
+
+Needs: One line around the training loop
+
+[Read the page →](/product/warning-light)
+
+feature
+
+The Diary
+
+What did the model do to itself, and when?
+
+Produces a signed, timestamped record of every modification made during training: the component, the diagnosis, the treatment, the step, and the limit it remained inside. Diffable against the last approved version.
+
+Needs: Training on the architecture
+
+[Read the page →](/product/diary)
+
+feature
+
+The Separator
+
+Which part of this is the source, not the signal?
+
+Separates what a model learned about the world from what it learned about where the data came from. One model ships and works anywhere, carrying a named removable part for each source and a record of the data that justified each.
+
+Needs: Training on the architecture, with source labels
+
+[Read the page →](/product/separator)
+
+feature
+
+Certified Deletion
+
+What data is in here, and can I remove it?
+
+Removes a named source's contribution and issues a signed certificate of exactly what was removed, with a bounded statement of what changed, and without retraining.
+
+Needs: The Separator, plus a deletion policy
+
+[Read the page →](/product/certified-deletion)
+
+feature
+
+The Federated Node
+
+Can we train together without pooling the data?
+
+Runs inside an existing federation. Each party's contribution is recorded before the averaging step destroys it, so a round that drops six points can be attributed to a site.
+
+Needs: A federation that already exists
+
+[Read the page →](/product/federated-node)
+
+feature
+
+The Update Engine
+
+What is this model allowed to change about itself?
+
+Retrains a deployed model inside a limit declared and signed beforehand, and produces the evidence that every change stayed inside it. Built to the shape of a predetermined change control plan.
+
+Needs: A limit agreed with the reviewer in advance
+
+[Read the page →](/product/update-engine)
+
+sector
+
+AI Training
+
+Is this run failing, and where?
+
+Mid-training collapse on a large run is the most expensive invisible problem in ML infrastructure. The industry currently has no per-component signal to detect it before it completes.
+
+Enters through The Warning Light
+
+[Read the page →](/sectors/ai-training)
+
+sector
+
+Regulated Finance
+
+What changed, and can a validator verify it?
+
+A model that cannot be audited at the component level cannot be validated under SR 26-2, the interagency model risk guidance that replaced SR 11-7 in April 2026. A model that cannot be validated cannot be deployed. A model that cannot be deployed is the entire project cost, written off.
+
+Enters through The Diary
+
+[Read the page →](/sectors/regulated-finance)
+
+sector
+
+Medical AI
+
+Which site caused this, and can we show it?
+
+Clinical AI that fails a CE marking audit delays market entry by 12–36 months. The audit requires documented evidence of training governance. That documentation does not exist for standard networks.
+
+Enters through The Federated Node
+
+[Read the page →](/sectors/medical-ai)
+
+sector
+
+Data Obligation
+
+What data is in here, and can I remove it?
+
+They trained on data they do not own outright. They signed a contract promising to delete it. The model was trained. The contract was terminated. The model still knows. The only compliant path is retrain from scratch: $100,000–$500,000.
+
+Enters through Certified Deletion
+
+[Read the page →](/sectors/data-obligation)
+
+sector
+
+Defense & Safety-Critical
+
+What did the system do to itself in the field?
+
+An autonomous system operating where conditions actively degrade — jamming, spoofing, sensor degradation, physical damage, radiation — faces a problem no frozen model solves.
+
+Enters through The Diary
+
+[Read the page →](/sectors/defense-safety-critical)
+
+capability
+
+ACCOUNT
+
+One of the six capabilities the bounded chain makes possible.
+
+Used by 6 of the seven features: The Warning Light, The Diary, The Separator, Certified Deletion, The Federated Node, The Update Engine.
+
+Reaches AI Training · Regulated Finance · Medical AI · Data Obligation · Defense & Safety-Critical
+
+[Read the page →](/technology)
+
+capability
+
+PROTECT
+
+One of the six capabilities the bounded chain makes possible.
+
+Used by 2 of the seven features: The Diary, The Update Engine.
+
+Reaches Regulated Finance · Defense & Safety-Critical
+
+[Read the page →](/technology)
+
+capability
+
+REPAIR
+
+One of the six capabilities the bounded chain makes possible.
+
+Used by 2 of the seven features: The Diary, The Update Engine.
+
+Reaches Regulated Finance · Defense & Safety-Critical
+
+[Read the page →](/technology)
+
+capability
+
+DETECT
+
+One of the six capabilities the bounded chain makes possible.
+
+Used by 4 of the seven features: The Proofreader, The Separator, Certified Deletion, The Federated Node.
+
+Reaches Medical AI · Data Obligation
+
+[Read the page →](/technology)
+
+capability
+
+ISOLATE
+
+One of the six capabilities the bounded chain makes possible.
+
+Used by 3 of the seven features: The Separator, Certified Deletion, The Federated Node.
+
+Reaches Medical AI · Data Obligation
+
+[Read the page →](/technology)
+
+capability
+
+SUPPRESS
+
+One of the six capabilities the bounded chain makes possible.
+
+Used by 3 of the seven features: The Separator, Certified Deletion, The Federated Node.
+
+Reaches Medical AI · Data Obligation
+
+[Read the page →](/technology)
+
 > One bounded node · six capabilities · seven features · five sectors Drag to turn it
 
 What that costs today

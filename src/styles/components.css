@@ -581,12 +581,26 @@ main {
 	   the very overlap bug the solid background was added to fix. */
 	background: var(--bg-base);
 	background: color-mix(in srgb, var(--bg-base) 90%, transparent);
-	backdrop-filter: blur(16px) saturate(140%);
 	-webkit-backdrop-filter: blur(16px) saturate(140%);
 	border-bottom: 1px solid transparent;
 	transition:
 		border-color var(--duration-fast) var(--ease-out),
 		box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* THE STANDARD PROPERTY, IN A RULE OF ITS OWN, ON PURPOSE.
+   Written next to the -webkit- one inside .nav it did not survive the build: the two
+   declarations are character-for-character identical, the CSS minifier treats that as
+   a duplicate and keeps one, and the one it kept was the prefixed spelling. The built
+   stylesheet shipped with zero unprefixed backdrop-filter — counted, not assumed —
+   which means Firefox, supporting only the standard spelling, got no blur at all and
+   the page scrolled under a bar that was merely 90% opaque, with the hero's own text
+   legible straight through the navigation. A separate rule cannot be merged into the
+   first, and @supports also stops a browser that has neither from being offered one. */
+@supports (backdrop-filter: blur(1px)) {
+	.nav {
+		backdrop-filter: blur(16px) saturate(140%);
+	}
 }
 
 /* a hairline of the signature accent across the very top of the page */
