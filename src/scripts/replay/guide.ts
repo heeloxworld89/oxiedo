@@ -159,8 +159,11 @@ export function buildGuide(bundle: Bundle): GuideStep[] {
 				'. The rows above now answer differently, and the record below is the reason.',
 	});
 
-	// What to do with it, on the stop where the reader is deciding whether to stay.
-	steps[steps.length - 1].body += ' Finish opens that record in full.';
+	// SAYS WHAT THE BUTTON ACTUALLY DOES. It used to promise the record, and Finish
+	// now rewinds the run and hands the controls over instead — a stop that describes
+	// a different button than the one under it is worse than a stop that says nothing.
+	steps[steps.length - 1].body +=
+		' Finish puts the run back to the first epoch at normal speed, and the controls are yours.';
 
 	/* THE FRAME, WRITTEN LAST AND SHOWN FIRST.
 	   A reader arrives here straight out of the title sequence and the first thing they

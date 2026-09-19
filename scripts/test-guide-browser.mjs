@@ -208,6 +208,34 @@ for (const vp of VIEWPORTS) {
 	} else {
 		ok(false, 'the guided read opens on /black-box without the cold open');
 	}
+	/* FINISHING HANDS THE RUN BACK IN A STATE WORTH PRESSING PLAY ON.
+	   The guide walks the reader to the last epoch and runs at 4x to keep the hops
+	   short. It used to leave both behind, so Finish dropped the reader on a console
+	   sitting at 199 of 199 with the scrubber hard right and the rate still on 4x — a
+	   thing that had visibly already happened, with no obvious next move. */
+	for (let i = 0; i < 12; i++) {
+		const last = await page.evaluate(() =>
+			document.querySelector('[data-guide-next]')?.textContent?.trim() === 'Finish');
+		await page.click('[data-guide-next]');
+		for (let k = 0; k < 60; k++) {
+			if (!(await page.evaluate(() => !!document.querySelector('[data-guide].is-travelling')))) break;
+			await page.waitForTimeout(80);
+		}
+		await page.waitForTimeout(120);
+		if (last) break;
+	}
+	const ended = await page.evaluate(() => ({
+		epoch: Number(document.querySelector('[data-scrub]')?.value ?? -1),
+		rate: [...document.querySelectorAll('[data-rate]')]
+			.find((b) => b.getAttribute('aria-pressed') === 'true')?.getAttribute('data-rate'),
+		guideOpen: !document.querySelector('[data-guide]')?.hidden,
+		pulsing: !document.querySelector('.rp')?.classList.contains('is-running'),
+	}));
+	ok(ended.guideOpen === false, 'Finish closes the guided read');
+	ok(ended.epoch === 0, `Finish rewinds to the first epoch (at ${ended.epoch})`);
+	ok(ended.rate === '1', `Finish restores normal speed (at ${ended.rate}x)`);
+	ok(ended.pulsing, 'Play is inviting a press after the guided read');
+
 	await page.keyboard.press('Escape');
 
 	/* SCROLLING DOES NOT PAUSE THE RUN. The observer used to pause below 40%

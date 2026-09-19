@@ -824,7 +824,29 @@ const SCENARIOS = [
 			if (lit) scrollToBand(lit);
 		}
 
-		function guideStop() {
+		/** Set the playback rate and make the rate buttons agree with it. */
+		function applyRate(r: number) {
+			engine?.setRate(r);
+			for (const b of root.querySelectorAll('[data-rate]')) {
+				b.setAttribute('aria-pressed', String(Number(b.getAttribute('data-rate')) === r));
+			}
+		}
+
+		/** Leave the guided read.
+		 *
+		 *  THE GUIDE PUTS THE CONSOLE BACK THE WAY IT FOUND IT. It runs at 4x so the hops
+		 *  between stops are short, and it used to leave that rate behind — so a reader
+		 *  who then pressed Play got the whole run at quadruple speed without having
+		 *  asked for it, and the 4x button sitting lit was the only clue why.
+		 *
+		 *  `rewind` additionally returns the run to the start, and is used when the guide
+		 *  is FINISHED rather than skipped. Finishing walks the reader to the last epoch,
+		 *  so the console was left at 199 of 199 with the scrubber hard right: a console
+		 *  that is over. Nothing left to press, which is exactly how it was described.
+		 *  Skipping does not rewind — somebody who leaves at stop three is leaving in
+		 *  order to look at the epoch they are on, and moving it would undo the thing
+		 *  they pressed Skip to do. */
+		function guideStop(rewind = false) {
 			guideAt = -1;
 			guideWaiting = -1;
 			travelFrom = -1;
@@ -837,6 +859,8 @@ const SCENARIOS = [
 			root.classList.remove('is-guided');
 			for (const el of root.querySelectorAll('.is-lit')) el.classList.remove('is-lit');
 			engine?.pause();
+			applyRate(1);
+			if (rewind) engine?.seekEpoch(0);
 			setPlayLabel();
 		}
 
@@ -922,10 +946,7 @@ const SCENARIOS = [
 			root.classList.add('is-guided');
 			selectTab('answers');
 			// Each hop sets its own rate from the distance — see guideGoTo.
-			engine.setRate(4);
-			for (const b of root.querySelectorAll('[data-rate]')) {
-				b.setAttribute('aria-pressed', String(b.getAttribute('data-rate') === '4'));
-			}
+			applyRate(4);
 			engine.seekEpoch(0);
 			guideAt = 0;
 			guideWaiting = -1;
@@ -939,11 +960,18 @@ const SCENARIOS = [
 		});
 
 		btnGuide.addEventListener('click', () => (guideRunning() ? guideStop() : guideStart()));
-		gq('[data-guide-skip]')!.addEventListener('click', guideStop);
+		gq('[data-guide-skip]')!.addEventListener('click', () => guideStop());
 		gq('[data-guide-next]')!.addEventListener('click', () => {
 			// Pressed while the run is still travelling: arrive now rather than queueing.
 			if (guideWaiting >= 0) { guideGoTo(guideAt, true); return; }
-			if (guideAt >= guide.length - 1) { guideStop(); showRecord(); return; }
+			/* FINISH HANDS THE RUN BACK, AT THE START AND AT 1x. It used to close the
+			   guide and open the record, which left the console at the last epoch with
+			   the scrubber hard right and the rate on 4x — a thing that had plainly
+			   already happened, with no obvious next move. The reader has just been
+			   walked through the argument; what they want now is to watch it themselves,
+			   so they are given a run that has not started yet and a Play button that is
+			   pulsing for the press. */
+			if (guideAt >= guide.length - 1) { guideStop(true); selectTab('answers'); return; }
 			guideGoTo(guideAt + 1);
 		});
 		gq('[data-guide-back]')!.addEventListener('click', () => {
