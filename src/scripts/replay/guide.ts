@@ -159,5 +159,36 @@ export function buildGuide(bundle: Bundle): GuideStep[] {
 				'. The rows above now answer differently, and the record below is the reason.',
 	});
 
+	// What to do with it, on the stop where the reader is deciding whether to stay.
+	steps[steps.length - 1].body += ' Finish opens that record in full.';
+
+	/* THE FRAME, WRITTEN LAST AND SHOWN FIRST.
+	   A reader arrives here straight out of the title sequence and the first thing they
+	   met was "Two networks, identical shape" — a sentence that only means something to
+	   somebody who already knows what they are looking at. They do not yet know this is
+	   a recording rather than a live demo, that something is about to go wrong on
+	   purpose, what they are being asked to watch for, or how long it will take. Every
+	   one of those is cheap to say and expensive to leave out, because the reader who
+	   cannot tell what is being claimed is the reader who leaves.
+
+	   Built after the rest so the length is counted rather than asserted: a scenario
+	   with no discrete event has a different number of stops, and a promise of "six"
+	   that delivers five is worse than no promise. */
+	steps.unshift({
+		epoch: 0,
+		target: '.rp-panes',
+		eyebrow: 'WHAT THIS IS',
+		title: 'A real training run, recorded and replayed',
+		body:
+			`Not a simulation and not a diagram. ${int(last + 1)} epochs of an actual run on ` +
+			`${c.dataset}, archived and played back exactly as it happened. Two networks train ` +
+			`side by side` +
+			(ev
+				? ', something is done to both of them partway through, and the question is which '
+				: ', the data they are given is wrong from the first step, and the question is which ') +
+			`one can say what happened to it. ${int(steps.length + 1)} stops, about a minute. Leave ` +
+			'at any point with Skip and the controls are yours.',
+	});
+
 	return steps;
 }

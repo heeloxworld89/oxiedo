@@ -177,6 +177,63 @@ for (const vp of VIEWPORTS) {
 	await page.close();
 }
 
+/* ── THE TWO TIMING BUGS, PINNED ─────────────────────────────────────────────
+   Both were reported from the page and neither is visible in a screenshot, so
+   neither can be caught by looking. */
+{
+	const page = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+	await page.addInitScript(() => { try { sessionStorage.removeItem('oxiedo.blackbox.guideSeen'); } catch { /* blocked */ } });
+	await page.goto(`${ORIGIN}/black-box?intro=0`);
+	await page.waitForTimeout(2200);
+
+	/* A HOP BETWEEN STOPS IS ABOUT A SECOND, WHATEVER THE DISTANCE. The clock is
+	   non-linear in epochs — the act covering the failure spends eight seconds on
+	   five of them — so at a flat rate the hop into that act ran past ten seconds
+	   with the component dimmed and nothing changing. It reads as a hang, and it
+	   was reported as one. */
+	const btn = page.locator('[data-guide]:not([hidden]) [data-guide-next]');
+	if (await page.locator('[data-guide]:not([hidden])').count()) {
+		for (let stop = 0; stop < 3; stop++) {
+			const t0 = Date.now();
+			await btn.click();
+			for (let i = 0; i < 150; i++) {
+				const travelling = await page.evaluate(() =>
+					!!document.querySelector('[data-guide].is-travelling'));
+				if (!travelling) break;
+				await page.waitForTimeout(80);
+			}
+			const secs = (Date.now() - t0) / 1000;
+			ok(secs < 3, `hop to stop ${stop + 2} finishes promptly (${secs.toFixed(2)}s)`);
+		}
+	} else {
+		ok(false, 'the guided read opens on /black-box without the cold open');
+	}
+	await page.keyboard.press('Escape');
+
+	/* SCROLLING DOES NOT PAUSE THE RUN. The observer used to pause below 40%
+	   visibility, and the console is taller than a laptop viewport — so reading the
+	   prose under it stopped the run and flipped the button back to Play. */
+	await page.evaluate(() => document.querySelector('[data-replay]')?.scrollIntoView({ block: 'center' }));
+	await page.waitForTimeout(1800);
+	const epoch = () => page.evaluate(() => Number(document.querySelector('[data-scrub]')?.value || 0));
+	const playing = () => page.evaluate(() =>
+		/pause/i.test(document.querySelector('[data-play]')?.textContent || ''));
+	// Started here rather than waited for: a conditional assertion is one that can
+	// quietly stop running, and this one did — it was skipped on the first pass
+	// because the guide had just been dismissed and nothing was playing.
+	if (!(await playing())) await page.click('[data-play]');
+	await page.waitForTimeout(700);
+	ok(await playing(), 'the run is playing before the scroll test');
+	await page.evaluate(() => window.scrollBy(0, 1400));
+	await page.waitForTimeout(900);
+	const e1 = await epoch();
+	await page.waitForTimeout(900);
+	const e2 = await epoch();
+	ok(e2 > e1, `scrolling away does not pause the run (${e1} -> ${e2})`);
+	ok(await playing(), 'the button still reads Pause after scrolling away');
+	await page.close();
+}
+
 // The homepage embed loops and must never offer the guided read over the top of itself.
 const home = await newPg({ viewport: { width: 1440, height: 900 } });
 await home.goto(`${ORIGIN}/`, { waitUntil: 'networkidle' });

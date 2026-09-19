@@ -888,6 +888,20 @@ const SCENARIOS = [
 				return;
 			}
 
+			/* THE TRAVEL TAKES THE SAME TIME WHATEVER THE DISTANCE.
+			   It used to run at a flat 4x, and the clock is deliberately non-linear in
+			   epochs — the act covering the failure spends eight seconds on five epochs.
+			   So the hop into that act took upwards of ten seconds at 4x, during which
+			   the component is dimmed and nothing visibly changes. That is the step that
+			   reads as the whole thing having hung, and it was reported as exactly that.
+
+			   The distance is known in advance: timeAt(target) - timeAt(here) is the run
+			   time at 1x. Dividing by the budget gives the rate that arrives on time, so
+			   a one-epoch nudge and a hundred-epoch jump both take about a second and
+			   the reader never waits on a number they were not shown. */
+			const TRAVEL_S = 1.05;
+			const secs = Math.max(0, engine.timeAt(target) - engine.timeAt(here));
+			engine.setRate(Math.min(90, Math.max(3, secs / TRAVEL_S)));
 			guideWaiting = target;
 			travelFrom = here;
 			paintGuide();                       // destination copy is up before the travel starts
@@ -907,7 +921,8 @@ const SCENARIOS = [
 			document.body.appendChild(elGuide);
 			root.classList.add('is-guided');
 			selectTab('answers');
-			engine.setRate(4);          // the gaps between stops are long at 1x
+			// Each hop sets its own rate from the distance — see guideGoTo.
+			engine.setRate(4);
 			for (const b of root.querySelectorAll('[data-rate]')) {
 				b.setAttribute('aria-pressed', String(b.getAttribute('data-rate') === '4'));
 			}
@@ -1004,7 +1019,9 @@ const SCENARIOS = [
 					const pct = Math.max(0, Math.min(1, (e - travelFrom) / span));
 					elGuide.style.setProperty('--travel', `${(pct * 100).toFixed(1)}%`);
 					const live = elGuide.querySelector('[data-guide-live]');
-					if (live) live.textContent = `running · epoch ${Math.round(e)}`;
+					// Where it is AND where it is going. "epoch 143" alone tells a reader
+					// nothing about how much longer they are waiting for.
+					if (live) live.textContent = `running · epoch ${Math.round(e)} → ${guideWaiting}`;
 				}
 				// Arrive, hold, and settle the card.
 				if (guideWaiting >= 0 && e >= guideWaiting) {
@@ -1190,12 +1207,25 @@ const SCENARIOS = [
 		// with site data blocked, and an exception here would take out the autostart with it.
 		// A reader whose storage is unavailable gets the guide every visit, which is the safe
 		// direction to fail in.
+		/* ONCE PER SESSION, NOT ONCE PER BROWSER.
+		   The flag used to live in localStorage, so the guided read opened for a given
+		   reader exactly once, ever. On the page whose entire subject is this component
+		   that is the wrong trade: the second visit — the one where somebody has come
+		   back to look properly — got no walkthrough at all, and the report was simply
+		   that it does not open. sessionStorage gives every fresh visit the read and
+		   still never repeats it inside one, so it cannot interrupt somebody who has
+		   dismissed it and is working.
+
+		   Wrapped both ways: storage throws in a private window and with site data
+		   blocked, and an exception here would take the autostart down with it. A reader
+		   whose storage is unavailable gets the read every visit, which is the safe
+		   direction to fail in. */
 		const GUIDE_SEEN = 'oxiedo.blackbox.guideSeen';
 		function guideAlreadySeen() {
-			try { return localStorage.getItem(GUIDE_SEEN) === '1'; } catch { return false; }
+			try { return sessionStorage.getItem(GUIDE_SEEN) === '1'; } catch { return false; }
 		}
 		function rememberGuideSeen() {
-			try { localStorage.setItem(GUIDE_SEEN, '1'); } catch { /* storage unavailable */ }
+			try { sessionStorage.setItem(GUIDE_SEEN, '1'); } catch { /* storage unavailable */ }
 		}
 
 		// THE COLD OPEN INTERLOCK. /black-box plays a title sequence over the loaded page, and
@@ -1265,15 +1295,42 @@ const SCENARIOS = [
 			});
 		}
 
+		/* SCROLLING DOES NOT PAUSE IT. This used to pause the run whenever less than
+		   forty percent of the console was on screen, which on this page is most of the
+		   time: the component is taller than a laptop viewport, so reading the prose
+		   underneath it stopped the run, and the play button flipped back to Play under
+		   the reader's hand. Worse during a guided read, which scrolls the page itself
+		   to bring each band into view and was therefore pausing the very run it was
+		   walking through.
+
+		   Leaving the screen is not a request to stop. A reader who scrolls past has
+		   simply moved on, and the tab going into the background is already covered by
+		   visibilitychange, which is the case that actually wastes a frame budget. The
+		   observer's only job now is deciding when to START. */
 		const io = new IntersectionObserver((entries) => {
 			inView = entries[0]?.isIntersecting ?? true;
-			if (!inView) { clearTimeout(loopTimer); engine?.pause(); setPlayLabel(); return; }
-			maybeAutoStart();
-		}, { threshold: 0.4 });
+			if (inView) maybeAutoStart();
+		}, { threshold: 0.25 });
 		io.observe(root);
 
-		// The curtain has come down: take over.
-		const onColdOpenDone = () => maybeAutoStart();
+		/* THE CURTAIN HAS COME DOWN: TAKE OVER, AND BRING THE READER WITH IT.
+		   The cold open plays over the top of the page at whatever scroll position the
+		   landing had, which is the top — and the console is below the fold. So the
+		   handoff fired, found the component out of view, and did nothing; the guided
+		   read then waited for a scroll that the reader had no reason to make, because
+		   nothing had told them there was anything to scroll to. It looked like the
+		   sequence simply ended in silence.
+
+		   Bringing the console into view is the handoff. inView is set here rather than
+		   waited for, because the observer will not report until after the scroll has
+		   settled and the reader would watch a still console until then. */
+		const onColdOpenDone = () => {
+			if (root.dataset.guideMode === 'auto' && !guideAlreadySeen()) {
+				root.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
+				inView = true;
+			}
+			maybeAutoStart();
+		};
 		document.addEventListener('coldopen:done', onColdOpenDone);
 
 		const onVisibility = () => {
