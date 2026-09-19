@@ -354,35 +354,157 @@ const ghostEdges: [number, number][] = [
 	    and read as a comparison, which is what they are. */}
 	<HeroModel />
 
-	<div class="hero-fig-body">
-		<section class="hero-fig-col">
-			<p class="hero-fig-col-title">What that costs today</p>
-			<dl class="hero-fig-stats">
-				{failureRows.map((r) => (
-					<div>
-						<dt><span class="hero-fig-num">{r.figure}</span><span class="hero-fig-unit">{r.unit}</span></dt>
-						<dd>{r.body}</dd>
-					</div>
-				))}
-			</dl>
-			<p class="hero-fig-src">Published figures · one per industry</p>
-		</section>
+	{/* ── THE BOARD ───────────────────────────────────────────────────────────
+	    Two columns of four rows became four columns of two, and the change is not
+	    decoration: the rows were already pairs and nothing on the page said so.
+	    $15M burned on a failed run sat in the left column while "keep the run —
+	    names the component that failed" sat in the right, four hundred pixels away
+	    and two rows down. Stacking each answer under its own cost puts the pair in
+	    one glance, which is the argument the section exists to make.
 
-		<section class="hero-fig-col">
-			<p class="hero-fig-col-title hero-fig-col-title--lit">What replaces it</p>
-			<dl class="hero-fig-stats hero-fig-stats--lit">
-				{resultRows.map((r) => (
-					<div>
-						<dt><span class="hero-fig-num">{r.figure}</span><span class="hero-fig-unit">{r.unit}</span></dt>
-						<dd>{r.body}</dd>
-					</div>
-				))}
-			</dl>
-			<p class="hero-fig-src">Built in, not bolted on</p>
-		</section>
+	    They are pinned notes because a pinned note is an object: it has an edge, it
+	    casts a shadow, it hangs slightly crooked, and it can be picked up and moved.
+	    Eight of them on the wall read as evidence someone collected. Eight rows of
+	    a definition list read as a table of contents. */}
+	<div class="board" data-board>
+		<div class="board-head">
+			<p class="board-label">What that costs today</p>
+			<p class="board-note">Published figures · one per sector</p>
+		</div>
+		<ul class="board-notes">
+			{failureRows.map((r) => (
+				<li class="note note--cost">
+					<span class="note-pin" aria-hidden="true"></span>
+					<p class="note-figure">
+						<span class="note-num">{r.figure}</span>{r.unit && <span class="note-unit">{r.unit}</span>}
+					</p>
+					<p class="note-body">{r.body}</p>
+				</li>
+			))}
+		</ul>
+
+		<div class="board-head board-head--lit">
+			<p class="board-label">What replaces it</p>
+			<p class="board-note">Built in, not bolted on</p>
+		</div>
+		<ul class="board-notes">
+			{resultRows.map((r) => (
+				<li class="note note--answer">
+					<span class="note-pin" aria-hidden="true"></span>
+					<p class="note-figure">
+						<span class="note-num">{r.figure}</span>{r.unit && <span class="note-unit">{r.unit}</span>}
+					</p>
+					<p class="note-body">{r.body}</p>
+				</li>
+			))}
+		</ul>
+
+		{/* Appears only once a note has been moved, and only where dragging is on. */}
+		<button type="button" class="board-tidy" data-board-tidy hidden>Straighten the board</button>
 	</div>
 </div>
 
+
+<script>
+	/* ── PICKING A NOTE OFF THE WALL ──────────────────────────────────────────
+	   Pure enhancement. Every word is in the HTML and the board is laid out by CSS
+	   grid, so with this script removed the section is exactly as readable — the
+	   notes simply stop being liftable. Nothing is behind the gesture.
+
+	   Not on touch. Dragging needs the pointer stream, and taking it means calling
+	   touch-action: none on the note, which kills the page scroll of anyone whose
+	   thumb happens to land on one. A phone gets the board and keeps its scroll. */
+	function mountBoard() {
+		const board = document.querySelector<HTMLElement>('[data-board]');
+		if (!board) return;
+		if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+		const notes = [...board.querySelectorAll<HTMLElement>('.note')];
+		if (!notes.length) return;
+		const tidy = board.querySelector<HTMLButtonElement>('[data-board-tidy]');
+		board.classList.add('is-draggable');
+
+		let top = 1;
+		let held: HTMLElement | null = null;
+		let startX = 0;
+		let startY = 0;
+		let baseX = 0;
+		let baseY = 0;
+		let moved = false;
+
+		const num = (el: HTMLElement, k: string) =>
+			parseFloat(el.style.getPropertyValue(k) || '0') || 0;
+
+		const onDown = (e: PointerEvent) => {
+			const note = (e.target as Element)?.closest<HTMLElement>('.note');
+			if (!note || e.button !== 0) return;
+			held = note;
+			startX = e.clientX;
+			startY = e.clientY;
+			baseX = num(note, '--dx');
+			baseY = num(note, '--dy');
+			// Whatever is picked up goes on top and stays there, the way a pile works.
+			note.style.zIndex = String(++top);
+			note.classList.add('is-held');
+			try { note.setPointerCapture(e.pointerId); } catch { /* fine */ }
+		};
+
+		const onMove = (e: PointerEvent) => {
+			if (!held) return;
+			/* CLAMPED TO THE BOARD. Unclamped, a note dragged to the right edge widens
+			   the document and the whole page gains a horizontal scrollbar — the note
+			   is inside the layout, not floating above it. */
+			const b = board.getBoundingClientRect();
+			const r = held.getBoundingClientRect();
+			const dx = baseX + (e.clientX - startX);
+			const dy = baseY + (e.clientY - startY);
+			const minX = dx - (r.left - b.left);
+			const maxX = dx + (b.right - r.right);
+			const minY = dy - (r.top - b.top) - 40;
+			const maxY = dy + (b.bottom - r.bottom) + 40;
+			held.style.setProperty('--dx', `${Math.round(Math.min(Math.max(dx, minX), maxX))}px`);
+			held.style.setProperty('--dy', `${Math.round(Math.min(Math.max(dy, minY), maxY))}px`);
+			if (!moved && Math.hypot(e.clientX - startX, e.clientY - startY) > 4) {
+				moved = true;
+				if (tidy) tidy.hidden = false;
+			}
+		};
+
+		const onUp = (e: PointerEvent) => {
+			if (!held) return;
+			held.classList.remove('is-held');
+			try { held.releasePointerCapture(e.pointerId); } catch { /* gone */ }
+			held = null;
+		};
+
+		board.addEventListener('pointerdown', onDown);
+		board.addEventListener('pointermove', onMove);
+		board.addEventListener('pointerup', onUp);
+		board.addEventListener('pointercancel', onUp);
+
+		tidy?.addEventListener('click', () => {
+			for (const n of notes) {
+				n.style.removeProperty('--dx');
+				n.style.removeProperty('--dy');
+				n.style.removeProperty('z-index');
+			}
+			top = 1;
+			moved = false;
+			tidy.hidden = true;
+		});
+
+		document.addEventListener('astro:before-swap', () => {
+			board.removeEventListener('pointerdown', onDown);
+			board.removeEventListener('pointermove', onMove);
+			board.removeEventListener('pointerup', onUp);
+			board.removeEventListener('pointercancel', onUp);
+		}, { once: true });
+	}
+
+	document.addEventListener('astro:page-load', mountBoard);
+	if (document.readyState !== 'loading') mountBoard();
+	else document.addEventListener('DOMContentLoaded', mountBoard);
+</script>
 
 <style>
 	.hero-visual {
@@ -433,8 +555,8 @@ const ghostEdges: [number, number][] = [
 
 	/* ── the ask: five buyers, five questions, one missing answer ── */
 	.hero-fig-ask-label,
-	.hero-fig-col-title,
-	.hero-fig-src {
+	.board-label,
+	.board-note {
 		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
 		font-size: 0.6875rem;
 		letter-spacing: 0.14em;
@@ -484,64 +606,131 @@ const ghostEdges: [number, number][] = [
 		opacity: 0.72;
 	}
 
-	/* ── the comparison ── */
-	.hero-fig-body {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--space-2xl);
-		align-items: start;
-	}
+	/* ── the board ───────────────────────────────────────────────────────────── */
+	.board { display: grid; gap: var(--space-md); }
 
-	/* Grid cell: min-width:0 or a long label pushes the track wider than its share and squeezes
-	   the diagram — the standard grid overflow trap. */
-	.hero-fig-col { min-width: 0; }
-
-	.hero-fig-col-title { opacity: 0.6; }
-	.hero-fig-col-title--lit { color: var(--accent-on-dark); opacity: 0.9; }
-
-	.hero-fig-stats { margin: var(--space-lg) 0 0; }
-
-	.hero-fig-stats > div {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		min-height: 7.25rem;
-		padding-block: var(--space-md);
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	.hero-fig-stats dt {
+	.board-head {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: baseline;
-		gap: 4px;
+		justify-content: space-between;
+		gap: var(--space-sm) var(--space-lg);
+		padding-bottom: 2px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+	}
+	/* Between the two groups only. Applied to every .board-notes it also padded the
+	   bottom of the section, leaving a band of empty wall above the footer. */
+	.board-notes:first-of-type { margin-bottom: var(--space-2xl); }
+	.board-head--lit .board-label { color: var(--accent-on-dark); opacity: 0.9; }
+	.board-label { opacity: 0.6; }
+	.board-note { opacity: 0.34; }
+
+	.board-notes {
+		display: grid;
+		grid-template-columns: 1fr;
+		/* Row gap carries the pin, which sits above the paper's top edge. Tighter in
+		   one column, where eight notes stacked at the wide gap is a lot of scrolling
+		   for eight short sentences. */
+		gap: var(--space-xl) var(--space-lg);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	/* PAPER, ON A WALL. Cream is the site's own ground colour, so the notes are not a
+	   new material introduced for effect — they are the rest of the site, pinned to
+	   the dark. Barely any corner radius: paper is cut, not rounded. */
+	.note {
+		position: relative;
+		min-width: 0;
+		padding: 22px 18px 18px;
+		border-radius: 2px;
+		/* Not a flat fill: a sheet catching the light has a top that is a shade
+		   brighter than its foot, and the hairline along the top edge is what stops
+		   the paper reading as a rectangle of colour. */
+		background:
+			linear-gradient(176deg, #FBFAF5 0%, var(--bg-base) 42%, #EBE8DE 100%);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.9),
+			0 1px 1px rgba(0, 0, 0, 0.34),
+			0 12px 24px -8px rgba(0, 0, 0, 0.5);
+		transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0) rotate(var(--tilt, 0deg));
+		transition:
+			transform var(--duration-fast, 180ms) var(--ease-out, ease),
+			box-shadow var(--duration-fast, 180ms) var(--ease-out, ease);
+	}
+
+	/* THE TILT IS WRITTEN HERE, NOT ON THE ELEMENT. An inline custom property beats
+	   any stylesheet rule, so a tilt in a style attribute could never be unset on
+	   hover — and straightening a note as the reader looks at it is the whole trick. */
+	.board-notes > :nth-child(1) { --tilt: -1.4deg; }
+	.board-notes > :nth-child(2) { --tilt: 1.1deg; }
+	.board-notes > :nth-child(3) { --tilt: -0.7deg; }
+	.board-notes > :nth-child(4) { --tilt: 1.5deg; }
+	.board-notes + .board-head + .board-notes > :nth-child(1) { --tilt: 1.2deg; }
+	.board-notes + .board-head + .board-notes > :nth-child(2) { --tilt: -1.5deg; }
+	.board-notes + .board-head + .board-notes > :nth-child(3) { --tilt: 0.8deg; }
+	.board-notes + .board-head + .board-notes > :nth-child(4) { --tilt: -1deg; }
+
+	/* THE PIN. A brass head catching light from the upper left, with its own small
+	   shadow on the paper below it — without that shadow it reads as a printed dot
+	   rather than as a thing holding the paper up. */
+	.note-pin {
+		position: absolute;
+		top: -8px;
+		left: 50%;
+		width: 15px;
+		height: 15px;
+		margin-left: -7.5px;
+		border-radius: 50%;
+		background:
+			radial-gradient(circle at 34% 30%, #FFE9AE 0%, #E0A93B 38%, #A5600C 78%, #6B3D07 100%);
+		box-shadow:
+			0 2px 3px rgba(0, 0, 0, 0.45),
+			inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+	}
+
+	.note-figure {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 3px;
+		margin: 0;
 		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
 		font-weight: 700;
-		color: var(--chart-warning-on-dark);
 	}
+	.note--cost .note-figure { color: var(--chart-warning); }
+	.note--answer .note-figure { color: var(--accent-dark); }
 
-	.hero-fig-stats--lit dt { color: var(--accent-on-dark); }
+	/* The cost notes hold numbers, which want to be big. The answer notes hold short
+	   phrases — "Proof, built in" at 1.75rem overruns its own note — so they take a
+	   size of their own rather than being shortened until they happen to fit. */
+	.note--cost .note-num { font-size: 1.875rem; line-height: 1; }
+	.note--answer .note-num { font-size: 1.1875rem; line-height: 1.25; }
+	.note-unit { font-size: 0.9375rem; font-weight: 400; opacity: 0.85; }
 
-	.hero-fig-num { font-size: 1.75rem; line-height: 1; }
-
-	/* The cost column holds numbers, which want to be big. The answer column holds short phrases —
-	   at 1.75rem "Proof, built in" is 250px against a 230px track, so it gets its own size rather
-	   than being shortened until it happens to fit. */
-	.hero-fig-stats--lit .hero-fig-num {
-		font-size: 1.25rem;
-		line-height: 1.25;
-	}
-	.hero-fig-unit { font-size: 0.9375rem; font-weight: 400; opacity: 0.8; }
-
-	.hero-fig-stats dd {
-		margin: 6px 0 0;
+	.note-body {
+		margin: 10px 0 0;
 		font-size: 0.875rem;
 		line-height: 1.5;
-		color: var(--text-on-dark);
-		opacity: 0.66;
+		color: var(--text-secondary);
 	}
 
-	.hero-fig-src { margin-top: var(--space-md); opacity: 0.34; }
+	.board-tidy {
+		justify-self: start;
+		padding: 7px 14px;
+		border: 1px solid rgba(255, 255, 255, 0.22);
+		border-radius: 999px;
+		background: transparent;
+		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+		font-size: 0.6875rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--text-on-dark);
+		opacity: 0.6;
+		cursor: pointer;
+	}
+	.board-tidy:hover { opacity: 1; border-color: var(--accent-on-dark); }
 
 	/* ── the diagram ── */
 	.hero-visual { margin: 0; min-width: 0; }
@@ -589,14 +778,47 @@ const ghostEdges: [number, number][] = [
 
 	/* Side columns only flank the diagram once there is room for all three. Below that they stack,
 	   which is the correct mobile behaviour and costs nothing to get. */
-	@media (min-width: 1080px) {
-		.hero-fig-body {
-			/* Two equal columns. They carry the same shape of content — a heading, four
-			   figures, a source line — so equal tracks let them read as the comparison
-			   they are; the old 0.85 / 1.9 / 0.85 existed only to leave room for the
-			   diagram between them. */
+	@media (min-width: 620px) {
+		.board-notes {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: var(--space-3xl);
+			gap: var(--space-2xl) var(--space-lg);
 		}
+	}
+
+	/* Four across, so each answer lands under the cost it answers. */
+	@media (min-width: 1000px) {
+		.board-notes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+	}
+
+	/* PICKING ONE UP. Only on a device with a real pointer: on a touch screen the
+	   listener would have to claim the gesture to drag, and claiming it takes away
+	   the page scroll that starts on top of a note. Straightening on hover is the
+	   same idea in miniature — you square a photograph up to look at it. */
+	@media (hover: hover) and (pointer: fine) {
+		.note { cursor: grab; }
+		.note:hover {
+			--tilt: 0deg;
+			box-shadow:
+				0 2px 2px rgba(0, 0, 0, 0.3),
+				0 22px 40px -12px rgba(0, 0, 0, 0.62);
+		}
+		.note.is-held {
+			cursor: grabbing;
+			transition: box-shadow var(--duration-fast, 180ms) var(--ease-out, ease);
+			box-shadow:
+				0 3px 3px rgba(0, 0, 0, 0.3),
+				0 34px 56px -14px rgba(0, 0, 0, 0.7);
+		}
+		/* Text selection and a drag are the same gesture; the note is four lines of
+		   copy that is also on the page in the panels, so the drag wins. */
+		.board.is-draggable .note {
+			user-select: none;
+			-webkit-user-select: none;
+			touch-action: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.note { transition: none; }
 	}
 </style>

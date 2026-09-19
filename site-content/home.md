@@ -251,21 +251,43 @@ Reaches Medical AI · Data Obligation
 
 What that costs today
 
-- **$15M** — Of computing burned on one training run that failed.
-- **419** — Times that run stopped in 54 days. Nobody knew why.
-- **7%** — Of worldwide revenue. The EU fine ceiling, from August 2026.
-- **92%** — Of approved medical AI can never be updated at all.
+Published figures · one per sector
 
-Published figures · one per industry
+- $15M
+
+  Of computing burned on one training run that failed.
+
+- 419
+
+  Times that run stopped in 54 days. Nobody knew why.
+
+- 7%
+
+  Of worldwide revenue. The EU fine ceiling, from August 2026.
+
+- 92%
+
+  Of approved medical AI can never be updated at all.
 
 What replaces it
 
-- **Keep the run** — Names the component that failed, so it is repaired rather than the run rerun.
-- **No mystery** — Every stop arrives with its cause named, not a guess.
-- **Proof, built in** — The evidence a regulator wants, written as it learns.
-- **It can change** — Every change capped and logged against a limit declared in advance.
-
 Built in, not bolted on
+
+- Keep the run
+
+  Names the component that failed, so it is repaired rather than the run rerun.
+
+- No mystery
+
+  Every stop arrives with its cause named, not a guess.
+
+- Proof, built in
+
+  The evidence a regulator wants, written as it learns.
+
+- It can change
+
+  Every change capped and logged against a limit declared in advance.
 
 Five sectors where the data is locked and worth the most
 
