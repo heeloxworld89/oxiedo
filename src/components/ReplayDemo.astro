@@ -2569,17 +2569,72 @@ const SCENARIOS = [
 		background: var(--plate-sunk);
 	}
 
+	/* ── THE CONTROLS ARE KEYS ────────────────────────────────────────────────────
+	   These were flat rectangles with a 1px border, which is what a link looks like when
+	   it has been asked to look like a button. This screen is an instrument, and the one
+	   thing every instrument ever built has in common is that its controls are objects you
+	   can push. So they are extruded: a side wall under the cap, a bevel along the top
+	   edge where the light would catch, and a contact shadow on the plate beneath.
+
+	   The wall is the whole trick. --key-rise is both the height of the wall and the
+	   distance the cap travels on :active, so a press does not "animate" — it lands, flush
+	   with the surface it was standing on, and springs back on release. Hover lifts it 1px
+	   and deepens the wall to match, so the object has weight before it is touched.
+
+	   box-shadow and transform only. No background-image anywhere: a gradient fill leaves
+	   background-color transparent, which is exactly how a selected option in this
+	   component once measured 1.17:1 against its own label. */
+	.rp {
+		--key-rise: 3px;
+		--key-wall: color-mix(in oklab, #000 42%, var(--plate));
+		--key-bevel: rgba(255, 255, 255, 0.16);
+		--key-cast: rgba(0, 0, 0, 0.22);
+	}
+	.rp--app {
+		--key-wall: color-mix(in oklab, #000 62%, var(--plate));
+		--key-bevel: rgba(255, 255, 255, 0.11);
+		--key-cast: rgba(0, 0, 0, 0.45);
+	}
+
 	.rp-btn {
 		font: inherit;
 		font-size: var(--text-small);
-		padding: 6px 12px;
+		padding: 7px 13px;
 		border: 1px solid var(--rule);
-		border-radius: 3px;
-		background: var(--plate);
+		border-radius: 5px;
+		background-color: var(--plate);
 		color: var(--fg);
 		cursor: pointer;
+		position: relative;
+		box-shadow:
+			inset 0 1px 0 var(--key-bevel),
+			0 var(--key-rise) 0 var(--key-wall),
+			0 calc(var(--key-rise) + 2px) 7px var(--key-cast);
+		transition:
+			transform 130ms var(--ease-out, ease),
+			box-shadow 130ms var(--ease-out, ease),
+			filter 130ms var(--ease-out, ease);
 	}
-	.rp-btn:hover { border-color: var(--border-strong); }
+	.rp-btn:hover:not(:disabled):not([aria-disabled='true']) {
+		border-color: var(--border-strong);
+		transform: translateY(-1px);
+		box-shadow:
+			inset 0 1px 0 var(--key-bevel),
+			0 calc(var(--key-rise) + 1px) 0 var(--key-wall),
+			0 calc(var(--key-rise) + 4px) 11px var(--key-cast);
+	}
+	/* It lands. The travel equals the wall, so the cap finishes flush with the plate, and
+	   it gets there in 40ms — a key that takes 130ms to go down feels broken, while the
+	   same duration coming back up reads as the spring returning. */
+	.rp-btn:active:not(:disabled):not([aria-disabled='true']) {
+		transform: translateY(var(--key-rise));
+		box-shadow:
+			inset 0 1px 2px rgba(0, 0, 0, 0.3),
+			0 0 0 var(--key-wall),
+			0 1px 2px var(--key-cast);
+		transition-duration: 40ms;
+	}
+	.rp-btn:disabled, .rp-btn[aria-disabled='true'] { box-shadow: none; transform: none; }
 	/* ── THE THREE ACTIONS ────────────────────────────────────────
 	   A first-time visitor arrives at a still frame and has no reason to think any of this
 	   moves. All three controls were the same cream chrome as the speed toggles, so nothing
@@ -2608,7 +2663,12 @@ const SCENARIOS = [
 		justify-content: center;
 		gap: 7px;
 	}
-	.rp-btn--play:hover { filter: brightness(1.08); }
+	.rp-btn--play {
+		--key-rise: 4px;
+		--key-wall: color-mix(in oklab, #000 40%, var(--ormas));
+		--key-bevel: rgba(255, 255, 255, 0.42);
+	}
+	.rp-btn--play:hover:not(:disabled) { filter: brightness(1.05); }
 
 	/* A glyph, so the control is recognisable before the label is read. Driven by the class
 	   the island already toggles on the root, so there is no second source of truth about
@@ -2629,7 +2689,21 @@ const SCENARIOS = [
 		84%      { box-shadow: 0 0 0 7px color-mix(in oklab, var(--ormas) 0%, transparent); }
 		100%     { box-shadow: 0 0 0 0 color-mix(in oklab, var(--ormas) 0%, transparent); }
 	}
-	.rp:not(.is-running) .rp-btn--play {
+	/* THE PULSE MOVED TO A RING, and it had to. It animated box-shadow on the button
+	   itself, and a running animation outranks an ordinary declaration — so the moment
+	   the key grew a wall, the attention pulse erased it. The play control was the one
+	   button on the screen with no depth, at rest, which is the only state a visitor who
+	   has not pressed anything ever sees. Measured: box-shadow resolved to the pulse
+	   alone, and the pressed inset never applied.
+	   A pseudo-element owns the ring now, so the two effects stop sharing a property. */
+	.rp-btn--play::after {
+		content: '';
+		position: absolute;
+		inset: -1px;
+		border-radius: inherit;
+		pointer-events: none;
+	}
+	.rp:not(.is-running) .rp-btn--play::after {
 		animation: rp-play-attention 2600ms var(--ease-out) infinite;
 	}
 
@@ -2638,11 +2712,19 @@ const SCENARIOS = [
 		color: var(--ormas-text);
 		font-weight: 600;
 	}
-	.rp-btn--guide:hover { background: color-mix(in oklab, var(--ormas) 9%, transparent); }
+	.rp-btn--guide {
+		--key-wall: color-mix(in oklab, #000 48%, var(--ormas));
+		--key-bevel: color-mix(in oklab, var(--ormas) 30%, transparent);
+	}
+	/* background-color, not the shorthand: `background` would wipe the wall out, and a
+	   hover that silently flattens the key is worse than no hover at all. */
+	.rp-btn--guide:hover:not(:disabled) {
+		background-color: color-mix(in oklab, var(--ormas) 9%, var(--plate));
+	}
 	/* 8%, not 14%. The active tint is behind amber text, and at 14% it took the label to
 	   3.73:1. The state still reads — it is the only tinted control in the row. */
 	.rp.is-guided .rp-btn--guide {
-		background: color-mix(in oklab, var(--ormas) 8%, transparent);
+		background-color: color-mix(in oklab, var(--ormas) 8%, var(--plate));
 	}
 
 	.rp-btn--event {
@@ -2650,12 +2732,24 @@ const SCENARIOS = [
 		color: var(--fg);
 		font-weight: 600;
 	}
-	.rp-btn--event:hover { border-color: var(--fg); }
+	.rp-btn--event:hover:not(:disabled) { border-color: var(--fg); }
 
 	@media (prefers-reduced-motion: reduce) {
-		.rp:not(.is-running) .rp-btn--play { animation: none; }
+		.rp:not(.is-running) .rp-btn--play::after { animation: none; }
+		/* The keys keep their depth — shading is not motion — but they stop travelling. */
+		.rp-btn, .rp-rate { transition: none; }
+		.rp-btn:hover, .rp-rate:hover { transform: none; }
 	}
-	.rp-btn--primary { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; font-weight: 600; }
+	/* A cap moulded in one colour has a side in that same colour, darker — not a grey
+	   side glued on. Every variant below sets its own wall for that reason. */
+	.rp-btn--primary {
+		background-color: var(--accent-dark);
+		border-color: var(--accent-dark);
+		color: #fff;
+		font-weight: 600;
+		--key-wall: color-mix(in oklab, #000 38%, var(--accent-dark));
+		--key-bevel: rgba(255, 255, 255, 0.26);
+	}
 
 	.rp-scrub { flex: 1 1 200px; display: block; }
 	.rp-scrub input { width: 100%; accent-color: var(--ormas); }
@@ -2665,11 +2759,32 @@ const SCENARIOS = [
 	.rp-nature:empty { display: none; }
 
 	.rp-rates { display: flex; gap: 2px; }
+	/* Shorter travel than the action keys — these are a segmented speed control, not a
+	   command — but keyed all the same, because three raised caps beside three flat
+	   rectangles in one row reads as an unfinished screen rather than as a hierarchy. */
 	.rp-rate {
 		font: inherit; font-size: 11px; font-family: var(--mono);
-		padding: 5px 8px;
+		padding: 6px 9px;
 		border: 1px solid var(--rule);
-		background: var(--plate); color: var(--fg-dim); cursor: pointer;
+		border-radius: 4px;
+		background-color: var(--plate); color: var(--fg-dim); cursor: pointer;
+		box-shadow:
+			inset 0 1px 0 var(--key-bevel),
+			0 2px 0 var(--key-wall),
+			0 3px 5px var(--key-cast);
+		transition: transform 120ms var(--ease-out, ease), box-shadow 120ms var(--ease-out, ease);
+	}
+	.rp-rate:hover { transform: translateY(-1px); }
+	.rp-rate:active {
+		transform: translateY(2px);
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 var(--key-wall);
+		transition-duration: 40ms;
+	}
+	/* The selected speed is held down — the state IS the physical position, which is how
+	   a real segmented control works and needs no extra colour to say it. */
+	.rp-rate[aria-pressed='true'] {
+		transform: translateY(2px);
+		box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.34), 0 0 0 var(--key-wall);
 	}
 	.rp-rate[aria-pressed='true'] { color: var(--plate); background: var(--fg); font-weight: 700; }
 

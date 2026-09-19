@@ -683,6 +683,45 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 	await page.close();
 }
 
+/* ── THE CONTROLS ARE KEYS, AND MUST STAY KEYS ─────────────────────────────────
+   Each control carries a side wall: a box-shadow with zero blur and a positive y
+   offset, which is what makes it read as an object rather than a rectangle.
+
+   This is asserted because it broke silently once, on the button it mattered most
+   for. The play control runs an attention pulse, the pulse animated box-shadow, and a
+   running animation outranks an ordinary declaration — so the wall existed in the
+   stylesheet and never once reached the screen at rest, which is the only state a
+   visitor who has not pressed anything ever sees. The pulse owns a pseudo-element now,
+   and this fails if the two are ever put back on the same property. */
+{
+	const page = await newPg({ viewport: { width: 1440, height: 900 } });
+	await page.goto(BLACKBOX, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(2200);
+	const keys = await page.evaluate(() => {
+		const hasWall = (v) => v !== 'none'
+			&& v.split(/,(?![^(]*\))/).some((l) => /\s0px\s+0px(\s|$)/.test(l.trim())
+				&& /\s[1-9]\d*px\s+0px\s+0px/.test(l.trim()));
+		const read = (sel) => {
+			const el = document.querySelector(sel);
+			if (!el) return { missing: true };
+			const v = getComputedStyle(el).boxShadow;
+			return { flat: v === 'none', wall: hasWall(v) };
+		};
+		return {
+			play: read('[data-play]'),
+			event: read('[data-replay-event]'),
+			guide: read('[data-guide-start]'),
+			rate: read('.rp-rate'),
+		};
+	});
+	for (const [name, k] of Object.entries(keys)) {
+		ok(!k.missing, `${name}: the control exists`);
+		ok(!k.flat, `${name}: the control is not flat`);
+		ok(k.wall, `${name}: the control still has a side wall at rest`);
+	}
+	await page.close();
+}
+
 await browser.close();
 server.close();
 
