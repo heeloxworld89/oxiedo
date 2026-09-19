@@ -37,22 +37,28 @@ import { sectors } from '../data/sectors';
 /* A WIDE ARTBOARD, because the column is wide. The previous figure was 820x820 in a
    container capped by height, so preserveAspectRatio fitted it by the short edge and
    left a third of the frame empty on each side. */
-const W = 1240;
+/* SIZED TO THE WORST CASE, MEASURED OVER A FULL TURN. The shells rotate, so the
+   silhouette is not the one the build happens to bake — sampled across a rotation the
+   drawing reaches x 66..1294 and y -25..529 against a 1240x470 box. It was running 54
+   past the right edge, 25 above the top and 59 below, and overflow:visible meant those
+   labels were not clipped by the SVG but by the page: "Certified Deletion" behind the
+   masthead, "Medical AI" off the side. 12px of margin on the measured extent. */
+const W = 1320;
 /* Measured, not guessed: the drawing occupies y 15..455 of this box. An artboard
    taller than its content is dead space that the page cannot see and cannot close,
    because preserveAspectRatio centres the whole viewBox — 570 was putting 77px of
    nothing above the figure and 66 below, which read on the page as a gap under the
    paragraph that no margin was responsible for. */
-const H = 470;
+const H = 590;
 
 // The network on the left, and the node it belongs to.
 const NET_X0 = 70;
 const NET_X1 = 400;
-const SRC = { x: 372, y: 252 };
+const SRC = { x: 372, y: 312 };
 
 // The opened node.
 const CX = 862;
-const CY = 252;
+const CY = 312;
 const R_CORE = 66;
 /* Wider than the first pass. Eighteen labels on three shells of 118/196/272 bunched
    badly enough that the cull was hiding a third of them at rest, and a hero that
@@ -305,7 +311,7 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	/* The same geometry the build baked, re-solved every frame into the same elements.
 	   One source of shape, two renderers, no duplicated DOM. */
 	const CX = 862;
-	const CY = 252;
+	const CY = 312;
 	const YAW0 = -0.35;
 	const PITCH0 = 0.42;
 	const SHELLS: Record<string, { tilt: number; roll: number }> = {
@@ -348,7 +354,15 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			dot: el.querySelector<SVGCircleElement>('circle'),
 			text: el.querySelector<SVGTextElement>('text'),
 			cull: el.querySelector<SVGElement>('[data-cull]'),
+			/* Measured, not assumed. The caps carry no rect, so their width was a flat
+			   74 for every one of them — "ACCOUNT" is 56 and "SUPPRESS" is 70, and the
+			   cull was reserving the wrong span for both. */
+			textW: 74,
 		}));
+		for (const o of orbs) {
+			if (o.w) continue;
+			try { o.textW = (o.text?.getComputedTextLength?.() ?? 74) + 6; } catch { /* not laid out yet */ }
+		}
 		/* Radii come off the elements, not from constants retyped in here. The first
 		   pass hardcoded 118 / 196 / 272 in the script as well as in the frontmatter,
 		   which is two sources of truth for one geometry and a silent mis-draw the
@@ -417,18 +431,10 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			const placed = [...orbs].map((o) => ({ o, p: project(o.r, o.a, o.shell) }))
 				.sort((m, n) => m.p.dep - n.p.dep);
 
-			// Far first, so the near ones are appended last and paint on top.
-			const boxes: Array<{ l: number; r: number; t: number; b: number }> = [];
-			/* THE NUCLEUS IS ABSOLUTE, and it cannot share the soft threshold. A third of
-			   a 184px pill is sixty pixels, so "a third of its own area" let a sector
-			   label lie sixty pixels across the core and still pass — measured, twice per
-			   turn. Label against label is a judgement about readability; label against
-			   the subject of the picture is not. */
-			const core = { l: CX - 76, r: CX + 76, t: CY - 76, b: CY + 76 };
-			const onCore = (bx: { l: number; r: number; t: number; b: number }) =>
-				bx.r > core.l && bx.l < core.r && bx.b > core.t && bx.t < core.b;
-			for (let i = placed.length - 1; i >= 0; i--) {
-				const { o, p } = placed[i];
+			/* Move everything first, then decide what is visible, then paint. Doing all
+			   three in one pass is what made the last two attempts wrong in ways that
+			   only showed up while it was turning. */
+			for (const { o, p } of placed) {
 				if (o.rect) {
 					o.rect.setAttribute('x', String(p.x - o.w / 2));
 					o.rect.setAttribute('y', String(p.y - o.h / 2));
@@ -440,33 +446,59 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 					o.text.setAttribute('x', String(p.x));
 					o.text.setAttribute('y', String(o.rect ? p.y + 4 : p.y - 10));
 				}
-				/* GREEDY CULL, NEAREST FIRST. Eighteen labels on three shells will cross at
-				   some rotation no matter how they are placed — that is geometry, not a bug
-				   to tune away. So the nearest label wins the space and anything that would
-				   sit on top of one already placed is hidden until the model turns. Zero
-				   overlap at every angle, which no amount of offset solving can promise. */
-				const w = o.w || 74;
-				const h = o.h || 14;
-				const box = { l: p.x - w / 2, r: p.x + w / 2, t: p.y - h / 2, b: p.y + h / 2 };
-				/* Hidden on a real overlap, not on a touch. Culling at first contact took
-				   four of the eighteen labels off the screen at rest, most of them barely
-				   grazing another — and a hero that hides a fifth of its content to avoid
-				   a two-pixel clip has made the wrong trade. But a third was too generous
-				   the other way: at 0.33 "The Separator" and "Regulated Finance" printed
-				   across each other and both stayed on screen. 0.18 is the line — a
-				   glancing clip survives, a stack does not. */
-				const area = Math.max(1, w * h);
-				const hit = onCore(box) || boxes.some((q) => {
-					const ow = Math.min(box.r, q.r) - Math.max(box.l, q.l);
-					const oh = Math.min(box.b, q.b) - Math.max(box.t, q.t);
-					return ow > 0 && oh > 0 && (ow * oh) / area > 0.18;
-				});
+			}
+
+			const boxes: Array<{ l: number; r: number; t: number; b: number }> = [];
+			/* THE NUCLEUS IS ABSOLUTE. A third of a 184px pill is sixty pixels of label
+			   lying across the subject of the picture, so it gets no tolerance at all. */
+			const core = { l: CX - 76, r: CX + 76, t: CY - 76, b: CY + 76 };
+			const onCore = (bx: { l: number; r: number; t: number; b: number }) =>
+				bx.r > core.l && bx.l < core.r && bx.b > core.t && bx.t < core.b;
+
+			/* GREEDY CULL, NEAREST FIRST. Eighteen labels on three shells will cross at
+			   some rotation whatever offsets they are given — that is geometry. So the
+			   nearest wins the space and anything that would sit on one already placed
+			   is hidden until the model turns. */
+			for (let i = placed.length - 1; i >= 0; i--) {
+				const { o, p } = placed[i];
+				/* THE BOX HAS TO BE WHERE THE INK IS. A capability label has no rect and
+				   is drawn at p.y - 10, but the cull was testing a box centred on p.y —
+				   thirteen pixels below the glyphs, so it cleared collisions the label
+				   was actually in. That is why SUPPRESS kept printing through The Update
+				   Engine while the check reported nothing. */
+				/* A CAPABILITY IS A DOT AND A LABEL, and the box has to cover both. The
+				   group holds a circle at p.y and text at p.y - 10, so its real extent
+				   runs from about p.y - 20 to p.y + 6 — twenty-six tall. Modelling it as
+				   thirteen, centred fourteen above, described a box that missed the dot
+				   entirely, which is why SUPPRESS kept clipping The Update Engine
+				   through three different thresholds: the rule was never wrong, it was
+				   being asked about the wrong rectangle. */
+				const w = o.w || o.textW;
+				const h = o.h || 26;
+				const cy2 = o.rect ? p.y : p.y - 7;
+				const box = { l: p.x - w / 2, r: p.x + w / 2, t: cy2 - h / 2, b: cy2 + h / 2 };
+
+				/* SEPARATION, NOT A FRACTION OF AREA. Two thresholds were tried — a third
+				   of the label's own area, then a twentieth — and both left grazes on
+				   screen while reporting themselves satisfied, because a corner clip of
+				   9x9 is a rounding error as an area and a visibly broken word to a
+				   reader. Overlapping text does not get less overlapping when the
+				   rectangle is large. So: no two labels may come within 3px, full stop.
+				   It costs a label or two at some angles and it is never ambiguous. */
+				const PAD = 3;
+				const hit = onCore(box) || boxes.some((q) =>
+					box.r + PAD > q.l && box.l - PAD < q.r && box.b + PAD > q.t && box.t - PAD < q.b);
+
 				const near = (p.dep + 1) / 2;
-				o.el.style.opacity = hit ? '0' : String(0.4 + near * 0.6);
+				o.el.style.opacity = hit ? '0' : String(0.45 + near * 0.55);
 				o.el.style.pointerEvents = hit ? 'none' : '';
 				if (!hit) boxes.push(box);
-				o.el.parentNode?.appendChild(o.el);
 			}
+
+			/* Painter's order: FAR FIRST, so the near ones are appended last and end up
+			   on top. The previous pass appended nearest-first, which is the order that
+			   puts the far labels over the near ones — the exact opposite of depth. */
+			for (const { o } of placed) o.el.parentNode?.appendChild(o.el);
 
 			for (const c of chords) {
 				const a = project(c.fr, c.fa, 'feat');
@@ -530,15 +562,15 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		   Cropping to the node narrows the viewBox to 800, which makes labels BIGGER
 		   for the same box: 10.7px at 780. So the middle tier crops rather than
 		   shrinks, and only the narrowest tier gives the labels up. */
-		const FULL_VB = '0 0 1240 470';
-		const NODE_VB = `${CX - 400} ${CY - 232} 800 464`;
+		const FULL_VB = '0 0 1320 590';
+		const NODE_VB = `${CX - 430} ${CY - 290} 860 580`;
 		const MIN_LABEL_PX = 9;
 		const fitViewBox = () => {
 			const w = svg.getBoundingClientRect().width;
-			const cropped = (11 * w) / 1240 < MIN_LABEL_PX;
+			const cropped = (11 * w) / 1320 < MIN_LABEL_PX;
 			svg.setAttribute('viewBox', cropped ? NODE_VB : FULL_VB);
 			// Even cropped, below about 580px the labels fall under 8px.
-			fig.classList.toggle('is-compact', (11 * w) / 800 < 8);
+			fig.classList.toggle('is-compact', (11 * w) / 860 < 8);
 			fig.classList.toggle('is-cropped', cropped);
 		};
 		fitViewBox();
@@ -571,7 +603,11 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		   1240x570, so at 1240 wide this is 570 tall and the labels render at their
 		   designed 11px instead of the four or five they were getting. */
 		max-height: min(62vh, 640px);
-		overflow: visible;
+		/* hidden, not visible. The artboard is sized to the worst case now, so nothing
+		   should reach the edge — but in the cropped tier the network sits 366 units
+		   outside the viewBox by design, and overflow:visible does not mean "draw
+		   outside my box", it means "draw outside my box and over the page". */
+		overflow: hidden;
 	}
 	.hm.is-live svg {
 		cursor: grab;
@@ -638,6 +674,16 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	.hm-pill-text { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); font-size: 11px; fill: var(--accent-on-dark); }
 	/* Only the feature shell is interactive: hovering one traces its capabilities. */
 	[data-orb="feat"] { cursor: pointer; }
+
+	/* Cropped to the node: the network and its callout are outside the frame, so they
+	   come off rather than being sliced by the viewBox edge — a half-drawn network
+	   bleeding off the side looks like a rendering fault, not like a crop. */
+	.hm.is-cropped .hm-net-node,
+	.hm.is-cropped .hm-net-edge,
+	.hm.is-cropped .hm-lead,
+	.hm.is-cropped .hm-src-ring,
+	.hm.is-cropped .hm-src-dot,
+	.hm.is-cropped .hm-src-label { display: none; }
 
 	/* Cropped to the node: the network on the left is out of frame, so the legend
 	   carries that part. Worth the trade — the subject is the opened node. */
