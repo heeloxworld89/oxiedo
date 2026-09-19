@@ -39,14 +39,33 @@
 		<p class="co-line" data-co-line></p>
 		<p class="co-sub" data-co-sub></p>
 
-		{/* ACT II. Every figure here is already on this site with its source attached — see
-		    src/data/markets.ts. Nothing is written for the occasion, and no individual is
-		    quoted: the record is the citation. */}
-		<ul class="co-figs" data-co-figs hidden>
+		{/* ACT 03. Public statements, quoted exactly, about the problem and never about us.
+		    The disclaimer is not decoration: a named warning one screen above a product claim
+		    reads as endorsement however carefully it is fenced, and none of these people have
+		    endorsed anything here. Both quotations are verified to source. */}
+		<div class="co-quotes" data-co-quotes hidden>
+			<figure class="co-quote" data-co-item>
+				<blockquote>This lack of understanding is essentially unprecedented in the history of technology.</blockquote>
+				<figcaption>Dario Amodei · co-founder and CEO, Anthropic<span>“The Urgency of Interpretability”, April 2025</span></figcaption>
+			</figure>
+			<figure class="co-quote" data-co-item>
+				<blockquote>We don’t really understand exactly how they do those things.</blockquote>
+				<figcaption>Geoffrey Hinton · Turing Award, 2018<span>CBS, 60 Minutes, 8 October 2023</span></figcaption>
+			</figure>
+			<p class="co-fine" data-co-item>
+				In <i>Science</i>, 2024, Bengio, Hinton, Russell and Kahneman among others asked that at
+				least a third of AI research budgets go to safety and interpretability. None of the people
+				quoted here is affiliated with Oxiedo, and none has endorsed this work.
+			</p>
+		</div>
+
+		{/* ACT 04. Every figure already on this site with its source attached — src/data/markets.ts
+		    for the first three, EU AI Act Article 12 for the fourth. Nothing written for the occasion. */}
+		<ul class="co-figs" data-co-figs="cost" hidden>
 			<li class="co-fig" data-co-fig>
 				<span class="co-fig-n">419</span>
 				<span class="co-fig-u">unexpected interruptions in a single 54-day run</span>
-				<span class="co-fig-s">Meta · Llama 3 405B, on 16,384 H100s</span>
+				<span class="co-fig-s">Meta · Llama 3 405B, on 16,384 H100s. Nobody could say why</span>
 			</li>
 			<li class="co-fig" data-co-fig>
 				<span class="co-fig-n">$15M</span>
@@ -54,24 +73,44 @@
 				<span class="co-fig-s">At 30-minute checkpointing, repeated across 419 failures</span>
 			</li>
 			<li class="co-fig" data-co-fig>
-				<span class="co-fig-n">1,451</span>
-				<span class="co-fig-u">AI-enabled medical devices authorised by end-2025</span>
-				<span class="co-fig-s">Around 8% can be changed after authorisation. The rest are locked</span>
+				<span class="co-fig-n">~8%</span>
+				<span class="co-fig-u">of AI medical devices that can be changed after authorisation</span>
+				<span class="co-fig-s">1,451 authorised by end-2025. The rest are frozen as approved</span>
 			</li>
 			<li class="co-fig" data-co-fig>
-				<span class="co-fig-n">Apr 2026</span>
-				<span class="co-fig-u">SR 26-2 supersedes SR 11-7</span>
-				<span class="co-fig-s">Federal Reserve, FDIC and OCC · validation and change control</span>
+				<span class="co-fig-n">Aug 2026</span>
+				<span class="co-fig-u">EU AI Act Article 12 applies in full</span>
+				<span class="co-fig-s">Automatic logging across the lifecycle; deployers keep logs six months</span>
+			</li>
+		</ul>
+
+		{/* ACT 05. The thesis of the company, which the first version of this sequence never said. */}
+		<ul class="co-figs co-figs--pair" data-co-figs="locked" hidden>
+			<li class="co-fig" data-co-fig>
+				<span class="co-fig-n">2026–2032</span>
+				<span class="co-fig-u">when the stock of public human text is projected to run out</span>
+				<span class="co-fig-s">Epoch AI. What is left after that is owned by somebody</span>
+			</li>
+			<li class="co-fig" data-co-fig>
+				<span class="co-fig-n">Mar 2029</span>
+				<span class="co-fig-u">EHDS secondary-use provisions apply to health data</span>
+				<span class="co-fig-s">Institutions choose training infrastructure about three years ahead</span>
 			</li>
 		</ul>
 	</div>
 
 	<footer class="co-foot">
-		<ol class="co-rail" aria-hidden="true">
-			<li data-co-seg><i></i></li>
-			<li data-co-seg><i></i></li>
-			<li data-co-seg><i></i></li>
-			<li data-co-seg><i></i></li>
+		{/* THE RAIL IS A CONTROL, not a progress bar. Twenty-five seconds is a long time to
+		    ask of a stranger, and the answer is not to cut the argument down to something
+		    that fits an attention span — it is to let the reader set the pace. A skimmer
+		    clicks to the end in two seconds, an investor sits on act three for a minute. */}
+		<ol class="co-rail">
+			{[
+				'The machine', 'The architecture', 'The field’s own words',
+				'What it costs', 'What stays locked', 'The break', 'The console',
+			].map((name, i) => (
+				<li><button type="button" data-co-seg={i} aria-label={`Go to ${name}`}><i></i></button></li>
+			))}
 		</ol>
 		<button type="button" class="co-skip" data-co-skip>
 			Skip <kbd>Esc</kbd>
@@ -160,16 +199,36 @@
 		const elLine = root.querySelector<HTMLElement>('[data-co-line]')!;
 		const elSub = root.querySelector<HTMLElement>('[data-co-sub]')!;
 		const elFigs = root.querySelector<HTMLElement>('[data-co-figs]')!;
-		const figs = [...root.querySelectorAll<HTMLElement>('[data-co-fig]')];
 		const segs = [...root.querySelectorAll<HTMLElement>('[data-co-seg]')];
 		const skip = root.querySelector<HTMLButtonElement>('[data-co-skip]')!;
 
 		/* ── the score ──────────────────────────────────────────────────────────────
-		   Four acts over 14.6s. Long for a web animation and deliberately so — this is
-		   a narrative, not a spinner — which is exactly why Skip is present in frame one
-		   and the rail shows how much is left. A reader who wants the console can have it
-		   in under a second. */
-		const T = { ignite: 0, machine: 900, record: 4700, brk: 9100, hand: 12700, end: 14600 };
+		   Seven acts over ~25s. That is long, and it is long on purpose: the first version
+		   ran fourteen seconds and told only the narrow story — a network breaks, ORMAS
+		   names the break. The argument this page actually has to make is larger. Opacity
+		   is not a fault in a network, it is the arithmetic of how one trains; the field
+		   says so in its own words; it has a price and a set of dates attached; and the
+		   thing it finally costs is the data nobody will release. None of that fits in
+		   fourteen seconds, and none of it should be cut to fit.
+		   What makes the length affordable is that the reader steers: the rail is seven
+		   buttons, the arrow keys step, and Skip has been in frame one since the first
+		   version. Auto-advance is the default, not the only option. */
+		const T = {
+			ignite: 0,
+			machine: 800,
+			arch: 4000,
+			words: 7400,
+			cost: 12000,
+			locked: 16400,
+			brk: 20000,
+			hand: 23400,
+			end: 25800,
+		};
+
+		type Act = {
+			at: number; label: string; line: string; sub: string;
+			quotes?: boolean; figs?: 'cost' | 'locked';
+		};
 
 		const ACTS: Act[] = [
 			{
@@ -179,20 +238,41 @@
 				sub: 'The run continues. Nothing inside the network can say which part failed, or when, or by how much.',
 			},
 			{
-				at: T.record,
-				label: '02 — What that costs',
-				line: 'The bill is already on the record.',
+				at: T.arch,
+				label: '02 — Not a fault. The architecture.',
+				line: 'Nothing was hidden. There was never anything to hide.',
+				sub: 'In a standard network every error signal reaches every parameter on every step. By the time training ends there is no component left that a question can be put to. The information was not lost — it was never separable.',
+			},
+			{
+				at: T.words,
+				label: '03 — The field’s own words',
+				line: 'This is not a minority view.',
 				sub: '',
+				quotes: true,
+			},
+			{
+				at: T.cost,
+				label: '04 — What it costs, and when it comes due',
+				line: 'The bill is already on the record. So are the dates.',
+				sub: '',
+				figs: 'cost',
+			},
+			{
+				at: T.locked,
+				label: '05 — What stays locked',
+				line: 'The most valuable data in the world is never trained on.',
+				sub: 'Not because it is secret, and not because anyone holding it is careless. It stays where it is because releasing it means putting it inside a model that afterwards cannot say what it took — and no custodian signs that.',
+				figs: 'locked',
 			},
 			{
 				at: T.brk,
-				label: '03 — The break',
-				line: 'ORMAS makes the network write the account as it trains.',
-				sub: 'Per component, per step, by arithmetic it cannot route around — and every correction bounded by a ceiling declared before the run starts.',
+				label: '06 — The break',
+				line: 'ORMAS bounds each component’s learning path to four operations.',
+				sub: 'The chain cannot grow with the network, so each component stays individually addressable for the whole run. Measured on the way past, not estimated afterwards by a second model.',
 			},
 			{
 				at: T.hand,
-				label: '04 — The console',
+				label: '07 — The console',
 				line: 'One archived run, replayed in full.',
 				sub: 'Every figure on the screen below is read from it. Nothing is computed in the browser.',
 			},
@@ -285,7 +365,9 @@
 			const ig = span(t, 0, T.machine);
 
 			// where the network sits, and how big
-			const recede = span(t, T.record - 250, T.record + 350);      // act two pushes it back
+			// The network holds the screen for acts one and two, recedes behind the words and
+			// the figures, and comes back for the break.
+			const recede = span(t, T.words - 250, T.words + 350);
 			const restore = span(t, T.brk - 350, T.brk + 250);
 			const back = Math.max(0, recede - restore);
 			const land = ease(span(t, T.hand + 300, T.end - 150));
@@ -293,7 +375,10 @@
 
 			const baseS = Math.min(1, (VW - 80) / NET_W) * (1 - 0.14 * back);
 			const baseCx = VW / 2;
-			const baseCy = VH * (0.4 - 0.06 * back);
+			// Acts three to five carry a heading, a paragraph and a grid, which is a much
+			// taller block than acts one and two — the network has to climb further out of
+			// the way or the type reads across it.
+			const baseCy = VH * (0.4 - 0.15 * back);
 			const cx = tgt ? baseCx + (tgt.cx - baseCx) * land : baseCx;
 			const cy = tgt ? baseCy + (tgt.cy - baseCy) * land : baseCy;
 			const s = tgt ? baseS + (tgt.s - baseS) * land : baseS;
@@ -308,6 +393,13 @@
 			const dim = 1 - 0.62 * back;
 			const drawn = ease(span(t, T.machine - 200, T.machine + 1100));
 			const killed = span(t, T.machine + 2500, T.machine + 2900);
+			/* ACT TWO'S ONE VISUAL IDEA. The dim all-to-all wash — every error signal
+			   reaching every parameter — comes up to full while the readable lattice drops
+			   away, so for three seconds the screen shows the smear and nothing else. That
+			   smear is the argument: there is no component left in there to put a question
+			   to. It is the only moment in the sequence where the picture is deliberately
+			   illegible, because illegibility is the point being made. */
+			const flood = span(t, T.arch - 200, T.arch + 900) * (1 - span(t, T.words - 700, T.words));
 			const opened = span(t, T.brk + 300, T.brk + 1500);
 
 			/* ── edges, drawn in two passes ──────────────────────────────────────────
@@ -331,8 +423,8 @@
 				// their connections stayed dead drew a stage that was named but still severed.
 				const fade = dead ? 1 - 0.78 * killed * (1 - opened) : 1;
 
-				ctx.strokeStyle = `rgba(${CREAM},${0.05 * fade * dim})`;
-				ctx.lineWidth = 0.6;
+				ctx.strokeStyle = `rgba(${CREAM},${(0.05 + 0.20 * flood) * fade * dim})`;
+				ctx.lineWidth = 0.6 + 0.25 * flood;
 				ctx.beginPath();
 				for (const p of a) {
 					for (const q of b) {
@@ -342,7 +434,7 @@
 				}
 				ctx.stroke();
 
-				ctx.strokeStyle = `rgba(${CREAM},${0.2 * fade * dim})`;
+				ctx.strokeStyle = `rgba(${CREAM},${0.2 * (1 - 0.75 * flood) * fade * dim})`;
 				ctx.lineWidth = 0.9;
 				ctx.beginPath();
 				for (let i = 0; i < a.length; i++) {
@@ -491,6 +583,12 @@
 		}
 
 		/* ── type ───────────────────────────────────────────────────────────────── */
+		const quotes = root.querySelector<HTMLElement>('[data-co-quotes]')!;
+		const figSets = new Map<string, HTMLElement>(
+			[...root.querySelectorAll<HTMLElement>('[data-co-figs]')]
+				.map((el) => [el.dataset.coFigs!, el]),
+		);
+
 		let shown = -1;
 		function paintType(t: number) {
 			let idx = -1;
@@ -505,23 +603,42 @@
 				elLine.textContent = a ? a.line : '';
 				elSub.textContent = a ? a.sub : '';
 				elSub.hidden = !a || !a.sub;
-				elFigs.hidden = idx !== 1;
-				segs.forEach((s, i) => s.classList.toggle('is-on', i <= idx));
+				quotes.hidden = !a?.quotes;
+				for (const [name, el] of figSets) el.hidden = a?.figs !== name;
+				segs.forEach((seg, i) => seg.classList.toggle('is-on', i <= idx));
 			}
-			if (idx === 1) {
-				const each = (T.brk - T.record - 400) / figs.length;
-				figs.forEach((f, i) => {
-					const st = T.record + 300 + i * each;
-					f.classList.toggle('is-in', t >= st);
-				});
+
+			// Items inside an act stagger in across the act's own length, so a four-cell
+			// readout fills rather than appearing at once, and a reader who steps straight
+			// to an act still gets everything it holds.
+			const a = ACTS[idx];
+			if (a) {
+				const to = ACTS[idx + 1] ? ACTS[idx + 1].at : T.end;
+				const host = a.quotes ? quotes : a.figs ? figSets.get(a.figs)! : null;
+				if (host) {
+					const items = [...host.querySelectorAll<HTMLElement>('[data-co-item], [data-co-fig]')];
+					const each = Math.min(520, (to - a.at - 900) / Math.max(1, items.length));
+					items.forEach((el, i) => el.classList.toggle('is-in', t >= a.at + 260 + i * each));
+				}
 			}
-			segs.forEach((s, i) => {
-				const a = ACTS[i];
-				const b = ACTS[i + 1];
-				const to = b ? b.at : T.end;
-				const p = a ? clamp01((t - a.at) / (to - a.at)) : 0;
-				(s.firstElementChild as HTMLElement).style.transform = `scaleX(${p})`;
+
+			segs.forEach((seg, i) => {
+				const from = ACTS[i];
+				const to = ACTS[i + 1] ? ACTS[i + 1].at : T.end;
+				const p = from ? clamp01((t - from.at) / (to - from.at)) : 0;
+				(seg.firstElementChild as HTMLElement).style.transform = `scaleX(${p})`;
 			});
+		}
+
+		/* THE READER STEERS. Seeking is a clock change and nothing else — every visual in
+		   draw() is a pure function of t — so a jump backwards replays an act exactly and a
+		   jump forwards lands mid-state rather than skipping the state. */
+		function seek(i: number) {
+			const a = ACTS[Math.max(0, Math.min(ACTS.length - 1, i))];
+			if (!a) return;
+			start = performance.now() - a.at;
+			shown = -1;
+			for (const el of root!.querySelectorAll('.is-in')) el.classList.remove('is-in');
 		}
 
 		/* ── run ────────────────────────────────────────────────────────────────── */
@@ -563,9 +680,28 @@
 		function onGesture() {
 			if (performance.now() - mounted > GESTURE_GRACE) finish();
 		}
+		/* Escape leaves; the arrows move within. An earlier version mapped the arrows to
+		   "skip", which meant a reader reaching for the obvious way to see the next panel
+		   was thrown out of the sequence instead. */
 		function onKey(e: KeyboardEvent) {
 			if (e.key === 'Escape') { e.preventDefault(); return finish(); }
-			if ([' ', 'PageDown', 'ArrowDown', 'End'].includes(e.key)) return finish();
+			if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+				e.preventDefault();
+				return seek(currentAct() + 1);
+			}
+			if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+				e.preventDefault();
+				return seek(currentAct() - 1);
+			}
+			if (e.key === 'End') { e.preventDefault(); return seek(ACTS.length - 1); }
+			if (e.key === 'Home') { e.preventDefault(); return seek(0); }
+		}
+
+		function currentAct() {
+			const t = performance.now() - start;
+			let idx = 0;
+			for (let i = 0; i < ACTS.length; i++) if (t >= ACTS[i].at - 150) idx = i;
+			return idx;
 		}
 
 		/* A THROW IN HERE MUST NOT STRAND THE READER. If draw() raises, the frame loop dies
@@ -592,6 +728,7 @@
 		}
 
 		skip.addEventListener('click', finish);
+		segs.forEach((seg, i) => seg.addEventListener('click', (e) => { e.stopPropagation(); seek(i); }));
 		root.addEventListener('click', (e) => { if (e.target === root || e.target === canvas) finish(); });
 		document.addEventListener('keydown', onKey);
 		window.addEventListener('wheel', onGesture, { passive: true });
@@ -713,6 +850,59 @@
 		to   { opacity: 1; transform: none; }
 	}
 
+	/* ── act three: the quotations ────────────────────────────────────────────── */
+	.co-quotes:not([hidden]) {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 18px 28px;
+		margin-top: 20px;
+		max-width: 1000px;
+	}
+	.co-quote { margin: 0; min-width: 0; }
+	/* Not a card. A quotation mark and a rule are the two things print has always used to
+	   say "these are not our words", and on a dark ground a bordered box would read as one
+	   more panel of the instrument — which is the exact confusion to avoid here. */
+	.co-quote blockquote {
+		margin: 0;
+		padding-left: 15px;
+		border-left: 2px solid rgba(224,162,51,0.5);
+		font-family: 'Fraunces', ui-serif, Georgia, serif;
+		font-size: clamp(1rem, 1.55vw, 1.3rem);
+		line-height: 1.34;
+		color: #F1EFE8;
+		text-wrap: pretty;
+	}
+	.co-quote figcaption {
+		margin: 9px 0 0 17px;
+		font-size: 12px;
+		line-height: 1.45;
+		color: #A9AEC4;
+	}
+	.co-quote figcaption span {
+		display: block;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 10.5px;
+		letter-spacing: 0.04em;
+		color: #828AA8;
+		margin-top: 2px;
+	}
+	.co-fine {
+		grid-column: 1 / -1;
+		margin: 2px 0 0;
+		font-size: 11.5px;
+		line-height: 1.5;
+		color: #828AA8;
+		max-width: 92ch;
+	}
+	.co-fine i { font-style: italic; }
+
+	.co-quote, .co-fine {
+		opacity: 0;
+		transform: translateY(9px);
+		transition: opacity 420ms var(--ease-out, ease), transform 420ms var(--ease-out, ease);
+	}
+	.co-quote.is-in, .co-fine.is-in { opacity: 1; transform: none; }
+
 	/* ── act two ──────────────────────────────────────────────────────────────── */
 	.co-figs:not([hidden]) {
 		list-style: none;
@@ -754,6 +944,15 @@
 	.co-fig-u { display: block; margin-top: 8px; font-size: 12.5px; line-height: 1.4; color: #F1EFE8; }
 	.co-fig-s { display: block; margin-top: 6px; font-size: 11px; line-height: 1.4; color: #828AA8; }
 
+	/* AFTER the four-column rule, not before it. Both selectors are (0,2,0) — one class
+	   plus :not([hidden]) — so this is decided purely on source order, and declared first
+	   it lost: act five's two cells were laid out on a four-column grid and sat in the
+	   left half with two empty plates beside them. */
+	.co-figs--pair:not([hidden]) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		max-width: 720px;
+	}
+
 	/* ── chrome ───────────────────────────────────────────────────────────────── */
 	.co-foot {
 		position: relative;
@@ -765,10 +964,36 @@
 		margin-inline: auto;
 		padding-block: 18px 22px;
 	}
-	.co-rail { list-style: none; display: flex; gap: 6px; margin: 0; padding: 0; flex: 1 1 auto; max-width: 420px; }
-	.co-rail li { flex: 1; height: 2px; background: rgba(241,239,232,0.16); overflow: hidden; }
-	.co-rail i { display: block; height: 100%; background: #828AA8; transform: scaleX(0); transform-origin: left; }
-	.co-rail li.is-on i { background: #E0A233; }
+	/* The rail is seven buttons. The hit target is 22px tall with the mark itself at 2px —
+	   a 2px control is not a control — and the segment lights on hover so it reads as one. */
+	.co-rail { list-style: none; display: flex; gap: 6px; margin: 0; padding: 0; flex: 1 1 auto; max-width: 560px; }
+	.co-rail li { flex: 1; display: flex; }
+	.co-rail button {
+		flex: 1;
+		appearance: none;
+		border: 0;
+		background: none;
+		padding: 10px 0;
+		cursor: pointer;
+		display: block;
+	}
+	.co-rail button::before {
+		content: '';
+		display: block;
+		height: 2px;
+		background: rgba(241,239,232,0.16);
+		margin-bottom: -2px;
+	}
+	.co-rail i {
+		display: block;
+		height: 2px;
+		background: #828AA8;
+		transform: scaleX(0);
+		transform-origin: left;
+	}
+	.co-rail button.is-on i { background: #E0A233; }
+	.co-rail button:hover::before { background: rgba(241,239,232,0.4); }
+	.co-rail button:focus-visible { outline: 2px solid #E0A233; outline-offset: 3px; }
 
 	.co-skip {
 		pointer-events: auto;
@@ -800,6 +1025,7 @@
 
 	@media (max-width: 900px) {
 		.co-figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		.co-quotes:not([hidden]) { grid-template-columns: 1fr; gap: 14px; }
 		.co-copy, .co-foot { width: calc(100% - 32px); }
 		.co-line { max-width: none; }
 	}
@@ -807,11 +1033,16 @@
 		.co-figs { grid-template-columns: 1fr; }
 		.co-fig { padding: 11px 13px 12px; }
 		.co-fig-s { display: none; }
+		/* The attribution stays at every width. A quotation without its source is the one
+		   part of this that must never be allowed to degrade. */
+		.co-quote blockquote { font-size: 1rem; }
+		.co-fine { font-size: 11px; }
 	}
 
 	/* Belt and braces. The inline gate already removes the element under reduced motion;
 	   this means that even if it is somehow mounted, nothing here moves. */
 	@media (prefers-reduced-motion: reduce) {
-		.co, .co-fig, .co-act, .co-line, .co-sub { transition: none !important; animation: none !important; }
+		.co, .co-fig, .co-fig > span, .co-quote, .co-fine,
+		.co-act, .co-line, .co-sub { transition: none !important; animation: none !important; }
 	}
 </style>

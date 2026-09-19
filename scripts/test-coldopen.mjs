@@ -106,15 +106,44 @@ const watch = (page, tag) => {
 	ok(frame.navOnTop, 'the nav paints above the curtain');
 	ok(frame.navLinkClickable, 'and its links are still hit-testable — the way out stays open');
 
-	// Act two's figures are quoted from src/data/markets.ts. If that file is corrected and
-	// this is not, the cold open starts citing a number the rest of the site disagrees with.
+	// The figures are quoted from src/data/markets.ts and from the EU AI Act. If those are
+	// corrected and this is not, the sequence starts citing numbers the rest of the site
+	// disagrees with — in front of the exact audience most likely to check.
 	const figs = await page.evaluate(() =>
 		[...document.querySelectorAll('[data-co-fig] .co-fig-n')].map((e) => e.textContent.trim()));
-	for (const want of ['419', '$15M', '1,451', 'Apr 2026']) {
-		ok(figs.includes(want), `act two still cites ${want} (got ${figs.join(' · ')})`);
+	for (const want of ['419', '$15M', '~8%', 'Aug 2026', '2026–2032', 'Mar 2029']) {
+		ok(figs.includes(want), `the sequence still cites ${want} (got ${figs.join(' · ')})`);
 	}
 
-	await page.waitForTimeout(17000);
+	/* THE QUOTATIONS ARE THE HIGHEST-RISK TEXT ON THE SITE. They are real statements by
+	   named people who have not endorsed anything here, reproduced verbatim. A stray edit
+	   that drops a word, softens a claim or loses an attribution turns an accurate citation
+	   into a misquotation attributed to a Turing laureate. Assert them to the character,
+	   and assert that the disclaimer travels with them. */
+	const quoted = await page.evaluate(() => ({
+		text: document.querySelector('[data-co-quotes]')?.textContent.replace(/\s+/g, ' ').trim() ?? '',
+		count: document.querySelectorAll('[data-co-quotes] blockquote').length,
+		captions: document.querySelectorAll('[data-co-quotes] figcaption').length,
+	}));
+	ok(quoted.count === 2 && quoted.captions === 2,
+		`both quotations carry an attribution (${quoted.count} quotes, ${quoted.captions} captions)`);
+	for (const want of [
+		'This lack of understanding is essentially unprecedented in the history of technology.',
+		'Dario Amodei',
+		'“The Urgency of Interpretability”, April 2025',
+		'We don’t really understand exactly how they do those things.',
+		'Geoffrey Hinton',
+		'CBS, 60 Minutes, 8 October 2023',
+		'None of the people quoted here is affiliated with Oxiedo, and none has endorsed this work.',
+	]) {
+		ok(quoted.text.includes(want), `act three reproduces exactly: "${want.slice(0, 64)}"`);
+	}
+
+	// Seek to the last act rather than sitting through all seven. The suite should not cost
+	// twenty-six seconds a run to learn what the final two seconds do, and seeking is the
+	// product's own control, so this exercises the real path rather than a test-only one.
+	await page.click('[data-co-seg="6"]');
+	await page.waitForTimeout(4000);
 	const after = await page.evaluate(() => {
 		const de = document.documentElement;
 		const guide = document.querySelector('.rp-guide');
@@ -169,6 +198,27 @@ const watch = (page, tag) => {
 	}));
 	ok(!gone.el && gone.flag === null,
 		`leaving mid-sequence tears it down (el ${gone.el}, flag ${gone.flag})`);
+	// THE READER STEERS. Twenty-five seconds is only affordable because the rail is a set
+	// of buttons and the arrows step, so a skimmer reaches the console in two clicks and
+	// nobody is held to the auto-advance.
+	await page.goto(`${ORIGIN}/black-box`);
+	await page.waitForTimeout(700);
+	const segCount = await page.evaluate(() => document.querySelectorAll('[data-co-seg]').length);
+	ok(segCount === 7, `the rail exposes one control per act (${segCount})`);
+	await page.click('[data-co-seg="4"]');
+	await page.waitForTimeout(500);
+	ok((await page.evaluate(() => document.querySelector('[data-co-act]')?.textContent ?? '')).startsWith('05'),
+		'clicking the rail jumps to that act');
+	await page.keyboard.press('ArrowLeft');
+	await page.waitForTimeout(400);
+	ok((await page.evaluate(() => document.querySelector('[data-co-act]')?.textContent ?? '')).startsWith('04'),
+		'ArrowLeft steps back an act rather than skipping out');
+	await page.keyboard.press('ArrowRight');
+	await page.waitForTimeout(400);
+	ok((await page.evaluate(() => document.querySelector('[data-co-act]')?.textContent ?? '')).startsWith('05'),
+		'ArrowRight steps forward an act');
+	ok(await page.evaluate(() => !!document.querySelector('[data-coldopen-root]')),
+		'and none of that stepping dismissed the sequence');
 	await ctx.close();
 }
 

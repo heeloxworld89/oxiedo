@@ -5,13 +5,27 @@
 - **Meta description:** Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running.
 
 ---
-- 419 — unexpected interruptions in a single 54-day run — Meta · Llama 3 405B, on 16,384 H100s
+This lack of understanding is essentially unprecedented in the history of technology.
+
+> Dario Amodei · co-founder and CEO, Anthropic“The Urgency of Interpretability”, April 2025
+
+We don’t really understand exactly how they do those things.
+
+> Geoffrey Hinton · Turing Award, 2018 CBS, 60 Minutes, 8 October 2023
+
+In *Science*, 2024, Bengio, Hinton, Russell and Kahneman among others asked that at least a third of AI research budgets go to safety and interpretability. None of the people quoted here is affiliated with Oxiedo, and none has endorsed this work.
+
+- 419 — unexpected interruptions in a single 54-day run — Meta · Llama 3 405B, on 16,384 H100s. Nobody could say why
 
 - $15M — of compute wasted on that one run — At 30-minute checkpointing, repeated across 419 failures
 
-- 1,451 — AI-enabled medical devices authorised by end-2025 — Around 8% can be changed after authorisation. The rest are locked
+- ~8%of AI medical devices that can be changed after authorisation — 1,451 authorised by end-2025. The rest are frozen as approved
 
-- Apr 2026 — SR 26-2 supersedes SR 11-7 — Federal Reserve, FDIC and OCC · validation and change control
+- Aug 2026 — EU AI Act Article 12 applies in full — Automatic logging across the lifecycle; deployers keep logs six months
+
+- 2026–2032 — when the stock of public human text is projected to run out — Epoch AI. What is left after that is owned by somebody
+
+- Mar 2029 — EHDS secondary-use provisions apply to health data — Institutions choose training infrastructure about three years ahead
 
 **Two networks, the same data, the same damage.** **ORMAS**, on the right, names which parts broke — two steps later — and repairs itself. The **sealed network** on the left cannot say anything about it, and never will. Every figure is read from one archived training run.
 
