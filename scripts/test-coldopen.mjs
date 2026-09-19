@@ -340,6 +340,65 @@ const watch = (page, tag) => {
 	await ctx.close();
 }
 
+/* ── 3b-0. THE FIRST THREE ACTS CANNOT BE CLICKED AWAY ─────────────────────── */
+{
+	/* Acts one to three are the argument: a neural network that cannot report on itself,
+	   why that is the arithmetic of how it trains rather than a fault, and the field
+	   saying so in its own words. A stray click in the first two seconds should not cost
+	   a reader the whole case, so the empty screen is inert until act four, which is the
+	   evidence. The deliberate exits — the button and Escape — are never gated; this
+	   governs the accidental one only. */
+	const ctx = await browser.newContext({ viewport: VP });
+	for (let act = 0; act < 7; act++) {
+		const page = await ctx.newPage();
+		watch(page, `gate-${act}`);
+		await page.goto(`${ORIGIN}/black-box`);
+		await page.waitForTimeout(800);
+		await page.click(`[data-co-seg="${act}"]`);
+		await page.waitForTimeout(700);
+		// Empty screen, well right of the diagram and above the control row.
+		await page.mouse.click(VP.width - 120, 240);
+		await page.waitForTimeout(600);
+		const alive = await page.evaluate(() => !!document.querySelector('[data-coldopen-root]'));
+		if (act < 3) {
+			ok(alive, `act ${act + 1}: a click on the empty screen is ignored`);
+		} else {
+			ok(!alive, `act ${act + 1}: a click on the empty screen dismisses it`);
+		}
+		await page.close();
+	}
+
+	// The cursor must not promise what the gate will not honour.
+	for (const [act, want] of [[0, false], [2, false], [3, true], [6, true]]) {
+		const page = await ctx.newPage();
+		await page.goto(`${ORIGIN}/black-box`);
+		await page.waitForTimeout(800);
+		await page.click(`[data-co-seg="${act}"]`);
+		await page.waitForTimeout(600);
+		const pointer = await page.evaluate(() =>
+			getComputedStyle(document.querySelector('[data-coldopen-root]')).cursor === 'pointer');
+		ok(pointer === want,
+			`act ${act + 1}: the backdrop ${want ? 'shows' : 'does not show'} a pointer cursor`);
+		await page.close();
+	}
+
+	// Both deliberate exits still work during act one, where the click does not.
+	for (const [how, run] of [
+		['the Skip button', (pg) => pg.click('[data-co-skip]')],
+		['Escape', (pg) => pg.keyboard.press('Escape')],
+	]) {
+		const page = await ctx.newPage();
+		await page.goto(`${ORIGIN}/black-box`);
+		await page.waitForTimeout(1100);
+		await run(page);
+		await page.waitForTimeout(700);
+		ok(await page.evaluate(() => !document.querySelector('[data-coldopen-root]')),
+			`act 1: ${how} still works while the click gate is closed`);
+		await page.close();
+	}
+	await ctx.close();
+}
+
 /* ── 3b-i. ONE LINE AND A FRAGMENT, NOT A PARAGRAPH ────────────────────────── */
 {
 	/* Reported as "the content is dense… you essentially put paragraphs in it", and it
@@ -369,6 +428,12 @@ const watch = (page, tag) => {
 			};
 		});
 		ok(n.prose <= 22, `act ${act + 1}: the prose stays a line and a fragment (${n.prose} words)`);
+		// "a network" is a graph; "a neural network" is the thing this page is about, and
+		// the distinction matters in front of a reader who does not already know.
+		const said = await page.evaluate(() =>
+			document.querySelector('.co-copy').innerText.replace(/\s+/g, ' '));
+		ok(!/\b(a|the) networks?\b/i.test(said),
+			`act ${act + 1} says "neural network", not bare "network" ("${said.slice(0, 60)}")`);
 		ok(n.total <= 45, `act ${act + 1} stays glanceable overall (${n.total} words)`);
 	}
 	await ctx.close();

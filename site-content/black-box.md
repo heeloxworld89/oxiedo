@@ -23,7 +23,7 @@ Neither is affiliated with Oxiedo.
 
 - Aug 2026 — EU logging rules apply
 
-**Two networks, the same data, the same damage.** **ORMAS**, on the right, names which parts broke — two steps later — and repairs itself. The **sealed network** on the left cannot say anything about it, and never will. Every figure is read from one archived training run.
+**Two neural networks, the same data, the same damage.** **ORMAS**, on the right, names which parts broke — two steps later — and repairs itself. The **sealed network** on the left cannot say anything about it, and never will. Every figure is read from one archived training run.
 
 ORMAS·replay console
 

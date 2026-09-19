@@ -436,7 +436,7 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		ok(!m.plainPresent,
 			`console ${vp.w}: .rp-plain does not also render — one prose band, not two`);
 		for (const phrase of [
-			'Two networks, the same data, the same damage.',
+			'Two neural networks, the same data, the same damage.',
 			'ORMAS, on the right',
 			'The sealed network on the left',
 			'read from one archived training run',

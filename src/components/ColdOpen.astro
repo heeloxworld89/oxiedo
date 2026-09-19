@@ -226,12 +226,12 @@
 			{
 				at: T.machine,
 				label: '01 — The machine',
-				line: 'A network breaks mid-training.',
+				line: 'A neural network breaks mid-training.',
 				sub: 'Nothing inside it can say which part.',
 			},
 			{
 				at: T.arch,
-				label: '02 — The architecture',
+				label: '02 — How artificial intelligence is built',
 				line: 'Nothing was hidden.',
 				sub: 'Every signal touches every parameter. There was never a part to point at.',
 			},
@@ -253,7 +253,7 @@
 				at: T.locked,
 				label: '05 — What stays locked',
 				line: 'The best data is never trained on.',
-				sub: 'No custodian hands data to a model that cannot say what it took.',
+				sub: 'No custodian hands data to an artificial intelligence that cannot say what it took.',
 			},
 			{
 				at: T.brk,
@@ -709,6 +709,11 @@
 				elSub.hidden = !a || !a.sub;
 				quotes.hidden = !a?.quotes;
 				for (const [name, el] of figSets) el.hidden = a?.figs !== name;
+				// A pointer cursor only once a click actually does something. Without this
+				// a reader clicks during act one, nothing happens, and the reasonable
+				// conclusion is that the page is broken rather than that the control is
+				// not live yet.
+				root!.classList.toggle('can-dismiss', idx >= 3);
 				// The block just changed height — quotes, a four-cell grid or neither.
 				measureCopy();
 				segs.forEach((seg, i) => seg.classList.toggle('is-on', i <= idx));
@@ -830,15 +835,27 @@
 			raf = requestAnimationFrame(frame);
 		}
 
-		/* CLICKING THE EMPTY SCREEN DISMISSES IT, requested.
-		   Scoped to the backdrop and the canvas by target, not bound to the whole overlay:
-		   a click on a quotation, an attribution or the rail is somebody engaging with the
-		   thing rather than asking to leave, and dropping the curtain on them would be the
-		   trap this originally was. So most of the screen is an exit, and the parts that
-		   hold something to read or press are not. */
+		/* CLICKING THE EMPTY SCREEN DISMISSES IT — FROM ACT FOUR ONWARDS.
+		   Two rules layered, and they answer different problems.
+
+		   Scoped by target, so the backdrop and the canvas are an exit but a quotation, an
+		   attribution and the rail are not. A click on those is somebody engaging with the
+		   sequence, and dropping the curtain on them is the trap this started out as.
+
+		   Gated by act, so the first three cannot be dismissed by a click at all. Those
+		   three are the argument — a network that cannot report on itself, why that is the
+		   arithmetic rather than a fault, and the field saying so in its own words — and a
+		   stray click in the first two seconds should not cost a reader the whole case.
+		   From act four, which is the evidence, the screen is an exit.
+
+		   The deliberate ways out are never gated: the button and Escape work from the
+		   first frame. This only governs the accidental one. */
+		const DISMISS_FROM = 3; // zero-based: act four
+
 		skip.addEventListener('click', finish);
 		segs.forEach((seg, i) => seg.addEventListener('click', (e) => { e.stopPropagation(); seek(i); }));
 		root.addEventListener('click', (e) => {
+			if (currentAct() < DISMISS_FROM) return;
 			if (e.target === root || e.target === canvas || (e.target as HTMLElement).closest('.co-foot')) {
 				finish();
 			}
@@ -908,6 +925,11 @@
 		transition: opacity 400ms var(--ease-out, ease);
 	}
 	.co.is-out { opacity: 0; pointer-events: none; }
+	/* Set from act four, when clicking the empty screen starts doing something. */
+	.co.can-dismiss { cursor: pointer; }
+	.co.can-dismiss .co-copy > *,
+	.co.can-dismiss .co-rail { cursor: auto; }
+	.co.can-dismiss .co-rail button, .co.can-dismiss .co-skip { cursor: pointer; }
 
 	.co-stage { position: absolute; inset: 0; display: block; }
 
