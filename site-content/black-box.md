@@ -5,6 +5,8 @@
 - **Meta description:** Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running.
 
 ---
+**Two networks, the same data, the same damage.** **ORMAS**, on the right, names which parts broke — two steps later — and repairs itself. The **sealed network** on the left cannot say anything about it, and never will. Every figure is read from one archived training run.
+
 ORMAS·replay console
 
 Scenario
@@ -37,8 +39,6 @@ The archived run did not load.
 
 Every figure on this screen is read from a file in the experiment archive, and that file did not arrive. Nothing here is computed in the browser, so there is nothing to show until it does.
 
-**A neural network is damaged partway through training.** The version on the right names which parts broke, two steps later, and repairs itself. The one on the left cannot say anything about it, and never will.
-
 - Field: Epoch
 
 epoch 0 / 199
@@ -57,11 +57,11 @@ Every correction, with its component, diagnosis, step, magnitude and declared ce
 
 **THE RUN, REPLAYED**
 
-### The same network, twice. One sealed, one open.
+### What was done to the network, and how to check it.
 
-Two networks of identical shape, trained on the same data toward the same objective. At epoch 101 two of their convolutional stages are destroyed. One names the damaged components two steps later and recovers. The other sits at chance for the rest of the run and cannot say what happened to it.
+Both arms have identical shape and were trained on the same data toward the same objective. At epoch 101 two of their convolutional stages are destroyed outright. The sealed arm does not degrade gracefully: it falls to chance and stays there for the rest of the run.
 
-Press play, or drag the epoch bar, and watch the table underneath stop answering the same way for the two of them. The run is archived: every figure is read from its own telemetry, and its identifier and seed are on screen. Each of the four scenarios regenerates from its own seed — the fourth is the one that goes against us, and it sits in the same menu as the other three.
+The controls drive an archive, not a simulation. Play and the epoch bar move both arms through the same recorded run, and the table underneath stops answering the same way for the two of them. The run's identifier and seed sit in the bar at the top of the console, and each of the four scenarios regenerates from its own seed. The fourth goes against us, and it sits in the same menu as the other three.
 
 Nothing in the sealed pane was withheld. A standard network does not compute a per-component health signal at any point in training, so there is no quantity to display and no setting that would reveal one. That absence is the problem, drawn.
 

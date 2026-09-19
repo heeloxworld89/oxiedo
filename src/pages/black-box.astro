@@ -190,27 +190,34 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 		<ReplayDemo scenario="dead-layer-lesion" guide="auto" app trail={trail} />
 	</div>
 
+	{/* THIS SECTION NO LONGER INTRODUCES THE SCREEN — the stripe at the top of the console
+	    does that, and it says: two networks, the same data, the same damage; one names what
+	    broke and repairs itself, the other never can; every figure comes from one archived
+	    run. Four of those clauses were repeated here almost word for word, which is what a
+	    reader meets as padding. What is left is what the stripe does NOT carry: the specific
+	    conditions of this run, and how to check that the screen is reading an archive rather
+	    than performing one. */}
 	<section class="section container">
 		<Eyebrow>THE RUN, REPLAYED</Eyebrow>
-		<h2>The same network, twice. One sealed, one open.</h2>
+		<h2>What was done to the network, and how to check it.</h2>
 		<p class="demo-intro">
-			Two networks of identical shape, trained on the same data toward the same objective. At
-			epoch 101 two of their convolutional stages are destroyed. One names the damaged
-			components two steps later and recovers. The other sits at chance for the rest of the
-			run and cannot say what happened to it.
+			Both arms have identical shape and were trained on the same data toward the same
+			objective. At epoch 101 two of their convolutional stages are destroyed outright. The
+			sealed arm does not degrade gracefully: it falls to chance and stays there for the rest
+			of the run.
 		</p>
 		<p class="demo-intro">
-			Press play, or drag the epoch bar, and watch the table underneath stop answering the
-			same way for the two of them. The run is archived: every figure is read from its own
-			telemetry, and its identifier and seed are on screen. Each of the four scenarios
-			regenerates from its own seed — the fourth is the one that goes against us, and it sits
-			in the same menu as the other three.
+			The controls drive an archive, not a simulation. Play and the epoch bar move both arms
+			through the same recorded run, and the table underneath stops answering the same way
+			for the two of them. The run's identifier and seed sit in the bar at the top of the console, and each of
+			the four scenarios regenerates from its own seed. The fourth goes against us, and it
+			sits in the same menu as the other three.
 		</p>
-	</section>
-
-
-	<section class="section container">
-		<p class="demo-note">
+		{/* THIS BELONGS TO THE PARAGRAPHS ABOVE IT. It had a <section> to itself, which on this
+		    page means 80px of padding above and 80px below — 160px of empty cream between a
+		    note and the copy it annotates, while the page's other three notes sit 24px under
+		    theirs. The orphan section is gone; the spacing now matches every other note. */}
+		<p class="demo-note demo-note--tight">
 			Nothing in the sealed pane was withheld. A standard network does not compute a
 			per-component health signal at any point in training, so there is no quantity to display
 			and no setting that would reveal one. That absence is the problem, drawn.
@@ -453,6 +460,15 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 	}
 	.demo-intro--muted { font-size: var(--text-small); color: var(--text-muted); }
 
+	/* VERTICAL RHYTHM. Measured down the rendered page rather than guessed: every block pair
+	   on this page sits 24px apart — intro to grid, grid to note, list to note — with exactly
+	   two exceptions, and both were 0px. A heading landed flat on its first paragraph in all
+	   seven sections, and consecutive paragraphs had no gap at all, so the four under "An
+	   account that was never written" read as one undivided block. The rule below puts those
+	   two pairs on the same 24px the rest of the page already uses. */
+	.section h2 + .demo-intro,
+	.demo-intro + .demo-intro { margin-top: var(--space-lg); }
+
 	.demo-lede {
 		max-width: 64ch;
 		font-size: var(--text-body);
@@ -469,7 +485,9 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		gap: var(--space-lg);
-		margin: var(--space-xl) 0 var(--space-lg);
+		/* --space-xl (40px) made this the only grid on the page that did not open 24px under
+		   its paragraph; .demo-readers, .demo-limits and .demo-objections all use --space-lg. */
+		margin: var(--space-lg) 0;
 	}
 	.demo-half {
 		border: 1px solid var(--border-hairline);

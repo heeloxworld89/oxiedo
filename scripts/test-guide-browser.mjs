@@ -333,6 +333,30 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 			}));
 			return {
 				component: Math.round(rp.height),
+				// The one-screen box itself, rather than the working area plus a hardcoded bar
+				// height. The old assertion added a literal 48 for the product bar, which was
+				// the same guess the stylesheet used to make — and it was wrong twice over:
+				// it could not see a band added above the bar, and below 900px .rp-appbar
+				// wraps to two rows and is no longer 48px at all.
+				consoleBox: Math.round(
+					document.querySelector('.rp-console').getBoundingClientRect().height),
+				// THE ORIENTATION STRIPE. A first-time reader has to meet a sentence before
+				// the jargon, so this asserts three separate things: that it is there, that
+				// it is genuinely ABOVE the product bar rather than merely near it, and that
+				// its text reads as sentences. The last one is not fussiness — Astro drops
+				// whitespace at an element→text line boundary and this shipped once as
+				// "sealed networkon the left", which a margin would have hidden from the eye
+				// while leaving it joined for a screen reader.
+				orientTop: (() => {
+					const o = document.querySelector('.rp-orient');
+					return o ? Math.round(o.getBoundingClientRect().top) : null;
+				})(),
+				appbarTop: Math.round(
+					document.querySelector('.rp-appbar').getBoundingClientRect().top),
+				orientText: (document.querySelector('.rp-orient')?.textContent || '')
+					.replace(/\s+/g, ' ').trim(),
+				// In app mode the stripe REPLACES this rather than joining it.
+				plainPresent: !!document.querySelector('.rp-plain'),
 				usable: innerHeight - Math.round(document.querySelector('.nav').getBoundingClientRect().height),
 				allRendered: cells.every((c) => c.rendered),
 				count: cells.length,
@@ -388,8 +412,22 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 			`console ${vp.w}: the chart has a real width (${m.canvas}px) — a canvas measured before the grid lays out is 0`);
 		// The CONSOLE is one screen — the product bar plus the working area. The record strip
 		// below is deliberately outside it.
-		ok(Math.abs(m.component + 48 - m.usable) <= 10,
-			`console ${vp.w}×${vp.h}: bar + working area is ${m.component + 48}px against ${m.usable}px of window`);
+		ok(Math.abs(m.consoleBox - m.usable) <= 10,
+			`console ${vp.w}×${vp.h}: the console box is ${m.consoleBox}px against ${m.usable}px of window`);
+		ok(m.orientText.length > 0, `console ${vp.w}: the orientation stripe is present`);
+		ok(m.orientTop !== null && m.orientTop < m.appbarTop,
+			`console ${vp.w}: the stripe is above the product bar (${m.orientTop} vs ${m.appbarTop})`);
+		ok(!m.plainPresent,
+			`console ${vp.w}: .rp-plain does not also render — one prose band, not two`);
+		for (const phrase of [
+			'Two networks, the same data, the same damage.',
+			'ORMAS, on the right',
+			'The sealed network on the left',
+			'read from one archived training run',
+		]) {
+			ok(m.orientText.includes(phrase),
+				`console ${vp.w}: the stripe reads "${phrase}" — got "${m.orientText.slice(0, 120)}…"`);
+		}
 		ok(!m.overflowX, `console ${vp.w}: nothing overflows sideways`);
 		await page.close();
 	}

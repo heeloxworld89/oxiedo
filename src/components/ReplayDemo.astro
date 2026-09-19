@@ -99,6 +99,33 @@ const SCENARIOS = [
 	    The rail collapses to icons before the working area gets too narrow for the two
 	    networks: anatomy.ts holds each to 560px, so the pair needs 1120px and the rail has
 	    to give its 220px back long before that limit is reached. */}
+	<div class="rp-console">
+	{/* THE ORIENTATION STRIPE. The first band inside the instrument is a sentence, not
+	    chrome. Before this, a first-time reader met the product bar — which carries
+	    "DEAD-LAYER LESION" and "ablation_ormas_cnn_dead_s0" — and then four figures with
+	    no units a stranger knows, and only reached plain language in the fourth band down.
+	    The explanation now comes before the jargon it explains.
+
+	    This REPLACES .rp-plain in app mode rather than joining it: two prose bands on one
+	    screen is how a reader learns to skip both, and the vertical budget here is already
+	    tight. .rp-plain still renders everywhere else the component is used. */}
+	{app && (
+		<div class="rp-orient">
+			<p class="rp-orient-line">
+				{/* The {' '} are load-bearing. Astro drops the whitespace at an element→text line
+				    boundary, so `…sealed network</b>` followed by `on the left` on the next line
+				    rendered as "sealed networkon the left". A margin on the element papers over
+				    the gap visually but leaves the word joined for a screen reader and for
+				    select-and-copy, so the space is a real space. */}
+				<strong>Two networks, the same data, the same damage.</strong>{' '}
+				<b class="rp-orient-open">ORMAS</b>, on the right, names which parts broke — two
+				steps later — and repairs itself. The <b class="rp-orient-sealed">sealed network</b>{' '}
+				on the left cannot say anything about it, and never will. Every figure is read
+				from one archived training run.
+			</p>
+		</div>
+	)}
+
 	{app && (
 		<header class="rp-appbar">
 			<p class="rp-appbar-mark">ORMAS<span>·</span>replay console</p>
@@ -196,11 +223,14 @@ const SCENARIOS = [
 		<button type="button" class="rp-btn rp-btn--primary" data-retry>Try again</button>
 	</div>
 
-	<p class="rp-plain">
-		<strong>A neural network is damaged partway through training.</strong> The version on the
-		right names which parts broke, two steps later, and repairs itself. The one on the left
-		cannot say anything about it, and never will.
-	</p>
+	{/* Non-app only — in app mode the orientation stripe above the product bar carries this. */}
+	{!app && (
+		<p class="rp-plain">
+			<strong>A neural network is damaged partway through training.</strong> The version on the
+			right names which parts broke, two steps later, and repairs itself. The one on the left
+			cannot say anything about it, and never will.
+		</p>
+	)}
 
 	<div class="rp-stageband">
 		<div class="rp-panes">
@@ -322,6 +352,7 @@ const SCENARIOS = [
 		</div>
 		</div>
 	</div>
+	</div>{/* /.rp-console — the one-screen console: stripe + product bar + working area */}
 
 	{/* THE RECORD IS THE ENDING, not a quarter of the readout row. In a 423px cell its
 	    five-column table had nowhere to go and the panel sat mostly empty; as a full-width
@@ -1552,6 +1583,7 @@ const SCENARIOS = [
 	@media (max-height: 880px) {
 		.rp-anatomy > :global(svg) { height: 240px !important; }
 		.rp-plain { padding-block: 8px; }
+		.rp-orient { padding-block: 9px; }
 		.rp-pane { padding-block: 6px; }
 		.rp-panel { padding-block: 10px; }
 	}
@@ -1784,10 +1816,30 @@ const SCENARIOS = [
 		white-space: nowrap;
 	}
 
+	/* THE CONSOLE IS THE ONE-SCREEN BOX, and the shell takes what the bands above it left.
+	   The shell used to carry `height: calc(100dvh - nav - appbar)`, which had two faults.
+	   It could not survive a new band above it — the arithmetic lived in one place and the
+	   markup in another. And --appbar is a lie below 900px, where .rp-appbar is given
+	   `height: auto; flex-wrap: wrap` and becomes two rows: the subtraction stayed 48px and
+	   the console ran a whole bar past the fold at exactly the widths least able to afford
+	   it. Both faults are the same fault — a number guessed here instead of measured by the
+	   browser. The console now owns the height; every band above the shell is flex:none and
+	   the shell is flex:1, so the arithmetic is the layout engine's.
+
+	   min-height 568px is the old floor kept intact: shell 520 + appbar 48. The stripe
+	   replaced .rp-plain inside the shell rather than adding to it, so the working area
+	   below that floor is unchanged. */
+	.rp--app .rp-console {
+		display: flex;
+		flex-direction: column;
+		height: calc(100dvh - var(--nav-h, 89px));
+		min-height: 568px;
+	}
+
 	.rp--app .rp-shell {
 		display: flex;
-		height: calc(100dvh - var(--nav-h, 89px) - var(--appbar));
-		min-height: 520px;
+		flex: 1 1 auto;
+		min-height: 0;
 	}
 
 	.rp--app .rp-main {
@@ -1997,6 +2049,7 @@ const SCENARIOS = [
 	.rp.is-failed .rp-tabs,
 	.rp.is-failed .rp-metrics,
 	.rp.is-failed .rp-recordband { display: none; }
+	.rp.is-failed .rp-console,
 	.rp.is-failed .rp-shell { height: auto; min-height: 0; }
 
 	/* ── plain-language strip ── */
@@ -2010,6 +2063,37 @@ const SCENARIOS = [
 		max-width: 104ch;
 	}
 	.rp-plain strong { color: var(--fg); font-weight: 700; }
+
+	/* ── the orientation stripe ──────────────────────────────────────────────────
+	   Deliberately NOT chrome. Everything else in this band stack is uppercase mono at
+	   10-11px; this is sentence-case prose at 14-15px on a raised plate, so it reads as
+	   something written rather than something labelled, and a reader can tell in one
+	   glance which of the two it is.
+
+	   The two proper nouns are tinted to the arms they name — ORMAS to the amber of the
+	   open network, "sealed network" to the blue of the baseline — so the sentence binds
+	   itself to the two panels below without a legend. Computed on #1A1D2E: the lead
+	   14.50:1, the body 7.58:1, ORMAS 7.45:1, the sealed blue 6.49:1. */
+	.rp-orient {
+		background: var(--ink-raised);
+		border-bottom: 1px solid var(--rule);
+		padding: 12px var(--space-lg);
+		flex: none;
+	}
+	.rp-orient-line {
+		margin: 0;
+		max-width: 132ch;
+		font-size: 14px;
+		line-height: 1.5;
+		color: var(--fg-mid);
+	}
+	.rp-orient-line strong {
+		color: var(--fg);
+		font-weight: 700;
+		font-size: 15px;
+	}
+	.rp-orient-open { color: var(--ormas); font-weight: 600; }
+	.rp-orient-sealed { color: var(--base); font-weight: 600; }
 
 	/* ── tabs ── */
 	.rp-tabs {
