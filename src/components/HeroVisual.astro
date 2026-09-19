@@ -60,23 +60,145 @@ const CHIP_H = 34;
 const PILL_W = 192;
 const PILL_H = 30;
 
-// Angles run clockwise from the top, so the first item in each ring reads at 12 o'clock.
-const pos = (r: number, i: number, n: number) => {
-	const a = ((i / n) * 360 - 90) * (Math.PI / 180);
-	return { x: CX + r * Math.cos(a), y: CY + r * Math.sin(a), a };
+/* ── THE RINGS ARE TILTED PLANES, AND THEY ARE STACKED ───────────────────────────
+   Flat concentric circles say "these things are arranged around that thing". Tilting
+   the plane and lifting each ring says what the diagram actually argues: the
+   primitive is the apex and everything else is built outward AND downward from it.
+   Same data, same chords, one more true statement.
+
+   THE PROJECTION IS BAKED AT BUILD TIME, not applied in the browser. This component's
+   own rules are "renders identically with JavaScript disabled (Law 3)" and no looping
+   decoration, and both survive: the geometry arrives already three-dimensional in the
+   markup, the existing one-pass build animation is untouched, and nothing rotates on
+   a timer. The only motion added is a tilt that answers the pointer, which is a
+   response rather than an animation — at rest the figure is still.
+
+   ORTHOGRAPHIC, not perspective. A perspective divide turns the ring guides into
+   shapes SVG has no primitive for, and they would have to become paths that no longer
+   match the projected chip positions exactly. Under an orthographic tilt a circle is
+   exactly an ellipse, so the guides stay <ellipse> and every point on them lands where
+   the geometry says it does. Depth is carried by scale and opacity instead, which is
+   what the eye reads first anyway.
+
+   x is untouched by the tilt, so the horizontal extent — the one dimension with no
+   room left, with 192px pills reaching 396 of the 410 half-width — cannot change. */
+const TILT = 46 * (Math.PI / 180);
+const CT = Math.cos(TILT);
+const ST = Math.sin(TILT);
+
+/** Height of each ring above the base plane. The core is the apex. */
+const Z_MKT = 0;
+const Z_FEAT = 20;
+const Z_CAPS = 44;
+const Z_CORE = 70;
+
+/** A point on a ring plane, projected. `dep` runs -1 (far) to +1 (near). */
+const at = (r: number, a: number, z: number) => {
+	const fx = r * Math.cos(a);
+	const fy = r * Math.sin(a);
+	return {
+		x: CX + fx,
+		y: CY + fy * CT - z * ST,
+		a,
+		dep: r === 0 ? 0 : fy / r,
+	};
 };
+
+// Angles run clockwise from the top, so the first item in each ring reads at 12 o'clock
+// — which after the tilt is also the far side, so the ring opens towards the reader.
+const pos = (r: number, i: number, n: number, z: number) =>
+	at(r, ((i / n) * 360 - 90) * (Math.PI / 180), z);
+
+/** Nearer reads slightly larger and slightly brighter. Both kept gentle: this is a
+ *  depth cue, and a label that shrinks enough to notice is a label that got harder to
+ *  read in exchange for an effect. */
+const depthScale = (dep: number) => (1 + dep * 0.055).toFixed(4);
+const depthFade = (dep: number) => (0.78 + ((dep + 1) / 2) * 0.22).toFixed(3);
 
 const CAP_ORDER = ['ACCOUNT', 'PROTECT', 'REPAIR', 'DETECT', 'ISOLATE', 'SUPPRESS'] as const;
 
-const capPts = CAP_ORDER.map((name, i) => {
-	const p = pos(R_CAPS, i, CAP_ORDER.length);
-	const ux = (p.x - CX) / R_CAPS;
-	const uy = (p.y - CY) / R_CAPS;
-	// 28px clear of the guide, along the radius — never across it.
-	return { name, ...p, lx: CX + ux * (R_CAPS + 28), ly: CY + uy * (R_CAPS + 28) + 4 };
+/* ── THE CAPABILITY LABELS ARE PLACED BY SOLVING, NOT BY RULE ────────────────────
+   Flat, a fixed 28px along the radius cleared everything. Tilted, it does not: the
+   radial step keeps its full width in x but is squashed to 0.695 of itself in y, so
+   labels walk sideways into the feature chips instead of stepping clear of them.
+   Measured after the tilt: five of six overlapped a chip, against none before.
+
+   A single better rule does not exist either. PROTECT and SUPPRESS each sit 8.6° from
+   a feature chip — six capabilities against seven features will always put some pair
+   close — so "push away from the centre" fixes the ones at the sides and drives those
+   two straight into the chip above them.
+
+   So each label tries a ring of candidate offsets and takes the first that hits
+   nothing. It runs at build time, it is deterministic, and because the whole diagram
+   is generated from data/features.ts and data/sectors.ts it keeps working when a
+   feature is added or a capability renamed — which a hand-tuned offset per label
+   would not. The estimate is conservative: mono at 11px is close enough to 6.9px a
+   character, and the check below in the browser measures the real thing. */
+const CAP_FONT_W = 6.9;
+const CAP_H = 13;
+
+interface Box { l: number; r: number; t: number; b: number }
+const boxOf = (cx: number, cy: number, w: number, h: number): Box =>
+	({ l: cx - w / 2, r: cx + w / 2, t: cy - h / 2, b: cy + h / 2 });
+/* A NEGATIVE PAD: the boxes are GROWN before testing, not shrunk. A solver that
+   tests for bare contact places labels one pixel clear of a chip, which is a
+   collision to every eye that is not a bounding-box comparison. 5px of air. */
+const overlaps = (p1: Box, p2: Box, air = 5) =>
+	p1.r + air > p2.l && p1.l - air < p2.r && p1.b + air > p2.t && p1.t - air < p2.b;
+
+const capRaw = CAP_ORDER.map((name, i) => ({ name, ...pos(R_CAPS, i, CAP_ORDER.length, Z_CAPS) }));
+const featRaw = features.map((f, i) => ({ feature: f, ...pos(R_FEAT, i, features.length, Z_FEAT) }));
+const mktRaw = sectors.map((s, i) => ({ sector: s, ...pos(R_MKT, i, sectors.length, Z_MKT) }));
+
+const obstacles: Box[] = [
+	...featRaw.map((f) => boxOf(f.x, f.y, CHIP_W, CHIP_H)),
+	...mktRaw.map((m) => boxOf(m.x, m.y, PILL_W, PILL_H)),
+	/* The core's FULL box. Shrinking it to 0.78 to approximate the ellipse was wrong
+	   at the one place it mattered: an ellipse touches its bounding box at the top
+	   centre, which is exactly where ACCOUNT sits, and the solver cheerfully placed
+	   it 36px across the disc's crown. Narrower than the box at the corners is a
+	   tolerable loss; overlapping the apex is not. */
+	boxOf(CX, CY - Z_CORE * ST, R_CORE * 2, R_CORE * CT * 2),
+];
+
+/** Tried in order: straight out, straight in, the two verticals, then the diagonals,
+ *  at two distances. The first clear one wins; if none is, the last is used and the
+ *  browser check will say so rather than this failing silently. */
+const CAP_TRIES: Array<[number, number]> = [
+	[0, 1], [0, -1], [1, 0], [-1, 0],
+	[0.7, 0.7], [-0.7, 0.7], [0.7, -0.7], [-0.7, -0.7],
+];
+
+const capPts = capRaw.map((c) => {
+	const w = c.name.length * CAP_FONT_W;
+	const vy = c.y - (CY - Z_CAPS * ST);
+	const away = vy === 0 ? 1 : Math.sign(vy);
+	let lx = c.x;
+	let ly = c.y + away * 20;
+	for (const dist of [20, 28, 36, 46, 58]) {
+		let done = false;
+		for (const [ux, uy] of CAP_TRIES) {
+			// Prefer moving away from the centre vertically: that is where the room is.
+			const tx = c.x + ux * dist;
+			const ty = c.y + uy * dist * away;
+			if (!obstacles.some((o) => overlaps(boxOf(tx, ty, w, CAP_H), o))) {
+				lx = tx; ly = ty; done = true; break;
+			}
+		}
+		if (done) break;
+	}
+	return { ...c, lx, ly: ly + 4 };
 });
-const featPts = features.map((f, i) => ({ feature: f, ...pos(R_FEAT, i, features.length) }));
-const mktPts = sectors.map((s, i) => ({ sector: s, ...pos(R_MKT, i, sectors.length) }));
+
+const featPts = featRaw;
+const mktPts = mktRaw;
+
+/* Painter's order. With the plane tilted, a near chip genuinely overlaps a far one, and
+   source order would put the far one on top. Sorted copies: the originals stay in data
+   order, because the chords look features up by id and the reader of this file should
+   not have to know that the render order is a lie. */
+const featDraw = [...featPts].sort((p, q) => p.dep - q.dep);
+const mktDraw = [...mktPts].sort((p, q) => p.dep - q.dep);
 
 // THE MATRIX, as chords. Each is one cell of Commercial Plan `03 §3`. They are drawn first and
 // the core disc is painted over them, so a chord between two near-opposite points reads as
@@ -85,13 +207,10 @@ const chords = featPts.flatMap((fp) =>
 	fp.feature.capabilities
 		.map((cap) => capPts.find((c) => c.name === cap))
 		.filter((c): c is NonNullable<typeof c> => Boolean(c))
-		.map((c) => ({
-			key: `${fp.feature.id}-${c.name}`,
-			x1: CX + (R_FEAT - CHIP_H / 2 - 4) * Math.cos(fp.a),
-			y1: CY + (R_FEAT - CHIP_H / 2 - 4) * Math.sin(fp.a),
-			x2: c.x,
-			y2: c.y,
-		}))
+		.map((c) => {
+			const from = at(R_FEAT - CHIP_H / 2 - 4, fp.a, Z_FEAT);
+			return { key: `${fp.feature.id}-${c.name}`, x1: from.x, y1: from.y, x2: c.x, y2: c.y };
+		})
 );
 
 // Each market enters through one feature. Two markets lead with The Diary, so two lines converge
@@ -100,13 +219,9 @@ const entries = mktPts
 	.map((mp) => {
 		const target = featPts.find((fp) => fp.feature.id === mp.sector.primaryFeature);
 		if (!target) return null;
-		return {
-			key: mp.sector.id,
-			x1: CX + (R_MKT - PILL_H / 2 - 4) * Math.cos(mp.a),
-			y1: CY + (R_MKT - PILL_H / 2 - 4) * Math.sin(mp.a),
-			x2: CX + (R_FEAT + CHIP_H / 2 + 4) * Math.cos(target.a),
-			y2: CY + (R_FEAT + CHIP_H / 2 + 4) * Math.sin(target.a),
-		};
+		const from = at(R_MKT - PILL_H / 2 - 4, mp.a, Z_MKT);
+		const to = at(R_FEAT + CHIP_H / 2 + 4, target.a, Z_FEAT);
+		return { key: mp.sector.id, x1: from.x, y1: from.y, x2: to.x, y2: to.y };
 	})
 	.filter((e): e is NonNullable<typeof e> => Boolean(e));
 
@@ -250,10 +365,13 @@ const ghostEdges: [number, number][] = [
 					then the five sectors, each connected to the feature it enters through.
 				</desc>
 {/* ring guides */}
+		{/* Each guide is its ring's plane seen edge-on-ish: an exact ellipse, lifted by
+		    that ring's own height. Three of them at three heights is what makes the
+		    structure read as tiers rather than as one flat target. */}
 		<g class="hv-guides">
-			<circle cx={CX} cy={CY} r={R_CAPS} class="hv-guide hv-stage-caps" />
-			<circle cx={CX} cy={CY} r={R_FEAT} class="hv-guide hv-stage-feat" />
-			<circle cx={CX} cy={CY} r={R_MKT} class="hv-guide hv-stage-mkt" />
+			<ellipse cx={CX} cy={CY - Z_CAPS * ST} rx={R_CAPS} ry={R_CAPS * CT} class="hv-guide hv-stage-caps" />
+			<ellipse cx={CX} cy={CY - Z_FEAT * ST} rx={R_FEAT} ry={R_FEAT * CT} class="hv-guide hv-stage-feat" />
+			<ellipse cx={CX} cy={CY - Z_MKT * ST} rx={R_MKT} ry={R_MKT * CT} class="hv-guide hv-stage-mkt" />
 		</g>
 
 		{/* the capability matrix, drawn behind the core */}
@@ -271,14 +389,17 @@ const ghostEdges: [number, number][] = [
 		</g>
 
 		{/* CORE · the primitive. Painted over the chords. */}
+		{/* THE APEX. The disc is the primitive's own plane, lifted clear of the rings and
+		    tilted with them; the four operation boxes stand upright on it, because type
+		    laid into the plane would be type read at 46 degrees. */}
 		<g class="hv-core hv-stage-core">
-			<circle cx={CX} cy={CY} r={R_CORE} class="hv-core-disc" />
-			<circle cx={CX} cy={CY} r={R_CORE} class="hv-core-ring" />
+			<ellipse cx={CX} cy={CY - Z_CORE * ST} rx={R_CORE} ry={R_CORE * CT} class="hv-core-disc" />
+			<ellipse cx={CX} cy={CY - Z_CORE * ST} rx={R_CORE} ry={R_CORE * CT} class="hv-core-ring" />
 			{ops.map((op, i) => {
 				const col = i % 2;
 				const row = i < 2 ? 0 : 1;
 				const bx = CX - 60 + col * 62;
-				const by = CY - 32 + row * 32;
+				const by = CY - Z_CORE * ST - 30 + row * 28;
 				return (
 					<g>
 						<rect x={bx} y={by} width="58" height="25" rx="4" class="hv-op-box" />
@@ -286,7 +407,7 @@ const ghostEdges: [number, number][] = [
 					</g>
 				);
 			})}
-			<text x={CX} y={CY + 60} text-anchor="middle" class="hv-core-caption">4 BOUNDED OPS</text>
+			<text x={CX} y={CY - Z_CORE * ST + R_CORE * CT + 16} text-anchor="middle" class="hv-core-caption">4 BOUNDED OPS</text>
 		</g>
 
 		{/* RING 1 · the six capabilities */}
@@ -301,8 +422,8 @@ const ghostEdges: [number, number][] = [
 
 		{/* RING 2 · the seven features */}
 		<g class="hv-feats hv-stage-feat">
-			{featPts.map((fp) => (
-				<g>
+			{featDraw.map((fp) => (
+				<g style={`opacity:${depthFade(fp.dep)}`}>
 					<rect
 						x={fp.x - CHIP_W / 2}
 						y={fp.y - CHIP_H / 2}
@@ -318,8 +439,8 @@ const ghostEdges: [number, number][] = [
 
 		{/* RING 3 · the five markets */}
 		<g class="hv-mkts hv-stage-mkt">
-			{mktPts.map((mp) => (
-				<g>
+			{mktDraw.map((mp) => (
+				<g style={`opacity:${depthFade(mp.dep)}`}>
 					<rect
 						x={mp.x - PILL_W / 2}
 						y={mp.y - PILL_H / 2}
