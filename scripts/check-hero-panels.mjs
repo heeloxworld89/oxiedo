@@ -210,12 +210,31 @@ for (const vp of [
 	   Three samples, widest gap taken: rx is periodic, so two samples alone can
 	   straddle a symmetric pair and read as motionless while the model turns. */
 	{
+		/* TOTAL VARIATION, NOT PEAK-TO-PEAK AND NOT EQUALITY.
+		   Two wrong answers came before this one. Peak-to-peak of the shell's rx has a
+		   threshold to tune, and rx is periodic — sampled across a turning point it
+		   barely moves, which reported a turning model as stuck at one width in four.
+		   Exact equality then failed the other way at all four, because the spin eases
+		   to a halt asymptotically and never reaches precisely zero: held still, rx
+		   still creeps in the second decimal forever.
+
+		   Summing the absolute change between consecutive samples answers both. A
+		   turning model accumulates distance even while crossing a turning point,
+		   because the path length does not care about direction; a held one accumulates
+		   almost nothing. The two are three orders of magnitude apart, so the band
+		   between them is wide rather than tuned. */
 		const rx = () => page.evaluate(() =>
 			parseFloat(document.querySelector('[data-shell="feat"]').getAttribute('rx')));
-		const swing = async () => {
-			const seen = [];
-			for (let i = 0; i < 3; i++) { seen.push(await rx()); await page.waitForTimeout(420); }
-			return Math.max(...seen) - Math.min(...seen);
+		const travelled = async () => {
+			let prev = await rx();
+			let sum = 0;
+			for (let i = 0; i < 8; i++) {
+				await page.waitForTimeout(170);
+				const now = await rx();
+				sum += Math.abs(now - prev);
+				prev = now;
+			}
+			return sum;
 		};
 		const spot = await page.evaluate(() => {
 			const n = document.querySelector('[data-orb="feat"] .hm-chip');
@@ -224,12 +243,14 @@ for (const vp of [
 		});
 		await page.mouse.move(spot.x, spot.y);
 		await page.waitForTimeout(900);          // let it coast to a stop
-		if (await swing() > 0.6) fails.push(`${tag}: hovering a label did not hold the model still`);
+		const held = await travelled();
+		if (held > 0.5) fails.push(`${tag}: hovering a label did not hold the model still (moved ${held.toFixed(2)})`);
 
 		// Off the figure entirely, which is the event that has to release it.
 		await page.mouse.move(4, 4);
 		await page.waitForTimeout(900);
-		if (await swing() < 1.5) fails.push(`${tag}: the model stayed stuck after the pointer left`);
+		const freed = await travelled();
+		if (freed < 1) fails.push(`${tag}: the model stayed stuck after the pointer left (moved ${freed.toFixed(2)})`);
 	}
 
 	// A drag turns the model. It must never also open a panel.
