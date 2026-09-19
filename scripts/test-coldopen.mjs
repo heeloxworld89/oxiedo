@@ -275,17 +275,59 @@ const watch = (page, tag) => {
 	await ctx.close();
 }
 
-/* ── 3b. a scroll is read as "the console, please" ─────────────────────────── */
+/* ── 3b. THE ONLY WAYS OUT ARE THE BUTTON AND ESCAPE ───────────────────────── */
 {
+	// Every one of these used to end the sequence. A click anywhere and a scroll are both
+	// things a reader does by accident — reaching for the rail and missing, selecting a
+	// quotation to copy its attribution, nudging a trackpad while reading act three — and
+	// being thrown out with no idea what you pressed is worse than a control that does
+	// nothing. The exit is a button that looks like one.
 	const ctx = await browser.newContext({ viewport: VP });
 	const page = await ctx.newPage();
-	watch(page, 'scroll');
+	watch(page, 'exits');
 	await page.goto(`${ORIGIN}/black-box`);
-	await page.waitForTimeout(1400);
-	await page.mouse.wheel(0, 400);
-	await page.waitForTimeout(900);
-	ok(await page.evaluate(() => !document.querySelector('[data-coldopen-root]')),
-		'scrolling dismisses the sequence rather than doing nothing visible');
+	await page.waitForTimeout(1300);
+	const alive = () => page.evaluate(() => !!document.querySelector('[data-coldopen-root]'));
+
+	await page.mouse.click(Math.round(VP.width / 2), 300);   // the canvas itself
+	await page.waitForTimeout(500);
+	ok(await alive(), 'clicking the canvas does not dismiss it');
+
+	await page.mouse.click(VP.width - 90, VP.height - 40);   // empty chrome
+	await page.waitForTimeout(500);
+	ok(await alive(), 'clicking the backdrop does not dismiss it');
+
+	const before = await page.evaluate(() => window.scrollY);
+	await page.mouse.wheel(0, 600);
+	await page.waitForTimeout(600);
+	const scrolled = await page.evaluate(() => window.scrollY);
+	ok(await alive(), 'scrolling does not dismiss it');
+	// And it is held rather than merely ignored, so the page behind cannot slide away and
+	// strand the reader mid-article the moment the curtain lifts.
+	ok(before === scrolled, `the page behind is held (scrollY ${before} → ${scrolled})`);
+
+	// The one control, and it has to look like the one control.
+	const btn = await page.evaluate(() => {
+		const el = document.querySelector('[data-co-skip]');
+		const cs = getComputedStyle(el);
+		const r = el.getBoundingClientRect();
+		return {
+			label: el.textContent.replace(/\s+/g, ' ').trim(),
+			bg: cs.backgroundColor,
+			w: Math.round(r.width),
+			h: Math.round(r.height),
+			onScreen: r.bottom <= window.innerHeight + 1 && r.right <= window.innerWidth + 1,
+		};
+	});
+	ok(btn.bg !== 'rgba(0, 0, 0, 0)' && btn.bg !== 'transparent',
+		`Skip is a filled control, not a ghost outline (${btn.bg})`);
+	ok(btn.h >= 36 && btn.w >= 120, `Skip is a real target (${btn.w}×${btn.h})`);
+	ok(btn.onScreen, 'Skip is on screen');
+	ok(/Esc/.test(btn.label), `Skip names its keyboard equivalent ("${btn.label}")`);
+
+	await page.click('[data-co-skip]');
+	await page.waitForTimeout(800);
+	ok(!(await alive()), 'the Skip button dismisses it');
 	await ctx.close();
 }
 

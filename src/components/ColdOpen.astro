@@ -112,8 +112,9 @@
 				<li><button type="button" data-co-seg={i} aria-label={`Go to ${name}`}><i></i></button></li>
 			))}
 		</ol>
+		<p class="co-hint">Click to jump · ← → to step</p>
 		<button type="button" class="co-skip" data-co-skip>
-			Skip <kbd>Esc</kbd>
+			Skip to the console <kbd>Esc</kbd>
 		</button>
 	</footer>
 </div>
@@ -665,21 +666,18 @@
 			}, 420);
 		}
 
-		/* SCROLLING GETS OUT OF IT, rather than being locked out of it.
-		   The curtain is fixed and the nav is fixed, so a reader who scrolls during the
-		   sequence sees nothing move — a dead control, and then the page lands mid-article
-		   when the curtain lifts. Locking the scroll instead would mean hiding the scrollbar,
-		   which shifts the layout under it on every platform that still reserves a gutter.
-		   Reading a scroll as "the console, please" costs nothing and is what the gesture
-		   means. With Escape, the button, a click and this, there are four ways out.
-
-		   wheel and touchmove rather than scroll: a scroll event also fires when a browser
-		   restores a position on reload, which would dismiss the sequence before its first
-		   frame. These two are only ever a person. */
-		const GESTURE_GRACE = 350;
-		function onGesture() {
-			if (performance.now() - mounted > GESTURE_GRACE) finish();
-		}
+		/* SCROLLING IS HELD, NOT TREATED AS AN EXIT.
+		   It used to dismiss the sequence, on the reasoning that a scroll means "the page,
+		   please". In practice it meant a reader who nudged a trackpad while reading act
+		   three was thrown out of it, with no idea what they had done — an accidental exit
+		   is worse than a dead one. The only ways out are now the button and Escape, both
+		   of which a person has to mean.
+		   The gesture is cancelled rather than ignored, so the page behind cannot scroll
+		   away underneath and strand the reader mid-article when the curtain lifts. This is
+		   preventDefault on a non-passive listener rather than overflow:hidden on <html>,
+		   because hiding the scrollbar reclaims its gutter and shifts the whole layout —
+		   including the fixed nav — on every platform that still reserves one. */
+		function onGesture(e: Event) { e.preventDefault(); }
 		/* Escape leaves; the arrows move within. An earlier version mapped the arrows to
 		   "skip", which meant a reader reaching for the obvious way to see the next panel
 		   was thrown out of the sequence instead. */
@@ -727,12 +725,15 @@
 			raf = requestAnimationFrame(frame);
 		}
 
+		/* NO CLICK-ANYWHERE-TO-SKIP. An invisible full-screen exit means every attempt to
+		   interact — reaching for the rail and missing, selecting a quotation to copy the
+		   attribution, a stray click while reading — throws the reader out of the sequence
+		   with nothing to tell them why. The exit is a button that looks like one. */
 		skip.addEventListener('click', finish);
 		segs.forEach((seg, i) => seg.addEventListener('click', (e) => { e.stopPropagation(); seek(i); }));
-		root.addEventListener('click', (e) => { if (e.target === root || e.target === canvas) finish(); });
 		document.addEventListener('keydown', onKey);
-		window.addEventListener('wheel', onGesture, { passive: true });
-		window.addEventListener('touchmove', onGesture, { passive: true });
+		window.addEventListener('wheel', onGesture, { passive: false });
+		window.addEventListener('touchmove', onGesture, { passive: false });
 		skip.focus({ preventScroll: true });
 		raf = requestAnimationFrame(frame);
 
@@ -791,7 +792,6 @@
 		display: grid;
 		grid-template-rows: 1fr auto;
 		overflow: hidden;
-		cursor: pointer;
 		opacity: 1;
 		transition: opacity 400ms var(--ease-out, ease);
 	}
@@ -959,14 +959,15 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 20px;
+		gap: 16px 22px;
+		flex-wrap: wrap;
 		width: min(1080px, 100% - 48px);
 		margin-inline: auto;
 		padding-block: 18px 22px;
 	}
 	/* The rail is seven buttons. The hit target is 22px tall with the mark itself at 2px —
 	   a 2px control is not a control — and the segment lights on hover so it reads as one. */
-	.co-rail { list-style: none; display: flex; gap: 6px; margin: 0; padding: 0; flex: 1 1 auto; max-width: 560px; }
+	.co-rail { list-style: none; display: flex; gap: 6px; margin: 0; padding: 0; flex: 0 1 460px; }
 	.co-rail li { flex: 1; display: flex; }
 	.co-rail button {
 		flex: 1;
@@ -995,33 +996,63 @@
 	.co-rail button:hover::before { background: rgba(241,239,232,0.4); }
 	.co-rail button:focus-visible { outline: 2px solid #E0A233; outline-offset: 3px; }
 
+	/* SOLID, NOT GHOSTED. This was a 1px outline at 28% on a near-black ground, which is
+	   how a control looks when it is meant to be ignored — and it was, at the same time,
+	   the only visible way out. Now that clicking the backdrop no longer skips, it is the
+	   only way out at all, so it takes the amber this design system already uses for a
+	   primary action: the Play control on the console, and the sign in the nav above it.
+	   Computed: the ink reads 8.93:1 on the fill, the fill 8.93:1 on the ground, and the
+	   key chip 6.07:1 — every one of them a real number rather than a hope. */
 	.co-skip {
 		pointer-events: auto;
 		display: inline-flex;
 		align-items: center;
-		gap: 9px;
+		gap: 10px;
 		font: inherit;
-		font-size: 13px;
-		font-weight: 600;
-		color: #F1EFE8;
-		background: transparent;
-		border: 1px solid rgba(241,239,232,0.28);
-		border-radius: 3px;
-		padding: 9px 15px;
+		font-size: 13.5px;
+		font-weight: 700;
+		letter-spacing: 0.01em;
+		color: #07080F;
+		background: #E0A233;
+		border: 1px solid #E0A233;
+		border-radius: 4px;
+		padding: 11px 17px;
 		cursor: pointer;
-		transition: border-color 150ms ease, background-color 150ms ease;
+		box-shadow: 0 2px 14px rgba(224,162,51,0.22);
+		transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 	}
-	.co-skip:hover { border-color: rgba(241,239,232,0.6); background: rgba(241,239,232,0.06); }
-	.co-skip:focus-visible { outline: 2px solid #E0A233; outline-offset: 2px; }
+	.co-skip:hover {
+		background: #EBB04A;
+		box-shadow: 0 3px 20px rgba(224,162,51,0.34);
+	}
+	.co-skip:active { transform: translateY(1px); }
+	.co-skip:focus-visible { outline: 2px solid #F1EFE8; outline-offset: 3px; }
 	.co-skip kbd {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 10px;
+		font-weight: 600;
 		letter-spacing: 0.08em;
-		color: #A9AEC4;
-		border: 1px solid rgba(241,239,232,0.22);
+		color: #3A2C0E;
+		border: 1px solid rgba(7,8,15,0.32);
 		border-radius: 2px;
 		padding: 1px 5px;
 	}
+
+	/* The rail stopped being self-evident the moment the backdrop stopped being clickable,
+	   so it says what it is. Mono, small, and beside the thing it describes. */
+	.co-hint {
+		/* margin-right:auto rather than relying on space-between: with three items the
+		   hint landed in the middle of the row, nearer the button than the rail it is
+		   describing. It belongs beside the control it explains. */
+		margin: 0 auto 0 0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 10px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: #828AA8;
+		white-space: nowrap;
+	}
+	@media (max-width: 860px) { .co-hint { display: none; } }
 
 	@media (max-width: 900px) {
 		.co-figs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
