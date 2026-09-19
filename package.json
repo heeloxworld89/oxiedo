@@ -19,7 +19,7 @@
 		"build:bundles": "python3 scripts/build-replay-bundle.py && python3 scripts/verify-replay-bundle.py",
 		"test:replay": "node scripts/test-replay-engine.mjs",
 		"test:coldopen": "node scripts/test-coldopen.mjs",
-		"check:hero": "node scripts/check-hero-collisions.mjs",
+		"check:hero": "node scripts/check-hero-figure.mjs",
 		"check:panels": "node scripts/check-hero-panels.mjs"
 	},
 	"dependencies": {

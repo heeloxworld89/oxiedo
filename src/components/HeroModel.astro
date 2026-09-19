@@ -1,174 +1,112 @@
 ---
 /* THE OPENED NODE.
  *
- * WHAT IT ARGUES, in one frame. On the left, a neural network — layers of units,
- * connections, the ordinary thing. One of its units is called out and magnified on
- * the right, and it is open: inside is the bounded four-operation chain, and around
- * that, in shells, everything the bound makes possible — the six capabilities, the
- * seven features, the five sectors.
+ * WHAT IT ARGUES. A standard unit cannot be opened, because its gradient path runs
+ * through everything downstream and has no fixed length. ORMAS bounds that path to
+ * four operations, and a part with a bounded path is a part you can point at. So:
+ * one unit of a neural network, opened, with the bounded chain at its face — and
+ * underneath it, everything the bound makes possible.
  *
- * That is the company's sentence as a picture. A standard unit cannot be opened
- * because its gradient path runs through everything downstream and has no fixed
- * length; ORMAS bounds that path to four operations, and a part with a bounded path
- * is a part you can point at. So: open one node and look inside. The page is called
- * The Black Box and this is what opening one looks like.
+ * WHY THE NAMES CAME OFF THE OBJECT. They were in orbit: eighteen of them, on three
+ * shells, around a disc, in a column seven hundred pixels wide. Every version of
+ * that was a fight — a cull that deleted a third of them, then a solver that flung
+ * them to the frame edge, then a leash, then more passes. The ratio was the problem
+ * the whole time. A radial arrangement carries five to seven things before it costs
+ * the reader more than it gives, its centre should not be filled with labels, and it
+ * already asks more of a reader than a straight list does. Eighteen names, three
+ * ring systems and a chord matrix in that space was never going to resolve, and a
+ * picture that has to be fought into legibility every frame is not finished, it is
+ * unfinished in a way that happens to be moving.
  *
- * WHY IT REPLACED CONCENTRIC RINGS. Three flat rings said "these things are arranged
- * around that thing", which is true and inert. Shells at different orientations
- * around a nucleus say "this is one object with an interior", which is the claim.
- * Atom visualisers have drawn structure that way for a century because it reads
- * instantly as a thing with an inside.
+ * So the object carries no text at all. It is a sphere with the chain on its face
+ * and three rings around it, and the only thing it has to do is be worth looking at
+ * and say "this has an inside". The eighteen names sit below it in three rows, where
+ * they cannot collide because a grid cannot collide, where they are real HTML with
+ * real focus rings and real tap targets, and where the relationships are shown by
+ * lighting up rather than by drawing sixty lines across the picture. Point at a
+ * feature and the capabilities it uses and the sectors it serves light up with it.
  *
- * EVERY LINE IS DATA. Each chord from a feature to a capability is a row of the
- * capability matrix in data/features.ts; each sector's line runs to that sector's own
- * primaryFeature in data/sectors.ts. Add a feature and the picture redraws itself
- * correctly, because it is drawn from the files the pages are drawn from.
+ * EVERY RELATION IS DATA. Which capabilities a feature uses is its row of the matrix
+ * in data/features.ts; which feature a sector enters through is its primaryFeature
+ * in data/sectors.ts. Add a feature and the picture redraws itself correctly.
  *
- * SVG, DRIVEN BY A PROJECTION. The geometry is solved twice: once at build, baking a
- * camera into the markup so the figure is three-dimensional with JavaScript off, and
- * again every frame once the model mounts, into the same elements. The eighteen
- * labels are the product and sector names — navigational content — so they stay real
- * text. Painted into a canvas they would lose find-in-page, translation, selection
- * and every screen reader.
+ * THE RINGS ARE REAL 3D. Each is a circle in space, projected through the same
+ * camera, and split at the horizon into the half in front of the sphere and the half
+ * behind it. The back half is drawn first and the sphere covers it. That is why it
+ * reads as a solid object rather than as three ovals laid on top of a circle.
  */
 import { features } from '../data/features';
 import { sectors } from '../data/sectors';
 
-/* A WIDE ARTBOARD, because the column is wide. The previous figure was 820x820 in a
-   container capped by height, so preserveAspectRatio fitted it by the short edge and
-   left a third of the frame empty on each side. */
-/* THE ARTBOARD IS THE NODE, AND NOTHING ELSE.
-   The network that used to stand at the left is gone: the figure sits between the two
-   columns of notes now, and a second drawing in the same frame was competing with the
-   thing the frame is for. What that buys is proportion — an 1320x590 box holding one
-   object 800 wide wasted a third of its width on context, and the same object in a
-   900x580 box is the whole picture.
-
-   Sized to the worst case over a full turn, not to the pose the build happens to bake:
-   a sector pill is 184 wide, so its centre can sit 92 short of either edge, and the
-   solver clamps anything that would run past. */
-/* A TIGHTER BOX MAKES BIGGER LABELS. A label is 11 units wide in the viewBox, so on
-   screen it measures 11 x (box width / viewBox width) — shrinking the viewBox around
-   the same object is the only lever that makes the names larger without making the
-   object smaller. Measured in the three-column layout: at a 900-unit box the labels
-   came out at 8.1px on a 1600px screen, which is the four-or-five-pixel mistake this
-   figure has already made once, in slower motion. */
-const W = 760;
-/* Measured against the worst case the leash allows: an outer anchor reaches
-   0.76 x 272 above or below the centre, a label may travel 78 further, and half a
-   chip is 14 more — 306 either side of CY. Anything taller is dead artboard, which
-   preserveAspectRatio centres and the page cannot close. */
-const H = 650;
-
-// The opened node.
-const CX = 380;
-const CY = 326;
-const R_CORE = 88;
-/* Three shells that clear each other's labels: a chip is 28 tall and a pill 26, so
-   94 units of gap between rings leaves room for a label on each without the solver
-   having to fling them. */
-const R_CAPS = 126;
-const R_FEAT = 200;
-const R_MKT = 272;
-
-const CHIP_W = 146;
-const CHIP_H = 28;
-const PILL_W = 184;
-const PILL_H = 26;
-
-/* ── the camera ─────────────────────────────────────────────────────────────────
-   Orthographic. A perspective divide turns a circle into a shape SVG has no
-   primitive for, and every ring here has to stay an exact ellipse so the points on
-   it land where the geometry says. Depth is carried by scale and opacity, which the
-   eye reads first anyway. */
-const YAW0 = -0.35;
-/* THE RINGS STAND MORE UPRIGHT NOW, and this is the fix for the crowding rather
-   than any change to the solver. At a shallow pitch the three ellipses flatten to
-   about four tenths of their width, which puts all eighteen anchors inside one thin
-   horizontal band across the middle of the frame — so every label had to be flung
-   a long way vertically to find room, and a label two hundred pixels from the thing
-   it names has stopped being attached to it. Opening the pitch spreads the anchors
-   over the height of the figure, and labels that start apart do not have to be
-   thrown apart. */
-const PITCH0 = 0.86;
-
-/** Each shell has its OWN orientation. Coplanar rings are a target; rings at
- *  different tilts are an object with an interior, which is the entire point. */
-const SHELLS = {
-	caps: { tilt: 0.0, roll: 0.0 },
-	feat: { tilt: 0.55, roll: 0.42 },
-	mkt: { tilt: -0.42, roll: -0.5 },
-};
-
-interface P3 { x: number; y: number; z: number }
-
-const rotX = (p: P3, a: number): P3 => ({
-	x: p.x,
-	y: p.y * Math.cos(a) - p.z * Math.sin(a),
-	z: p.y * Math.sin(a) + p.z * Math.cos(a),
-});
-const rotY = (p: P3, a: number): P3 => ({
-	x: p.x * Math.cos(a) + p.z * Math.sin(a),
-	y: p.y,
-	z: -p.x * Math.sin(a) + p.z * Math.cos(a),
-});
-const rotZ = (p: P3, a: number): P3 => ({
-	x: p.x * Math.cos(a) - p.y * Math.sin(a),
-	y: p.x * Math.sin(a) + p.y * Math.cos(a),
-	z: p.z,
-});
-
-/** A point at angle `a` on a shell of radius `r`, taken through that shell's own
- *  orientation and then through the camera. `dep` runs -1 (far) to +1 (near). */
-const onShell = (r: number, a: number, shell: { tilt: number; roll: number }) => {
-	let p: P3 = { x: r * Math.cos(a), y: 0, z: r * Math.sin(a) };
-	p = rotX(p, shell.tilt);
-	p = rotZ(p, shell.roll);
-	p = rotY(p, YAW0);
-	p = rotX(p, PITCH0);
-	return { x: CX + p.x, y: CY + p.y, dep: r === 0 ? 0 : p.z / r };
-};
-
-const ring = (r: number, i: number, n: number, shell: { tilt: number; roll: number }) => {
-	const a = ((i / n) * 360 - 90) * (Math.PI / 180);
-	return { a, ...onShell(r, a, shell) };
-};
-
 const CAP_ORDER = ['ACCOUNT', 'PROTECT', 'REPAIR', 'DETECT', 'ISOLATE', 'SUPPRESS'] as const;
-
-const capPts = CAP_ORDER.map((name, i) => ({ name, ...ring(R_CAPS, i, CAP_ORDER.length, SHELLS.caps) }));
-const featPts = features.map((f, i) => ({ feature: f, ...ring(R_FEAT, i, features.length, SHELLS.feat) }));
-const mktPts = sectors.map((s, i) => ({ sector: s, ...ring(R_MKT, i, sectors.length, SHELLS.mkt) }));
-
-/* THE MATRIX, as chords: one per cell of the capability matrix. */
-const chords = featPts.flatMap((fp) =>
-	fp.feature.capabilities
-		.map((cap) => capPts.find((c) => c.name === cap))
-		.filter((c): c is NonNullable<typeof c> => Boolean(c))
-		.map((c) => ({
-			key: `${fp.feature.id}-${c.name}`,
-			fa: fp.a, ca: c.a,
-			x1: fp.x, y1: fp.y, x2: c.x, y2: c.y,
-		})),
-);
-
-/* Each sector enters through one feature. Two lead with The Diary, so two lines
-   converge on it — that convergence is true and worth seeing. */
-const entries = mktPts
-	.map((mp) => {
-		const target = featPts.find((fp) => fp.feature.id === mp.sector.primaryFeature);
-		if (!target) return null;
-		return { key: mp.sector.id, ma: mp.a, fa: target.a, x1: mp.x, y1: mp.y, x2: target.x, y2: target.y };
-	})
-	.filter((e): e is NonNullable<typeof e> => Boolean(e));
+type Capability = (typeof CAP_ORDER)[number];
 
 const ops = ['LayerNorm', 'Linear ↓', 'PReLU', 'Linear ↑'];
 
-/* ── WHAT EACH THING IS, FOR THE PANEL THAT OPENS WHEN IT IS CLICKED ───────────
-   Read from data/features.ts and data/sectors.ts, the same files the pages use, so
-   a panel cannot say something the feature's own page contradicts. The capability
-   panels are derived rather than written: a capability IS the set of features that
-   consume it, and that set is the capability matrix. */
+/* ── the object ─────────────────────────────────────────────────────────────── */
+/* SIZED TO CONTAIN THE WHOLE OBJECT. The outer ring reaches 184 from the centre in
+   every direction once the three rolls are accounted for, so the board is that plus
+   a margin — no overflow, nothing leaning into the note columns either side. */
+const W = 460;
+const H = 440;
+const CX = 230;
+const CY = 220;
+const R_SPHERE = 92;
+
+/* Three rings at different attitudes. Tilt leans the ring away from the camera,
+   roll spins it in its own plane; together they are what stops three circles round
+   one sphere reading as three concentric ovals. */
+const RINGS = [
+	{ r: 120, tilt: 1.16, roll: 0.0 },
+	{ r: 152, tilt: 1.22, roll: 1.05 },
+	{ r: 184, tilt: 1.1, roll: -1.0 },
+];
+
+interface V3 { x: number; y: number; z: number }
+const rotX = (p: V3, a: number): V3 =>
+	({ x: p.x, y: p.y * Math.cos(a) - p.z * Math.sin(a), z: p.y * Math.sin(a) + p.z * Math.cos(a) });
+const rotY = (p: V3, a: number): V3 =>
+	({ x: p.x * Math.cos(a) + p.z * Math.sin(a), y: p.y, z: -p.x * Math.sin(a) + p.z * Math.cos(a) });
+const rotZ = (p: V3, a: number): V3 =>
+	({ x: p.x * Math.cos(a) - p.y * Math.sin(a), y: p.x * Math.sin(a) + p.y * Math.cos(a), z: p.z });
+
+/* THE CAMERA, once, here and again in the script. z is depth: positive is toward
+   the reader, which is what decides whether a stretch of ring is in front of the
+   sphere or behind it. */
+const project = (r: number, a: number, ring: { tilt: number; roll: number }, yaw = 0) => {
+	let p: V3 = { x: r * Math.cos(a), y: 0, z: r * Math.sin(a) };
+	p = rotX(p, ring.tilt);
+	p = rotZ(p, ring.roll);
+	p = rotY(p, yaw);
+	return { x: CX + p.x, y: CY + p.y, z: p.z };
+};
+
+/* A ring, split at the horizon. Sampled rather than solved: the exact split point is
+   a root of a trig equation and the difference at 96 samples is a third of a pixel. */
+const SAMPLES = 96;
+const ringHalves = (ring: { r: number; tilt: number; roll: number }, yaw = 0) => {
+	const pts = Array.from({ length: SAMPLES + 1 }, (_, i) =>
+		project(ring.r, (i / SAMPLES) * Math.PI * 2, ring, yaw));
+	const runs: { front: boolean; d: string }[] = [];
+	let cur: string[] = [];
+	let front = pts[0].z >= 0;
+	for (const p of pts) {
+		const isFront = p.z >= 0;
+		if (isFront !== front && cur.length) {
+			runs.push({ front, d: `M${cur.join('L')}` });
+			cur = [cur[cur.length - 1]];
+			front = isFront;
+		}
+		cur.push(`${p.x.toFixed(1)},${p.y.toFixed(1)}`);
+	}
+	if (cur.length > 1) runs.push({ front, d: `M${cur.join('L')}` });
+	return runs;
+};
+const bakedRings = RINGS.map((ring, i) => ({ i, halves: ringHalves(ring) }));
+
+/* ── what each thing is, for the card that opens when it is clicked ───────────
+   Read from data/features.ts and data/sectors.ts, the same files the pages are
+   built from, so a card cannot say something a feature's own page contradicts. */
 interface Panel {
 	id: string;
 	kind: 'feature' | 'sector' | 'capability';
@@ -199,18 +137,17 @@ const panels: Panel[] = [
 		href: `/sectors/${sec.id}`,
 	})),
 	/* A CAPABILITY IS NOT WRITTEN ANYWHERE, so it is not written here either. There is
-	   no prose for the six in data/, and a definition composed for a tooltip would be
-	   a claim about the architecture that nothing in the archive backs. What a
+	   no prose for the six in data/, and a definition composed for a card would be a
+	   claim about the architecture that nothing in the archive backs. What a
 	   capability demonstrably IS, from the data alone, is the set of features that use
-	   it and the sectors those features are the way into — so the panel says that, and
-	   sends the reader to a page that does have the prose. */
+	   it and the sectors those features are the way into. */
 	...CAP_ORDER.map((cap) => {
-		const users = features.filter((f) => f.capabilities.includes(cap));
+		const users = features.filter((f) => f.capabilities.includes(cap as Capability));
 		const reach = sectors.filter((sec) => users.some((f) => f.id === sec.primaryFeature));
 		return {
 			id: `p-cap-${cap.toLowerCase()}`,
 			kind: 'capability' as const,
-			name: cap,
+			name: cap as string,
 			question: 'One of the six capabilities the bounded chain makes possible.',
 			body: users.length === 1
 				? `Used by one of the seven features: ${users[0].name}.`
@@ -223,175 +160,156 @@ const panels: Panel[] = [
 	}),
 ];
 
-const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
+/* The three rows, and the links between them that the highlight follows. */
+const capRow = CAP_ORDER.map((cap) => ({
+	id: `p-cap-${cap.toLowerCase()}`,
+	name: cap as string,
+	feats: features.filter((f) => f.capabilities.includes(cap as Capability)).map((f) => f.id),
+}));
+const featRow = features.map((f) => ({
+	id: `p-${f.id}`,
+	key: f.id,
+	name: f.name,
+	caps: f.capabilities.map((c) => `p-cap-${String(c).toLowerCase()}`),
+	secs: sectors.filter((s) => s.primaryFeature === f.id).map((s) => `p-${s.id}`),
+}));
+const secRow = sectors.map((sec) => ({
+	id: `p-${sec.id}`,
+	name: sec.name,
+	feat: `p-${sec.primaryFeature}`,
+}));
 ---
 
 <figure class="hm" data-hm>
-	{/* aria-label, NOT <title>. An SVG <title> is the accessible name AND a native
-	    browser tooltip, so "One node of a neural network, opened" followed the cursor
-	    around the figure and sat on top of the drawing it was describing — clipped by
-	    the frame on the way out. The same mistake is written up at the top of
-	    HeroVisual, which is where this should have been read first. aria-label gives
-	    assistive technology the identical name and draws nothing. */}
-	<svg
-		data-hm-svg
-		viewBox={`0 0 ${W} ${H}`}
-		role="img"
-		aria-label="One node of a neural network, opened"
-		aria-describedby="hm-desc"
-		preserveAspectRatio="xMidYMid meet"
-	>
-		<desc id="hm-desc">
-			One unit of a neural network, magnified and shown open: at its centre the bounded
-			four-operation chain — LayerNorm, Linear down, PReLU, Linear up — and around it three
-			shells carrying the six capabilities the bound makes possible, the seven features built
-			from those capabilities, and the five sectors each feature serves. Lines between the
-			shells are the capability matrix and each sector's lead feature.
-		</desc>
+	{/* ── THE OBJECT ──────────────────────────────────────────────────────────
+	    No text but the chain on its face. Everything that used to orbit it is in
+	    the rows below, where a grid guarantees what a solver could only attempt. */}
+	<div class="hm-stage">
+		<svg
+			data-hm-svg
+			viewBox={`0 0 ${W} ${H}`}
+			role="img"
+			aria-label="One unit of a neural network, opened"
+			aria-describedby="hm-desc"
+			preserveAspectRatio="xMidYMid meet"
+		>
+			<desc id="hm-desc">
+				A sphere with three rings around it. On its face, the bounded four-operation chain:
+				LayerNorm, Linear down, PReLU, Linear up. The rows beneath name the six capabilities
+				the bound makes possible, the seven features built from them, and the five sectors
+				each feature serves.
+			</desc>
+			<defs>
+				{/* Lit from the upper left, falling away to the far edge. A flat fill was
+				    the thing that read as a circle rather than as a body. */}
+				<radialGradient id="hm-face" cx="34%" cy="28%" r="78%">
+					<stop offset="0%" stop-color="#2E3163" />
+					<stop offset="52%" stop-color="#1D2045" />
+					<stop offset="100%" stop-color="#121430" />
+				</radialGradient>
+				{/* Kept off the sphere's own edge. Spread across it, the halo washed the rim
+				    out and the body stopped having a boundary at all. */}
+				<radialGradient id="hm-halo" cx="50%" cy="50%" r="50%">
+					<stop offset="72%" stop-color="rgba(165,160,255,0)" />
+					<stop offset="86%" stop-color="rgba(165,160,255,0.10)" />
+					<stop offset="100%" stop-color="rgba(165,160,255,0)" />
+				</radialGradient>
+			</defs>
 
-		{/* ── shells ──────────────────────────────────────────────────────────── */}
-		<g>
-			<ellipse data-shell="caps" data-r={R_CAPS} cx={CX} cy={CY} rx={R_CAPS} ry={R_CAPS * 0.76} class="hm-shell" />
-			<ellipse data-shell="feat" data-r={R_FEAT} cx={CX} cy={CY} rx={R_FEAT} ry={R_FEAT * 0.76} class="hm-shell" />
-			<ellipse data-shell="mkt" data-r={R_MKT} cx={CX} cy={CY} rx={R_MKT} ry={R_MKT * 0.76} class="hm-shell" />
-		</g>
+			<circle cx={CX} cy={CY} r={R_SPHERE * 1.42} fill="url(#hm-halo)" />
 
-		<g>
-			{chords.map((c) => (
-				<line
-					data-chord={c.key} data-fa={c.fa} data-ca={c.ca}
-					data-fr={R_FEAT} data-cr={R_CAPS}
-					x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2} class="hm-chord"
-				/>
-			))}
-			{entries.map((e) => (
-				<line
-					data-entry={e.key} data-ma={e.ma} data-fa={e.fa}
-					data-mr={R_MKT} data-fr={R_FEAT}
-					x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="hm-entry"
-				/>
-			))}
-		</g>
+			{/* Behind the sphere. Drawn first so the sphere covers it — the occlusion is
+			    what makes a ring read as going round rather than lying on top. */}
+			<g data-rings="back">
+				{bakedRings.map((r) => r.halves.filter((h) => !h.front).map((h) => (
+					<path d={h.d} class="hm-ring hm-ring--back" data-ring={r.i} data-front="0" />
+				)))}
+			</g>
 
-		{/* ── the leaders ───────────────────────────────────────────────────────
-		    IN THEIR OWN GROUP, AND BEFORE THE NUCLEUS. A leader runs from a label to
-		    its anchor on a shell, and when that anchor is behind the disc the line has
-		    to cross it. Drawn inside the label's own group — which is painted after the
-		    core so the names stay on top — every one of those crossings was a hairline
-		    ruled straight over the subject of the picture. Here they slide behind the
-		    disc instead, which is also where they are in space.
+			<g class="hm-body">
+				<circle cx={CX} cy={CY} r={R_SPHERE} fill="url(#hm-face)" />
+				<circle cx={CX} cy={CY} r={R_SPHERE} class="hm-rim" />
+				<text x={CX} y={CY - R_SPHERE + 24} text-anchor="middle" class="hm-cap">the bounded chain</text>
+				{ops.map((op, i) => {
+					const by = CY - 48 + i * 26;
+					return (
+						<g>
+							<rect x={CX - 45} y={by} width="90" height="18" rx="3" class="hm-op" />
+							<text x={CX} y={by + 12.8} text-anchor="middle" class="hm-op-text">{op}</text>
+							{i < ops.length - 1 && (
+								<path d={`M${CX},${by + 18} v5 m-2.6,-2.6 l2.6,2.6 l2.6,-2.6`} class="hm-op-arrow" />
+							)}
+						</g>
+					);
+				})}
+			</g>
 
-		    It has a second effect worth naming: an orb's group no longer stretches from
-		    its anchor to its label, so the collision check measures the label rather
-		    than a box the size of the leader. It was reporting four labels "covering
-		    the nucleus" when what crossed the nucleus was four lines. */}
-		<g>
-			{[...capPts.map((c) => ({ id: `p-cap-${c.name.toLowerCase()}`, x: c.x, y: c.y })),
-			  ...featPts.map((fp) => ({ id: `p-${fp.feature.id}`, x: fp.x, y: fp.y })),
-			  ...mktPts.map((mp) => ({ id: `p-${mp.sector.id}`, x: mp.x, y: mp.y }))].map((a) => (
-				<line class="hm-leader" data-leader={a.id} x1={a.x} y1={a.y} x2={a.x} y2={a.y} />
-			))}
-		</g>
+			<g data-rings="front">
+				{bakedRings.map((r) => r.halves.filter((h) => h.front).map((h) => (
+					<path d={h.d} class="hm-ring hm-ring--front" data-ring={r.i} data-front="1" />
+				)))}
+			</g>
 
-		{/* ── the nucleus: the bounded chain ────────────────────────────────────
-		    A CHAIN, DRAWN AS A CHAIN. Four boxes in a two-by-two grid says "here are
-		    four things" — a set, in no order, with no relationship between them. The
-		    claim is the opposite of that: these four operations are a *chain*, and the
-		    fact that it is bounded at four is the entire thesis. A grid was not a
-		    weaker picture of the idea, it was a picture of a different idea. So: one
-		    column, top to bottom, with the arrows that make it a sequence. */}
-		<g data-core>
-			<circle cx={CX} cy={CY} r={R_CORE} class="hm-core-disc" />
-			<circle cx={CX} cy={CY} r={R_CORE} class="hm-core-ring" />
-			{/* A DISC IS NARROW AT THE TOP. The caption was set at the width of the
-			    diameter and placed 24 below the crown, where the chord it actually has
-			    is 126 wide — so it ran out over the ring and printed across a shell
-			    anchor. Lower, smaller, and measured against the chord at that height. */}
-			<text x={CX} y={CY - R_CORE + 26} text-anchor="middle" class="hm-core-cap">the bounded chain</text>
-			{ops.map((op, i) => {
-				const by = CY - 58 + i * 32;
-				return (
-					<g>
-						<rect x={CX - 50} y={by} width="100" height="20" rx="3" class="hm-op" />
-						<text x={CX} y={by + 14} text-anchor="middle" class="hm-op-text">{op}</text>
-						{i < ops.length - 1 && (
-							<path d={`M${CX},${by + 20} v8 m-3.5,-3.5 l3.5,3.5 l3.5,-3.5`} class="hm-op-arrow" />
-						)}
-					</g>
-				);
-			})}
-		</g>
+			{/* One carrier per ring, riding it. The only motion in the figure. */}
+			<g data-carriers>
+				{RINGS.map((_, i) => <circle r="3.4" class="hm-carrier" data-carrier={i} cx={CX} cy={CY} />)}
+			</g>
+		</svg>
+	</div>
 
-		{/* ── capabilities ────────────────────────────────────────────────────── */}
-		<g>
-			{capPts.map((c) => (
-				<g
-					data-orb="caps" data-a={c.a} data-r={R_CAPS} data-id={c.name}
-					data-hm-panel={`p-cap-${c.name.toLowerCase()}`}
-					role="button" tabindex="0"
-					aria-label={`${c.name} — what this capability is`}
-					style={`opacity:${fmtDep(c.dep)}`}
-				>
-					{/* A HIT AREA. A capability is a 4.5px dot with a line of text ten pixels
-					    above it, and an SVG group does not catch a pointer in the gap between
-					    its children — a click on the middle of this group went straight
-					    through to the page behind it and opened nothing. Measured. A
-					    transparent rect gives the label one target, which is also what turns
-					    a nine-pixel dot into something a thumb can hit. */}
-					<rect class="hm-hit" x={c.x - 52} y={c.y - 22} width="104" height="34" />
-					<circle cx={c.x} cy={c.y} r="4.5" class="hm-cap-dot hm-anchor" />
-					<text x={c.x} y={c.y - 10} text-anchor="middle" class="hm-cap-text" data-cull>{c.name}</text>
-				</g>
-			))}
-		</g>
+	{/* ── THE THREE ROWS ──────────────────────────────────────────────────────
+	    Real buttons, in a grid. They cannot overlap, they take focus, they are a
+	    proper tap target, and the text is HTML so it is crisp at any size and
+	    findable on the page. Pointing at one lights everything it is joined to,
+	    which is the same information the chords carried and none of the mess. */}
+	<div class="hm-tax" data-tax>
+		<section class="hm-row">
+			<p class="hm-row-label">Six capabilities</p>
+			<ul class="hm-chips">
+				{capRow.map((c) => (
+					<li>
+						<button
+							type="button" class="hm-chip hm-chip--cap"
+							data-node={c.id} data-kin={c.feats.map((f) => `p-${f}`).join(' ')}
+						>{c.name}</button>
+					</li>
+				))}
+			</ul>
+		</section>
 
-		{/* ── features ────────────────────────────────────────────────────────── */}
-		<g>
-			{featPts.map((fp) => (
-				<g
-					data-orb="feat" data-a={fp.a} data-r={R_FEAT}
-					data-w={CHIP_W} data-h={CHIP_H} data-id={fp.feature.id}
-					data-hm-panel={`p-${fp.feature.id}`}
-					role="button" tabindex="0"
-					aria-label={`${fp.feature.name} — what this feature does`}
-					style={`opacity:${fmtDep(fp.dep)}`}
-				>
-					{/* THE ANCHOR IS THE TRUTH. The dot is where this feature actually sits on
-					    its shell; the chip is only the name, free to slide aside when another
-					    name wants the same pixels. The leader that joins them is drawn in a
-					    group of its own, further up — see the note there. */}
-					<rect x={fp.x - CHIP_W / 2} y={fp.y - CHIP_H / 2} width={CHIP_W} height={CHIP_H} rx="5" class="hm-chip" data-cull />
-					<text x={fp.x} y={fp.y + 4} text-anchor="middle" class="hm-chip-text">{fp.feature.name}</text>
-					<circle cx={fp.x} cy={fp.y} r="3.6" class="hm-chip-dot hm-anchor" />
-				</g>
-			))}
-		</g>
+		<section class="hm-row">
+			<p class="hm-row-label">Seven features</p>
+			<ul class="hm-chips">
+				{featRow.map((f) => (
+					<li>
+						<button
+							type="button" class="hm-chip hm-chip--feat"
+							data-node={f.id} data-kin={[...f.caps, ...f.secs].join(' ')}
+						>{f.name}</button>
+					</li>
+				))}
+			</ul>
+		</section>
 
-		{/* ── sectors ─────────────────────────────────────────────────────────── */}
-		<g>
-			{mktPts.map((mp) => (
-				<g
-					data-orb="mkt" data-a={mp.a} data-r={R_MKT}
-					data-w={PILL_W} data-h={PILL_H} data-id={mp.sector.id}
-					data-hm-panel={`p-${mp.sector.id}`}
-					role="button" tabindex="0"
-					aria-label={`${mp.sector.name} — what this sector asks`}
-					style={`opacity:${fmtDep(mp.dep)}`}
-				>
-					<rect x={mp.x - PILL_W / 2} y={mp.y - PILL_H / 2} width={PILL_W} height={PILL_H} rx="14" class="hm-pill" data-cull />
-					<circle cx={mp.x} cy={mp.y} r="4" class="hm-chip-dot hm-anchor" />
-					<text x={mp.x} y={mp.y + 4} text-anchor="middle" class="hm-pill-text">{mp.sector.name}</text>
-				</g>
-			))}
-		</g>
-	</svg>
+		<section class="hm-row">
+			<p class="hm-row-label">Five sectors</p>
+			<ul class="hm-chips">
+				{secRow.map((s) => (
+					<li>
+						<button
+							type="button" class="hm-chip hm-chip--sec"
+							data-node={s.id} data-kin={s.feat}
+						>{s.name}</button>
+					</li>
+				))}
+			</ul>
+		</section>
+	</div>
 
-	{/* ONE PANEL PER THING, IN THE MARKUP.
-	    Real content, not strings assembled in JavaScript: it is in the HTML for a
-	    crawler and a screen reader whether or not the model ever mounts, and every
-	    word of it comes from the same data files the product and sector pages are
-	    built from. The native popover attribute carries the rest — top layer, light
-	    dismiss, Escape, focus return — none of which is worth reimplementing. */}
+	{/* ONE CARD PER THING, IN THE MARKUP. Real content, not strings assembled in
+	    JavaScript: it is in the HTML for a crawler and a screen reader whether or
+	    not the script ever runs, and every word comes from the same data files the
+	    product and sector pages are built from. */}
 	<div class="hm-panels">
 		{panels.map((p) => (
 			<div class="hm-panel" id={p.id} popover="auto" data-kind={p.kind}>
@@ -406,29 +324,24 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	</div>
 
 	<figcaption class="hm-legend">
-		{/* THE LEGEND CARRIES WHAT THE MESH USED TO SAY. The network beside the node was
-		    the thing that made "one unit" true rather than asserted, and it has gone;
-		    the words have to do that work now, in real text at a real size. */}
-		<span>One unit of a neural network · six capabilities · seven features · five sectors</span>
-		<span class="hm-drive" data-hm-hint hidden>Drag to turn it</span>
+		One unit of a neural network, opened. Point at any name to see what it joins.
 	</figcaption>
 </figure>
 
 <script>
-	/* The same geometry the build baked, re-solved every frame into the same elements.
+	/* The same camera the build used, re-solved each frame into the same elements.
 	   One source of shape, two renderers, no duplicated DOM. */
-	const CX = 380;
-	const CY = 326;
-	const R_CORE = 88;
-	const W = 760;
-	const H = 650;
-	const YAW0 = -0.35;
-	const PITCH0 = 0.86;
-	const SHELLS: Record<string, { tilt: number; roll: number }> = {
-		caps: { tilt: 0.0, roll: 0.0 },
-		feat: { tilt: 0.55, roll: 0.42 },
-		mkt: { tilt: -0.42, roll: -0.5 },
-	};
+	const W = 460;
+	const H = 440;
+	const CX = 230;
+	const CY = 220;
+	const R_SPHERE = 92;
+	const RINGS = [
+		{ r: 120, tilt: 1.16, roll: 0.0 },
+		{ r: 152, tilt: 1.22, roll: 1.05 },
+		{ r: 184, tilt: 1.1, roll: -1.0 },
+	];
+	const SAMPLES = 96;
 
 	interface V3 { x: number; y: number; z: number }
 	const rotX = (p: V3, a: number): V3 =>
@@ -439,550 +352,153 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		({ x: p.x * Math.cos(a) - p.y * Math.sin(a), y: p.x * Math.sin(a) + p.y * Math.cos(a), z: p.z });
 
 	function mountHeroModel() {
-		const svg = document.querySelector<SVGSVGElement>('[data-hm-svg]');
-		if (!svg || svg.dataset.live === '1') return;
-		const fig = svg.closest<HTMLElement>('[data-hm]');
-		if (!fig) return;
-		svg.dataset.live = '1';
+		const fig = document.querySelector<HTMLElement>('[data-hm]');
+		if (!fig || fig.dataset.hmLive === '1') return;
+		fig.dataset.hmLive = '1';
 
-		const hint = fig.querySelector<HTMLElement>('[data-hm-hint]');
-		if (hint) hint.hidden = false;
-		fig.classList.add('is-live');
+		const svg = fig.querySelector<SVGSVGElement>('[data-hm-svg]');
+		const backG = fig.querySelector<SVGGElement>('[data-rings="back"]');
+		const frontG = fig.querySelector<SVGGElement>('[data-rings="front"]');
+		if (!svg || !backG || !frontG) return;
 
+		const carriers = [...fig.querySelectorAll<SVGCircleElement>('[data-carrier]')];
 		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		const num = (el: Element, k: string) => Number(el.getAttribute(k)) || 0;
 
-		const orbs = [...svg.querySelectorAll<SVGGElement>('[data-orb]')].map((el) => ({
-			el,
-			shell: el.getAttribute('data-orb') as string,
-			a: num(el, 'data-a'),
-			r: num(el, 'data-r'),
-			w: num(el, 'data-w'),
-			h: num(el, 'data-h'),
-			id: el.getAttribute('data-id') || '',
-			rect: el.querySelector<SVGRectElement>('rect:not(.hm-hit)'),
-			hit: el.querySelector<SVGRectElement>('rect.hm-hit'),
-			anchor: el.querySelector<SVGCircleElement>('circle.hm-anchor'),
-			leader: svg.querySelector<SVGLineElement>(
-				`line.hm-leader[data-leader="${el.getAttribute('data-hm-panel')}"]`,
-			),
-			/* How far this label currently sits from its anchor. Carried between frames
-			   so the solved position can be eased into rather than jumped to. */
-			ox: 0,
-			oy: 0,
-			/* Where it was nailed down when the pointer arrived on it, if it is the one
-			   being pointed at. Absolute, not an offset — see the note at the freeze. */
-			fx: null as number | null,
-			fy: null as number | null,
-			text: el.querySelector<SVGTextElement>('text'),
-			cull: el.querySelector<SVGElement>('[data-cull]'),
-			/* Measured, not assumed. The caps carry no rect, so their width was a flat
-			   74 for every one of them — "ACCOUNT" is 56 and "SUPPRESS" is 70, and the
-			   cull was reserving the wrong span for both. */
-			textW: 74,
-		}));
-		for (const o of orbs) {
-			if (o.w) continue;
-			try { o.textW = (o.text?.getComputedTextLength?.() ?? 74) + 6; } catch { /* not laid out yet */ }
+		const project = (r: number, a: number, ring: { tilt: number; roll: number }, yaw: number) => {
+			let p: V3 = { x: r * Math.cos(a), y: 0, z: r * Math.sin(a) };
+			p = rotX(p, ring.tilt);
+			p = rotZ(p, ring.roll);
+			p = rotY(p, yaw);
+			return { x: CX + p.x, y: CY + p.y, z: p.z };
+		};
+
+		/* A POOL OF PATHS, REUSED. A ring crosses the horizon twice, so it is at most
+		   two runs each side, and the DOM never has to grow or shrink — which is the
+		   whole reason the old figure kept losing the pointer: it was taking nodes out
+		   and putting them back every frame. Nothing is added or removed here after
+		   mount; only the d attribute changes. */
+		const pool: { back: SVGPathElement[]; front: SVGPathElement[] } = { back: [], front: [] };
+		const MAX_RUNS = 3;
+		for (const side of ['back', 'front'] as const) {
+			const host = side === 'back' ? backG : frontG;
+			host.textContent = '';
+			for (let i = 0; i < RINGS.length * MAX_RUNS; i++) {
+				const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+				el.setAttribute('class', `hm-ring hm-ring--${side}`);
+				// An SVG path with no fill declared is black, not transparent.
+				el.setAttribute('fill', 'none');
+				el.style.display = 'none';
+				host.appendChild(el);
+				pool[side].push(el);
+			}
 		}
-		/* Radii come off the elements, not from constants retyped in here. The first
-		   pass hardcoded 118 / 196 / 272 in the script as well as in the frontmatter,
-		   which is two sources of truth for one geometry and a silent mis-draw the
-		   moment either moves. */
-		const chords = [...svg.querySelectorAll<SVGLineElement>('[data-chord]')].map((el) => ({
-			el, fa: num(el, 'data-fa'), ca: num(el, 'data-ca'),
-			fr: num(el, 'data-fr'), cr: num(el, 'data-cr'),
-			key: el.getAttribute('data-chord') || '',
-		}));
-		const entryDefs = [...svg.querySelectorAll<SVGLineElement>('[data-entry]')].map((el) => ({
-			el, ma: num(el, 'data-ma'), fa: num(el, 'data-fa'),
-			mr: num(el, 'data-mr'), fr: num(el, 'data-fr'),
-			key: el.getAttribute('data-entry') || '',
-		}));
-		const shellEls = [...svg.querySelectorAll<SVGEllipseElement>('[data-shell]')].map((el) => ({
-			el, shell: el.getAttribute('data-shell') as string, r: num(el, 'data-r'),
-		}));
 
 		let yaw = 0;
-		let aimYaw = 0;
-		let pitch = 0;
-		let aimPitch = 0;
-		let frozenEl: Element | null = null;   // the label the pointer is resting on
-		const order: Element[] = [];           // the depth order the DOM is currently in
-		let hovered = '';    // a feature id: lights the chords leaving that feature
-		let hoverCap = '';   // a capability name: lights the chords arriving at it
-		let dragging = false;
-		let lastX = 0;
-		let lastY = 0;
-		/* THE MODEL SLOWS TO A STOP, IT DOES NOT SEIZE. Hovering a label used to set the
-		   rate to zero on the frame the pointer arrived, and a turning object that halts
-		   between one frame and the next does not read as "held" — it reads as stuck,
-		   which is the word that came back. Easing the rate over about a fifth of a
-		   second makes the same behaviour legible as the figure waiting for you. */
-		let spinAim = reduced ? 0 : 1;
-		let spin = spinAim;
-		const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
+		let raf = 0;
+		let last = 0;
 
-		const project = (r: number, a: number, shell: string) => {
-			const s = SHELLS[shell] ?? SHELLS.caps;
-			let p: V3 = { x: r * Math.cos(a), y: 0, z: r * Math.sin(a) };
-			p = rotX(p, s.tilt);
-			p = rotZ(p, s.roll);
-			p = rotY(p, YAW0 + yaw);
-			p = rotX(p, PITCH0 + pitch);
-			return { x: CX + p.x, y: CY + p.y, dep: r === 0 ? 0 : p.z / r };
-		};
+		const draw = (t: number) => {
+			const dt = last ? Math.min(64, t - last) : 16;
+			last = t;
+			if (!reduced) yaw += dt * 0.00013;
 
-		/* A SHELL'S SILHOUETTE. Under an orthographic camera a tilted circle is still an
-		   exact ellipse; these are its axes, found by projecting two perpendicular
-		   diameters, so the guide always matches the points sitting on it. */
-		const shellPath = (r: number, shell: string) => {
-			const p0 = project(r, 0, shell);
-			const p1 = project(r, Math.PI / 2, shell);
-			const ax = Math.hypot(p0.x - CX, p0.y - CY);
-			const ay = Math.hypot(p1.x - CX, p1.y - CY);
-			const rot = (Math.atan2(p0.y - CY, p0.x - CX) * 180) / Math.PI;
-			return { rx: Math.max(1, ax), ry: Math.max(1, ay), rot };
-		};
+			const used = { back: 0, front: 0 };
+			RINGS.forEach((ring, ri) => {
+				let cur: string[] = [];
+				let front = project(ring.r, 0, ring, yaw).z >= 0;
+				const flush = () => {
+					if (cur.length < 2) return;
+					const side = front ? 'front' : 'back';
+					const el = pool[side][used[side]];
+					if (!el) return;
+					used[side] += 1;
+					el.setAttribute('d', `M${cur.join('L')}`);
+					el.style.display = '';
+				};
+				for (let i = 0; i <= SAMPLES; i++) {
+					const p = project(ring.r, (i / SAMPLES) * Math.PI * 2, ring, yaw);
+					const isFront = p.z >= 0;
+					if (isFront !== front && cur.length) {
+						flush();
+						cur = [cur[cur.length - 1]];
+						front = isFront;
+					}
+					cur.push(`${p.x.toFixed(1)},${p.y.toFixed(1)}`);
+				}
+				flush();
 
-		function frame(now: number) {
-			spin += (spinAim - spin) * 0.09;
-			if (!dragging) aimYaw += 0.0016 * spin;
-			yaw += (aimYaw - yaw) * 0.08;
-			pitch += (aimPitch - pitch) * 0.08;
-
-			for (const s of shellEls) {
-				const g = shellPath(s.r, s.shell);
-				s.el.setAttribute('rx', String(g.rx));
-				s.el.setAttribute('ry', String(g.ry));
-				s.el.setAttribute('transform', `rotate(${g.rot} ${CX} ${CY})`);
-			}
-
-			const placed = [...orbs].map((o) => ({ o, p: project(o.r, o.a, o.shell) }))
-				.sort((m, n) => m.p.dep - n.p.dep);
-
-			/* ── NOTHING DISAPPEARS ──────────────────────────────────────────────
-			   THE CULL IS GONE. It hid any label that would land on one already
-			   placed, which at a typical angle was five of the eighteen — and because
-			   hovering stops the model, whatever happened to be hidden at that instant
-			   stayed hidden for as long as the reader looked. What that produces on
-			   screen is a figure that deletes a third of itself the moment you touch
-			   it and then freezes that way. Reported exactly so, and correctly.
-
-			   A label that is in the way does not have to be destroyed; it has to move.
-			   Each label keeps an anchor on its shell — the dot, which is the true
-			   position and never moves off the geometry — and the text is free to slide
-			   until it has room, joined back to its anchor by a leader. This is how a
-			   technical illustration has always solved it, and it has the property the
-			   cull could never have: every one of the eighteen is legible at every
-			   angle, because being in the way costs a label a few pixels instead of its
-			   existence. */
-			/* How far a label may travel from the dot it names. */
-			const LEASH = 78;
-			const items = placed.map(({ o, p }) => {
-				const w = (o.w || o.textW) + 8;
-				const h = (o.h || 22) + 8;
-				// Nudged outward to begin with, so the solver starts on the side of the
-				// anchor with the open space rather than pushing through the nucleus.
-				const vx = p.x - CX;
-				const vy = p.y - CY;
-				const m = Math.hypot(vx, vy) || 1;
-				/* A CAPABILITY SITS ABOVE ITS DOT, SQUARELY. Lifted radially like the
-				   others it landed on a diagonal, and a 74-wide word displaced 17 along a
-				   diagonal still has its own dot touching the last letter — ISOLATE● .
-				   Straight up by eighteen clears the text at every angle and gives it a
-				   short vertical leader instead of a stub poking out of a corner. */
-				if (o.shell === 'caps') return { o, p, w, h, x: p.x, y: p.y - 18, rx: 0, ry: 0, held: false };
-				return { o, p, w, h, x: p.x + (vx / m) * 5, y: p.y + (vy / m) * 5, rx: 0, ry: 0, held: false };
+				/* The carrier rides its ring and goes behind the sphere with it: hidden
+				   when it is on the far side AND inside the disc, which is exactly when a
+				   real bead would be out of sight. Near the camera it is bigger. */
+				const c = carriers[ri];
+				if (c) {
+					const a = yaw * (2.4 + ri * 0.55) + ri * 2.1;
+					const p = project(ring.r, a, ring, yaw);
+					const depth = p.z / ring.r;
+					const hidden = depth < 0 && Math.hypot(p.x - CX, p.y - CY) < R_SPHERE;
+					c.setAttribute('cx', p.x.toFixed(1));
+					c.setAttribute('cy', p.y.toFixed(1));
+					c.setAttribute('r', (2.4 + (depth + 1) * 1.1).toFixed(2));
+					c.style.opacity = hidden ? '0' : String(0.45 + ((depth + 1) / 2) * 0.55);
+				}
 			});
-
-			const core = { l: CX - R_CORE, r: CX + R_CORE, t: CY - R_CORE, b: CY + R_CORE };
-
-			/* Pairwise separation along the shorter axis: a label that overlaps by 40
-			   across and 6 down is one that wants to move down, and moving it down is
-			   both the smaller lie about where it belongs and the shorter trip. Six
-			   passes settles eighteen boxes; it is 153 pairs, which is nothing. */
-			/* FOURTEEN PASSES, NOT SIX. Six left labels wedged: measured, SUPPRESS still
-			   sat 67% across AI Training and four labels were still on the nucleus. The
-			   work is 153 pairs a pass and the whole solve is under a tenth of a
-			   millisecond, so the cost of being generous here is nothing and the cost of
-			   being stingy is a label printed through another one. */
-			for (let pass = 0; pass < 14; pass++) {
-				for (let i = 0; i < items.length; i++) {
-					for (let j = i + 1; j < items.length; j++) {
-						const a = items[i];
-						const b = items[j];
-						const dx = b.x - a.x;
-						const dy = b.y - a.y;
-						const ox = (a.w + b.w) / 2 - Math.abs(dx);
-						const oy = (a.h + b.h) / 2 - Math.abs(dy);
-						if (ox <= 0 || oy <= 0) continue;
-						if (ox < oy) {
-							const push = ((dx < 0 ? -1 : 1) * ox) / 2;
-							a.x -= push; b.x += push;
-						} else {
-							const push = ((dy < 0 ? -1 : 1) * oy) / 2;
-							a.y -= push; b.y += push;
-						}
-					}
-				}
-				/* ON A LEASH. Separation on its own will send a label anywhere it fits,
-				   and a name two hundred pixels from the dot it belongs to has stopped
-				   being attached to anything — the figure read as eighteen words
-				   scattered round a circle. Held within reach of its own anchor, a
-				   label that cannot fit nudges its neighbours instead of emigrating. */
-				for (const a of items) {
-					const dx = a.x - a.p.x;
-					const dy = a.y - a.p.y;
-					const d = Math.hypot(dx, dy);
-					if (d > LEASH) {
-						a.x = a.p.x + (dx / d) * LEASH;
-						a.y = a.p.y + (dy / d) * LEASH;
-					}
-					// Inside the artboard, or the page clips what the solver just saved.
-					a.x = Math.min(Math.max(a.x, a.w / 2 + 4), W - a.w / 2 - 4);
-					a.y = Math.min(Math.max(a.y, a.h / 2 + 4), H - a.h / 2 - 4);
-				}
-				/* THE NUCLEUS IS ABSOLUTE, AND IT GOES LAST. It is the subject of the
-				   picture and gets no tolerance. Running it before the artboard clamp
-				   meant the clamp could push a label straight back onto it on the final
-				   pass, which is exactly what four of them did. */
-				for (const a of items) {
-					const ox = (a.w / 2 + R_CORE) - Math.abs(a.x - CX);
-					const oy = (a.h / 2 + R_CORE) - Math.abs(a.y - CY);
-					if (ox <= 0 || oy <= 0) continue;
-					if (ox < oy) a.x += (a.x < CX ? -1 : 1) * ox;
-					else a.y += (a.y < CY ? -1 : 1) * oy;
-				}
+			for (const side of ['back', 'front'] as const) {
+				for (let i = used[side]; i < pool[side].length; i++) pool[side][i].style.display = 'none';
 			}
-
-			/* ── EASE, THEN ENFORCE ON WHAT IS ACTUALLY DRAWN ────────────────────
-			   The solver answers where a label SHOULD be; the easing decides where it
-			   IS, a few frames behind. Every invariant therefore has to be checked
-			   twice: once on the answer, and once on the pixel.
-
-			   This was not a theory. The nucleus clearance was applied per label after
-			   the easing, each one evicted along its nearest edge in ignorance of the
-			   other seventeen — so two labels evicted off the same side of the disc
-			   landed on the same spot, and ACCOUNT sat one hundred percent inside the
-			   AI Training pill while the solver was perfectly correct about both of
-			   them. Forty passes did not help, because the fault was downstream of the
-			   passes. The fix is not a bigger solve, it is the same solve run again on
-			   the eased positions: separation, artboard, nucleus, in that order, on the
-			   coordinates about to be written into the DOM.
-
-			   The label under the pointer is excluded from the moves. It has been
-			   promised it will hold still, and everything else can go round it. */
-			for (const it of items) {
-				const { o, p } = it;
-				/* THE LABEL YOU ARE POINTING AT IS NAILED DOWN. Labels move, and the
-				   model takes a moment to coast to a stop, so between deciding to click
-				   a chip and clicking it the chip could slide out from under the cursor
-				   — measured: a sector click at 1180 wide opened nothing. Freezing the
-				   OFFSET is not enough, because the anchor is still coasting and the
-				   label rides along with it, so the absolute position is what is held. */
-				if (o.el === frozenEl) {
-					if (o.fx === null || o.fy === null) {
-						o.fx = p.x + o.ox;
-						o.fy = p.y + o.oy;
-					}
-					it.rx = o.fx;
-					it.ry = o.fy;
-					it.held = true;
-				} else {
-					o.fx = null;
-					o.fy = null;
-					/* Chasing the target at a third of the distance per frame. Followed
-					   exactly, a label flickers between two answers the moment it trades
-					   places with a neighbour; eased, the same thing reads as it getting
-					   out of the way. */
-					o.ox += (it.x - p.x - o.ox) * 0.3;
-					o.oy += (it.y - p.y - o.oy) * 0.3;
-					it.rx = p.x + o.ox;
-					it.ry = p.y + o.oy;
-					it.held = false;
-				}
-			}
-
-			for (let pass = 0; pass < 8; pass++) {
-				for (let i = 0; i < items.length; i++) {
-					for (let j = i + 1; j < items.length; j++) {
-						const a = items[i];
-						const b = items[j];
-						if (a.held && b.held) continue;
-						const dx = b.rx - a.rx;
-						const dy = b.ry - a.ry;
-						const ox = (a.w + b.w) / 2 - Math.abs(dx);
-						const oy = (a.h + b.h) / 2 - Math.abs(dy);
-						if (ox <= 0 || oy <= 0) continue;
-						// One of the pair is pinned: the other one does all the moving.
-						const aShare = a.held ? 0 : b.held ? 1 : 0.5;
-						const bShare = 1 - aShare;
-						if (ox < oy) {
-							const push = (dx < 0 ? -1 : 1) * ox;
-							a.rx -= push * aShare; b.rx += push * bShare;
-						} else {
-							const push = (dy < 0 ? -1 : 1) * oy;
-							a.ry -= push * aShare; b.ry += push * bShare;
-						}
-					}
-				}
-				for (const a of items) {
-					if (a.held) continue;
-					const dx = a.rx - a.p.x;
-					const dy = a.ry - a.p.y;
-					const d = Math.hypot(dx, dy);
-					if (d > LEASH) {
-						a.rx = a.p.x + (dx / d) * LEASH;
-						a.ry = a.p.y + (dy / d) * LEASH;
-					}
-					a.rx = Math.min(Math.max(a.rx, a.w / 2 + 4), W - a.w / 2 - 4);
-					a.ry = Math.min(Math.max(a.ry, a.h / 2 + 4), H - a.h / 2 - 4);
-					const ox = a.w / 2 + R_CORE - Math.abs(a.rx - CX);
-					const oy = a.h / 2 + R_CORE - Math.abs(a.ry - CY);
-					if (ox <= 0 || oy <= 0) continue;
-					if (ox < oy) a.rx += (a.rx < CX ? -1 : 1) * ox;
-					else a.ry += (a.ry < CY ? -1 : 1) * oy;
-				}
-			}
-
-			for (const it of items) {
-				const { o, p } = it;
-				const lx = it.rx;
-				const ly = it.ry;
-				// Written back so the next frame eases on from where the label really is.
-				o.ox = lx - p.x;
-				o.oy = ly - p.y;
-
-				/* AN ANCHOR IS ONLY WORTH DRAWING WHEN IT DISAGREES WITH THE LABEL.
-				   A chip that has not moved already sits on its anchor, and the dot then
-				   prints in the middle of the name — "The ●Diary" — which reads as a
-				   rendering fault rather than as a mark. And a dot whose projection lands
-				   inside the disc is one the disc is in front of or behind: either way it
-				   ends up stamped on the nucleus, and it put a dot through the middle of
-				   the caption. Neither is drawn. */
-				/* OUTSIDE THE LABEL'S OWN BOX, measured, not guessed at with a radius. A
-				   chip is 146 by 28: an anchor eight pixels from its centre is still well
-				   inside the name, and "seven pixels" drew a dot in the middle of The
-				   Update Engine. The dot is worth drawing exactly when it is somewhere
-				   the label is not. */
-				const outside = Math.abs(p.x - lx) > (o.w || o.textW) / 2 ||
-					Math.abs(p.y - ly) > (o.h || 22) / 2;
-				const behindCore = Math.hypot(p.x - CX, p.y - CY) < R_CORE;
-				const showAnchor = outside && !behindCore;
-				if (o.anchor) {
-					o.anchor.setAttribute('cx', String(p.x));
-					o.anchor.setAttribute('cy', String(p.y));
-					o.anchor.style.opacity = showAnchor ? '1' : '0';
-				}
-				if (o.leader) {
-					o.leader.setAttribute('x1', String(p.x));
-					o.leader.setAttribute('y1', String(p.y));
-					o.leader.setAttribute('x2', String(lx));
-					o.leader.setAttribute('y2', String(ly));
-					o.leader.style.opacity = showAnchor ? '1' : '0';
-				}
-				if (o.hit) {
-					o.hit.setAttribute('x', String(lx - 52));
-					o.hit.setAttribute('y', String(ly - 22));
-				}
-				if (o.rect) {
-					o.rect.setAttribute('x', String(lx - o.w / 2));
-					o.rect.setAttribute('y', String(ly - o.h / 2));
-				}
-				if (o.text) {
-					o.text.setAttribute('x', String(lx));
-					o.text.setAttribute('y', String(o.rect ? ly + 4 : ly + 3));
-				}
-
-				// Depth reads as weight now, and only as weight. Never as absence.
-				const near = (p.dep + 1) / 2;
-				o.el.style.opacity = String(0.5 + near * 0.5);
-			}
-
-			/* Painter's order: FAR FIRST, so the near ones are appended last and end up
-			   on top. The previous pass appended nearest-first, which is the order that
-			   puts the far labels over the near ones — the exact opposite of depth.
-
-			   ONLY WHEN IT HAS ACTUALLY CHANGED. Re-appending eighteen nodes every
-			   frame is eighteen removals and eighteen insertions a frame for an order
-			   that changes a few times a second, and each one is a chance for the
-			   browser to lose track of what the pointer is over. While the model is
-			   held still it now touches the DOM not at all. */
-			let sameOrder = order.length === placed.length;
-			if (sameOrder) {
-				for (let i = 0; i < placed.length; i++) {
-					if (order[i] !== placed[i].o.el) { sameOrder = false; break; }
-				}
-			}
-			if (!sameOrder) {
-				order.length = 0;
-				for (const { o } of placed) {
-					o.el.parentNode?.appendChild(o.el);
-					order.push(o.el);
-				}
-			}
-
-			for (const c of chords) {
-				const a = project(c.fr, c.fa, 'feat');
-				const b = project(c.cr, c.ca, 'caps');
-				c.el.setAttribute('x1', String(a.x)); c.el.setAttribute('y1', String(a.y));
-				c.el.setAttribute('x2', String(b.x)); c.el.setAttribute('y2', String(b.y));
-				/* The dash matters: a bare startsWith would also light every chord of a
-				   feature whose id merely begins with this one's. */
-				const lit = (hovered !== '' && c.key.startsWith(`${hovered}-`)) ||
-					(hoverCap !== '' && c.key.endsWith(`-${hoverCap}`));
-				c.el.classList.toggle('is-lit', lit);
-				c.el.classList.toggle('is-dim', (hovered !== '' || hoverCap !== '') && !lit);
-			}
-			for (const e of entryDefs) {
-				const a = project(e.mr, e.ma, 'mkt');
-				const b = project(e.fr, e.fa, 'feat');
-				e.el.setAttribute('x1', String(a.x)); e.el.setAttribute('y1', String(a.y));
-				e.el.setAttribute('x2', String(b.x)); e.el.setAttribute('y2', String(b.y));
-			}
-			raf = requestAnimationFrame(frame);
-		}
-
-		/* ── A PRESS IS A CLICK UNTIL IT MOVES ───────────────────────────────────
-		   setPointerCapture on pointerdown redirects every later pointer event to the
-		   SVG, which means the browser's click lands on the SVG and never on the label
-		   — the labels were wired up correctly and simply never heard. Measured: the
-		   handler was attached, the panel existed, and clicking a chip did nothing.
-
-		   So capture is deferred until the pointer has actually travelled 4px. Below
-		   that it is a click and the label gets it; past that it is a drag and the
-		   model takes over. It is also the right behaviour on a touch screen, where
-		   every tap carries a pixel or two of movement. */
-		const DRAG_SLOP = 4;
-		let downX = 0;
-		let downY = 0;
-		let downOn: Element | null = null;
-		let pressed = false;
-
-		const onDown = (e: PointerEvent) => {
-			pressed = true;
-			dragging = false;
-			downX = lastX = e.clientX;
-			downY = lastY = e.clientY;
-			downOn = (e.target as Element)?.closest?.('[data-hm-panel]') ?? null;
+			raf = requestAnimationFrame(draw);
 		};
-		const onMove = (e: PointerEvent) => {
-			if (!pressed) return;
-			if (!dragging && Math.hypot(e.clientX - downX, e.clientY - downY) < DRAG_SLOP) return;
-			if (!dragging) {
-				dragging = true;
-				// Turning it is a clear signal the reader is done reading.
-				closePanel();
-				try { svg.setPointerCapture(e.pointerId); } catch { /* fine */ }
-				fig.classList.add('is-turning');
-			}
-			aimYaw += (e.clientX - lastX) * 0.006;
-			aimPitch = clamp(aimPitch + (e.clientY - lastY) * 0.004, -0.5, 0.5);
-			lastX = e.clientX; lastY = e.clientY;
-		};
-		const onUp = (e: PointerEvent) => {
-			if (pressed && !dragging && downOn) openFor(downOn as SVGGElement);
-			pressed = false;
-			dragging = false;
-			downOn = null;
-			try { svg.releasePointerCapture(e.pointerId); } catch { /* gone */ }
-			fig.classList.remove('is-turning');
-		};
+		raf = requestAnimationFrame(draw);
 
-		/* ── HOVER IS TRACKED ON THE SVG, NOT ON THE LABELS ──────────────────────
-		   THE STUCK BUG. Hovering a label stops the model so it can be clicked, and
-		   that hold was released by a pointerleave on the label itself. But the
-		   painter's-order pass takes every label out of the DOM and puts it back once
-		   a frame, and moving the node the pointer is sitting on destroys the
-		   browser's record of what is being hovered: the leave never arrives. The
-		   model then stays stopped, with the chords still lit, after the pointer has
-		   long since gone. Reported as "hover on it and it gets stuck", and that is
-		   exactly what it was.
+		/* ── THE ROWS ────────────────────────────────────────────────────────────
+		   Pointing at a name lights everything it is joined to and dims the rest. It
+		   is the chord matrix and the sector lines, shown by relation rather than by
+		   drawing sixty strokes over the picture. */
+		const tax = fig.querySelector<HTMLElement>('[data-tax]');
+		const chips = [...fig.querySelectorAll<HTMLButtonElement>('[data-node]')];
+		const byId = new Map(chips.map((c) => [c.dataset.node as string, c]));
 
-		   Listening on the SVG fixes the class of bug rather than this instance of it.
-		   The SVG is never re-appended, so its events cannot be lost, and what is under
-		   the pointer is read from the event target each time it moves. Leaving the
-		   figure is one event on one stable element.
-
-		   It also behaves better: a label that drifts under a stationary cursor no
-		   longer grabs it and halts the model unasked. The hold now follows the
-		   reader's intent — they moved the pointer there — rather than the geometry. */
-		const hoverOrb = (t: EventTarget | null) => {
-			const el = (t as Element | null)?.closest?.('[data-hm-panel]') ?? null;
-			if (el === frozenEl) return;
-			frozenEl = el as SVGGElement | null;
-			if (!el) {
-				hovered = '';
-				hoverCap = '';
-				spinAim = reduced ? 0 : 1;
+		const light = (chip: HTMLButtonElement | null) => {
+			if (!chip) {
+				for (const c of chips) c.classList.remove('is-lit', 'is-dim', 'is-on');
+				fig.classList.remove('is-tracing');
 				return;
 			}
-			spinAim = 0;
-			const who = el.getAttribute('data-id') || '';
-			hovered = el.getAttribute('data-orb') === 'feat' ? who : '';
-			hoverCap = el.getAttribute('data-orb') === 'caps' ? who : '';
+			const kin = new Set((chip.dataset.kin || '').split(' ').filter(Boolean));
+			fig.classList.add('is-tracing');
+			for (const c of chips) {
+				const id = c.dataset.node as string;
+				const on = c === chip;
+				const lit = kin.has(id);
+				c.classList.toggle('is-on', on);
+				c.classList.toggle('is-lit', lit);
+				c.classList.toggle('is-dim', !on && !lit);
+			}
 		};
-		const onHover = (e: PointerEvent) => {
-			if (openPanel || dragging) return;   // an open panel keeps its own subject
-			hoverOrb(e.target);
-		};
-		const onHoverOut = () => { if (!openPanel) hoverOrb(null); };
-		svg.addEventListener('pointermove', onHover);
-		svg.addEventListener('pointerleave', onHoverOut);
 
-		/* ── CLICK A LABEL, READ WHAT IT IS ──────────────────────────────────────
-		   The panel is a native popover: the browser puts it in the top layer, closes
-		   it on Escape or a click outside, and returns focus. None of that is worth
-		   hand-rolling, and hand-rolled versions are where focus traps come from.
-
-		   THE MODEL STOPS WHILE A PANEL IS OPEN. The anchor is a label on a turning
-		   object; positioning a popover against a moving target means either chasing
-		   it every frame or watching it drift away from what it describes. Reading is
-		   not a moment to keep animating underneath someone. */
 		let openPanel: HTMLElement | null = null;
-		const supportsPopover = typeof HTMLElement !== 'undefined'
-			&& typeof (HTMLElement.prototype as { showPopover?: unknown }).showPopover === 'function';
+		const closePanel = () => {
+			if (!openPanel) return;
+			const p = openPanel;
+			openPanel = null;
+			try { p.hidePopover(); } catch { /* already closed */ }
+			p.classList.remove('is-open');
+		};
 
-		const GAP = 12;   // between the label and the panel that explains it
+		const supportsPopover = typeof HTMLElement !== 'undefined' &&
+			typeof (HTMLElement.prototype as { showPopover?: unknown }).showPopover === 'function';
 
-		/* VIEWPORT COORDINATES, because a popover lives in the top layer.
-		   showPopover() promotes the panel out of the figure and into the top layer,
-		   where position resolves against the initial containing block — the viewport —
-		   and not against the element it is written inside. Figure-relative numbers are
-		   therefore wrong by however far down the page the figure sits, which is exactly
-		   how a panel anchored to a label in plain view opened below the fold. Measured:
-		   on screen false, twice. The panel is position:fixed and these are viewport
-		   numbers; one clamp at the end decides, rather than a run of branches
-		   overwriting each other. */
-		const place = (panel: HTMLElement, target: SVGGElement) => {
-			/* ANCHORED TO THE NAME, NOT TO THE GROUP. The group holds the label and the
-			   anchor dot marking its place on the shell, and the label slides away from
-			   that dot when something else wants the same pixels — so the group's box
-			   is as tall as the gap between them, and a panel placed against its edge
-			   floated clear of the thing it explains. Measured: 81px of daylight.
-
-			   Whichever of these is actually drawn. A hidden element still answers
-			   querySelector and still returns a rectangle — a rectangle of zeros — so
-			   asking for the text alone anchored the panel to the origin on a phone,
-			   where the names are off and only the hit area remains. Measured again:
-			   101px. Never the group; its centre is the empty space in between. */
-			const t = (() => {
-				for (const sel of ['.hm-chip', '.hm-pill', '.hm-cap-text', '.hm-hit']) {
-					const el = target.querySelector(sel);
-					if (!el) continue;
-					const r = el.getBoundingClientRect();
-					if (r.width > 2 && r.height > 2) return r;
-				}
-				return target.getBoundingClientRect();
-			})();
+		/* A CARD NEXT TO THE THING IT EXPLAINS, not a sheet over the page. A popover
+		   is in the top layer, so position resolves against the viewport — the panel
+		   is fixed and these are viewport numbers, and one clamp at the end decides
+		   rather than a run of branches overwriting each other. */
+		const place = (panel: HTMLElement, chip: HTMLElement) => {
+			const t = chip.getBoundingClientRect();
 			const w = panel.offsetWidth || 300;
 			const h = panel.offsetHeight || 170;
 			const M = 12;
+			const GAP = 10;
 			const above = t.top - h - GAP;
 			const below = t.bottom + GAP;
-			// Above by preference — it keeps the label and the thing it explains in one
-			// glance — but below whenever above would not fit and below would.
 			const goAbove = above >= M || below + h > window.innerHeight - M;
 			let top = goAbove ? above : below;
 			top = Math.max(M, Math.min(top, window.innerHeight - M - h));
@@ -990,121 +506,51 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			left = Math.max(M, Math.min(left, window.innerWidth - M - w));
 			panel.style.top = `${Math.round(top)}px`;
 			panel.style.left = `${Math.round(left)}px`;
-			/* THE BEAK. Clamping the panel to the viewport moves it off the label's
-			   centre, so the beak cannot just sit at 50% — it tracks the label, which
-			   is the whole point of it: it says which of forty labels this card is
-			   about. Held 14px clear of either rounded corner. */
 			panel.dataset.side = goAbove ? 'above' : 'below';
 			const cx = t.left + t.width / 2 - left;
-			panel.style.setProperty('--caret-x', `${Math.round(clamp(cx, 14, w - 14))}px`);
+			panel.style.setProperty('--caret-x', `${Math.round(Math.min(Math.max(cx, 14), w - 14))}px`);
 		};
 
-		const closePanel = () => {
-			if (!openPanel) return;
-			if (supportsPopover) { try { openPanel.hidePopover(); } catch { /* already closed */ } }
-			openPanel.classList.remove('is-open');
-			openPanel = null;
-			frozenEl = null;
-			hovered = '';
-			hoverCap = '';
-			spinAim = reduced ? 0 : 1;
-		};
-
-		const openFor = (el: SVGGElement) => {
-			const id = el.getAttribute('data-hm-panel');
+		const openFor = (chip: HTMLButtonElement) => {
+			const id = chip.dataset.node;
 			if (!id) return;
 			const panel = fig.querySelector<HTMLElement>(`#${CSS.escape(id)}`);
 			if (!panel) return;
 			if (openPanel === panel) { closePanel(); return; }
 			closePanel();
 			openPanel = panel;
-			spinAim = 0;
-			const who = el.getAttribute('data-id') || '';
-			hovered = el.getAttribute('data-orb') === 'feat' ? who : '';
-			hoverCap = el.getAttribute('data-orb') === 'caps' ? who : '';
-			/* ONE MECHANISM AT A TIME. Setting .is-open AND calling showPopover() meant
-			   the browser could close the popover on Escape or a click outside while
-			   the class stayed behind — and .is-open forces display:block, so the panel
-			   went on sitting there after being dismissed, and the next label opened
-			   underneath it. The class exists only for browsers without the popover
-			   API; where the API is present it owns the state completely. */
-			if (supportsPopover) {
-				try { panel.showPopover(); } catch { /* already open */ }
-			} else {
-				panel.classList.add('is-open');
-			}
-			// After it is laid out, or offsetWidth is zero and it lands in the corner.
-			requestAnimationFrame(() => place(panel, el));
+			if (supportsPopover) { try { panel.showPopover(); } catch { /* already open */ } }
+			else panel.classList.add('is-open');
+			requestAnimationFrame(() => place(panel, chip));
 		};
 
-		/* ── THE CLOSE THAT NEVER ARRIVED ────────────────────────────────────────
-		   This listener used to be attached inside openFor with { once: true }, and
-		   it was consumed by the wrong event. showPopover() queues a toggle whose
-		   newState is "open"; the listener was registered synchronously right after
-		   that call, so the open toggle reached it first, the handler declined to act
-		   on it — and { once: true } removed it anyway. Nothing was left to hear the
-		   close. openPanel therefore stayed set to a panel that was no longer on
-		   screen, which pins spinAim at zero and makes every hover return early, so
-		   the model stopped turning for the rest of the session after the first time
-		   anyone opened a card and pressed Escape. Measured: still, permanently,
-		   through every phase that followed.
-
-		   Registered once per panel, at mount, with no once flag: it hears every
-		   close and nothing removes it. */
+		/* ONE LISTENER PER PANEL, AT MOUNT, WITHOUT once. Attached inside openFor with
+		   { once: true } it was consumed by the toggle that fires when the popover
+		   OPENS, so nothing was left to hear the close — and the previous figure then
+		   sat frozen for the rest of the session. */
 		for (const panel of fig.querySelectorAll<HTMLElement>('.hm-panel')) {
 			panel.addEventListener('toggle', (e) => {
 				if ((e as ToggleEvent).newState === 'closed' && openPanel === panel) closePanel();
 			});
 		}
 
-		for (const o of orbs) {
-			if (!o.el.hasAttribute('data-hm-panel')) continue;
-			o.el.addEventListener('keydown', (e) => {
-				const k = (e as KeyboardEvent).key;
-				if (k === 'Enter' || k === ' ') { e.preventDefault(); openFor(o.el); }
-			});
+		for (const chip of chips) {
+			chip.addEventListener('pointerenter', () => light(chip));
+			chip.addEventListener('focus', () => light(chip));
+			chip.addEventListener('click', () => openFor(chip));
 		}
-		// Without popover support there is no light dismiss, so provide one.
-		if (!supportsPopover) {
-			document.addEventListener('click', closePanel);
-			document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
-		}
+		tax?.addEventListener('pointerleave', () => light(null));
+		tax?.addEventListener('focusout', (e) => {
+			if (!tax.contains((e as FocusEvent).relatedTarget as Node)) light(null);
+		});
+		if (!supportsPopover) document.addEventListener('click', closePanel);
+		window.addEventListener('resize', () => closePanel());
 
-		/* ── NARROW SCREENS GET THE NODE, NOT THE WHOLE SCENE ────────────────────
-		   The artboard is 1240x470. At 390px the rendered box is 350x133, which puts
-		   the labels at about three pixels — measured, and indefensible. There is no
-		   arrangement of eighteen labels that is legible in 350 by 133.
-		   So the viewBox crops to the opened node and the labels come off: what is
-		   left is the object itself, which is worth looking at, and the legend
-		   underneath carries the words in real text at a real size. Cropping rather
-		   than shrinking, because the thing this figure has to say on a phone is
-		   "a node, opened", not "here are eighteen names you cannot read". */
-		/* TWO TIERS NOW, NOT THREE. The middle tier existed to crop the network out
-		   of frame on a narrow screen; with the network gone the artboard is already
-		   the node, so there is nothing to crop to and one viewBox serves every width.
-		   What remains is the point below which a label cannot be read at all: a label
-		   is 11 units in a 780-unit box, so at a 560px box it lands at 7.9px. Under
-		   that the names come off and the object stays, which is the right trade —
-		   "a node, opened" is what this has to say on a phone, not eighteen names
-		   nobody can read. */
-		const MIN_LABEL_PX = 8;
-		const fitViewBox = () => {
-			const w = svg.getBoundingClientRect().width;
-			fig.classList.toggle('is-compact', (11 * w) / W < MIN_LABEL_PX);
-		};
-		fitViewBox();
-		window.addEventListener('resize', fitViewBox);
-
-		svg.addEventListener('pointerdown', onDown);
-		svg.addEventListener('pointermove', onMove);
-		svg.addEventListener('pointerup', onUp);
-		svg.addEventListener('pointercancel', onUp);
-
-		let raf = requestAnimationFrame(frame);
 		document.addEventListener('astro:before-swap', () => {
 			cancelAnimationFrame(raf);
-			window.removeEventListener('resize', fitViewBox);
+			closePanel();
 		}, { once: true });
+		void byId;
 	}
 
 	document.addEventListener('astro:page-load', mountHeroModel);
@@ -1113,18 +559,157 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 </script>
 
 <style>
-	.hm { margin: 0; min-width: 0; position: relative; }
+	.hm {
+		margin: 0;
+		min-width: 0;
+		display: grid;
+		gap: var(--space-lg);
+		position: relative;
+	}
 
-	/* ── THE PANEL ────────────────────────────────────────────────────────────
-	   A small card next to the thing it describes, not a sheet over the page. A
-	   modal for forty words is a punishment: it takes the whole screen, blocks
-	   everything behind it and has to be dismissed before anything else can
-	   happen. This is anchored, light, and closes on Escape, on a click outside
-	   or on turning the model. */
+	/* ── the object ──────────────────────────────────────────────────────────── */
+	.hm-stage { display: grid; justify-items: center; }
+	.hm-stage svg {
+		display: block;
+		width: 100%;
+		max-width: 430px;
+		height: auto;
+		/* hidden, not visible: the board already contains the whole object, and
+		   overflow:visible does not mean "draw outside my box", it means "draw
+		   outside my box and across the page" — into the notes either side. */
+		overflow: hidden;
+	}
+
+	/* THE EDGE IS WHAT MAKES IT A BODY. Without a crisp rim the gradient just fades
+	   into the page and the object reads as a smudge rather than as something with a
+	   surface the rings pass behind. */
+	.hm-rim {
+		fill: none;
+		stroke: var(--accent-on-dark);
+		stroke-opacity: 0.8;
+		stroke-width: 1.4;
+	}
+	/* :global, BECAUSE THESE ARE BUILT IN JAVASCRIPT. Astro scopes a component's CSS
+	   by appending a data-astro-cid attribute to every selector and stamping that
+	   attribute on the elements it renders. A path created with createElementNS has
+	   no such attribute, so a scoped .hm-ring rule never reaches it — and an SVG path
+	   with no fill declared does not default to none, it defaults to black. The
+	   object rendered as a black blob. Presentation attributes are set at creation
+	   too, so the shape is right even before any stylesheet arrives.
+
+	   The ring in front reads as near: brighter and a touch heavier. The one behind
+	   is dimmer where it clears the sphere, and simply gone where it does not,
+	   because the sphere is painted over it. */
+	:global(.hm-ring) { fill: none; stroke-linecap: round; }
+	:global(.hm-ring--front) {
+		stroke: color-mix(in oklab, var(--accent-on-dark) 80%, transparent);
+		stroke-opacity: 0.6;
+		stroke-width: 1.15;
+	}
+	:global(.hm-ring--back) {
+		stroke: var(--accent-on-dark);
+		stroke-opacity: 0.2;
+		stroke-width: 0.85;
+	}
+	.hm-carrier { fill: var(--accent-on-dark); }
+	/* There is nothing to click on the object — every target is a name in the rows
+	   below — so it does not take the pointer and cannot sit in front of anything. */
+	.hm-body { pointer-events: none; }
+
+	.hm-cap {
+		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+		font-size: 8px;
+		letter-spacing: 0.1em;
+		fill: var(--accent-on-dark);
+		fill-opacity: 0.75;
+	}
+	.hm-op { fill: none; stroke: var(--accent-on-dark); stroke-opacity: 0.45; stroke-width: 0.9; }
+	.hm-op-text {
+		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+		font-size: 9px;
+		fill: var(--accent-on-dark);
+	}
+	.hm-op-arrow {
+		fill: none;
+		stroke: var(--accent-on-dark);
+		stroke-opacity: 0.5;
+		stroke-width: 1;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	/* ── the three rows ──────────────────────────────────────────────────────── */
+	.hm-tax { display: grid; gap: var(--space-md); }
+	.hm-row { display: grid; gap: 7px; }
+	.hm-row-label {
+		margin: 0;
+		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+		font-size: 0.625rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--text-on-dark);
+		opacity: 0.4;
+	}
+	.hm-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.hm-chip {
+		display: block;
+		padding: 6px 11px;
+		border: 1px solid color-mix(in oklab, var(--text-on-dark) 18%, transparent);
+		border-radius: 6px;
+		background: color-mix(in oklab, var(--bg-dark-raised) 70%, transparent);
+		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+		font-size: 0.75rem;
+		line-height: 1.2;
+		color: var(--text-on-dark);
+		cursor: pointer;
+		/* Colour and edge move on hover; nothing moves position, so a row never
+		   reflows under the pointer. */
+		transition:
+			border-color var(--duration-fast, 180ms) var(--ease-out, ease),
+			background-color var(--duration-fast, 180ms) var(--ease-out, ease),
+			color var(--duration-fast, 180ms) var(--ease-out, ease),
+			opacity var(--duration-fast, 180ms) var(--ease-out, ease);
+	}
+	.hm-chip--cap {
+		letter-spacing: 0.1em;
+		font-size: 0.6875rem;
+		border-radius: 999px;
+	}
+	/* THE THREE ROWS ARE THREE KINDS OF THING, and the shape says which without a
+	   legend: capabilities and sectors are pills, features are the squared-off ones
+	   because they are the things that exist as products, and they carry the firmer
+	   edge to say so. */
+	.hm-chip--feat { border-color: color-mix(in oklab, var(--text-on-dark) 30%, transparent); }
+	.hm-chip--sec { border-radius: 999px; color: var(--accent-on-dark); }
+
+	.hm-chip:hover,
+	.hm-chip:focus-visible {
+		border-color: var(--accent-on-dark);
+		background: color-mix(in oklab, var(--accent-on-dark) 14%, transparent);
+	}
+	/* The one being pointed at, and the ones it is joined to. */
+	.hm-chip.is-on {
+		border-color: var(--accent-on-dark);
+		background: color-mix(in oklab, var(--accent-on-dark) 22%, transparent);
+		color: #fff;
+	}
+	.hm-chip.is-lit {
+		border-color: color-mix(in oklab, var(--accent-on-dark) 70%, transparent);
+		background: color-mix(in oklab, var(--accent-on-dark) 10%, transparent);
+	}
+	.hm-chip.is-dim { opacity: 0.3; }
+
+	/* ── the card ────────────────────────────────────────────────────────────── */
 	.hm-panels { position: absolute; inset: 0; pointer-events: none; }
 	.hm-panel {
-		/* fixed, not absolute: in the top layer this resolves against the viewport,
-		   and fixed says so rather than leaving it to look like an accident. */
 		position: fixed;
 		margin: 0;
 		inset: auto;
@@ -1138,21 +723,16 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		pointer-events: auto;
 		overflow: visible;
 	}
-	/* :popover-open for the native path, .is-open for the fallback. */
 	.hm-panel:not(:popover-open):not(.is-open) { display: none; }
 	.hm-panel:popover-open, .hm-panel.is-open {
 		display: block;
-		animation: hm-pop 160ms var(--ease-out, cubic-bezier(0.25,0.46,0.45,0.94));
+		animation: hm-pop 160ms var(--ease-out, cubic-bezier(0.25, 0.46, 0.45, 0.94));
 	}
 	@keyframes hm-pop {
 		from { opacity: 0; transform: translateY(6px) scale(0.985); }
 		to   { opacity: 1; transform: none; }
 	}
 	.hm-panel::backdrop { background: transparent; }
-
-	/* A rotated square sharing the panel's own fill and edge: two of its four borders
-	   are dropped so only the two facing outward are drawn, and it overlaps the panel
-	   edge by a pixel so the join has no seam. */
 	.hm-panel::after {
 		content: '';
 		position: absolute;
@@ -1164,16 +744,8 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		border: 1px solid color-mix(in oklab, var(--accent-on-dark) 42%, transparent);
 		transform: rotate(45deg);
 	}
-	.hm-panel[data-side='above']::after {
-		bottom: -6px;
-		border-top: 0;
-		border-left: 0;
-	}
-	.hm-panel[data-side='below']::after {
-		top: -6px;
-		border-bottom: 0;
-		border-right: 0;
-	}
+	.hm-panel[data-side='above']::after { bottom: -6px; border-top: 0; border-left: 0; }
+	.hm-panel[data-side='below']::after { top: -6px; border-bottom: 0; border-right: 0; }
 
 	.hm-panel-kind {
 		margin: 0 0 6px;
@@ -1183,156 +755,42 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 		text-transform: uppercase;
 		color: var(--accent-on-dark);
 	}
-	.hm-panel-name {
-		margin: 0;
-		font-size: 16px;
-		font-weight: 700;
-		letter-spacing: -0.01em;
-		line-height: 1.2;
-	}
+	.hm-panel-name { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.25; }
 	.hm-panel-q {
-		margin: 7px 0 0;
-		font-size: 12.5px;
+		margin: 6px 0 0;
+		font-size: 13px;
 		line-height: 1.45;
 		color: var(--accent-on-dark);
 	}
-	.hm-panel-body { margin: 9px 0 0; font-size: 13px; line-height: 1.5; }
+	.hm-panel-body { margin: 8px 0 0; font-size: 13px; line-height: 1.5; opacity: 0.86; }
 	.hm-panel-meta {
 		margin: 10px 0 0;
 		padding-top: 9px;
 		border-top: 1px solid rgba(255, 255, 255, 0.12);
 		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 		font-size: 10.5px;
-		line-height: 1.45;
-		color: var(--rule-on-dark);
+		line-height: 1.4;
+		opacity: 0.6;
 	}
 	.hm-panel-link {
 		display: inline-block;
 		margin-top: 10px;
-		font-size: 12px;
-		font-weight: 600;
+		font-size: 12.5px;
 		color: var(--accent-on-dark);
 	}
-	.hm-hit { fill: transparent; pointer-events: all; }
-	[data-hm-panel] { cursor: pointer; }
-	[data-hm-panel]:focus-visible { outline: 2px solid var(--accent-on-dark); outline-offset: 3px; }
-	.hm svg {
-		display: block;
-		width: 100%;
-		height: auto;
-		/* With the full width to work in, the cap can be generous: the artboard is
-		   1240x570, so at 1240 wide this is 570 tall and the labels render at their
-		   designed 11px instead of the four or five they were getting. */
-		max-height: min(62vh, 640px);
-		/* hidden, not visible. The artboard is sized to the worst case now, so nothing
-		   should reach the edge — but in the cropped tier the network sits 366 units
-		   outside the viewBox by design, and overflow:visible does not mean "draw
-		   outside my box", it means "draw outside my box and over the page". */
-		overflow: hidden;
-	}
-	.hm.is-live svg {
-		cursor: grab;
-		touch-action: pan-y;
-		user-select: none;
-		-webkit-user-select: none;
-	}
-	.hm.is-turning svg { cursor: grabbing; }
-
-	/* ── shells ──────────────────────────────────────────────────────────────── */
-	.hm-shell { fill: none; stroke: var(--text-on-dark); stroke-opacity: 0.16; stroke-width: 1; }
-
-	.hm-chord { stroke: var(--accent-on-dark); stroke-opacity: 0.2; stroke-width: 0.8; }
-	.hm-entry { stroke: var(--text-on-dark); stroke-opacity: 0.16; stroke-width: 0.8; }
-	.hm-chord, .hm-entry { transition: stroke-opacity 180ms ease, stroke 180ms ease; }
-	.hm-chord.is-lit { stroke-opacity: 0.95; stroke-width: 1.5; }
-	.hm-chord.is-dim { stroke-opacity: 0.05; }
-
-	/* ── nucleus ─────────────────────────────────────────────────────────────── */
-	.hm-core-disc { fill: var(--bg-dark); fill-opacity: 0.94; }
-	.hm-core-ring { fill: none; stroke: var(--accent-on-dark); stroke-opacity: 0.75; stroke-width: 1.4; }
-	.hm-op { fill: none; stroke: var(--accent-on-dark); stroke-opacity: 0.5; stroke-width: 0.9; }
-	.hm-op-arrow {
-		fill: none;
-		stroke: var(--accent-on-dark);
-		stroke-opacity: 0.55;
-		stroke-width: 1;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-	}
-	.hm-op-text { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); font-size: 9px; fill: var(--accent-on-dark); }
-	.hm-core-cap {
-		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
-		font-size: 8px;
-		letter-spacing: 0.08em;
-		fill: var(--accent-on-dark);
-		fill-opacity: 0.8;
-	}
-
-	/* ── the three shells' contents ──────────────────────────────────────────── */
-	.hm-cap-dot { fill: var(--accent-on-dark); }
-	.hm-cap-text {
-		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
-		font-size: 10px;
-		letter-spacing: 0.12em;
-		fill: var(--text-on-dark);
-	}
-	.hm-chip { fill: var(--bg-dark); fill-opacity: 0.92; stroke: var(--rule-on-dark); stroke-width: 1; }
-	.hm-chip-text { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); font-size: 11px; fill: var(--text-on-dark); }
-	.hm-pill { fill: var(--bg-dark); fill-opacity: 0.92; stroke: var(--accent-on-dark); stroke-opacity: 0.55; stroke-width: 1; }
-	.hm-pill-text { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); font-size: 11px; fill: var(--accent-on-dark); }
-	/* Only the feature shell is interactive: hovering one traces its capabilities. */
-	[data-orb="feat"] { cursor: pointer; }
-
-	/* SVG defaults an unfilled shape to black, which on this ground is a hole. The
-	   three shells keep the colours they carry at full width: the feature chip's
-	   hairline, the sector pill's accent, so the object still distinguishes its
-	   three orbits once the names are gone. */
-	/* The anchor is always drawn: it is the label's real position on the shell, and
-	   the only thing that makes a leader line mean anything. */
-	.hm-chip-dot { fill: var(--accent-on-dark); fill-opacity: 0.75; }
-	.hm-leader {
-		stroke: var(--accent-on-dark);
-		stroke-opacity: 0.4;
-		stroke-width: 0.8;
-		transition: opacity 160ms linear;
-	}
-	/* An anchor is shown only while it is somewhere its own label is not, and hidden
-	   again when the disc passes in front of it, so it is switched several times a
-	   turn. Fading is the difference between a mark appearing and a pixel blinking. */
-	.hm-anchor { transition: opacity 160ms linear; }
-	[data-orb='feat'] .hm-chip-dot { fill: var(--rule-on-dark); fill-opacity: 1; }
-
-	/* COMPACT: THE OBJECT, WITHOUT THE NAMES IT HAS NO ROOM FOR — but not a field of
-	   empty boxes, which is what hiding the text alone produced. Measured on a 390px
-	   phone: eighteen outlined pills with nothing written in any of them, which reads
-	   as a page that failed to load rather than as a deliberate simplification.
-	   So the chip becomes the node it always stood for: the outline goes, a dot
-	   appears, and the rect stays in place as an invisible 44px-wide target — a phone
-	   still gets to tap any of the eighteen and read what it is. */
-	.hm.is-compact [data-orb] text,
-	.hm.is-compact .hm-op-text { display: none; }
-	.hm.is-compact .hm-leader { display: none; }
-	.hm.is-compact .hm-chip,
-	.hm.is-compact .hm-pill {
-		fill: transparent;
-		stroke: transparent;
-	}
-	.hm.is-compact .hm-core-cap { font-size: 7px; }
 
 	.hm-legend {
-		margin-top: var(--space-md);
-		text-align: center;
 		font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 		font-size: var(--text-eyebrow);
-		letter-spacing: 0.1em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--text-muted);
+		opacity: 0.55;
+		line-height: 1.5;
 	}
-	.hm-drive:not([hidden]) { display: block; margin-top: 4px; opacity: 0.8; }
 
 	@media (prefers-reduced-motion: reduce) {
-		.hm-chord, .hm-entry { transition: none; }
-		/* The mesh keeps its colour and its dash; it just stops travelling. */
 		.hm-panel:popover-open, .hm-panel.is-open { animation: none; }
+		.hm-chip { transition: none; }
 	}
 </style>
