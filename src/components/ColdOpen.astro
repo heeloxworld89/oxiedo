@@ -34,6 +34,22 @@
 >
 	<canvas class="co-stage" data-co-canvas aria-hidden="true"></canvas>
 
+	{/* THE EXIT IS FIRST, in the document and on the screen.
+	    It sat in the footer, which measured at 94–96% of the way down the curtain and 22px
+	    off the bottom edge at every viewport — about as far from where anyone is looking as
+	    it is possible to put a control, on a tall monitor especially. It is now top right,
+	    directly under the masthead: the first place a reader's eye goes after the logo, the
+	    place every interface in thirty years has put "get me out of this", and nowhere near
+	    the copy or the diagram.
+	    It also separates the two controls by their jobs, which the footer had muddled. The
+	    rail is navigation WITHIN the sequence and stays with the progress it belongs to,
+	    bottom left. This is the way OUT, and it is on its own.
+	    First in the DOM as well as on screen, so a keyboard reader reaches the escape hatch
+	    before anything else. */}
+	<button type="button" class="co-skip" data-co-skip>
+		Skip to the console <kbd>Esc</kbd>
+	</button>
+
 	<div class="co-copy">
 		<p class="co-act" data-co-act></p>
 		<p class="co-line" data-co-line></p>
@@ -113,9 +129,6 @@
 			))}
 		</ol>
 		<p class="co-hint">Click to jump · ← → to step</p>
-		<button type="button" class="co-skip" data-co-skip>
-			Skip to the console <kbd>Esc</kbd>
-		</button>
 	</footer>
 </div>
 
@@ -1101,6 +1114,10 @@
 	   Computed: the ink reads 8.93:1 on the fill, the fill 8.93:1 on the ground, and the
 	   key chip 6.07:1 — every one of them a real number rather than a hope. */
 	.co-skip {
+		position: absolute;
+		top: 22px;
+		right: 24px;
+		z-index: 3;
 		pointer-events: auto;
 		display: inline-flex;
 		align-items: center;
@@ -1165,6 +1182,10 @@
 		   part of this that must never be allowed to degrade. */
 		.co-quote blockquote { font-size: 1rem; }
 		.co-fine { font-size: 11px; }
+		/* No keyboard, no point naming a key — and on a 390px screen the chip was padding
+		   the one control that has to stay compact out to half the width. */
+		.co-skip kbd { display: none; }
+		.co-skip { top: 16px; right: 16px; padding: 10px 14px; }
 	}
 
 	/* Belt and braces. The inline gate already removes the element under reduced motion;

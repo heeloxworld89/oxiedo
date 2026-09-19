@@ -323,6 +323,25 @@ const watch = (page, tag) => {
 		`Skip is a filled control, not a ghost outline (${btn.bg})`);
 	ok(btn.h >= 36 && btn.w >= 120, `Skip is a real target (${btn.w}×${btn.h})`);
 	ok(btn.onScreen, 'Skip is on screen');
+
+	// WHERE IT SITS IS PART OF WHETHER IT WORKS. In the footer it measured 94–96% of the
+	// way down the curtain and 22px off the bottom edge — present, and about as far from
+	// where anyone is looking as a control can be put. It belongs under the masthead.
+	const place = await page.evaluate(() => {
+		const co = document.querySelector('[data-coldopen-root]').getBoundingClientRect();
+		const nav = document.querySelector('.nav').getBoundingClientRect();
+		const sk = document.querySelector('[data-co-skip]').getBoundingClientRect();
+		const rail = document.querySelector('[data-co-seg="0"]').getBoundingClientRect();
+		return {
+			pctDown: Math.round((100 * ((sk.top + sk.height / 2) - co.top)) / co.height),
+			belowNav: Math.round(sk.top - nav.bottom),
+			clearOfRail: sk.top < rail.top,
+		};
+	});
+	ok(place.pctDown <= 20, `Skip sits in the top fifth of the curtain (${place.pctDown}% down)`);
+	ok(place.belowNav >= 8 && place.belowNav <= 48,
+		`Skip tucks under the masthead without touching it (${place.belowNav}px)`);
+	ok(place.clearOfRail, 'Skip is nowhere near the rail — the way out and the way around are separate controls');
 	ok(/Esc/.test(btn.label), `Skip names its keyboard equivalent ("${btn.label}")`);
 
 	await page.click('[data-co-skip]');
