@@ -448,6 +448,50 @@ for (const w of [1160, 1200, 1280, 1339, 1440, 1728]) {
 		await page.close();
 	}
 
+	// IT OPENS FOR A READER WHO HAS ASKED FOR REDUCED MOTION TOO. It used to sit behind the
+	// same early return as autoplay, so anyone with that system setting never saw it and had
+	// to find the button — reported exactly that way. Reduced motion asks for things to stop
+	// moving, not to be told less; the guide seeks between stops instead of playing.
+	{
+		const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+		const page = await ctx.newPage();
+		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+		await page.waitForTimeout(2000);
+		ok(await page.evaluate(() => !document.querySelector('[data-guide]').hidden),
+			'reduced motion: the guided read still opens itself');
+		await ctx.close();
+	}
+
+	// BOTH WAYS OUT WORK. The dock prints "esc" on its Skip button, and the listener was on
+	// the component — which hears nothing, because the dock is re-parented to <body> and
+	// nothing inside the component has focus when the guide has opened by itself.
+	for (const [how, act] of [['Escape', async (pg) => pg.keyboard.press('Escape')],
+		['Skip', async (pg) => pg.click('[data-guide-skip]')]]) {
+		const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+		const page = await ctx.newPage();
+		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'networkidle' });
+		await page.waitForTimeout(2000);
+		await act(page);
+		await page.waitForTimeout(400);
+		ok(await page.evaluate(() => document.querySelector('[data-guide]').hidden),
+			`${how} closes the guided read`);
+		await ctx.close();
+	}
+
+	// A START THAT CANNOT SUCCEED MUST NOT SPEND THE ONE SHOWING. The flag was written
+	// before guideStart, so a run that failed to load burned it and the reader never got
+	// the guide on any later visit either.
+	{
+		const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+		const page = await ctx.newPage();
+		await page.route('**/runs/*.json', (r) => r.abort());
+		await page.goto(`${ORIGIN}/black-box`, { waitUntil: 'domcontentloaded' });
+		await page.waitForTimeout(2000);
+		ok(await page.evaluate(() => localStorage.getItem('oxiedo.blackbox.guideSeen') === null),
+			'a failed run does not spend the first-visit showing');
+		await ctx.close();
+	}
+
 	// The guided read opens itself once, on a first visit to this page only.
 	const first = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 	const fp = await first.newPage();

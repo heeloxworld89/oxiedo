@@ -255,7 +255,7 @@ const SCENARIOS = [
 			<p class="rp-guide-body" data-guide-body></p>
 		</div>
 		<div class="rp-guide-foot">
-			<button type="button" class="rp-guide-skip" data-guide-skip>Close</button>
+			<button type="button" class="rp-guide-skip" data-guide-skip>Skip<span class="rp-guide-esc">esc</span></button>
 			<button type="button" class="rp-btn" data-guide-back>Back</button>
 			<button type="button" class="rp-btn rp-btn--primary" data-guide-next>Next</button>
 		</div>
@@ -909,10 +909,18 @@ const SCENARIOS = [
 			const seg = (e.target as HTMLElement)?.closest?.('[data-seg]') as HTMLElement | null;
 			if (seg) guideGoTo(Number(seg.dataset.seg), true);
 		});
-		// Escape leaves it, the same key that closes every other overlay on the site.
-		root.addEventListener('keydown', (e) => {
-			if ((e as KeyboardEvent).key === 'Escape' && guideRunning()) guideStop();
-		});
+		// ESCAPE LEAVES IT — ON document, NOT ON root.
+		//
+		// A keydown listener on the component only hears keys pressed while focus is inside
+		// it, and the dock is re-parented to <body> while the guide runs. Nothing in the
+		// component has focus when a reader arrives and the guide has opened itself, so the
+		// key went to <body> and was never heard. The dock prints "esc" on its Skip button;
+		// the key has to actually do it.
+		const onEsc = (e: KeyboardEvent) => {
+			if (e.key === 'Escape' && guideRunning()) { e.preventDefault(); guideStop(); }
+		};
+		document.addEventListener('keydown', onEsc);
+		teardown.push(() => document.removeEventListener('keydown', onEsc));
 
 		/** Say so, with a way out. `reason` null clears it. */
 		function setFailed(reason: string | null) {
@@ -1161,17 +1169,28 @@ const SCENARIOS = [
 		}
 
 		function maybeAutoStart() {
-			if (autoStarted || reduced) return;
+			if (autoStarted) return;
 			if (root.dataset.openRecord === 'true') return;
 			if (!inView || !engine || engine.isPlaying) return;
 			autoStarted = true;
 
+			// THE GUIDED READ IS NOT SUPPRESSED BY REDUCED MOTION. It was, because it sat
+			// behind the same early return as autoplay — and a reader with "reduce motion"
+			// set on their system therefore never saw it at all and had to find the button,
+			// which is exactly what was reported. Reduced motion is a request to stop things
+			// moving, not a request to be told less: guideGoTo already seeks between stops
+			// instead of playing when it is set, so the guide reads as a series of stills.
+			// Autoplay stays suppressed, because that IS motion nobody asked for.
 			if (root.dataset.guideMode === 'auto' && !guideAlreadySeen() && !guideRunning()) {
-				rememberGuideSeen();
 				guideStart();
+				// WRITTEN AFTER, NOT BEFORE. The flag used to be set first, so a start that
+				// bailed — no bundle yet, a scenario with no stops — burned the single
+				// showing and the reader never got it on any later visit either.
+				if (guideRunning()) rememberGuideSeen();
 				return;
 			}
 
+			if (reduced) return;
 			engine.seekEpoch(0);
 			engine.play();
 			setPlayLabel();
@@ -2182,16 +2201,34 @@ const SCENARIOS = [
 		align-items: center;
 		gap: 10px;
 	}
+	/* SKIP IS A CONTROL, not a word. It was a bare text link the colour of a caption, on a
+	   panel that opens itself — the one thing a reader who does not want a tour needs to
+	   find first. It is a bordered button now, with the key that also does it printed on it. */
 	.rp-guide-skip {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
 		font: inherit;
 		font-size: var(--text-small);
 		background: none;
-		border: 0;
-		padding: 0 4px;
-		color: var(--text-muted);
+		border: 1px solid var(--border-hairline);
+		border-radius: 4px;
+		padding: 8px 12px;
+		color: var(--text-secondary);
 		cursor: pointer;
+		transition: border-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
 	}
-	.rp-guide-skip:hover { color: var(--text-primary); }
+	.rp-guide-skip:hover { color: var(--text-primary); border-color: var(--border-strong); }
+	.rp-guide-esc {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 9.5px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		border: 1px solid var(--border-hairline);
+		border-radius: 3px;
+		padding: 1px 4px;
+	}
 	.rp-guide :global(.rp-btn) {
 		font: inherit;
 		font-size: var(--text-small);
