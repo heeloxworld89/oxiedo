@@ -11,7 +11,11 @@
 
 Machines that cannot lie.
 
-Not about the world. About themselves. Data stays locked because no model can say what it did with it, and the custodian who holds that data is right not to release it on a promise. ORMAS makes a network record every change it makes to itself, as it happens, by arithmetic it cannot route around. That record is the account a custodian has been waiting for.
+Not about the world. About themselves.
+
+Data stays locked because no model can say what it did with it, and the custodian who holds that data is right not to release it on a promise.
+
+**ORMAS** makes a network record every change it makes to itself, as it happens, by arithmetic it cannot route around. That record is the account a custodian has been waiting for.
 
 [Pre-book ORMAS](/contact)
 

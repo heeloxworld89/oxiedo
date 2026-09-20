@@ -1240,7 +1240,10 @@ main > section:last-child.band--dark {
 	display: flex;
 	gap: var(--space-md);
 	flex-wrap: wrap;
-	margin-top: var(--space-xl);
+	/* Closer than a section break. The claim above and the two buttons are one
+	   move — read this, then do this — and --space-xl between them read as the
+	   copy having ended and something unrelated starting. */
+	margin-top: var(--space-lg);
 }
 
 /* Scoped to .hero, not .hero-copy. When the CTAs moved out of .hero-copy into .hero-lede this
@@ -10596,13 +10599,51 @@ main > section:last-child.band--dark {
 	color: var(--text-on-dark);
 }
 
-.hero-subclaim {
+/* THE THREE BEATS UNDER THE FOUR WORDS.
+   One paragraph at one size did not show the shape the copy already has — a
+   disambiguation, then the problem, then the answer — so the pivot at "ORMAS
+   makes" was the fourth line of a grey block. Three tiers of brightness give the
+   eye somewhere to land and cost the copy nothing. */
+
+/* Sits tight under the statement it qualifies, and brighter than body, because
+   its whole job is to stop "cannot lie" being read as a claim about the world. */
+.hero-qualifier {
+	margin-top: 10px;
+	max-width: 46ch;
+	font-size: clamp(1rem, 0.5vw + 0.9rem, 1.125rem);
+	line-height: 1.5;
+	color: var(--text-on-dark);
+	opacity: 0.92;
+}
+
+/* The recessive beat. It is the situation, not the argument. */
+.hero-problem {
 	margin-top: var(--space-md);
 	max-width: 46ch;
 	font-size: 1rem;
 	line-height: 1.6;
 	color: var(--text-on-dark);
-	opacity: 0.66;
+	opacity: 0.58;
+}
+
+/* The claim, lifted back up and given an edge. The rule is the same device the
+   site uses elsewhere for a quoted passage, which is the right register: this is
+   the sentence the page is answerable for. */
+.hero-answer {
+	margin-top: var(--space-md);
+	max-width: 46ch;
+	padding-left: var(--space-md);
+	border-left: 2px solid color-mix(in oklab, var(--accent-on-dark) 60%, transparent);
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var(--text-on-dark);
+	opacity: 0.86;
+}
+
+.hero-answer strong {
+	font-weight: 600;
+	color: var(--accent-on-dark);
+	opacity: 1;
 }
 
 /* ============================================================
