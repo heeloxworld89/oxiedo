@@ -2252,16 +2252,37 @@ const SCENARIOS = [
 		opacity: 0.55;
 		transition: opacity 220ms ease;
 	}
+	/* THE RING IS DRAWN INSIDE THE ELEMENT, AND IT HAS TO BE.
+	   This was an outline at outline-offset: 10px, which paints ten pixels OUTSIDE
+	   the element's own box — and three of the four things the guide lights sit
+	   inside .rp-panel, which is a fixed 258px with overflow-y: auto because the
+	   ledger is a log of eighty-five corrections. A scroll container clips to its
+	   padding box, so the ring was cut on whichever side ran out of room, and at
+	   the foot of a panel that is the bottom edge: reported as the underline of the
+	   border never showing up, on every stop.
+
+	   An inset ring cannot be clipped, because there is nothing outside the box to
+	   clip. The element keeps its size, so nothing reflows when a stop lights it,
+	   and the outer glow is left as a glow — the one part that loses nothing by
+	   being cropped. */
 	.rp.is-guided .is-lit {
 		opacity: 1;
 		position: relative;
 		z-index: 1;
-		border-radius: 4px;
-		outline: 2px solid color-mix(in oklab, var(--ormas) 70%, transparent);
-		outline-offset: 10px;
+		border-radius: 6px;
 		background: var(--plate);
-		box-shadow: 0 0 0 10px var(--plate), 0 10px 32px rgb(0 0 0 / 0.08);
+		box-shadow:
+			inset 0 0 0 2px color-mix(in oklab, var(--ormas) 72%, transparent),
+			0 10px 32px rgb(0 0 0 / 0.1);
 	}
+
+	/* NO PADDING-AND-NEGATIVE-MARGIN TRICK HERE, and it was tried. Growing the box
+	   by ten and pulling it back with a negative margin gives the ring breathing
+	   room without reflowing neighbours — but it pushes the border box ten pixels
+	   PAST the scroll container, and measured, these elements sit flush with it:
+	   bottomInside is 0 for the ledger and the verdict. The ring would have been
+	   clipped again, by the same container, for the same reason. The ring sits on
+	   the element's own edge instead, which is the one place nothing can crop it. */
 
 	/* ── the dock ── */
 	.rp-guide:not([hidden]) {
