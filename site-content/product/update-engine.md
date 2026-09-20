@@ -68,11 +68,11 @@ This is why ORMAS is one product rather than seven. The Update Engine is the sam
 
 ### Markets using it
 
-- [Regulated Finance](/sectors/regulated-finance)Segments by industry
+- [Regulated Finance](/sectors/regulated-finance)Segments by sector
 
-- [Medical AI](/sectors/medical-ai)Segments by industry
+- [Medical AI](/sectors/medical-ai)Segments by sector
 
-- [Defense & Safety-Critical](/sectors/defense-safety-critical)Segments by industry
+- [Defense & Safety-Critical](/sectors/defense-safety-critical)Segments by sector
 
 07
 

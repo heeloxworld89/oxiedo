@@ -29,7 +29,7 @@ Read the market
 
 Market
 
-INDUSTRY
+SECTOR
 
 ### Regulated Finance
 
@@ -43,7 +43,7 @@ Read the market
 
 Market
 
-INDUSTRY
+SECTOR
 
 ### Medical AI
 
@@ -71,7 +71,7 @@ Read the market
 
 Market
 
-INDUSTRY
+SECTOR
 
 ### Defense & Safety-Critical
 

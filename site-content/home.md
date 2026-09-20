@@ -593,7 +593,7 @@ Answered by **The Warning Light** · 3 of 7 features in scope
 
 #### Regulated Finance
 
-INDUSTRY
+SECTOR
 
 What changed, and can a validator verify it?
 
@@ -605,7 +605,7 @@ Answered by **The Diary** · 6 of 7 features in scope
 
 #### Medical AI
 
-INDUSTRY
+SECTOR
 
 Which site caused this, and can we show it?
 
@@ -629,7 +629,7 @@ Answered by **Certified Deletion** · 5 of 7 features in scope
 
 #### Defense & Safety-Critical
 
-INDUSTRY
+SECTOR
 
 What did the system do to itself in the field?
 
@@ -657,7 +657,7 @@ The interagency guidance that replaced SR 11-7 in April 2026 keeps the disciplin
 
 GDPR · Article 17
 
-The right to erasure is being enforced against trained models, not only against databases. The compliance industry has already named the category it needs (unlearning-ready architectures) ahead of any supply existing.
+The right to erasure is being enforced against trained models, not only against databases. Compliance vendors have already named the category they need (unlearning-ready architectures) ahead of any supply existing.
 
 **THE EVIDENCE**
 

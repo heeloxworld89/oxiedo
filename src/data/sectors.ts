@@ -14,7 +14,7 @@ export interface Sector {
 	id: string;
 	name: string;
 	/** `12 §1` — which of the three axes this market segments on */
-	axis: 'INDUSTRY' | 'OBLIGATION' | 'SCALE';
+	axis: 'SECTOR' | 'OBLIGATION' | 'SCALE';
 	/** `12 §1` — the question this market is actually asking */
 	question: string;
 	cost: string;
@@ -58,7 +58,7 @@ export const sectors: Sector[] = [
 	{
 		id: 'regulated-finance',
 		name: 'Regulated Finance',
-		axis: 'INDUSTRY',
+		axis: 'SECTOR',
 		question: 'What changed, and can a validator verify it?',
 		cost: 'A model that cannot be audited at the component level cannot be validated under SR 26-2, the interagency model risk guidance that replaced SR 11-7 in April 2026. A model that cannot be validated cannot be deployed. A model that cannot be deployed is the entire project cost, written off.',
 		changes: "Where attribution is available per component, validation can be conducted the same way. The record answers SR 26-2's validation and change-control expectations with evidence rather than with a memo.",
@@ -76,7 +76,7 @@ export const sectors: Sector[] = [
 	{
 		id: 'medical-ai',
 		name: 'Medical AI',
-		axis: 'INDUSTRY',
+		axis: 'SECTOR',
 		question: 'Which site caused this, and can we show it?',
 		cost: 'Clinical AI that fails a CE marking audit delays market entry by 12–36 months. The audit requires documented evidence of training governance. That documentation does not exist for standard networks.',
 		changes: 'Each site\'s contribution is recorded before the averaging step destroys it. When a round drops six points, the record says which site, and on what evidence.',
@@ -110,7 +110,7 @@ export const sectors: Sector[] = [
 	{
 		id: 'defense-safety-critical',
 		name: 'Defense & Safety-Critical',
-		axis: 'INDUSTRY',
+		axis: 'SECTOR',
 		question: 'What did the system do to itself in the field?',
 		cost: 'An autonomous system operating where conditions actively degrade — jamming, spoofing, sensor degradation, physical damage, radiation — faces a problem no frozen model solves.',
 		changes: 'Degrading to 80.3% rather than collapsing permanently to 10% is a different safety category, and every modification the system made to itself is bounded, timestamped and reviewable afterwards.',

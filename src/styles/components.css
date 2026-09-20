@@ -10694,3 +10694,86 @@ main > section:last-child.band--dark {
 	line-height: var(--lh-body);
 	color: var(--text-secondary);
 }
+
+/* ── /invest · the sections added from the September 2026 deck ─────────────────
+   A caveat is a paragraph the page is arguing against itself with — the
+   unvalidated institution count, the round not reaching default-alive. It gets a
+   rule and a colour rather than being folded into the body text, because an
+   investor skimming for the weaknesses should be able to find them by shape. */
+.iv-caveat {
+	margin-top: var(--space-lg);
+	padding-left: var(--space-md);
+	border-left: 2px solid var(--chart-warning);
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	color: var(--text-secondary);
+}
+
+/* THE TABLES SCROLL, THE PAGE DOES NOT. Five columns of comparison do not fit a
+   phone at a readable size, and the alternative to a scrolling table is either
+   four-point type or a stack of cards that loses the comparison the table exists
+   to make. The wrapper is the only thing on the page allowed to scroll sideways. */
+.iv-table-wrap {
+	margin-top: var(--space-2xl);
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.iv-table {
+	width: 100%;
+	min-width: 640px;
+	border-collapse: collapse;
+	font-size: 0.9375rem;
+	text-align: left;
+}
+
+.iv-table th,
+.iv-table td {
+	padding: var(--space-md) var(--space-lg) var(--space-md) 0;
+	border-bottom: 1px solid var(--border-hairline);
+	vertical-align: top;
+}
+
+.iv-table thead th {
+	padding-top: 0;
+	border-bottom: 1px solid var(--border-strong);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+	font-size: 0.6875rem;
+	font-weight: 500;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+
+.iv-table tbody th {
+	font-weight: 500;
+	color: var(--text-primary);
+}
+
+.iv-table td { color: var(--text-secondary); }
+
+.iv-table-mark {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+	font-size: 0.8125rem;
+}
+
+.iv-table-note { font-size: 0.875rem; color: var(--text-muted); }
+
+/* The four rows this round exists to validate. Named in the ink used for a
+   warning everywhere else on the site, so the page reads its own weak spots in
+   the same colour it reads a failure. */
+.iv-table-weak {
+	font-size: 0.875rem;
+	color: var(--chart-warning);
+}
+
+/* The status quo remedy: not a vendor, and the row that actually loses the money. */
+.iv-table-row--lead th,
+.iv-table-row--lead td { font-weight: 500; color: var(--text-primary); }
+
+.iv-table-row--ours th,
+.iv-table-row--ours td {
+	background: var(--accent-ghost);
+	font-weight: 600;
+	color: var(--accent-dark);
+}

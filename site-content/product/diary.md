@@ -105,13 +105,13 @@ This is why ORMAS is one product rather than seven. The Diary is the same mechan
 
 ### Markets using it
 
-- [Regulated Finance](/sectors/regulated-finance)Segments by industry*lead*
+- [Regulated Finance](/sectors/regulated-finance)Segments by sector*lead*
 
-- [Medical AI](/sectors/medical-ai)Segments by industry
+- [Medical AI](/sectors/medical-ai)Segments by sector
 
 - [Data Obligation](/sectors/data-obligation)Segments by obligation
 
-- [Defense & Safety-Critical](/sectors/defense-safety-critical)Segments by industry*lead*
+- [Defense & Safety-Critical](/sectors/defense-safety-critical)Segments by sector*lead*
 
 07
 

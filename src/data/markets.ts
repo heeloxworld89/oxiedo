@@ -676,7 +676,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'Unlearning-ready architectures',
-				body: 'The compliance industry named this category and forecast it becoming a requirement before any supply side existed. A named category with anticipated regulation and nothing to buy is a rarer situation than a large addressable market.',
+				body: 'Compliance vendors named this category and forecast it becoming a requirement before any supply side existed. A named category with anticipated regulation and nothing to buy is a rarer situation than a large addressable market.',
 			},
 		],
 		buyer: {

@@ -7,7 +7,7 @@
 ---
 INVEST
 
-## Every model in a regulated industry will soon have to account for itself. Almost none of them can.
+## Every model in a regulated sector will soon have to account for itself. Almost none of them can.
 
 The whole thing, in one screen
 
@@ -52,6 +52,66 @@ The usual answer to “why has nobody built this” is that the incentive did no
 
 Two of these have already happened. An institution that begins the architecture question in 2027 is not late by a quarter; it is late by a training cycle, and a training cycle in a regulated environment is measured in years.
 
+**THE MARKET**
+
+### Counted upward, from the institutions that qualify.
+
+The reference market is AI model-risk management: $8.3B in 2026, reaching $19.1B by 2035 on a 9.7% compound rate. That budget line already exists inside every institution below. Today it buys tools that estimate a finished model from the outside.
+
+An institution qualifies for this architecture on three tests at once. It holds data that cannot legally leave its infrastructure. It has an active plan to train on that data. And it answers to somebody who will ask what the model learned. Roughly a thousand clear all three.
+
+Academic medical centres
+
+~180
+
+With an internal AI group and a regulated pathway.
+
+Funds and asset managers
+
+~400
+
+With in-house machine learning.
+
+Insurers and credit-risk teams
+
+~270
+
+Under supervisory reporting.
+
+Labs running training at cost
+
+~150
+
+Where a failed run is a budget line, not an inconvenience.
+
+At a $250,000 annual contract value, that serviceable market is $250M. The beachhead is regulated finance: the shortest cycle, the clearest mandate, a named validator on the other side of the table, and no ethics board in the path. The obtainable target is twenty institutions by the end of year three — $5M ARR, two per cent of the serviceable market. The constraint on that number is delivery capacity, not demand.
+
+The institution counts are our own estimates. No buyer interviews have been conducted. It is the number on this page most likely to be wrong, and the first line of work this round funds is correcting it.
+
+**WHO SIGNS**
+
+### Four people stand around one workflow.
+
+The workflow is a bank whose model cannot clear independent validation. A sale requires all four of them, and each one refuses for a different reason.
+
+#### The economic buyer — Head of Model Risk
+
+Owns the budget and the remediation timetable. Wants to clear validation first time. Fears being the name on a model an examiner later reopens.
+
+#### The technical user — machine-learning platform lead
+
+Runs the training and owns the serving path. Wants to stop losing six-figure runs to failures found thousands of steps late. Fears anything that changes inference cost.
+
+#### The risk owner — Chief Risk Officer
+
+Signs, and carries it to the board. Wants a defensible position rather than a better number. Fears the sentence “the model changed and we cannot say how” appearing in a supervisory letter.
+
+#### The gatekeeper — independent validation, then the examiner
+
+Wants something verifiable rather than asserted. Kills deals by rejecting a method it cannot reproduce.
+
+The trigger is an event, not a budget cycle. A model fails validation, or an examiner finding lands, and a programme that is already funded cannot reach production. That is the moment this gets bought: the money exists, the deadline is external, and the alternative is rebuilding the model from the beginning.
+
 **DEFENSIBILITY**
 
 ### The moat is time nobody can buy.
@@ -77,6 +137,16 @@ In fields where the buyer is obliged to show their working, the released impleme
 #### The incumbents are structurally committed
 
 Every interpretability and observability vendor is built on the premise that attribution is recovered after training. Adopting this architecture means conceding that premise was wrong. That is not a product decision they can take quickly.
+
+**THE ALTERNATIVES**
+
+### What a buyer already owns.
+
+Every tool in this category inspects a finished model from the outside. They are complements rather than casualties: all five examine a model that has already made up its mind, which means they share our buyer and our budget line — enterprise quotes in this category start around $50,000 a year — and none of them can answer what training did.
+
+Alternative What it sells Train-time record Per-node attribution Autonomous repair ModelOp Governance control tower———Credo AI Policy and compliance documentation———Fiddler AI Post-hoc explainability—partial—Arthur AI Production drift monitoring———Robust Intelligence (Cisco)Pre-deployment stress testing———Retraining from scratch The status quo remedy———ORMAS The account, produced as it trains yes yes yes
+
+The real incumbent is the second-to-last row. Retraining from scratch costs $100,000 to $500,000 per request, and it is the only method that genuinely removes a data source from a model. It is what this displaces.
 
 **THE NUMBER**
 
@@ -202,6 +272,18 @@ Deep tech is funded against de-risking rather than revenue, so this is set out a
 
   Done when — Unspent, or spent against a decision written down at the time.
 
+**THREE YEARS**
+
+### Pre-revenue by design.
+
+Nothing could be sold until the architecture cleared its own destruction suite. What follows is what the money is expected to produce, and every cell in it is an assumption.
+
+Year 1 Year 2 Year 3 Assumption Paying institutions 0 4 20 Land at one model, then expand ARR$0$1.0M$5.0M$250K ACV, held flat Gross margin—~92%~92%On-premise; no hosting cost CAC, fully loaded—~$85K~$85K Founder and commercial time, pilot engineering LTV, four-year, margin-adjusted—$920K$920K Four-year life, no expansion assumed LTV:CAC—~10.8:1~10.8:1 Benchmark: 3:1 healthy, 5:1 strong Net burn$820K$680K Near breakeven Compute front-loaded to year one
+
+The ratio flatters because the inputs are unproven. The $250,000 contract value is benchmarked against model-risk tooling and validated by nobody — no pricing conversation has taken place. Year two assumes two things land: the transformer result, and one validator accepting the method. If either fails, year two is one or two design partners and a seed raised on research rather than on revenue.
+
+A seed is assumed at month fifteen against milestones, not against ARR. This round does not reach default-alive, and is not presented as though it does.
+
 **CAPITAL DISCIPLINE**
 
 ### What this round is deliberately not spent on.
@@ -292,7 +374,7 @@ Under adversarial weight injection the architecture is 1.0 pp worse than a param
 
 One person wrote all of it. It is the first line item in the round and the largest, at roughly 43 percent, and it buys two people rather than five because three who can each work unsupervised is a company.
 
-#### You are giving the mechanism away.
+#### The mechanism is being given away.
 
 Deliberately, and on release rather than now. A result nobody can check is worth nothing to a regulator, and the defensibility was never intended to rest on secrecy. What is not published is the programme extending it, which stays unpublished until it is protected.
 
@@ -327,6 +409,24 @@ What goes in front of an investor
 - The full technical account of the architecture.
 
 - A demonstration on their own workload, run in the customer environment.
+
+**TERMS**
+
+### $1.5M on a post-money SAFE. $15M cap, no discount, no debt component.
+
+Dilution at conversion is 10.0%, fixed on signature.
+
+The cap sits inside the 2026 band for AI and machine-learning pre-seed rounds, which runs $12M to $25M, with the largest premium going to AI applied in regulated sectors. At a raise of this size, $15M is the documented norm. It is set at the conservative end of that band deliberately: a company with no customers and an evidence base confined to CIFAR-10 and CIFAR-100 should not price at the top of its category.
+
+Cap-only is how roughly 72% of SAFEs were written in 2025. A discount layered on top of a cap is the minority structure and is not used here. The company is founder-owned with no prior institutional capital, and a priced round is deferred to the seed, on the year-two milestones above.
+
+**PROVENANCE**
+
+### Where every number on this page comes from.
+
+Four of these eight rows are unvalidated, and they are the four this round exists to validate. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
+
+Figure Source Status 80.3% against 10.0%, +70.3 pp 383 controlled experiments, reproducible from seed Measured, replayable−91% / +1,300%Twelve-month ablation on a live company, SHA-256 reconciled Measured, prior work$8.3B market, 9.7% CAGR Third-party analyst, AI model-risk management, 2026 Third-party~1,000 institutions Our own bottom-up count across four segments Estimate, unvalidated$250K ACV, $150K–$500K band Benchmarked against model-risk tooling No pricing conversations CAC $85K, LTV:CAC 10.8:1 Modelled on a six-to-eighteen-month enterprise cycle Assumption, no data$15M cap, 10% dilution 2026 AI pre-seed band; $15M is the norm at this raise size Market benchmark Competitor pricing ~$50K Published enterprise quote floors Third-party
 
 **THE ASK**
 

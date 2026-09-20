@@ -83,13 +83,13 @@ This is why ORMAS is one product rather than seven. The Separator is the same me
 
 - [AI Training](/sectors/ai-training)Segments by scale
 
-- [Regulated Finance](/sectors/regulated-finance)Segments by industry
+- [Regulated Finance](/sectors/regulated-finance)Segments by sector
 
-- [Medical AI](/sectors/medical-ai)Segments by industry
+- [Medical AI](/sectors/medical-ai)Segments by sector
 
 - [Data Obligation](/sectors/data-obligation)Segments by obligation
 
-- [Defense & Safety-Critical](/sectors/defense-safety-critical)Segments by industry
+- [Defense & Safety-Critical](/sectors/defense-safety-critical)Segments by sector
 
 07
 

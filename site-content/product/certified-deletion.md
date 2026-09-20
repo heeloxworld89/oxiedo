@@ -73,9 +73,9 @@ This is why ORMAS is one product rather than seven. Certified Deletion is the sa
 
 ### Markets using it
 
-- [Regulated Finance](/sectors/regulated-finance)Segments by industry
+- [Regulated Finance](/sectors/regulated-finance)Segments by sector
 
-- [Medical AI](/sectors/medical-ai)Segments by industry
+- [Medical AI](/sectors/medical-ai)Segments by sector
 
 - [Data Obligation](/sectors/data-obligation)Segments by obligation*lead*
 
