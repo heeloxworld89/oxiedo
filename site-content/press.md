@@ -26,11 +26,11 @@ Available, including on the parts of this that are not working yet. For a scepti
 - **What it is** — A neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns.
 - **Name** — ORMAS, short for Orchestrated Repair and Monitoring with Architectural Self-correction. Oxiedo is the company; ORMAS is the architecture.
 - **Founded** — 2023 as a research effort. The architecture reached maturity on 1 August 2026; every result published here was measured on or after that date.
-- **Entity** — Oxiedo is a research company in formation and is not yet separately incorporated. A Delaware C-corporation is being established alongside the move to San Francisco. Until it completes, contracting and payments run through an existing UK-registered company, which is named in full in any agreement.
-- **Founder** — Rokib Al Dhin Raadh, technical founder, with companies built and exited before this one.
-- **Funding** — Pre-revenue. No institutional investment to date. Raising a pre-seed round.
-- **Structure** — Founder-led. Commercial, research and regulatory roles open; see /careers.
-- **Customers** — None. Zero customer conversations have taken place.
+- **Entity** — A Delaware C-corporation is being established alongside the move to San Francisco. Contracting and payments run through an existing UK-registered company, which is named in full in any agreement.
+- **Founder** — Rokib Al Dhin Raadh, founder, and the named principal accountable for the architecture. Companies built and exited before this one.
+- **Funding** — Raising a pre-seed round.
+- **Structure** — One named principal is accountable for the architecture and for every claim made about it. Hiring across commercial, research and regulatory functions; see /careers.
+- **Customers** — None. No deployment or pilot exists; every published result comes from controlled experiments.
 - **Licence** — A research licence, free for research, teaching and evaluation from the moment the release lands. Production use is licensed. Not open source, and not described as one.
 - **Evidence base** — 383 controlled experiments, four architecture families, 67 archived runs each regenerating from seed. The architecture and the full archive are released on publication.
 - **Data used** — CIFAR-10 and CIFAR-100 only. No clinical, biological, financial or defence data has ever touched the system.
@@ -117,7 +117,7 @@ Oxiedo builds ORMAS, a neural network training architecture that makes per-compo
 
 Full
 
-Oxiedo builds ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), a neural network architecture that makes per-node causal attribution a physical property of the backward pass, enabling per-component diagnosis, bounded structural repair, audit, and accounting for the contribution of data to a trained model. Every correction is logged, bounded and human-reviewable. The architecture is supported by 383 controlled experiments across four architecture families, each regenerating from seed. The mechanism is released under a research licence on publication, free for research, teaching and evaluation from that day; production use is licensed separately. All experimental results are CIFAR-10 and CIFAR-100; no clinical, biological, financial or defence data has been used. Oxiedo is pre-revenue, has no customers, and is raising a pre-seed round as of September 2026.
+Oxiedo builds ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), a neural network architecture that makes per-node causal attribution a physical property of the backward pass, enabling per-component diagnosis, bounded structural repair, audit, and accounting for the contribution of data to a trained model. Every correction is logged, bounded and human-reviewable. The architecture is supported by 383 controlled experiments across four architecture families, each regenerating from seed. The mechanism is released under a research licence on publication, free for research, teaching and evaluation from that day; production use is licensed separately. All experimental results are CIFAR-10 and CIFAR-100; no clinical, biological, financial or defence data has been used. Oxiedo is raising a pre-seed round as of September 2026.
 
 **ASSETS**
 

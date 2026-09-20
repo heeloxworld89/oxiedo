@@ -79,11 +79,11 @@ The practical consequence is that a model trained under ORMAS arrives with a rec
 
 #### Is this interpretability? How is it different from SHAP, LIME or attention maps?
 
-Those methods build a second, simpler model of a first model and report what the approximation says. They are estimates of a system from outside it, they disagree with each other on the same input, and their output is not stable enough to put in front of a regulator who is entitled to ask how the number was produced.
+Every one of those methods inspects a model that has already finished training. They build a second, simpler model of the first and report what the approximation says. They are estimates of a system from outside it, they disagree with each other on the same input, and their output is not stable enough to put in front of a regulator who is entitled to ask how the number was produced.
 
 ORMAS does not approximate. The attribution is a quantity the network computes about itself while training, bounded by construction. There is no surrogate, no sampling, and no post-hoc reconstruction that could be run a second time and return a different answer.
 
-The distinction matters commercially rather than philosophically: an approximation is an opinion about a model, and an opinion cannot be entered as evidence.
+The distinction matters commercially rather than philosophically: an approximation is an opinion about a model, and an opinion cannot be entered as evidence. The record is produced at train time or it is not produced at all, which is why this competes for the model-risk budget rather than the explainability one.
 
 #### How is this different from Weights & Biases, MLflow, Arize or our own observability stack?
 
@@ -91,7 +91,7 @@ Those tools record what a training run reported about itself. They are excellent
 
 What they cannot do is answer a causal question, because the information required to answer it was never produced. A loss curve reports that the run degraded at step 40,000. It cannot name the component that caused the degradation, because a standard architecture does not compute that quantity at any point.
 
-ORMAS produces the quantity. An observability platform is then the natural place to put it.
+ORMAS produces the quantity, because it is computed as the model trains rather than read off a run after the fact. An observability platform is then the natural place to put it.
 
 #### Is it a model, a library, a wrapper, or a training method?
 
@@ -151,9 +151,9 @@ Closing that gap is what the dataset partnership on the careers page exists to d
 
 #### Has this been independently verified?
 
-Not yet by a third party, and that is stated plainly rather than left to be discovered. The architecture is not public today, and the commitment to release it in full is written into the licence rather than promised.
+Not by a third party. That is the boundary of what is claimed, and it is drawn here rather than left to be discovered. The architecture is not public today, and the commitment to release it in full is written into the licence rather than promised.
 
-What is available now, to an investor or an evaluating institution under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. External verification is a meaningful signal and it is not yet held. Seeded reproducibility is the stronger one, because it does not depend on anyone taking our word for a number.
+What an evaluating institution or an investor can have now, under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. Third-party verification is a meaningful signal, it is not yet held, and it is not claimed anywhere on this site. Seeded reproducibility is the stronger signal in any case, because it puts the check in the evaluator’s hands rather than asking anyone to take our word for a number.
 
 #### Where does ORMAS lose?
 
@@ -163,9 +163,9 @@ It is a real deficit and it is small. It sits alongside a +70.3 pp recovery adva
 
 #### What has not been established?
 
-Behaviour at frontier scale, behaviour on any regulated dataset, and behaviour in production over time. There is no deployment, no pilot and no customer, so none of the three has been observed.
+Three things, and they are the outer edge of what is claimed anywhere on this site: behaviour at frontier scale, behaviour on any regulated dataset, and behaviour in production over time. No deployment, pilot or customer exists, so none of the three has been observed, and nothing here is sold as though it had been.
 
-The technology page carries a section listing exactly this, written before anyone asked for it.
+Everything inside that boundary is claimed without hedging: 383 controlled experiments across four architecture families, 67 archived runs that regenerate from seed, and the one adverse result published alongside the rest. The technology page carries a section drawing the same line, written before anyone asked for it.
 
 [What is not established →](/technology)
 
@@ -329,7 +329,7 @@ Under a deployment licence, neither, in respect of the data. The customer remain
 
 For an evaluation sent to us, we are the customer's processor and a DPA is executed before any transfer. For this website, we are the controller of what is submitted through it.
 
-Oxiedo is not yet separately incorporated; a Delaware C-corporation is being formed. Until it completes, the controller for anything submitted through this site is the UK-registered company through which we currently contract, and UK GDPR and the Data Protection Act 2018 apply to it as home law. EU GDPR applies under Article 3(2) for data subjects in the Union. That entity is named in full in any agreement and before any data is transferred to us.
+The contracting entity is stated precisely, because a controller has to be identifiable before anything is submitted. Oxiedo contracts through a UK-registered company, and that company is the controller for anything submitted through this site: UK GDPR and the Data Protection Act 2018 apply to it as home law, and EU GDPR applies under Article 3(2) for data subjects in the Union. A Delaware C-corporation is being established alongside the move to San Francisco, and until contracting moves to it the UK-registered company remains the controller. The entity is named in full in any agreement and before any data is transferred to us.
 
 [Positions under GDPR and HIPAA →](/data)
 
@@ -427,11 +427,13 @@ Who is behind it, how it is funded, and what happens if it fails.
 
 #### Who is behind this?
 
-Oxiedo is a founder-led research company in formation, incorporating as a Delaware C-corporation alongside a move to San Francisco. Until that completes it contracts through an existing registered company, named in full in any agreement.
+Oxiedo is a licensing company. What it licenses is train-time accountability: ORMAS, the training architecture, licensed to institutions that hold regulated data and carry the obligation to account for what a model did with it. The company is incorporating as a Delaware C-corporation alongside a move to San Francisco, and until that completes it contracts through an existing registered company, named in full in any agreement.
 
-The founder is a technical founder who has built and exited companies before this one. Commercial, research and regulatory roles are open, and the full position on structure and funding is on the investor page rather than buried.
+One named principal, Rokib Al Dhin Raadh, is accountable for the architecture: it was designed, built and adversarially tested under that name, and the counterparty an institution contracts with is the party that wrote it. That accountability is the substance of the licence. Institutions under obligation are not buying a repository; they are buying somebody who will stand behind a number in a filing.
 
-[The company and the founder →](/about)
+Commercial, research and regulatory roles are open, and the full position on structure and funding is set out on the investor page rather than buried.
+
+[The company →](/about)
 
 #### How much of this actually exists?
 
@@ -449,11 +451,9 @@ The investor case rests on one architectural result, published and reproducible,
 
 #### Why should we engage a company with no paying customers?
 
-Because the alternative on offer is a mature vendor selling an approximation, and an approximation does not become admissible by being sold at scale. The question is not who has more customers; it is which one produces evidence that survives a regulator.
+Because every established tool in this category inspects a model that has already finished training, and an inspection performed afterwards is an approximation however long the vendor has been selling it. ORMAS produces the record as the model trains. That is a different position inside an existing, budgeted market — AI model-risk management — rather than a new one, and the question an institution under obligation is actually deciding is which supplier produces evidence that survives a regulator.
 
 What is normally opaque at this stage is not opaque here. The release commitment is written into the licence, every experiment regenerates from seed, the one adverse result is disclosed on this site, and the falsification test costs under 30 GPU-hours. Most established vendors disclose none of it.
-
-Zero customer conversations have taken place, and it is on the about page in those words.
 
 #### What happens to us if Oxiedo fails?
 
@@ -463,9 +463,9 @@ Escrow covers the production implementation. This is the concentration-risk ques
 
 #### How much of what you sell depends on work not yet done?
 
-The published architecture and its results are complete and reproducible today. The programme extending it is described by its objectives and constraints on the technology page; its mechanism is not published, and will not be until it is protected.
+What is licensed today is finished work. The architecture, its results and the record it produces exist now and regenerate from seed, and nothing in that set is waiting on a result to arrive.
 
-Anything sold against work not yet complete is identified as such in the contract, with the milestone written in. Nothing here is priced on a promise that is not also a commitment.
+The programme extending it is a separate thing and is described as one: its objectives and constraints are on the technology page, and its mechanism is not published and will not be until it is protected. Where a licence reaches work not yet complete, that work is identified as such in the contract with the milestone written in. Nothing here is priced on a promise that is not also a commitment.
 
 #### Where does the name come from?
 

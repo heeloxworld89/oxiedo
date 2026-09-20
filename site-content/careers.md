@@ -13,7 +13,7 @@ Oxiedo is building the architecture that lets a regulated institution prove what
 
 Each one states what it owns and what it requires. The commitment shape is on every listing, because a research partnership and a full-time equity role are different propositions and should not be described as though they are the same.
 
-- **Stage** — Early, commercially open, pre-seed
+- **Stage** — Pre-seed, commercially open
 - **How we work** — Direct. No recruiters, no screening layer, no take-home
 - **Location** — Remote, with the headquarters relocating to San Francisco
 - **Reply time** — A few days, usually less. Every message read by a person

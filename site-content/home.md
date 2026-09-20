@@ -29,7 +29,7 @@ Five sectors. One question about data, asked five ways.
 
 - Medical AI — Which site caused this, and can we show it?
 
-- Data Obligation — What data is in here, and can I remove it?
+- Data Obligation — What data is in here, and can we remove it?
 
 - Defense & Safety-Critical — What did the system do to itself in the field?
 
@@ -107,7 +107,7 @@ feature
 
 Certified Deletion
 
-What data is in here, and can I remove it?
+What data is in here, and can we remove it?
 
 Removes a named source's contribution and issues a signed certificate of exactly what was removed, with a bounded statement of what changed, and without retraining.
 
@@ -351,7 +351,7 @@ Training on the architecture, with source labels
 
 [Certified Deletion](/product/certified-deletion)
 
-What data is in here, and can I remove it?
+What data is in here, and can we remove it?
 
 Regulated Finance · Medical AI · Data Obligation
 
@@ -577,6 +577,24 @@ The only method that genuinely removes a data source from a model. Six figures, 
 
 None of this is a report assembled afterwards. The system writes it while the work is happening, and a result produced that way can be verified rather than taken on assertion.
 
+**THE CATEGORY**
+
+### This market splits on one question: when was the record written?
+
+The distinction above is not only a technical one. It divides a market that is already funded. AI model-risk management is bought today from ModelOp, Credo AI, Fiddler AI, Arthur AI and Robust Intelligence, and all five sit on the near side of the line: they begin work after the run has finished, on a model that has already made up its mind. They do that job well, and they are complements rather than casualties — none of them claims to account for what training did to the model, and none was built to be present while it happened. ORMAS is the other side of the line.
+
+The budget
+
+Already allocated. Nothing here asks an institution to open a new line. It changes what the existing one is able to buy.
+
+The question
+
+An evaluation that asked which tool explains a finished model best now has a prior question to settle: whether a record of the training itself can be produced at all.
+
+The answer
+
+A method that starts after the run has ended cannot produce that record, however well it is built. It is a property of when the work happens, not a verdict on how well it is done.
+
 **FIVE MARKETS · ONE PRODUCT**
 
 ### Every sector that holds data has this problem. These five are where solving it is worth the most.
@@ -623,7 +641,7 @@ Answered by **The Federated Node** · 6 of 7 features in scope
 
 OBLIGATION
 
-What data is in here, and can I remove it?
+What data is in here, and can we remove it?
 
 Certified Deletion routes the memorisable contribution into a named, removable structure, and hands the requester a signed certificate.
 
@@ -700,12 +718,3 @@ There is no price list. The figure is agreed per institution and written into th
 Early partners get flat-rate, enterprise-wide terms, their own compliance workflow built into the baseline architecture, and direct engineering access rather than an account manager.
 
 [Pre-book a deployment](/contact?intent=pre-book#pre-book)
-
-383 controlled experiments, across four architecture families, every run regenerating from seed.
-
-Conditions, error bars and the one adverse result, in full.
-
-- **Experiments** — 383
-- **Archived runs** — 67
-
-[See the evidence →](/technology)

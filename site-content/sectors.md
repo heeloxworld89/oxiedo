@@ -61,7 +61,7 @@ OBLIGATION
 
 ### Data Obligation
 
-What data is in here, and can I remove it?
+What data is in here, and can we remove it?
 
 > A customer withdraws the data a model was trained on. ORMAS removes just their contribution and issues signed proof, instead of retraining the whole model from scratch for $100,000–$500,000.
 

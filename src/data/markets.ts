@@ -123,7 +123,7 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				title: 'The failure is invisible until it is expensive',
-				body: 'Silent degradation is worse than a crash. A crashed job restarts. A job that keeps running while quietly getting worse consumes its full compute budget and produces a model that has to be thrown away — which is the mechanism behind the industry estimate that a large share of frontier compute goes to experiments that never ship anything.',
+				body: 'Silent degradation is worse than a crash. A crashed job restarts. A job that keeps running while quietly getting worse consumes its full compute budget and produces a model that has to be thrown away — which is the mechanism behind the estimate that a large share of frontier compute goes to experiments that never ship anything.',
 			},
 		],
 		incumbents: [
@@ -246,7 +246,7 @@ export const markets: Record<string, MarketDeep> = {
 			'Every quantitative firm is already paying for catastrophic forgetting in cash, and booking it as a cost of doing business rather than as the architectural defect it is.',
 		situation: [
 			'A model is trained through one market regime. The regime turns. The model degrades at exactly the moment its output matters most, so the firm retrains on the new regime, and the retraining quietly destroys what the model knew about the old one. Then the old regime returns.',
-			'The industry response is to retrain on a schedule and absorb the difference. That is a rational response to a constraint nobody has been able to remove, and it is worth being precise about what the constraint is: it is not a tuning problem, and no amount of hyperparameter search resolves it. It is catastrophic forgetting, and it is a property of how gradient descent updates a shared parameter space.',
+			'The standard response is to retrain on a schedule and absorb the difference. That is a rational response to a constraint nobody has been able to remove, and it is worth being precise about what the constraint is: it is not a tuning problem, and no amount of hyperparameter search resolves it. It is catastrophic forgetting, and it is a property of how gradient descent updates a shared parameter space.',
 			'Meanwhile the supervisory picture changed. On 17 April 2026 the Federal Reserve, FDIC and OCC jointly issued SR 26-2, superseding the SR 11-7 framework that had governed model risk management since 2011. The core disciplines survive — inventory, independent validation, board-level governance, documented change control — but expectations are now explicitly scaled to materiality and to each institution\'s own model risk profile.',
 		],
 		evidence: [
@@ -588,9 +588,9 @@ export const markets: Record<string, MarketDeep> = {
 
 	'data-obligation': {
 		thesis:
-			'The obligation to delete training data from a model is already contractual and already enforceable. The prevailing industry response is to disclose that it cannot be done.',
+			'The obligation to delete training data from a model is already contractual and already enforceable. The prevailing response is to disclose that it cannot be done.',
 		situation: [
-			'This is not an industry. It is a duty, and it cuts across every industry and includes companies in none of them. A hospital under a data-use agreement, a SaaS vendor with a termination clause, and a bank holding client records have the same problem and it has nothing to do with what they sell.',
+			'This is not a sector. It is a duty, and it cuts across every sector and includes companies in none of them. A hospital under a data-use agreement, a SaaS vendor with a termination clause, and a bank holding client records have the same problem and it has nothing to do with what they sell.',
 			'The qualifying test is three properties held at once: the organisation trains or fine-tunes on data it does not own outright; it carries a deletion obligation that is contractual, regulatory or both; and it is large enough that this is somebody\'s actual job. Contractual requirements increasingly name the artefacts explicitly — models, weights, embeddings, training artefacts and derived datasets — and require written attestation.',
 			'The technical position is well documented and unflattering. Exact unlearning means retraining from scratch, which is prohibitively expensive at any serious scale. Everything else shipping is approximate: weights that resemble what retraining would have produced. The field is currently having a credibility reckoning about its own approximations, including a position paper arguing the term "machine unlearning" is overused. Arriving in that moment with a structural answer rather than a better approximation is the position.',
 		],

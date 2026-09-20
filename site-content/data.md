@@ -15,7 +15,7 @@ That is an architectural property rather than a promise, which matters: a commit
 
 - **Version** — 1.0
 - **Last updated** — September 2026
-- **Entity** — Oxiedo is a research company in formation, incorporating in Delaware. Until that completes, the controller is the UK-registered company through which we contract, named in full in any agreement and before any data reaches us
+- **Entity** — The controller is the UK-registered company through which Oxiedo contracts, named in full in any agreement and before any data reaches us. A Delaware entity is being established and is named here once it is
 - **Governing law** — UK GDPR and the Data Protection Act 2018 apply to that controller as home law. EU GDPR applies under Article 3(2) for data subjects in the Union; the governing law of any engagement is set in its own contract
 
 **THE THREE MODES**
@@ -206,9 +206,9 @@ Listed so nobody has to ask, and so a security review does not discover an absen
 
 - ○CCPA and CPRA, California — Not yet engaged. Follows the Delaware entity and the San Francisco headquarters, once the statutory thresholds are met
 
-- ○SOC 2 Type II — Not held. Planned after the first engagements fund the audit
+- ○SOC 2 Type II — Not held, and planned. In Mode A we hold no customer data for a report to attest to, so the review question is software supply chain rather than data custody
 
-- ○ISO 27001 — Not held. Same timing
+- ○ISO 27001 — Not held. Same position
 
 - ○HIPAA Business Associate Agreement — Not applicable in Mode A. Available for Mode B where PHI is involved
 

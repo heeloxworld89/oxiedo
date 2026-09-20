@@ -25,7 +25,7 @@ Model risk functions are not evaluating performance; the model team already did 
 
 A model is trained through one market regime. The regime turns. The model degrades at exactly the moment its output matters most, so the firm retrains on the new regime, and the retraining quietly destroys what the model knew about the old one. Then the old regime returns.
 
-The industry response is to retrain on a schedule and absorb the difference. That is a rational response to a constraint nobody has been able to remove, and it is worth being precise about what the constraint is: it is not a tuning problem, and no amount of hyperparameter search resolves it. It is catastrophic forgetting, and it is a property of how gradient descent updates a shared parameter space.
+The standard response is to retrain on a schedule and absorb the difference. That is a rational response to a constraint nobody has been able to remove, and it is worth being precise about what the constraint is: it is not a tuning problem, and no amount of hyperparameter search resolves it. It is catastrophic forgetting, and it is a property of how gradient descent updates a shared parameter space.
 
 Meanwhile the supervisory picture changed. On 17 April 2026 the Federal Reserve, FDIC and OCC jointly issued SR 26-2, superseding the SR 11-7 framework that had governed model risk management since 2011. The core disciplines survive — inventory, independent validation, board-level governance, documented change control — but expectations are now explicitly scaled to materiality and to each institution's own model risk profile.
 
@@ -167,7 +167,7 @@ What it asks for Training on the architecture
 
 - [The Update Engine](/product/update-engine)What is this model allowed to change about itself?
 
-- [Certified Deletion](/product/certified-deletion)What data is in here, and can I remove it?
+- [Certified Deletion](/product/certified-deletion)What data is in here, and can we remove it?
 
 - [The Federated Node](/product/federated-node)Can we train together without pooling the data?
 

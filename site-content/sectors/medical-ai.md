@@ -175,7 +175,7 @@ What it asks for A federation that already exists
 
 - [The Update Engine](/product/update-engine)What is this model allowed to change about itself?
 
-- [Certified Deletion](/product/certified-deletion)What data is in here, and can I remove it?
+- [Certified Deletion](/product/certified-deletion)What data is in here, and can we remove it?
 
 **THE OBJECTIONS**
 

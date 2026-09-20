@@ -2,7 +2,7 @@
 
 - **URL:** `/contact`
 - **Page title:** Contact: pre-book, invest, or ask — Oxiedo
-- **Meta description:** Three ways in: pre-book a deployment, an investment conversation, or anything else. Every message is read by a person and answered within a few days.
+- **Meta description:** Six ways in: pre-book a deployment, an investment conversation, press, a data request, a falsification attempt, or anything else. Every message is read by a person and answered within a few days.
 
 ---
 CONTACT
@@ -11,7 +11,7 @@ CONTACT
 
 **GET IN TOUCH**
 
-Five ways in. Pick the one that fits and the form changes to match. Four useful questions are worth more than a name and an empty message box.
+Six ways in. Pick the one that fits and the form changes to match. Four useful questions are worth more than a name and an empty message box.
 
 - **Reply time** — Within a few days, usually less.
 - **Who reads it** — A person, every message, without exception. The first reply comes from whoever built the part being asked about.
@@ -62,7 +62,7 @@ PRESS
 
 #### Press enquiry
 
-Replies come from the people who built the architecture, not an agency. For a sceptical piece, ask for the falsification specification: it is the fastest route to checking whether any of this holds. Interviews are available, including on the parts that are not working yet.
+Replies come from the people who built the architecture, not an agency. For a sceptical piece, ask for the falsification specification: it is the fastest route to checking whether any of this holds. Interviews are available, including on the open problems.
 
 - Field: Name *
 
@@ -120,9 +120,9 @@ Anything submitted here is held by us as controller, used to answer the message 
 
 **CONTACT QUESTIONS**
 
-#### Which form should I use?
+#### Which form should we use?
 
-Pre-booking is the one route to the product, whichever application is in mind. Investors use the second. Everything else goes to the third, and all three are read by the same people.
+Pre-booking is the one route to the product, whichever application is in mind. Investors, journalists, data requests and anyone bringing a falsification attempt each have their own, and everything else goes to the last. All six reach the same people.
 
 #### How long before someone replies?
 

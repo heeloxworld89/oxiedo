@@ -183,7 +183,7 @@ No. The architecture is demonstrated on fully-connected, convolutional and resid
 
 #### Does the replay prove it works at scale?
 
-No. It shows one 200-epoch run on a network of 636,677 parameters. Behaviour at frontier scale, on regulated data, and in production over time has not been observed, because no deployment exists.
+No, and that is not what it is for. It shows one 200-epoch run on a network of 636,677 parameters, and what it establishes is the mechanism rather than the scale. Frontier scale, regulated data and production over time are outside the evidence: no deployment exists, and nothing here is asserted about behaviour under any of the three.
 
 #### Why not checkpoint and roll back instead?
 
@@ -217,7 +217,7 @@ A page arguing that half of a decade-old problem is closed has to say exactly wh
 
 - **Under adversarial weight injection the architecture measures 1.0 percentage point worse** than a parameter-matched baseline, with no current mitigation. That run is in the scenario selector above, and it plays, and it loses.
 
-- **Behaviour at frontier scale, on regulated data, and in production over time has not been observed**, because no deployment exists.
+- **The claim stops where the evidence stops.** Frontier scale, regulated data and production over time are outside it — no deployment exists, and nothing here is asserted about behaviour under any of the three.
 
 The claim is not that a network can now be read. It is that a single-network architecture can produce mechanistically logged, per-component causal attribution that no prior single-network method offers, and that this is what makes recovery from failures possible that standard architectures cannot even detect.
 

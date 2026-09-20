@@ -17,6 +17,18 @@
 // not. The adversarial deficit, the absence of customers and the CIFAR-only evidence base are
 // stated plainly in their own answers, because a buyer who finds them later stops reading, and
 // because being exact about a limit is the position rather than a caveat on it.
+//
+// REVISED 2026-09-21, the company and limits answers. Oxiedo is described as what it is — a
+// licensing company with one named principal accountable for the architecture — rather than as a
+// research effort "in formation", which reads to a procurement officer as "not a company yet".
+// "Zero customer conversations have taken place" was removed from the no-customers answer: it is
+// volunteered weakness in a buyer-facing FAQ, nobody asks it, and it remains on /invest where an
+// investor is entitled to it. The limits answers (not-established, peer-review,
+// roadmap-dependency) keep every fact and lose the apology: the register is a company drawing the
+// edge of its claims, not a founder asking to be forgiven for where the edge is. Where an answer
+// discusses a competitor or the category, the organising line is that every other tool inspects a
+// model that has already finished training, while ORMAS produces the record as it trains — which
+// splits an existing, budgeted market rather than inventing one.
 
 export type FaqCategoryId =
 	| 'product'
@@ -126,9 +138,9 @@ export const faqs: FaqItem[] = [
 		cat: 'product',
 		q: 'Is this interpretability? How is it different from SHAP, LIME or attention maps?',
 		a: [
-			'Those methods build a second, simpler model of a first model and report what the approximation says. They are estimates of a system from outside it, they disagree with each other on the same input, and their output is not stable enough to put in front of a regulator who is entitled to ask how the number was produced.',
+			'Every one of those methods inspects a model that has already finished training. They build a second, simpler model of the first and report what the approximation says. They are estimates of a system from outside it, they disagree with each other on the same input, and their output is not stable enough to put in front of a regulator who is entitled to ask how the number was produced.',
 			'ORMAS does not approximate. The attribution is a quantity the network computes about itself while training, bounded by construction. There is no surrogate, no sampling, and no post-hoc reconstruction that could be run a second time and return a different answer.',
-			'The distinction matters commercially rather than philosophically: an approximation is an opinion about a model, and an opinion cannot be entered as evidence.',
+			'The distinction matters commercially rather than philosophically: an approximation is an opinion about a model, and an opinion cannot be entered as evidence. The record is produced at train time or it is not produced at all, which is why this competes for the model-risk budget rather than the explainability one.',
 		],
 	},
 	{
@@ -138,7 +150,7 @@ export const faqs: FaqItem[] = [
 		a: [
 			'Those tools record what a training run reported about itself. They are excellent at it, and ORMAS does not replace them.',
 			'What they cannot do is answer a causal question, because the information required to answer it was never produced. A loss curve reports that the run degraded at step 40,000. It cannot name the component that caused the degradation, because a standard architecture does not compute that quantity at any point.',
-			'ORMAS produces the quantity. An observability platform is then the natural place to put it.',
+			'ORMAS produces the quantity, because it is computed as the model trains rather than read off a run after the fact. An observability platform is then the natural place to put it.',
 		],
 	},
 	{
@@ -216,8 +228,8 @@ export const faqs: FaqItem[] = [
 		cat: 'evidence',
 		q: 'Has this been independently verified?',
 		a: [
-			'Not yet by a third party, and that is stated plainly rather than left to be discovered. The architecture is not public today, and the commitment to release it in full is written into the licence rather than promised.',
-			'What is available now, to an investor or an evaluating institution under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. External verification is a meaningful signal and it is not yet held. Seeded reproducibility is the stronger one, because it does not depend on anyone taking our word for a number.',
+			'Not by a third party. That is the boundary of what is claimed, and it is drawn here rather than left to be discovered. The architecture is not public today, and the commitment to release it in full is written into the licence rather than promised.',
+			'What an evaluating institution or an investor can have now, under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. Third-party verification is a meaningful signal, it is not yet held, and it is not claimed anywhere on this site. Seeded reproducibility is the stronger signal in any case, because it puts the check in the evaluator\u2019s hands rather than asking anyone to take our word for a number.',
 		],
 	},
 	{
@@ -234,8 +246,8 @@ export const faqs: FaqItem[] = [
 		cat: 'evidence',
 		q: 'What has not been established?',
 		a: [
-			'Behaviour at frontier scale, behaviour on any regulated dataset, and behaviour in production over time. There is no deployment, no pilot and no customer, so none of the three has been observed.',
-			'The technology page carries a section listing exactly this, written before anyone asked for it.',
+			'Three things, and they are the outer edge of what is claimed anywhere on this site: behaviour at frontier scale, behaviour on any regulated dataset, and behaviour in production over time. No deployment, pilot or customer exists, so none of the three has been observed, and nothing here is sold as though it had been.',
+			'Everything inside that boundary is claimed without hedging: 383 controlled experiments across four architecture families, 67 archived runs that regenerate from seed, and the one adverse result published alongside the rest. The technology page carries a section drawing the same line, written before anyone asked for it.',
 		],
 		link: { href: '/technology', label: 'What is not established' },
 	},
@@ -449,7 +461,7 @@ export const faqs: FaqItem[] = [
 		a: [
 			'Under a deployment licence, neither, in respect of the data. The customer remains the controller. A processor is a party that processes personal data on behalf of a controller, and where we do not receive, store, transmit or access it, no such processing occurs.',
 			'For an evaluation sent to us, we are the customer\'s processor and a DPA is executed before any transfer. For this website, we are the controller of what is submitted through it.',
-			'Oxiedo is not yet separately incorporated; a Delaware C-corporation is being formed. Until it completes, the controller for anything submitted through this site is the UK-registered company through which we currently contract, and UK GDPR and the Data Protection Act 2018 apply to it as home law. EU GDPR applies under Article 3(2) for data subjects in the Union. That entity is named in full in any agreement and before any data is transferred to us.',
+			'The contracting entity is stated precisely, because a controller has to be identifiable before anything is submitted. Oxiedo contracts through a UK-registered company, and that company is the controller for anything submitted through this site: UK GDPR and the Data Protection Act 2018 apply to it as home law, and EU GDPR applies under Article 3(2) for data subjects in the Union. A Delaware C-corporation is being established alongside the move to San Francisco, and until contracting moves to it the UK-registered company remains the controller. The entity is named in full in any agreement and before any data is transferred to us.',
 		],
 		link: { href: '/data', label: 'Positions under GDPR and HIPAA' },
 	},
@@ -576,10 +588,11 @@ export const faqs: FaqItem[] = [
 		cat: 'company',
 		q: 'Who is behind this?',
 		a: [
-			'Oxiedo is a founder-led research company in formation, incorporating as a Delaware C-corporation alongside a move to San Francisco. Until that completes it contracts through an existing registered company, named in full in any agreement.',
-			'The founder is a technical founder who has built and exited companies before this one. Commercial, research and regulatory roles are open, and the full position on structure and funding is on the investor page rather than buried.',
+			'Oxiedo is a licensing company. What it licenses is train-time accountability: ORMAS, the training architecture, licensed to institutions that hold regulated data and carry the obligation to account for what a model did with it. The company is incorporating as a Delaware C-corporation alongside a move to San Francisco, and until that completes it contracts through an existing registered company, named in full in any agreement.',
+			'One named principal, Rokib Al Dhin Raadh, is accountable for the architecture: it was designed, built and adversarially tested under that name, and the counterparty an institution contracts with is the party that wrote it. That accountability is the substance of the licence. Institutions under obligation are not buying a repository; they are buying somebody who will stand behind a number in a filing.',
+			'Commercial, research and regulatory roles are open, and the full position on structure and funding is set out on the investor page rather than buried.',
 		],
-		link: { href: '/about', label: 'The company and the founder' },
+		link: { href: '/about', label: 'The company' },
 	},
 	{
 		id: 'how-much-exists',
@@ -605,9 +618,8 @@ export const faqs: FaqItem[] = [
 		cat: 'company',
 		q: 'Why should we engage a company with no paying customers?',
 		a: [
-			'Because the alternative on offer is a mature vendor selling an approximation, and an approximation does not become admissible by being sold at scale. The question is not who has more customers; it is which one produces evidence that survives a regulator.',
+			'Because every established tool in this category inspects a model that has already finished training, and an inspection performed afterwards is an approximation however long the vendor has been selling it. ORMAS produces the record as the model trains. That is a different position inside an existing, budgeted market \u2014 AI model-risk management \u2014 rather than a new one, and the question an institution under obligation is actually deciding is which supplier produces evidence that survives a regulator.',
 			'What is normally opaque at this stage is not opaque here. The release commitment is written into the licence, every experiment regenerates from seed, the one adverse result is disclosed on this site, and the falsification test costs under 30 GPU-hours. Most established vendors disclose none of it.',
-			'Zero customer conversations have taken place, and it is on the about page in those words.',
 		],
 	},
 	{
@@ -624,8 +636,8 @@ export const faqs: FaqItem[] = [
 		cat: 'company',
 		q: 'How much of what you sell depends on work not yet done?',
 		a: [
-			'The published architecture and its results are complete and reproducible today. The programme extending it is described by its objectives and constraints on the technology page; its mechanism is not published, and will not be until it is protected.',
-			'Anything sold against work not yet complete is identified as such in the contract, with the milestone written in. Nothing here is priced on a promise that is not also a commitment.',
+			'What is licensed today is finished work. The architecture, its results and the record it produces exist now and regenerate from seed, and nothing in that set is waiting on a result to arrive.',
+			'The programme extending it is a separate thing and is described as one: its objectives and constraints are on the technology page, and its mechanism is not published and will not be until it is protected. Where a licence reaches work not yet complete, that work is identified as such in the contract with the milestone written in. Nothing here is priced on a promise that is not also a commitment.',
 		],
 	},
 	{

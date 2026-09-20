@@ -1854,6 +1854,55 @@ main > section:last-child.band--dark {
 }
 
 /* ------------------------------------------------------------
+   HOME · THE CATEGORY — the commercial consequence of the comparison above.
+
+   A key/value list rather than a fourth two-column panel. The page already runs .scenario and
+   .matrix as before/after devices, and a third would read as the same argument made a third
+   time. The row idiom is .ledger's — hairline rules, label left, prose right from 900px — so
+   the two lists on this page read as siblings rather than as two attempts at the same object.
+
+   The label sits on --accent-dark rather than --text-muted, which is the opposite of .ledger's
+   head row. It is deliberate: .ledger's labels name columns and should recede, and these three
+   name the argument.
+   ------------------------------------------------------------ */
+.catsplit {
+	margin-top: var(--space-2xl);
+}
+
+.catsplit-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--space-sm);
+	padding-block: var(--space-lg);
+	border-top: 1px solid var(--border-hairline);
+}
+
+.catsplit-row:last-child {
+	border-bottom: 1px solid var(--border-hairline);
+}
+
+.catsplit-k {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--accent-dark);
+}
+
+.catsplit-v {
+	color: var(--text-primary);
+	max-width: 62ch;
+}
+
+@media (min-width: 900px) {
+	.catsplit-row {
+		grid-template-columns: minmax(0, 0.8fr) minmax(0, 3fr);
+		gap: var(--space-xl);
+		align-items: baseline;
+	}
+}
+
+/* ------------------------------------------------------------
    HOME · THE PRODUCT — the introduction to what is being sold.
 
    Replaces a card catalogue (name + question + three tags) that told a buyer nothing about what
@@ -2261,81 +2310,6 @@ main > section:last-child.band--dark {
 .closing-card-terms {
 	padding-top: var(--space-lg);
 	border-top: 1px solid var(--rule-on-dark);
-}
-
-
-
-/* citation strip, sitting on the same band under the two cards */
-.closing-citation {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-md);
-	margin-top: var(--space-xl);
-	padding-top: var(--space-xl);
-	border-top: 1px solid var(--rule-on-dark);
-}
-
-.closing-citation-main {
-	min-width: 0;
-}
-
-.closing-citation-title {
-	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-	font-size: var(--text-small);
-	color: var(--text-on-dark);
-	max-width: 70ch;
-}
-
-.closing-citation-meta {
-	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-	font-size: var(--text-eyebrow);
-	color: var(--text-on-dark);
-	opacity: 0.7;
-	margin-top: var(--space-xs);
-}
-
-.closing-citation-data {
-	display: flex;
-	gap: var(--space-xl);
-	margin: 0;
-}
-
-.closing-citation-data dt {
-	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-	font-size: var(--text-eyebrow);
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
-	color: var(--text-on-dark);
-	opacity: 0.7;
-}
-
-.closing-citation-data dd {
-	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-	font-size: var(--text-small);
-	color: var(--text-on-dark);
-	margin: var(--space-xs) 0 0;
-}
-
-.closing-citation .btn--tertiary {
-	color: var(--accent-on-dark);
-	align-self: flex-start;
-}
-
-@media (min-width: 900px) {
-	.closing-citation {
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-2xl);
-	}
-
-	.closing-citation-main {
-		flex: 1;
-	}
-
-	.closing-citation-data {
-		flex-shrink: 0;
-	}
 }
 
 /* ============================================================

@@ -85,7 +85,7 @@ Plus thirty additional days, spent entirely on recovering from loss spikes rathe
 
   #### The failure is invisible until it is expensive
 
-  Silent degradation is worse than a crash. A crashed job restarts. A job that keeps running while quietly getting worse consumes its full compute budget and produces a model that has to be thrown away — which is the mechanism behind the industry estimate that a large share of frontier compute goes to experiments that never ship anything.
+  Silent degradation is worse than a crash. A crashed job restarts. A job that keeps running while quietly getting worse consumes its full compute budget and produces a model that has to be thrown away — which is the mechanism behind the estimate that a large share of frontier compute goes to experiments that never ship anything.
 
 **WHAT IS USED TODAY**
 

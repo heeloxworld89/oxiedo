@@ -2,7 +2,7 @@
 
 - **URL:** `/product/certified-deletion`
 - **Page title:** Certified Deletion: signed removal from a model — Oxiedo
-- **Meta description:** What data is in here, and can I remove it? Certified Deletion is one of the seven features of ORMAS, under one architecture and one licence.
+- **Meta description:** What data is in here, and can we remove it? Certified Deletion is one of the seven features of ORMAS, under one architecture and one licence.
 
 ---
 AN APPLICATION OF ORMAS
@@ -11,7 +11,7 @@ AN APPLICATION OF ORMAS
 
 THE QUESTION IT ANSWERS
 
-What data is in here, and can I remove it?
+What data is in here, and can we remove it?
 
 - ACCOUNT
 

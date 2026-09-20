@@ -69,10 +69,10 @@ ${sectors.map((s) => `- **${s.name}** — ${s.question} [${SITE}/sectors/${s.id}
 
 - [About](${SITE}/about) · [Press kit and fast facts](${SITE}/press) · [Careers](${SITE}/careers) · [Invest](${SITE}/invest) · [Contact](${SITE}/contact)
 - Founded 2023 as a research effort. The architecture reached maturity on 1 August 2026; every published result was measured on or after that date.
-- Founder: Rokib Al Dhin Raadh, technical founder, with companies built and exited before this one.
-- Entity: a research company in formation, not yet separately incorporated. A Delaware C-corporation is being established alongside a move to San Francisco. Until then, contracting runs through an existing UK-registered company, named in full in any agreement.
-- Funding: pre-revenue, no institutional investment to date, raising a pre-seed round.
-- Customers: none. Zero customer conversations have taken place.
+- Accountability: one named principal, Rokib Al Dhin Raadh, is accountable for the architecture and for every claim published against it.
+- Entity: a licensing company. A Delaware C-corporation is being established alongside a move to San Francisco. Contracting runs through an existing UK-registered company, named in full in any agreement.
+- Funding: raising a pre-seed round.
+- Customers: none. No deployment or pilot exists; every published result comes from controlled experiments.
 - Official account: https://x.com/oxiedo_ai
 
 ## Evidence, stated plainly

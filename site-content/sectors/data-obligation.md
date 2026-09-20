@@ -2,20 +2,20 @@
 
 - **URL:** `/sectors/data-obligation`
 - **Page title:** Data obligation: deletion evidence for AI models — Oxiedo
-- **Meta description:** What data is in here, and can I remove it? How ORMAS applies in data obligation: the failures, the regulation, and the limits.
+- **Meta description:** What data is in here, and can we remove it? How ORMAS applies in data obligation: the failures, the regulation, and the limits.
 
 ---
 SECTOR
 
 ## Data Obligation
 
-- **The question** — What data is in here, and can I remove it?
+- **The question** — What data is in here, and can we remove it?
 - **What forces it** — GDPR · Article 17
 - **The number** — $100k–$500k+to retrain a custom domain model from scratch — The only exactly compliant remedy. Plus service downtime, plus revalidation, and at frontier scale it is not done at all.
 
-What data is in here, and can I remove it?
+What data is in here, and can we remove it?
 
-The obligation to delete training data from a model is already contractual and already enforceable. The prevailing industry response is to disclose that it cannot be done.
+The obligation to delete training data from a model is already contractual and already enforceable. The prevailing response is to disclose that it cannot be done.
 
 Stop asking whether a vendor can delete the data. Ask what they will put in writing, and what happens if it is tested.
 
@@ -23,7 +23,7 @@ Every answer in this category is approximate, and most of them say so in their o
 
 **WHERE THIS MARKET IS**
 
-This is not an industry. It is a duty, and it cuts across every industry and includes companies in none of them. A hospital under a data-use agreement, a SaaS vendor with a termination clause, and a bank holding client records have the same problem and it has nothing to do with what they sell.
+This is not a sector. It is a duty, and it cuts across every sector and includes companies in none of them. A hospital under a data-use agreement, a SaaS vendor with a termination clause, and a bank holding client records have the same problem and it has nothing to do with what they sell.
 
 The qualifying test is three properties held at once: the organisation trains or fine-tunes on data it does not own outright; it carries a deletion obligation that is contractual, regulatory or both; and it is large enough that this is somebody's actual job. Contractual requirements increasingly name the artefacts explicitly — models, weights, embeddings, training artefacts and derived datasets — and require written attestation.
 
@@ -155,7 +155,7 @@ Lead application
 
 #### [Certified Deletion](/product/certified-deletion)
 
-What data is in here, and can I remove it?
+What data is in here, and can we remove it?
 
 Removes a named source's contribution and issues a signed certificate of exactly what was removed, with a bounded statement of what changed, and without retraining.
 

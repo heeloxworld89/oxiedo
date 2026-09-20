@@ -169,7 +169,7 @@ export const features: Feature[] = [
 	{
 		id: 'certified-deletion',
 		name: 'Certified Deletion',
-		question: 'What data is in here, and can I remove it?',
+		question: 'What data is in here, and can we remove it?',
 		summary:
 			"Removes a named source's contribution and issues a signed certificate of exactly what was removed, with a bounded statement of what changed, and without retraining.",
 		requires: 'The Separator, plus a deletion policy',

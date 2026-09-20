@@ -2,7 +2,7 @@
 
 - **URL:** `/about`
 - **Page title:** About Oxiedo: the company and the research
-- **Meta description:** A company built around one goal: making the world’s locked data usable. The origin, the operating principles, and where this honestly stands today.
+- **Meta description:** A licensing company built around one goal: making the world’s locked data usable. The origin, the accountability behind the licence, the operating principles, and where this honestly stands today.
 
 ---
 ABOUT
@@ -13,25 +13,25 @@ ABOUT
 
 ### What Oxiedo is
 
-A company that works on data, and on the reason so much of the best of it sits unused. We build the architecture that makes a neural network keep a bounded, logged account of every change it makes to itself, as it makes it, which is the account that says what the model took from each source it was given. It exists in no standard architecture and no tool recovers it afterwards. It has to be built into how the model learns. We built it.
+A licensing company. What it licenses is train-time accountability: the architecture that makes a neural network keep a bounded, logged account of every change it makes to itself, as it makes it, which is the account that says what the model took from each source it was given. It exists in no standard architecture and no tool recovers it afterwards. It has to be built into how the model learns. We built it, and we license it to institutions holding data under obligation.
 
 02
 
 ### Why it matters
 
-Data is the asset of the next decade and most of the valuable part of it is locked. Hospital records, bank ledgers, assay runs and licensed corpora sit behind regulation and contract, unused, because handing them to a model means handing them to something that afterwards cannot say what it did with them. Nobody holding that data is wrong to hold it. What is missing is the account that would make opening it defensible.
+Data is the asset of the next decade and most of the valuable part of it is locked. Hospital records, bank ledgers, assay runs and licensed corpora sit behind regulation and contract, unused, because handing them to a model means handing them to something that afterwards cannot say what it did with them. Enough of it to change how medicine is practised, how risk is priced and how systems are built to fail safely, and almost none of it usable. The constraint is an accounting one rather than a technical one. Nobody holding that data is being careless, and nobody holding it is wrong to hold it under the conditions that exist. What is missing is the account that would make opening it defensible, and that account cannot be recovered later. It has to be built into how the model learns.
 
 03
 
 ### What we are doing about it
 
-Turning one property into one product, licensed to institutions that hold data under obligation. Transparency is the mechanism rather than the goal. The goal is that data currently locked by regulation and contract becomes data an institution can defensibly train on, because the record now exists to show what was taken from it and to take it back out on request. The mechanism is published so it can be checked, and the release is committed in the licence rather than promised in a blog post.
+Turning one property into one product, licensed to institutions that hold data under obligation. Transparency is the mechanism rather than the goal. The goal is that data currently locked by regulation and contract becomes data an institution can defensibly train on, because the record now exists to show what was taken from it and to take it back out on request. Behind those doors are applications nobody has reached, in sectors that have never had a model trained on their own data because the data was never releasable. The mechanism is published so it can be checked, and the release is committed in the licence rather than promised in a blog post.
 
 **ORIGIN**
 
-### A software company that followed a problem into research, and stayed.
+### Three years on one question, then the company the answer required.
 
-Nothing here was planned from the beginning. The company went where the problem was, and the problem turned out to be considerably larger than the one it set out to solve.
+Nothing here was planned from the beginning. The work began as a research question two years before there was a legal person behind it, the company went where the problem was, and the problem turned out to be considerably larger than the one it set out to solve.
 
 1. 2023
 
@@ -49,7 +49,7 @@ Nothing here was planned from the beginning. The company went where the problem 
 
   #### A legal footing, and the pursuit of regulated data begins
 
-  The research reaches the point of needing a legal person behind it, something that can hold an agreement, take a payment and issue a licence, so it gets one, through an existing registered company while the permanent structure is decided. The work then went to the people who hold regulated data to ask what a custodian actually needs before releasing any: a calibrated bound, a record that survives an audit, a named counterparty who will stand behind both. Those answers shaped the architecture more than any benchmark did. No custodian has yet released data to us, and that remains the largest single thing standing between the result and the field it was built for.
+  The research reaches the point of needing a legal person behind it, something that can hold an agreement, take a payment and issue a licence, so it gets one: contracting runs through an existing UK-registered company, named in full in any agreement, while the permanent structure is decided. The work then went to the people who hold regulated data to ask what a custodian actually needs before releasing any: a calibrated bound, a record that survives an audit, a named counterparty who will stand behind both. Those answers shaped the architecture more than any benchmark did. No custodian has yet released data to us, and that remains the largest single thing standing between the result and the field it was built for.
 
 4. 11 July 2026
 
@@ -65,27 +65,29 @@ Nothing here was planned from the beginning. The company went where the problem 
 
 6. Now
 
-  #### Commercially open, and moving to San Francisco
+  #### Licensing is open, and the headquarters moves to San Francisco
 
-  The architecture, the results and the reasoning are released in full on publication. Commercial licensing is open, pre-bookings are being taken, and we are open to early investment conversations. The first dataset partnership is the priority ahead of everything else, because a custodian releasing regulated data to this architecture is the proof the whole thesis rests on. The company is incorporating as a Delaware C-corporation and the headquarters is relocating to San Francisco, nearer the labs, the capital and the operators this was built for.
+  The architecture, the results and the reasoning are released in full on publication, and what is sold is not the research but a licence to the accountability it produces. Commercial licensing is open, pre-bookings are being taken, and we are open to early investment conversations. The first dataset partnership is the priority ahead of everything else, because a custodian releasing regulated data to this architecture is the proof the whole thesis rests on. The company is incorporating as a Delaware C-corporation and the headquarters is relocating to San Francisco, nearer the labs, the capital and the operators this was built for.
 
-**A NOTE FROM THE FOUNDER**
+**ACCOUNTABILITY**
+
+### A licence has to have a name on it.
 
 Rokib Al Dhin Raadh
 
-Founder
+Founder and named principal
 
+- **Accountable for** — The calibrated bound, the record behind it, and every claim published against either.
 - **Background** — Technical founder. Built and exited companies before this one.
-- **Role here** — The architecture and the research programme.
 - **Based** — Relocating to San Francisco.
 
-I have started companies before this one and sold some of them. This is the first time I have spent three years on a question rather than a product, and it is the only question I would have done that for.
+A custodian deciding whether to release regulated data asks for three things before anything else: a calibrated bound, a record that survives an audit, and a named counterparty who will stand behind both.
 
-The problem is not really technical, it is an accounting one. There is an enormous quantity of data in the world that would improve how medicine is practised, how risk is priced, how systems are built to fail safely — and almost none of it can be used, because using it means putting it inside a model that afterwards cannot say what it did with it. So it stays where it is, and everything it could have done goes unspent. Somewhere behind those doors are the applications nobody has reached yet, in fields that have never had a model trained on their own data because the data was never releasable.
+The first two are architecture. The third is not something an architecture can supply. A published mechanism has no counterparty of its own, and a bound with nobody behind it cannot be entered into a filing or defended in a review. What a licence adds to a published mechanism is a person who signs the declaration and answers for it when a regulator, an auditor or an opposing expert puts it under pressure.
 
-Nobody holding that data is being careless. They are right to hold it under the conditions that exist. What is missing is the account that would make opening it defensible, and that account has to be built into how a model learns, because it cannot be recovered later.
+Rokib Al Dhin Raadh is that person here. The architecture, the results published against it and the one adverse result published alongside them are attributable to a single named principal, and every archived run behind them regenerates from seed, so the claim can be checked rather than taken on trust. Corrections are issued under the same name as the original claim.
 
-I wanted to contribute a fact to this field rather than an opinion — measured, reproducible, checkable by anyone who cares to check it. That is why the mechanism gets published rather than kept back, and why every experiment regenerates from seed. If I am wrong, I would rather the field established that quickly.
+That is a deliberate structure rather than a stage the company is passing through. Accountability distributed across a vendor is accountability nobody can locate, which is the reason a compliance function asks who signs before it asks how the method works. A licence that function can rely on names someone, and this one does.
 
 **HOW WE OPERATE**
 
@@ -97,7 +99,7 @@ Each of these costs something. They are listed because a company is what it does
 
   #### Publish the mechanism, licence the accountability
 
-  The architecture and every experiment behind it are released on publication and free for research from that day. Credibility here rests on results anyone can reproduce, and a permanently closed method is worth less to a validator, not more.
+  The architecture and every experiment behind it are released on publication and free for research from that day. The intention is to contribute a fact to this field rather than an opinion: measured, reproducible, and checkable by anyone who cares to check it, which is why every experiment regenerates from seed. Credibility here rests on results anyone can reproduce, and a permanently closed method is worth less to a validator, not more. If the result is wrong, the field establishing that quickly is the better outcome.
 
 2. 02
 
@@ -175,7 +177,7 @@ A dataset partner above all, then a commercial lead, a research engineer, and tw
 
 Entity
 
-Oxiedo · A research company in formation · Incorporating in Delaware, headquarters relocating to San Francisco · Contracting runs through an existing registered company, named in full in any agreement
+Oxiedo · A licensing company · Incorporating in Delaware, headquarters relocating to San Francisco · Until that completes, contracting and payments run through an existing UK-registered company, which is named in full in any agreement
 
 Contact
 
