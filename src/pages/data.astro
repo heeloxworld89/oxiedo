@@ -86,7 +86,7 @@ const modes = [
 	{
 		tag: 'MODE C',
 		name: 'This website',
-		when: 'A message is sent through a form or by email.',
+		when: 'A message is sent through one of the forms.',
 		receive: 'What is typed into the form: a name, an address, an organisation, a message.',
 		role: 'We are the controller of that correspondence.',
 		agreement: 'None. Ask and it is deleted.',
@@ -105,7 +105,7 @@ const neverDo = [
 const subprocessors = [
 	{ name: 'Form relay', purpose: 'Delivering contact form submissions to us as email', data: 'Whatever is typed into the form: name, address, organisation, message body', where: 'FormSubmit, operating under its own privacy terms. Disclosed because it handles the submission before we see it. It is the only third party in that path, and it is removed once the form runs on our own infrastructure. Where no third party should touch a message, the direct route is available instead' },
 	{ name: 'Email and correspondence', purpose: 'Receiving and replying to messages once delivered', data: 'Name, address, organisation, message body', where: 'A mailbox read directly. Not a shared inbox, not a CRM, not a ticketing system' },
-	{ name: 'Website hosting', purpose: 'Serving these pages', data: 'Request logs only. No account, no analytics, no cookies set by us', where: 'To be named before any engagement begins' },
+	{ name: 'Website hosting', purpose: 'Serving these pages', data: 'Request logs only. No account, no analytics, no cookies set by us', where: 'Vercel, operating under its own terms. Named here rather than left open, because a subprocessor a reader cannot identify is not a disclosure' },
 	{ name: 'Evaluation compute', purpose: 'Mode B only: running an assessment on data sent to us', data: 'The checkpoint and sample provided', where: 'Named in writing before any transfer, with region confirmed' },
 ];
 

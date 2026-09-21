@@ -48,7 +48,7 @@ MODE C
 
 #### This website
 
-A message is sent through a form or by email.
+A message is sent through one of the forms.
 
 - **We receive** — What is typed into the form: a name, an address, an organisation, a message.
 - **Our role** — We are the controller of that correspondence.
@@ -180,7 +180,7 @@ Website hosting
 
 - **Purpose** — Serving these pages
 - **Data** — Request logs only. No account, no analytics, no cookies set by us
-- **Location** — To be named before any engagement begins
+- **Location** — Vercel, operating under its own terms. Named here rather than left open, because a subprocessor a reader cannot identify is not a disclosure
 
 Evaluation compute
 

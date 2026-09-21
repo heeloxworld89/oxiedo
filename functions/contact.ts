@@ -99,7 +99,7 @@ async function sendEmail(
 		},
 		body: JSON.stringify({
 			from: env.MAIL_FROM ?? 'Oxiedo <onboarding@resend.dev>',
-			to: [env.MAIL_TO ?? 'rokib@blackbloxie.com'],
+			to: [env.MAIL_TO ?? 'raadh@oxiedo.com'],
 			// Reply-to is whichever email field the intent actually carried, so hitting reply in the
 		// inbox goes to the sender rather than to us.
 		reply_to:

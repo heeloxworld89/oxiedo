@@ -13,13 +13,14 @@
 //   '/contact'. Uses functions/contact.ts — server-side validation, IP rate limiting, and Resend.
 //   Strictly better, and Cloudflare Pages only. Switch the moment the site deploys there.
 //
-// The recipient address is deliberately NOT rendered anywhere on the site: it is on a
-// founder-owned domain that is not Oxiedo's, and an address whose domain does not match the site
-// reads as a mistake or a phish. It exists here, in the endpoint, and nowhere a reader sees.
+// The recipient is now an Oxiedo address. The reason this was hidden no longer applies: it used
+// to be on a founder-owned domain that was not Oxiedo's, and an address whose domain does not
+// match the site reads as a mistake or a phish, so every route in was made a form instead.
+// Whether to publish it as well is a separate decision from where the form delivers.
 //
 // FIRST-RUN STEP, once: the first submission triggers a one-off confirmation email to that
 // address. Click the link in it and everything after that delivers silently.
-const FORM_ENDPOINT = 'https://formsubmit.co/ajax/rokib@blackbloxie.com';
+const FORM_ENDPOINT = 'https://formsubmit.co/ajax/raadh@oxiedo.com';
 
 // Human-readable intent names, used in the subject line so a message is triageable from the inbox
 // list without opening it.
