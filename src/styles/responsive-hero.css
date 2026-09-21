@@ -1,0 +1,160 @@
+/* RESPONSIVE — hero.
+   A separate sheet so a parallel sweep can work on four areas at once without four
+   agents editing components.css and clobbering each other. Loaded after
+   components.css, so an override here wins at equal specificity without needing
+   !important or an inflated selector. Rules that turn out to belong in the main
+   sheet can be folded back later; nothing here is meant to be permanent by virtue
+   of being here. */
+
+
+/* ════════════════════════════════════════════════════════════════════════════════
+   1 · THE OPENED NODE IS NOT SHIPPED TO A PHONE
+   ════════════════════════════════════════════════════════════════════════════════
+
+   WHAT A PHONE ACTUALLY GETS TODAY, measured at 320/360/390/414 in Chromium:
+   the figure's own `is-compact` tier is on at every one of them, and that tier is
+   `display: none` on [data-orb] text, on .hm-op-text and on .hm-leader. So the
+   thirteen product and capability names are already gone, the four operation names
+   inside the core are already gone, and what renders is thirteen dots, two ellipses
+   and four empty rounded boxes in a 280-350px square. It is not a simplified
+   diagram; it is a diagram with every word removed.
+
+   WHAT IT COSTS FOR THAT. Measured by wrapping requestAnimationFrame and attributing
+   each call to its script: 60 calls a second from HeroModel, unconditionally, at
+   every width — a thirteen-body separation solver run eight passes deep, plus
+   chord and anchor writes, every frame, for as long as the page is open. rAF is
+   throttled in background TABS, not for content scrolled out of view, so this runs
+   the whole visit. An animation frame that overruns delays the next paint, which is
+   the thing INP measures, and on a phone it is also battery.
+
+   WHERE THE LINE IS, from measurement rather than taste. A label is a fixed 11 units
+   of a 700-unit viewBox, so its rendered size is 11 x (box width / 700), and the box
+   is the viewport less the container's 20px gutters:
+
+     viewport   box    label      state
+       320      280    4.4px      is-compact — no words at all
+       390      350    5.5px      is-compact — no words at all
+       414      374    5.9px      is-compact — no words at all
+       540      500    7.9px      is-compact — no words at all
+       560      520    8.2px      words return, under the site's own type floor
+       700      660    10.4px     under the site's own type floor
+       759      719    11.3px     under the site's own type floor
+       768      728    11.4px     renders as designed
+       804      764    12.0px     clears the 12px body-copy floor
+
+   Two facts fix the number. Below ~549px the figure carries no text whatsoever, so
+   there is nothing to weigh against 60 rAF/s. From there to 759px the words are back
+   but never reach 11px — `--text-eyebrow`, the smallest type the rest of this site
+   sets — so across that whole band the figure is typeset below the page's own floor.
+   760px is where this site already changes tier (`max-width: 759px` appears three
+   times in components.css) and, tellingly, where components.css still carries
+   `.hero-visual { display: none }` — a rule written to hide exactly this figure on a
+   phone, against a class name the figure lost when it was rewritten as `.hero-fig`.
+   The intent was already here; it had simply stopped matching anything.
+
+   759.98 rather than 759 so a fractional viewport (zoom, some Android browsers)
+   cannot land in a one-pixel gap where neither tier applies.
+
+   NOTHING IS LOST BY REMOVING IT. Every name inside the figure is on this page in
+   real text at a real size: the seven feature names in .ftable-name, their questions,
+   summaries, requirements and capability tags in the same row, the six capabilities
+   in .ftable-caps, the five sector names in .hero-trust-list and again in .ledger.
+   The one exception is written up in the report: the four operation names —
+   LayerNorm, Linear, PReLU, Linear — appear on the homepage ONLY inside this figure,
+   already invisible to a sighted phone visitor because `is-compact` hides them, and
+   after this change also out of the accessibility tree there. They are set in real
+   text on /technology and /product.
+
+   THE LOOP IS STOPPED, NOT JUST HIDDEN. display:none on its own leaves the script
+   solving geometry for a figure nobody can see. HeroModel's script now refuses to
+   mount when the figure has no layout box, and halts its loop if the viewport
+   crosses this breakpoint downward. This rule is the single place the breakpoint is
+   written — the script reads the rendered state, not a copy of the number. */
+
+@media (max-width: 759.98px) {
+	.hero-fig .board-model {
+		display: none;
+	}
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════════
+   2 · THE HOMEPAGE ON A PHONE
+   ════════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 759.98px) {
+	/* THE CLOSING CARD WAS A 152-PIXEL COLUMN. `.closing-card--solo` sets
+	   padding: var(--space-2xl), which is 64px a side whatever the viewport. On a
+	   320px phone the card is 280px wide, so 128px of it is padding and the text
+	   gets 152px — measured: the h2 laid out 523px tall with "deployments." running
+	   outside its own box, and the body ran five words to a line. At 390 the text
+	   column is 220px. 64px of air is a desktop proportion; on a phone the card edge
+	   and the container gutter are already doing that work, so the padding drops to
+	   --space-lg and the text gets the width back. Same rule, one tier down. */
+	.closing-card--solo {
+		padding: var(--space-lg);
+	}
+
+	/* The market name above each question in the hero figure was 0.625rem — 10px,
+	   a step below --text-eyebrow (11px), which is the smallest type anything else
+	   on this site is set in. These are sector names, not decoration. Raised to the
+	   site's own floor. Three classes deep — (0,3,0) — because the component's own
+	   scoped rule is (0,2,0) and Astro emits that sheet after this one. */
+	.hero-fig .hero-fig-questions .hero-fig-q-market {
+		font-size: var(--text-eyebrow);
+	}
+}
+
+
+/* ── TAP TARGETS ─────────────────────────────────────────────────────────────────
+   Keyed on the pointer, not on the width, because that is what the criterion is
+   about — and it is the pattern components.css already uses for .footer-social.
+   WCAG 2.2 SC 2.5.8 (AA) sets 24x24 CSS px; SC 2.5.5 (AAA) and both platform
+   guidelines set ~44px. Links that sit inside a sentence are exempt from 2.5.8 and
+   are deliberately left alone here — .replay-home-note a and .evidence-qualifier a
+   are running text and are not touched. What follows are standalone targets: list
+   items, table headings and buttons, which have no such exemption.
+   Measured heights before, at 390px: hero-trust links 18px, .ftable-name 34px,
+   .ledger-market 27.2px, .btn--tertiary 23.8px, .btn--small 41.8px. */
+@media (pointer: coarse) {
+	/* Five sector links, two to a row at phone width. Most of the row gap becomes
+	   padding inside each link — an 18px target becomes a 44px one — and 8px of it
+	   is kept between rows, because two 44px targets that touch are two targets a
+	   thumb can confuse. 8px is the floor this audit measures against. */
+	.hero-trust-list {
+		row-gap: var(--space-sm);
+	}
+
+	.hero-trust-list a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+	}
+
+	/* The feature name is the row's heading and its link. Padding rather than
+	   min-height: it is an inline-block that may wrap to two lines at 320px, and a
+	   flex box would change how that wrap behaves. */
+	.ftable-name {
+		padding-block: 5px;
+	}
+
+	/* A grid item with justify-self: start — padding grows the target without
+	   stretching it across the column. */
+	.ledger-market {
+		padding-block: 9px;
+	}
+
+	/* "Read the market", five times down the sector list, measured at 41.8px tall —
+	   2.2px short. .btn is already inline-flex with align-items: center, so a
+	   min-height grows the box around the label rather than moving it.
+
+	   .btn--tertiary ("See all five markets →", 23.8px tall) is NOT here. It is a
+	   shared control that appears mostly on other pages, and responsive-pages.css
+	   now gives it a layout-neutral 44px ::after hit area — a better fix than
+	   growing the box, and doing both would be one fix too many. Verified by
+	   hit-testing: a point 15px above the link's centre returns the link. */
+	.btn--primary.btn--small,
+	.btn--secondary.btn--small {
+		min-height: 44px;
+	}
+}

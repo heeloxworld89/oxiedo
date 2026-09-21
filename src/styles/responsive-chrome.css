@@ -1,0 +1,218 @@
+/* RESPONSIVE — chrome.
+   A separate sheet so a parallel sweep can work on four areas at once without four
+   agents editing components.css and clobbering each other. Loaded after
+   components.css, so an override here wins at equal specificity without needing
+   !important or an inflated selector. Rules that turn out to belong in the main
+   sheet can be folded back later; nothing here is meant to be permanent by virtue
+   of being here. */
+
+/* ONE NUMBER FOR EVERY TOUCH TARGET IN THE CHROME.
+   48px, not 44. Both numbers are defensible and they answer different questions:
+   44 is the comfortable size WCAG 2.5.8 measures against (its hard AA floor is 24),
+   and .nav-hamburger in the main sheet is already built to it. 48 is the figure
+   Google's own mobile-usability guidance names, and it is the threshold Lighthouse's
+   "Tap targets are sized appropriately" audit tests — a 44px target is still reported.
+   The founder asked for mobile SEO, so the chrome is built to the number the audit
+   uses; it satisfies the accessibility floor on the way past. */
+:root {
+	--touch-min: 48px;
+}
+
+
+
+/* ============================================================
+   1. THE NAV'S REAL HEIGHT IS NOT --nav-h, AND EVERY PAGE PAYS FOR IT
+   ============================================================
+   MEASURED, on the built site, at 320 / 360 / 390 / 414 / 768 and at 390x640:
+   `.nav` renders 89.00px tall while `main` is offset by exactly var(--nav-h) = 88px.
+   The gap is the header's own `border-bottom: 1px solid transparent`, which is outside
+   `.nav-bar`'s `height: var(--nav-h)` and so adds to the fixed element without adding to
+   the token that every offset in the codebase is computed from. The top pixel row of
+   every page's content therefore sits under a blurred, 90%-opaque bar — on all 27 pages,
+   at every viewport width, because the mismatch is in the token and not in a breakpoint.
+
+   THE OFFSET IS NOT THE THING TO CHANGE. Eight rules read var(--nav-h): main's padding,
+   html's scroll-padding-top, and six sticky rails that pin themselves at
+   `top: calc(var(--nav-h) + <space>)`. Padding one of them by a pixel leaves the other
+   seven a pixel wrong. The token's stated contract is "the nav bar height", so the nav is
+   made to honour it: the bar gives back the pixel its parent's border takes, and
+   `.nav` then measures exactly var(--nav-h). One source of truth, eight correct consumers.
+
+   Not `border-bottom: none` — the border is load-bearing. It is transparent at rest and
+   `.nav.scrolled` colours it in, so removing it would remove the scrolled state's rule. */
+.nav-bar {
+	height: calc(var(--nav-h) - 1px);
+}
+
+
+/* ============================================================
+   2. TAP TARGETS — the two wordmarks
+   ============================================================
+   MEASURED at 320/360/390/414/768: the nav wordmark is 90.3 x 17.0 CSS px. It is the only
+   "home" control in the mobile bar — the hamburger beside it is correctly 44x44 — and 17px
+   of height is under the 24x24 WCAG 2.5.8 floor, well under the 44px comfortable size, and
+   under Google's 48px mobile-usability recommendation. The footer wordmark is the same
+   element at the same 17px.
+
+   The mark itself does not grow. `.logo` is already `inline-flex; align-items: center`, so
+   a min-height enlarges the hit box around a wordmark that stays optically identical —
+   the same trick .nav-hamburger already uses to wrap a 20px glyph in a 44px button. In the
+   nav bar the logo is a flex item in an 88px row, so it stays centred and nothing moves. */
+.nav .nav-logo {
+	min-height: var(--touch-min);
+}
+
+/* The footer wordmark sits in a block, not a flex row, so `inline-flex` would put it in a
+   line box and the min-height would come back as half-leading under it. Block-level flex
+   with a fit-content width keeps the hit area on the mark and off the empty column. */
+.footer .footer-logo {
+	display: flex;
+	width: fit-content;
+	min-height: var(--touch-min);
+}
+
+
+/* ============================================================
+   3. TAP TARGETS — the footer sitemap, on touch pointers
+   ============================================================
+   MEASURED: all 24 footer link targets render 18.0px tall on a 35.2px pitch. The pitch
+   means WCAG 2.5.8 passes on its spacing exception — 35.2 clears the 24px circle test —
+   but every SIZE threshold fails: 18px is under 24 (2.5.8 minimum), under 44 (comfortable)
+   and under the 48px Lighthouse tests for. The footer is
+   the site's sitemap — /press and /insights are reachable from nowhere else — so these are
+   not decorative links, and on a phone they are two columns of 18px text.
+
+   Scoped to `pointer: coarse` for the same reason the sheet above already scopes
+   .footer-social that way: the criterion is about fingers, and a mouse does not need the
+   footer to grow. Rows become --touch-min tall with no gap, which is the standard
+   touch-list pattern, and it is what the 8px-separation rule exists to approximate: that
+   rule protects targets that are too SMALL, and on a 48px pitch no target's finger zone
+   reaches its neighbour's centre. Holding them 8px apart as well would buy nothing and
+   cost another ~190px of dead footer on a phone. `display: flex` also widens each target from the text's own width
+   ("FAQ" measured 28.4px) to the full column, which is the larger of the two wins. */
+@media (pointer: coarse) {
+	.footer-nav-group ul {
+		gap: 0;
+	}
+
+	.footer-nav-group a {
+		display: flex;
+		align-items: center;
+		min-height: var(--touch-min);
+	}
+
+	/* The legal bar's two controls. "Data handling" measured 85.8 x 18.7; the X mark
+	   measured 31 x 31 even with the existing coarse-pointer padding, because 15px of
+	   art plus 2x8px of padding is 31 and the rule that set it was written against the
+	   24px minimum rather than this one. Both go to --touch-min, and the row keeps a
+	   16px gap between them so the two targets stay comfortably apart. */
+	.footer-legal-links {
+		align-items: center;
+		gap: var(--space-md);
+	}
+
+	.footer-legal-links a {
+		display: inline-flex;
+		align-items: center;
+		min-height: var(--touch-min);
+	}
+
+	/* (0,2,0), to outrank `.footer-legal .footer-social` in the main sheet rather than
+	   tie with it — see the note there about that selector already being scoped up to
+	   beat `.footer-legal-links a`. The negative margin goes: the row now centres
+	   full-size boxes instead of pulling a small one back onto a baseline. */
+	.footer-legal .footer-social {
+		justify-content: center;
+		min-width: var(--touch-min);
+		min-height: var(--touch-min);
+		padding: 0;
+		margin: 0;
+	}
+}
+
+
+/* ============================================================
+   4. LEGIBLE FONT SIZE — the legal sentence
+   ============================================================
+   Legible font size is one of the two literal Google mobile-usability criteria (tap target
+   sizing is the other). The legal line is --text-eyebrow, 11px, and at 320px it wraps to
+   five lines of 200 characters — measured 280 x 93.4px. Eleven-pixel monospace is under the
+   12px floor those audits use, and this is a sentence a reader is meant to read, not a label.
+   One step up, on phones only; the eyebrow token is shared site-wide and is not touched. */
+@media (max-width: 767px) {
+	.footer-legal-inner p {
+		font-size: 0.75rem;
+	}
+}
+
+
+/* ============================================================
+   5. THE THREE HAND-BUILT 44px CONTROLS, RAISED TO THE SAME NUMBER
+   ============================================================
+   .nav-hamburger, .nav-mobile-toggle and .nav-mobile-close were each deliberately built
+   to 44x44 in the main sheet, with a comment explaining the reasoning — the hamburger's
+   note records that it was raised from 20x20 for exactly this reason. Measured, all three
+   are correctly 44x44 and none of them is a bug. They are raised here only so the chrome
+   has one touch number rather than two, and so the mobile bar's single control clears the
+   48px line Lighthouse draws instead of sitting four pixels under it.
+
+   The drawn marks do not change size: all three centre a small glyph inside a larger hit
+   box, so only the box grows. The negative margins that keep the two right-hand controls
+   optically on the edge grow by the same two pixels the box did. THIS IS AN OVERRIDE OF A
+   CONSIDERED VALUE, not a correction — if components.css would rather own one number, the
+   token belongs there and these four rules disappear. */
+.nav-hamburger {
+	width: var(--touch-min);
+	height: var(--touch-min);
+	margin-right: -12px;
+}
+
+.nav-mobile-toggle {
+	width: var(--touch-min);
+	height: var(--touch-min);
+	margin-right: -12px;
+}
+
+/* (0,2,0), matching the main sheet's own `.nav-mobile .nav-mobile-close`. */
+.nav-mobile .nav-mobile-close {
+	width: var(--touch-min);
+	height: var(--touch-min);
+}
+
+
+/* ============================================================
+   6. THE MOBILE MENU'S OWN TARGETS — and a breakpoint that does not line up
+   ============================================================
+   MEASURED with the menu open and every submenu expanded, at 320/360/390/414/768 and at
+   390x640. Twenty-one controls; nineteen were already correct. Two were not:
+
+   (a) THE SUBMENU LINKS STOP GETTING THEIR TAP TARGET AT 760px, BUT THE MOBILE MENU RUNS
+       TO 1159px. components.css gives `.nav-mobile-sub a` its `padding-block: 10px` inside
+       `@media (max-width: 759px)`, while `.nav-hamburger` is revealed — and the desktop bar
+       hidden — at `max-width: 1159px`. Between 760 and 1159 the mobile menu is the ONLY
+       navigation on the page and its nine child links render with no padding at all:
+       measured 18.0px tall and as little as 36.6px wide at 768x1024. That band is every
+       tablet in portrait and every large phone in landscape. The rule is not wrong, it is
+       scoped to the wrong number — 759 belongs to a breakpoint the menu does not use.
+       Re-stated here at the menu's own 1159. REPORTED: the durable fix is to move the
+       existing block in components.css to `max-width: 1159px`, after which this can go.
+
+   (b) The row link only claimed its text's width, so "FAQ" measured 44.7px wide in a
+       332px row — the rest of the row did nothing when tapped. `flex-grow` hands the link
+       everything the caret beside it does not need, which fixes the width and makes the
+       whole row the target, as the caret already is. `flex-grow` alone, not `flex: 1`:
+       `flex: 1` resets the basis to 0 and lets a long label like "Open the Black Box"
+       shrink and wrap. Growing from the content width cannot. */
+@media (max-width: 1159px) {
+	.nav-mobile-sub a {
+		display: flex;
+		align-items: center;
+		min-height: var(--touch-min);
+		padding-block: 10px;
+		font-size: 1rem;
+	}
+
+	.nav-mobile-link {
+		flex-grow: 1;
+	}
+}

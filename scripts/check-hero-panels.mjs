@@ -23,7 +23,11 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const DIST = fileURLToPath(new URL('../dist/', import.meta.url));
+// HERO_DIST lets this run against a build other than ./dist, so it can be checked
+// while something else is building centrally.
+const DIST = process.env.HERO_DIST
+	? fileURLToPath(new URL(process.env.HERO_DIST.replace(/\/?$/, '/'), new URL('../', import.meta.url)))
+	: fileURLToPath(new URL('../dist/', import.meta.url));
 
 let chromium;
 try {
@@ -105,8 +109,13 @@ const settle = async (page, sel, hoverSel) => {
 };
 
 for (const vp of [
+	/* 430 IS GONE, AND ON PURPOSE. The figure is now hidden below 760px — at phone
+	   width its labels rendered at four to six pixels and it ran a sixty-frame-a-second
+	   loop to say nothing. A guard that demands a panel open at 430 would demand the
+	   figure come back. 800 is the narrowest width where it is still drawn, so it is
+	   the one worth guarding. */
 	{ width: 1600, height: 1000 }, { width: 1180, height: 820 },
-	{ width: 900, height: 780 }, { width: 430, height: 850 },
+	{ width: 900, height: 780 }, { width: 800, height: 900 },
 ]) {
 	const tag = `${vp.width}x${vp.height}`;
 	const page = await (await browser.newContext({ viewport: vp })).newPage();

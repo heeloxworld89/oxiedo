@@ -2993,6 +2993,339 @@ const SCENARIOS = [
 		.rp-alarms :global(.rp-alarm-cap) { display: none; }
 	}
 
+	/* ══ THE PHONE ══════════════════════════════════════════════════════════════════
+	   Everything below is one bug and its consequences, measured in a browser at 320,
+	   360, 390, 414 and 768 before and after.
+
+	   THE BUG. The console's one-screen height used to live on `.rp--app`, and the two
+	   rules that let a narrow window out of it — `@media (max-width: 1240px)` and
+	   `@media (max-width: 860px)`, both of which say `.rp--app { height: auto }` — were
+	   written against that. The height then moved to `.rp--app .rp-console` in the
+	   refactor that made the shell measure itself, and neither escape hatch moved with
+	   it. So on every viewport below 1240px the console stayed locked to
+	   calc(100dvh - nav) while its contents went on needing twice that, and
+	   `.rp--app .rp-main { overflow: hidden }` cut off whatever did not fit.
+
+	   WHAT THAT COST, at 390×844, measured: the transport row — Play, the epoch bar,
+	   1×/4×/16×, "Replay from the event", "Guided read" — was 161px tall with 0px of it
+	   visible or hittable. All three readout panels, 200px each, likewise 0px. The
+	   sealed network showed 56 of its 254px. A touch on the epoch bar changed nothing,
+	   because a clipped element is not hit-tested. The page's whole instrument was
+	   gone, and the record strip below it started straight after the drawing, which is
+	   what "overlap and layout loss" looks like from the reader's side.
+
+	   THE SHAPE ON A PHONE. Not a shrunk console — a stacked one. A screen built to be
+	   read in one glance cannot be read in one glance at 390px, so below 1240px it
+	   stops pretending: the console gives up its fixed height, every band is its own
+	   natural height, nothing scrolls inside anything, and the page scrolls instead.
+	   That is the trade the 860px comment already intended to make ("a phone is not a
+	   console") and could no longer reach. */
+	@media (max-width: 1240px) {
+		/* The height, on the element that actually carries it this time. */
+		.rp--app .rp-console { height: auto; min-height: 0; }
+		/* And the clip. With an auto height there is nothing to clip, but leaving
+		   `overflow: hidden` on a band that is now taller than its old box is how this
+		   comes back the next time a rule above it changes. */
+		.rp--app .rp-shell { display: block; }
+		.rp--app .rp-main { display: block; overflow: visible; }
+		.rp--app .rp-tabs { min-height: 0; }
+
+		/* THE PANELS STOP SCROLLING INSIDE THEMSELVES. The answer table wanted 405px in
+		   a 200px panel with overflow-y:auto and no scrollbar, no fade and no shadow —
+		   205px of the argument behind an affordance that does not exist on touch. It
+		   is the full table now and the page carries it.
+
+		   THE FLOORS ABOVE ARE LEFT ALONE — min-height 230 at 1240 and 200 at 860. It
+		   is the CEILING that was the bug. Zeroing the floor as well let the ledger
+		   collapse to 61px at 1200×800 at the first epoch, when it holds one idle line,
+		   and the guide suite asserts 200 there for the good reason that three readouts
+		   are cells of one instrument face and a face with a 61px cell in it reads as
+		   broken. Content decides how tall a panel gets; the floor decides how short. */
+		.rp--app .rp-panel { height: auto; overflow: visible; }
+		.rp--app .rp-panel > * { display: block; min-height: 0; }
+		.rp--app .rp-alarms { overflow: visible; min-height: 0; }
+		.rp--app .rp-verdict-table { height: auto; }
+		.rp--app .rp-verdict-table :global(tbody) { height: auto; }
+		/* The chart box was `flex: 1 1 auto; min-height: 150px` — correct while the panel
+		   was a fixed cell of a one-screen grid, and 150px of two stacked bands once the
+		   panel sizes to its content. A definite height, because a canvas has no
+		   intrinsic one. */
+		.rp--app .rp-chart-box { flex: none; height: 230px; min-height: 0; }
+	}
+
+	/* ── THE SCENARIO SWITCH, WHICH WAS THREE QUARTERS INVISIBLE ────────────────────
+	   `.rp-opts` is `flex: none` with `white-space: nowrap` on every option, so the
+	   group is a hard 697px wide whatever the bar is. At 390px it ran to x=721 inside a
+	   390px console and `.rp { overflow: hidden }` took the rest: one of the four runs
+	   was reachable, and the three that were not include the adversarial run this page
+	   twice tells the reader to go and play ("it sits in the same menu as the other
+	   three"). Measured 1/4 at 320px, 2/4 at 360–414.
+
+	   A WRAPPING GRID, not a scroller and not a <select>. A horizontal scroller hides
+	   options behind the same invisible affordance that lost them in the first place,
+	   and the <select> in `.rp-bar` is removed in app mode on purpose — two controls
+	   writing one piece of state is how they drift apart. auto-fit rather than a fixed
+	   two-up, because the row's own width decides: four across at 768–860 where they
+	   fit, two by two from 414 down to 320. The wrap is also what takes each option
+	   from 38px tall to a real 44px target.
+
+	   860, not 760. At 760 the 12px type floor below made the nowrap row 755px wide
+	   against 720px of bar at 768 — measured, three of four options again — so the
+	   escape has to open above the widest row the type can produce. */
+	@media (max-width: 860px) {
+		.rp-appbar { padding-inline: var(--space-md); }
+		.rp-opts {
+			flex: 1 1 100%;
+			margin-right: 0;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+			gap: 3px;
+		}
+		.rp-opt {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			white-space: normal;
+			line-height: 1.24;
+			min-height: 44px;
+			padding: 7px 9px;
+			letter-spacing: 0.05em;
+		}
+		/* The run identifier is the reader's means of checking that this is an archive
+		   rather than a performance, and the page says so in as many words. Ellipsing it
+		   to "ablation_ormas_…" is the one thing it must not do; it wraps instead. */
+		.rp-appbar-run { white-space: normal; overflow: visible; text-overflow: clip; }
+	}
+
+	/* ── THE TRANSPORT, RESTACKED ───────────────────────────────────────────────────
+	   Seven controls on one wrapping flex line put a 238px range input between a Play
+	   key and a ten-character epoch readout, and left the three keys to land wherever
+	   the wrap took them. Laid out as a grid instead, it reads down the phone in the
+	   order the reader needs it: the primary action, the bar it drives, the position and
+	   the speed, then the two secondary keys as a pair. Every cell clears 44px. */
+	@media (max-width: 860px) {
+		.rp-controls {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 10px;
+			align-items: stretch;
+			padding: var(--space-md);
+		}
+		.rp-btn--play { grid-column: 1 / -1; width: 100%; }
+		.rp-scrub { grid-column: 1 / -1; }
+		.rp-epoch { grid-column: 1; align-self: center; min-width: 0; }
+		.rp-rates { grid-column: 2; justify-self: end; }
+		.rp-btn--event { grid-column: 1; }
+		.rp-btn--guide { grid-column: 2; }
+		.rp-nature { grid-column: 1 / -1; }
+		.rp-btn { min-height: 44px; padding: 10px 14px; }
+		.rp-rate { min-height: 44px; min-width: 44px; padding: 6px 10px; }
+	}
+
+	/* ── THE EPOCH BAR ON A FINGER ──────────────────────────────────────────────────
+	   Measured at 390px: a 16px-tall native range with a ~16px thumb, and
+	   `touch-action: auto`, which is the pair that makes a slider feel broken on a
+	   phone. The thumb is under every published floor — WCAG 2.5.8 puts the minimum at
+	   24×24 CSS px and 2.5.5 the enhanced target at 44×44, which is also Apple's 44pt
+	   and the neighbourhood of Material's 48dp — and with touch-action unset a drag that
+	   starts with any vertical component is claimed by the scroller, so the page moves
+	   and the epoch does not.
+
+	   `pan-y` is the fix for the second half: it leaves vertical scrolling with the
+	   browser, so a reader who lands on the bar mid-flick still scrolls the page, and
+	   takes horizontal panning away from it, so a sideways drag reaches the slider
+	   instead of being arbitrated. The first half is a 44px-tall grab band with a 28px
+	   thumb drawn in it — the whole band is the hit area, because clicking a track
+	   seeks, so the target is the bar's full width and height rather than the thumb.
+
+	   The track and thumb have to be drawn once `appearance: none` is set, and they are
+	   drawn for both engines.
+
+	   TWO DIFFERENT SCOPES, and the split is measured rather than tidy. touch-action
+	   costs no layout, so it applies everywhere and the scroll-vs-drag conflict is
+	   fixed on every device including a touchscreen laptop. The 44px grab band costs
+	   12px of console height, and above 1240px the console is a one-screen layout whose
+	   panel budget was measured to the pixel — spending 12px of it there took the
+	   answer table from 271px to 258px at 1280×900 for no gain, because that is the
+	   width at which a pointer is a mouse. So the band opens at the same 1240px where
+	   the console stops being one screen. */
+	.rp-scrub input { touch-action: pan-y; }
+
+	@media (max-width: 1240px) {
+		.rp-scrub input {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 100%;
+			height: 44px;
+			margin: 0;
+			padding: 0;
+			background: transparent;
+			touch-action: pan-y;
+			cursor: pointer;
+		}
+		.rp-scrub input::-webkit-slider-runnable-track {
+			height: 6px;
+			border-radius: 3px;
+			background: color-mix(in oklab, var(--fg-dim) 55%, transparent);
+		}
+		.rp-scrub input::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 28px;
+			height: 28px;
+			margin-top: -11px;            /* centres the 28px cap on the 6px track */
+			border-radius: 50%;
+			border: 2px solid var(--plate);
+			background: var(--ormas);
+			box-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
+		}
+		.rp-scrub input::-moz-range-track {
+			height: 6px;
+			border-radius: 3px;
+			background: color-mix(in oklab, var(--fg-dim) 55%, transparent);
+		}
+		.rp-scrub input::-moz-range-thumb {
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			border: 2px solid var(--plate);
+			background: var(--ormas);
+			box-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
+		}
+		.rp-scrub input:focus-visible { outline: 2px solid var(--ormas); outline-offset: 2px; }
+	}
+
+	/* ── THE RECORD, WHICH DID NOT FIT AND SAID NOTHING ABOUT IT ────────────────────
+	   Five fixed columns at 12/16/24/24/24 per cent of 390px, with 16px of padding each
+	   side of every cell. Measured at the end of the run: the step column's inner width
+	   was 7px at 390 and MINUS 2px at 320 — the padding was wider than the column — and
+	   every one of the five overflowed, so each row broke to three lines of shredded
+	   monospace and the eighty-five of them came to 4,169px inside a 298px box.
+
+	   A record is a table of numbers and it does not restack into prose. It scrolls
+	   sideways, with its columns sized to their content and nothing wrapped — and it
+	   has to SAY that it does, twice over, because a scroll area with no affordance is
+	   lost content on a touch screen:
+
+	     · a drawn scrollbar. ::-webkit-scrollbar rules force a classic, always-present
+	       bar in Blink and WebKit instead of the overlay bar that appears only once you
+	       have already guessed to swipe. Note there is deliberately no `scrollbar-width`
+	       or `scrollbar-color` here: setting either makes Chrome ignore the
+	       ::-webkit-scrollbar rules entirely and hand the box back to the overlay bar.
+	     · an edge shadow, for the platforms that draw no bar at all. Two cover
+	       gradients attached `local` scroll away with the content and two shadow
+	       gradients attached `scroll` stay pinned to the box, so a dark edge appears on
+	       whichever side has more table behind it and disappears at the ends. No extra
+	       element, and it cannot fall out of step with the scroll position because it
+	       IS the scroll position. */
+	@media (max-width: 760px) {
+		.rp--app .rp-recordband { padding: var(--space-md); }
+		.rp--app .rp-recordband .rp-table-wrap {
+			max-height: 340px;
+			overflow: auto;
+			overscroll-behavior-x: contain;
+			background:
+				linear-gradient(to right, var(--plate) 55%, rgb(0 0 0 / 0)) left center / 44px 100% no-repeat local,
+				linear-gradient(to left, var(--plate) 55%, rgb(0 0 0 / 0)) right center / 44px 100% no-repeat local,
+				linear-gradient(to right, var(--ormas) 0 2px, rgb(0 0 0 / 0.62) 2px, rgb(0 0 0 / 0)) left center / 30px 100% no-repeat scroll,
+				linear-gradient(to left, var(--ormas) 0 2px, rgb(0 0 0 / 0.62) 2px, rgb(0 0 0 / 0)) right center / 30px 100% no-repeat scroll,
+				var(--plate);
+		}
+		.rp--app .rp-recordband .rp-table-wrap::-webkit-scrollbar { width: 10px; height: 10px; }
+		.rp--app .rp-recordband .rp-table-wrap::-webkit-scrollbar-track {
+			background: color-mix(in oklab, #000 34%, var(--plate));
+		}
+		.rp--app .rp-recordband .rp-table-wrap::-webkit-scrollbar-thumb {
+			background: var(--fg-dim);
+			border-radius: 5px;
+			border: 2px solid color-mix(in oklab, #000 34%, var(--plate));
+		}
+		.rp--app .rp-recordband :global(.rp-table) { table-layout: auto; width: auto; min-width: 100%; }
+		.rp--app .rp-recordband :global(.rp-table) :global(th),
+		.rp--app .rp-recordband :global(.rp-table) :global(td) {
+			padding: 7px 11px;
+			white-space: nowrap;
+		}
+		.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(1)),
+		.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(1)),
+		.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(2)),
+		.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(2)),
+		.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(3)),
+		.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(3)),
+		.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(4)),
+		.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(4)),
+		.rp--app .rp-recordband :global(.rp-table) :global(th:nth-child(5)),
+		.rp--app .rp-recordband :global(.rp-table) :global(td:nth-child(5)) { width: auto; }
+	}
+
+	/* ── THE DOCK ───────────────────────────────────────────────────────────────────
+	   It was not the thing covering the controls — there were no controls to cover —
+	   but once there are, it sits over the bottom 224px of a 390×844 phone and 224 of a
+	   390×640 one. Three changes, no repositioning: the run's own scrollToBand() already
+	   measures the dock and centres the lit panel in what is left, and moving the dock
+	   would break the one thing about it that works.
+
+	     · It clears the home indicator. `bottom: 8px` puts a button under it on every
+	       notched iPhone; the inset is added rather than assumed.
+	     · Skip, Back and Next clear 44px. Measured 35px and 37px.
+	     · A ceiling in pixels as well as in vh, so a long stop on a tall phone cannot
+	       take half the screen. */
+	@media (max-width: 760px) {
+		.rp-guide:not([hidden]) {
+			bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+			max-height: min(46vh, 300px);
+		}
+		.rp-guide-foot { gap: 8px; }
+		.rp-guide-skip, .rp-guide :global(.rp-btn) { min-height: 44px; }
+	}
+	/* No Escape key on a phone, so the chip naming one is an instruction that cannot be
+	   followed, and it is 9.5px of it. The cold open already does exactly this to its
+	   own kbd at 560px, for the same reason. */
+	@media (pointer: coarse) {
+		.rp-guide-esc { display: none; }
+	}
+
+	/* ── TYPE ───────────────────────────────────────────────────────────────────────
+	   Twenty distinct runs of text computed under 12px on this screen, from 10px labels
+	   to the 10.5px the whole record was set in. The console is dense by intent and its
+	   mono uppercase chrome earns a smaller size than its prose does, but "dense" is a
+	   desktop argument: at arm's length on a phone, 10.5px monospace numerals are the
+	   part of this page a reader gives up on. Twelve is the floor, applied to every text
+	   run the stylesheet sets below it. The two things left under it are the canvas's own
+	   drawn annotations, which are part of a drawing and are dealt with in anatomy.ts,
+	   and nothing else. */
+	@media (max-width: 860px) {
+		.rp-appbar-mark,
+		.rp-appbar-run,
+		.rp-run,
+		.rp-metric-label,
+		.rp-metric-note,
+		.rp-opt,
+		.rp-epoch,
+		.rp-rate,
+		.rp-chart-label,
+		.rp--app .rp-chart-label,
+		.rp-alarms,
+		.rp-record-sub,
+		.rp--app .rp-record-title,
+		.rp-guide-eyebrow { font-size: 12px; }
+
+		.rp-alarms :global(.rp-alarms-count),
+		.rp-alarms :global(.rp-alarm-cap) { font-size: 12px; }
+
+		.rp-verdict-table thead th { font-size: 12px; }
+		.rp--app .rp-verdict-table { font-size: 13px; }
+		.rp--app .rp-verdict-table :global(tbody th) { font-size: 13px; line-height: 1.35; }
+		.rp--app .rp-verdict-table :global(tbody td) { font-size: 12.5px; line-height: 1.4; }
+		.rp-verdict-table :global(tbody td)::before { font-size: 12px; }
+
+		.rp--app :global(.rp-rec-group-name) { font-size: 12px; }
+		.rp--app :global(.rp-rec-note) { font-size: 12px; }
+		.rp--app :global(.rp-record-cell dt) { font-size: 13px; }
+		.rp :global(.rp-table th), .rp :global(.rp-table td) { font-size: 12px; }
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 	}
 </style>

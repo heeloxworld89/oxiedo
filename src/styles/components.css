@@ -907,8 +907,16 @@ main {
 		align-items: stretch;
 		justify-content: flex-start;
 		gap: 0;
-		padding: calc(var(--space-3xl) + env(safe-area-inset-top)) 20px
-			calc(var(--space-2xl) + env(safe-area-inset-bottom));
+		/* Fallbacks are not decoration. An `env()` naming a variable the browser does not
+		   know, with no fallback, is invalid at computed-value time and takes the WHOLE
+		   declaration with it — the menu would open with no padding at all rather than
+		   with unpadded notches. `, 0px` makes the failure mode "no inset", which is the
+		   correct result everywhere the insets are zero anyway. (They are zero here in
+		   any case: the viewport meta does not set `viewport-fit=cover`, so the browser
+		   insets the viewport itself and these terms contribute nothing today. They are
+		   kept, correctly written, so that turning cover on later is a one-line change.) */
+		padding: calc(var(--space-3xl) + env(safe-area-inset-top, 0px)) 20px
+			calc(var(--space-2xl) + env(safe-area-inset-bottom, 0px));
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		/* DISPLAY, not opacity. The previous version kept a full-viewport fixed element over every
@@ -933,7 +941,7 @@ main {
 		align-items: center;
 		justify-content: center;
 		position: fixed;
-		top: calc(var(--space-md) + env(safe-area-inset-top));
+		top: calc(var(--space-md) + env(safe-area-inset-top, 0px));
 		right: 12px;
 		z-index: 1;
 		width: 44px;
@@ -10442,13 +10450,12 @@ main > section:last-child.band--dark {
 }
 
 
-/* ---- MOBILE: the hero figure is hidden below the layout breakpoint. It is a 320-unit diagram
-   with 6px labels inside it; at phone width the labels are illegible and it pushes the actual
-   proposition — headline, subhead, CTA — below the fold. The argument it makes is repeated in
-   words directly beneath it, so nothing is lost by removing it here. ---- */
+/* ---- MOBILE. The rule that used to hide the hero figure here targeted `.hero-visual`, a class
+   the component stopped rendering when it was rewritten — so it matched nothing and the figure
+   shipped to every phone anyway, wordless and running a sixty-frame-a-second loop. The live rule
+   is in responsive-hero.css, against `.hero-fig .board-model`, at the same 760px breakpoint this
+   block uses. Removed from here rather than repointed, so there is one rule and not two. ---- */
 @media (max-width: 759px) {
-	.hero-visual { display: none; }
-
 	.hero-inner { padding-block: var(--space-xl) var(--space-lg); }
 
 	/* Sub-navigation on the market and application pages: the label is redundant on a phone,

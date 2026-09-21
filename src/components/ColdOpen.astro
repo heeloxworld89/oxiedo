@@ -1249,6 +1249,17 @@
 		.co-skip { top: 16px; right: 16px; padding: 10px 14px; }
 	}
 
+	/* THE RAIL IS SEVEN CONTROLS AND THEY ARE 23px TALL. Measured on a phone: 51×23,
+	   which is a pixel under even the 24×24 that WCAG 2.5.8 sets as the floor, and less
+	   than half the 44×44 that 2.5.5 and every platform guideline ask of something a
+	   finger has to hit. Nothing is redrawn — the mark stays 3px, which is the point of
+	   it — the padding around it simply grows to a real target on the devices that need
+	   one. Twenty-two pixels of extra foot on a 640px screen, against a progress control
+	   that is currently a coin-toss to press. */
+	@media (pointer: coarse) {
+		.co-rail button { padding: 21px 0; }
+	}
+
 	/* Belt and braces. The inline gate already removes the element under reduced motion;
 	   this means that even if it is somehow mounted, nothing here moves. */
 	@media (prefers-reduced-motion: reduce) {

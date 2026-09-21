@@ -83,6 +83,10 @@ export class Anatomy {
 	private raf = 0;
 	private readonly born = performance.now();
 	private dead = false;
+	/** A frame is already booked. Guards against two chains from one instance. */
+	private pending = false;
+	/** The document went away. Nothing is drawn until it comes back. */
+	private suspended = false;
 
 	/* The same bounds the flat version used, so the component's height rules and
 	   the cold open's hand-off geometry are unchanged. */
@@ -99,6 +103,7 @@ export class Anatomy {
 
 	private onPointer: ((e: PointerEvent) => void) | null = null;
 	private onLeave: (() => void) | null = null;
+	private onVisibility: (() => void) | null = null;
 
 	constructor(mount: HTMLElement, opts: AnatomyOpts) {
 		this.mount = mount;
@@ -132,6 +137,44 @@ export class Anatomy {
 			mount.addEventListener('pointerleave', this.onLeave);
 		}
 
+		/* ── WHEN THE DOCUMENT GOES AWAY, SO DOES THE LOOP ───────────────────────
+		   Two of these run side by side on /black-box and on the home page, which
+		   is 120 requestAnimationFrame callbacks a second — and on the home page
+		   the embed carries `loop`, so it never stops of its own accord.
+
+		   Only the document's own visibility, deliberately. The IntersectionObserver
+		   that used to pause this on scroll was removed because pausing mid-playback
+		   during a guided read was a reported bug, and visibilitychange cannot
+		   reintroduce it: a guided read is something a reader is looking at, and a
+		   document that is hidden is by definition one nobody is looking at.
+
+		   Belt and braces rather than a fix on its own — every engine already
+		   suspends or throttles rAF for a hidden document — but "throttles" is not
+		   "stops" everywhere, and this also makes the intent legible instead of
+		   leaving two 60Hz loops relying on someone else's policy. */
+		this.onVisibility = () => {
+			this.suspended = document.hidden;
+			if (this.suspended) {
+				cancelAnimationFrame(this.raf);
+				this.pending = false;
+			} else {
+				this.schedule();
+			}
+		};
+		document.addEventListener('visibilitychange', this.onVisibility);
+
+		this.schedule();
+	}
+
+	/** Book one frame, and only one.
+	 *
+	 *  EVERY PATH THAT WANTS A REPAINT GOES THROUGH HERE, so the instance can never
+	 *  hold two rAF chains at once however many times it is poked — which is the
+	 *  invariant that makes the on-demand mode below safe, and which a bare
+	 *  `requestAnimationFrame(this.tick)` at each call site would not give. */
+	private schedule(): void {
+		if (this.dead || this.pending || this.suspended) return;
+		this.pending = true;
 		this.raf = requestAnimationFrame(this.tick);
 	}
 
@@ -142,6 +185,9 @@ export class Anatomy {
 		const cssH = parseFloat(getComputedStyle(this.cv).height) || this.H;
 		this.cv.width = Math.round(w * this.dpr);
 		this.cv.height = Math.round(cssH * this.dpr);
+		// Setting either dimension clears the canvas, so a resize always owes a
+		// repaint — and under reduced motion no loop is coming to supply one.
+		this.schedule();
 	}
 
 	load(bundle: Bundle): void {
@@ -181,17 +227,25 @@ export class Anatomy {
 				? `The ORMAS network in three dimensions: ${this.stages.length} instrumented convolutional stages${params ? `, ${fmt(params)} parameters` : ''}, each reporting its own health, with a bounded four-operation chain into a shared bottleneck.`
 				: `A standard convolutional network of the same shape in three dimensions: the same stages${params ? `, ${fmt(params)} parameters` : ''}, with no per-component instrumentation of any kind.`,
 		);
+		// A new scenario is an entirely new drawing. size() usually books the frame,
+		// but it bails when the mount has no width yet, so ask again here.
+		this.schedule();
 	}
 
 	update(frame: HealthFrame | null, strikeNodes: Set<number>, running: boolean): void {
 		this.frame = frame;
 		this.strikeNodes = strikeNodes;
 		this.running = running;
+		// No-op while the loop is free-running; the repaint under reduced motion.
+		this.schedule();
 	}
 
 	destroy(): void {
 		this.dead = true;
 		cancelAnimationFrame(this.raf);
+		this.pending = false;
+		if (this.onVisibility) document.removeEventListener('visibilitychange', this.onVisibility);
+		this.onVisibility = null;
 		this.ro?.disconnect();
 		this.ro = null;
 		if (this.onPointer) this.mount.removeEventListener('pointermove', this.onPointer);
@@ -225,9 +279,27 @@ export class Anatomy {
 		return { x: x1 * d, y: y1 * d, d, z: z2 };
 	}
 
+	/* ── REDUCED MOTION GETS A LOOP THAT IS NOT A LOOP ───────────────────────────
+	   Under `prefers-reduced-motion: reduce` this drawing does not move. The camera
+	   drift is multiplied by zero (see `drift` in draw), the pointer parallax
+	   listeners are never attached so aimYaw and aimPitch stay at zero and the
+	   easings converge to zero and stop, and the travelling activation packets are
+	   gated on `!this.opts.reduced`. Those are the only two places `t` is read.
+	   The frame is therefore a pure function of the health frame, the strike set
+	   and the canvas size — and it was being redrawn sixty times a second anyway,
+	   twice over, for a reader who has asked the machine to stop moving things.
+	   Measured at 390px: 364 callbacks in three seconds with reduced motion on.
+
+	   So in that mode the chain does not re-arm itself. It paints once and waits,
+	   and the three things that can change the picture — update() from the
+	   console's own frame, load() on a scenario change, and the ResizeObserver —
+	   book the next frame. While the run is playing update() fires every frame, so
+	   the cadence is identical; while it is paused nothing is scheduled at all.
+	   Same pixels, no idle loop. */
 	private tick = (now: number): void => {
 		if (this.dead) return;
-		this.raf = requestAnimationFrame(this.tick);
+		this.pending = false;
+		if (!this.opts.reduced) this.schedule();
 		try {
 			this.draw(now - this.born);
 		} catch (err) {
@@ -235,6 +307,7 @@ export class Anatomy {
 			// as to why. The console below is fully functional without this.
 			console.error('[anatomy] frame failed', err);
 			cancelAnimationFrame(this.raf);
+			this.pending = false;
 		}
 	};
 
@@ -525,6 +598,59 @@ export class Anatomy {
 			ctx.fillText(text, clamp(x, half + 4, cssW - half - 4), y);
 		};
 
+		/* ── THE RAILS ARE PACKED, NOT JUST CLAMPED ──────────────────────────────
+		   say() keeps a label inside the canvas and says nothing about the label
+		   beside it. That was fine while this drawing was 560px wide, which is what
+		   MIN_W was for; in app mode it is whatever the pane is, and on a 390px
+		   phone the pane is 356. Five labels on one rail at 356px is roughly 70px
+		   each, and the readings are 60–115px. Measured on a phone, the top rail
+		   printed "32×3296O params" — the input shape and the first stage's
+		   parameter count struck through one another — and the bottom one printed
+		   "health 0.32 · wnhealth 0.33".
+
+		   Two mechanics fix it, and neither of them is a breakpoint.
+
+		   sayPacked() takes a whole rail at once, in priority order, and refuses to
+		   draw a label that would land on one already down. The three stage
+		   readings go first because they are the measurement; the input and output
+		   captions go second because they name the two ends of a diagram whose
+		   shape is the one thing already obvious. So the endpoints are what a
+		   narrow canvas loses, and it loses them silently rather than on top of a
+		   number.
+
+		   sayFit() is for a rail where nothing may be dropped — the health line is
+		   per-stage telemetry and every stage has to report. It takes the reading
+		   already split into its parts and, when the joined form does not fit the
+		   width one stage may have, stacks the parts down the rail instead. The
+		   third row lands at railBot + 22, which is cssH - 40: BOTTOM reserves 76
+		   and the chain caption sits at cssH - 26, so there are 14px there and the
+		   rail is 9px type. Nothing is abbreviated and nothing is dropped. */
+		type Rail = { x: number; text: string; fill: string; font: string };
+		const sayPacked = (items: Rail[], y: number) => {
+			const placed: Array<{ l: number; r: number }> = [];
+			for (const it of items) {
+				ctx.font = it.font;
+				const half = ctx.measureText(it.text).width / 2;
+				const cx = clamp(it.x, half + 4, cssW - half - 4);
+				const l = cx - half - 5;
+				const r = cx + half + 5;
+				if (placed.some((p) => l < p.r && r > p.l)) continue;
+				placed.push({ l, r });
+				ctx.fillStyle = it.fill;
+				ctx.fillText(it.text, cx, y);
+			}
+		};
+		/** Width one stage's reading may take before it has to stack. */
+		const stageBudget = cssW / Math.max(1, this.stages.length) - 10;
+		const sayFit = (parts: string[], x: number, y: number) => {
+			const joined = parts.join(' · ');
+			if (parts.length < 2 || ctx.measureText(joined).width <= stageBudget) {
+				say(joined, x, y);
+				return;
+			}
+			parts.forEach((p, k) => say(p, x, y + k * 11));
+		};
+
 		/* ON TWO FIXED RAILS, not hung off each layer's own silhouette.
 		   Floating them relative to the units put every readout inside the web of
 		   connections belonging to the next layer along — the layers overlap
@@ -534,42 +660,50 @@ export class Anatomy {
 		   looks like anyway. */
 		const railTop = 13;
 		const railBot = cssH - BOTTOM + 14;
-		for (let i = 0; i < this.stages.length; i++) {
-			const s = this.stages[i];
+		const BOLD10 = '700 10px ui-monospace, SFMono-Regular, Menlo, monospace';
+		const REG9 = '400 9px ui-monospace, SFMono-Regular, Menlo, monospace';
+		const inP = P(layers[0].x, 0, 0);
+		const outP = P(outX, 0, 0);
+
+		/* The two top rails, stages before endpoints. */
+		const shapeRail: Rail[] = [];
+		const paramRail: Rail[] = [];
+		for (const s of this.stages) {
 			const cxs = P(s.x, 0, 0).x;
-			const n = ink ? node(s.id) : null;
-			const destroyed = ink && (n?.weight_norm ?? null) === 0;
+			shapeRail.push({ x: cxs, text: `${s.inDim}→${s.outDim}`, fill: FG, font: BOLD10 });
+			paramRail.push({ x: cxs, text: `${fmt(s.params)} params`, fill: DIM, font: REG9 });
+		}
+		shapeRail.push({ x: inP.x, text: 'input', fill: DIM, font: REG9 });
+		shapeRail.push({ x: outP.x, text: 'output', fill: DIM, font: REG9 });
+		paramRail.push({ x: inP.x, text: '32×32×3', fill: DIM, font: REG9 });
+		paramRail.push({ x: outP.x, text: '10 classes', fill: DIM, font: REG9 });
+		sayPacked(shapeRail, railTop);
+		sayPacked(paramRail, railTop + 11);
 
-			ctx.fillStyle = FG;
-			ctx.font = '700 10px ui-monospace, SFMono-Regular, Menlo, monospace';
-			say(`${s.inDim}→${s.outDim}`, cxs, railTop);
-			ctx.fillStyle = DIM;
-			ctx.font = '400 9px ui-monospace, SFMono-Regular, Menlo, monospace';
-			say(`${fmt(s.params)} params`, cxs, railTop + 11);
+		/* The two bottom rails carry per-stage telemetry, so nothing here may be
+		   dropped — a stage with no reading reads as a stage with no reading. */
+		if (ink) {
+			ctx.font = REG9;
+			for (const s of this.stages) {
+				const cxs = P(s.x, 0, 0).x;
+				const n = node(s.id);
+				const destroyed = (n?.weight_norm ?? null) === 0;
 
-			if (ink) {
-				ctx.font = '400 9px ui-monospace, SFMono-Regular, Menlo, monospace';
 				ctx.fillStyle = destroyed ? WARN : AMBER;
 				say(destroyed ? 'destroyed' : (n?.state ?? '—'), cxs, railBot);
 				ctx.fillStyle = DIM;
-				say(
+				sayFit(
 					destroyed
-						? 'weight norm 0.00'
-						: `health ${clamp(n?.goodness ?? 0, 0, 1).toFixed(2)} · wn ${(n?.weight_norm ?? 0).toFixed(2)}`,
+						? ['weight norm 0.00']
+						: [
+								`health ${clamp(n?.goodness ?? 0, 0, 1).toFixed(2)}`,
+								`wn ${(n?.weight_norm ?? 0).toFixed(2)}`,
+							],
 					cxs,
 					railBot + 11,
 				);
 			}
 		}
-
-		const inP = P(layers[0].x, 0, 0);
-		const outP = P(outX, 0, 0);
-		ctx.font = '400 9px ui-monospace, SFMono-Regular, Menlo, monospace';
-		ctx.fillStyle = DIM;
-		say('input', inP.x, railTop);
-		say('32×32×3', inP.x, railTop + 11);
-		say('output', outP.x, railTop);
-		say('10 classes', outP.x, railTop + 11);
 
 		ctx.textAlign = 'left';
 		const fits = (text: string) => ctx.measureText(text).width <= cssW - 28;

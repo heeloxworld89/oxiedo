@@ -182,12 +182,25 @@ a:not(.btn):not(.nav-link):hover {
 }
 
 
-/* A LAST-RESORT GUARD, added after a 13px monospace block widened /about past a phone viewport
-   and the browser scaled the entire page down to fit. The real fix is always min-width: 0 on
-   the offending flex or grid item — this only stops one mistake from wrecking a whole page.
-   `clip` rather than `hidden` deliberately: `hidden` makes the element a scroll container, and
-   that silently kills `position: sticky` on the header. `clip` does not. */
-html,
-body {
-	overflow-x: clip;
-}
+/* THE `overflow-x: clip` GUARD THAT USED TO SIT HERE HAS BEEN REMOVED.
+   It was added after a 13px monospace block widened /about past a phone viewport and the
+   browser scaled the whole page down to fit. It did stop that. It also did three things
+   nobody asked for:
+
+     · It made horizontal overflow undetectable. `scrollWidth` cannot exceed `clientWidth`
+       under it, and every element gains a clipping ancestor, so both of the usual ways to
+       test for overflow return clean on a page that is overflowing.
+     · It did not scroll the overflow into reach, it CUT IT OFF. The breadcrumb on
+       /sectors/defense-safety-critical rendered 40px past a 320px viewport and those 40px
+       were silently amputated. The page looked correct. The word did not finish.
+     · It therefore hid the very class of bug it was installed to contain, which is why that
+       breadcrumb survived as long as it did.
+
+   What replaces it is a guard that fails loudly instead of covering up: scripts/check-mobile-overflow.mjs
+   lifts this rule at test time and asserts that no element on any page runs past the right
+   edge at 320px or 390px. It runs in `npm run verify`. Every page was measured clean with the
+   rule lifted before it was taken out, so nothing was relying on it.
+
+   If a regression ever does get through, the symptom is now a visible sideways scroll rather
+   than invisibly missing content — and the build will have failed first. The real fix remains
+   `min-width: 0` on the offending flex or grid item. */

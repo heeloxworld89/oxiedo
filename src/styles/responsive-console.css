@@ -1,0 +1,62 @@
+/* RESPONSIVE — console.
+   A separate sheet so a parallel sweep can work on four areas at once without four
+   agents editing components.css and clobbering each other. Loaded after
+   components.css, so an override here wins at equal specificity without needing
+   !important or an inflated selector. Rules that turn out to belong in the main
+   sheet can be folded back later; nothing here is meant to be permanent by virtue
+   of being here. */
+
+/* ── WHY MOST OF THE /black-box RESPONSIVE WORK IS *NOT* IN THIS FILE ─────────────
+   Worth writing down, because the next person to open this sheet will ask.
+
+   The premise above — "loaded after components.css, so an override here wins at
+   equal specificity" — holds for components.css and for nothing else. Almost
+   nothing on /black-box comes from components.css. The console is
+   components/ReplayDemo.astro, the title sequence is components/ColdOpen.astro and
+   the prose below them is pages/black-box.astro, and all three carry Astro `<style>`
+   blocks, which means two things at once:
+
+     · Astro appends a [data-astro-cid-…] attribute to every selector in a scoped
+       block, so the component's own `.rp-panel` is `.rp-panel[data-astro-cid-…]` at
+       (0,2,0) against (0,1,0) for the same selector written here. This sheet loses on
+       specificity before load order is even consulted.
+     · And it loses on load order too. Checked in the built page, the <link> order is
+       Page.css (which is where this file ends up, inlined with the rest of the global
+       sheets) → ReplayDemo.css → black-box.css. The component sheets load AFTER this
+       one, so even a specificity tie goes to them.
+
+   Beating that from here needs a third class in the selector for no reason other
+   than to win an argument with the cascade — exactly the "inflated selector" the
+   header above says not to write. So the console's responsive rules live in
+   ReplayDemo.astro's own <style> block, next to the rules they override and at the
+   right specificity, and the title sequence's live in ColdOpen.astro's. They are
+   commented there in the same detail they would have had here. This file keeps the
+   page-level rules that CAN be written at an honest specificity from outside.
+
+   The one thing this sheet cannot reach at all is flagged in the audit report
+   instead of being forced: components.css's own `main { padding-top: var(--nav-h) }`
+   is 88px against a 89px nav, so the first pixel row of every page sits under the
+   nav's hairline. One pixel, on a dark band, and it belongs to whoever owns the
+   chrome sheet. */
+
+/* ── THE THREE WAYS ON ────────────────────────────────────────────────────────────
+   Measured at 320, 390 and 768: 172×18, 97×18 and 162×18 CSS px. These are the
+   page's three conversion points, they sit alone at the foot of their cards rather
+   than inline in a sentence — so the "inline" exception in WCAG 2.5.5 does not
+   apply to them — and every one is well under the 24×24 that 2.5.8 sets as a floor,
+   let alone the 44×44 of 2.5.5 and of Apple's and Google's own guidance.
+
+   Nothing about them changes visually except the box they answer to: inline-flex
+   with a 44px minimum, so the link keeps its own width and the finger gets a row.
+
+   THREE CLASSES, AND THE REASON IS THE CASCADE, not emphasis. `.demo-cta-link` in
+   pages/black-box.astro compiles to `.demo-cta-link[data-astro-cid-…]`, which is
+   (0,2,0) and loads after this file. `.demo-ctas .demo-cta .demo-cta-link` is
+   (0,3,0) and is a path that genuinely exists in the markup. */
+@media (pointer: coarse), (max-width: 860px) {
+	.demo-ctas .demo-cta .demo-cta-link {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+	}
+}

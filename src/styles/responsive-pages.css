@@ -1,0 +1,332 @@
+/* RESPONSIVE — pages.
+   A separate sheet so a parallel sweep can work on four areas at once without four
+   agents editing components.css and clobbering each other. Loaded after
+   components.css, so an override here wins at equal specificity without needing
+   !important or an inflated selector. Rules that turn out to belong in the main
+   sheet can be folded back later; nothing here is meant to be permanent by virtue
+   of being here. */
+
+
+/* ============================================================================
+   PAGES — MOBILE AUDIT, 2026-09-21
+   Measured in Chromium at 320 / 360 / 390 / 414 / 768 and re-checked at 1280.
+   Every rule below replaces a measured number with a better measured number;
+   the before/after figures are in the sweep report. Nothing here changes copy.
+   ============================================================================ */
+
+
+/* ---------------------------------------------------------------------------
+   1. THE BANNER BREADCRUMB WAS CUT OFF, NOT WRAPPED.
+
+   /sectors/defense-safety-critical at 320: the trail's right edge measured
+   360px against a 320px viewport — 40px of "Defense & Safety-Critical" sat
+   outside the window and `.page-banner { overflow: hidden }` ate it silently.
+
+   The cause is in the flex row, not in the text. `.page-banner-foot::before`
+   is a decorative rule with `flex: 1`, and `.page-banner-trail` carries
+   `flex-shrink: 0`. The trail therefore holds its 316px max-content width no
+   matter how little room there is, so the `ol`'s own `flex-wrap: wrap` never
+   gets a narrower box to wrap inside and never fires.
+
+   Below 600px the rule takes its own line and the trail gets the full column,
+   free to shrink and wrap. The rule keeps its job — it still spans the band —
+   and no crumb leaves the viewport.
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 599px) {
+	.page-banner-foot {
+		flex-wrap: wrap;
+		gap: var(--space-md);
+	}
+
+	/* Its own full-width line, above the crumbs, instead of competing with them. */
+	.page-banner-foot::before {
+		flex: 1 0 100%;
+	}
+
+	.page-banner-trail {
+		flex-shrink: 1;
+		min-width: 0;
+	}
+
+	/* Once the trail wraps, its rows sat 26px apart with a 14px-tall link in
+	   each — below any target-size floor, and with no room to grow into.
+	   16px of row-gap opens a 34.7px pitch; the crumb's hit area takes 32px of
+	   it below, clearing WCAG 2.5.8's 24px without the rows touching. The
+	   column gap between crumbs is untouched. */
+	.page-banner-trail ol {
+		row-gap: var(--space-md);
+	}
+
+	.page-banner-trail a {
+		position: relative;
+	}
+
+	.page-banner-trail a::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		height: 32px;
+		transform: translateY(-50%);
+	}
+}
+
+
+/* ---------------------------------------------------------------------------
+   2. THE TWO FIGURES WERE SCALED DOWN PAST LEGIBILITY.
+
+   Both charts are drawn on a 780-unit viewBox and both sit in a wrapper with
+   `overflow-x: auto`, so the intent — stated in components.css, "it scrolls
+   rather than compressing, which keeps the numbers legible" — is right. The
+   min-widths undercut it: 560px on /technology and 620px on /invest, i.e. 72%
+   and 79% of the width the charts were drawn at. An SVG in a viewBox scales
+   its type with its box, so a 10px axis label rendered at 7.2px at 320 and at
+   9.3px at 768. The numbers are the whole point of both figures and they were
+   the least readable thing on the page.
+
+   The fix is the scale factor, not the type: on a phone each figure is drawn
+   at the width it was designed at, so it is never shrunk below 1:1. The
+   geometry scales as a unit, so no label can collide with a bar the way it
+   would if the type alone were enlarged. 7.2px -> 10.0px on /technology,
+   7.9px -> 10.0px on /invest.
+
+   780px, not more. 936px was tried and measured first — it does reach a 12px
+   label, but the charts carry a fixed 240-unit row-label column, so at 1.2x
+   that column alone fills 288 of a phone's 350 visible pixels and the first
+   view is labels and a sliver of one bar. At 780 the first view still shows
+   every row label, the zero axis and the head of all eight bars. A figure you
+   cannot read is broken; a figure you cannot see at all is worse.
+
+   Bounded at 719px on purpose, matching the breakpoint components.css already
+   uses to append "scroll sideways" to both captions. Above it the min-width
+   was measured and left alone: at 768 raising it bought 0.7px of label
+   (9.3 -> 10.0) and cost a 52px sideways scroll with no cue to announce it —
+   the exact fault that caption rule exists to prevent.
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 719px) {
+	.tech-chart-wrap > svg,
+	.iv-chart-svg {
+		min-width: 780px;
+	}
+}
+
+
+/* ---------------------------------------------------------------------------
+   3. THE SECTOR "MECHANISM" CARD SPENT MORE OF THE SCREEN ON PADDING
+      THAN A PHONE CAN SPARE.
+
+   `.mk-section--lit` takes `padding: var(--space-xl)` — 40px a side. Inside a
+   280px column on a 320px screen that leaves a 200px text column: 63% of the
+   viewport, for the section the page calls its answer. The raised ground is
+   worth keeping; 40px of it is not. 16px a side gives back 48px of measure.
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 599px) {
+	.mk-section--lit {
+		padding: var(--space-lg) var(--space-md);
+	}
+}
+
+
+/* ---------------------------------------------------------------------------
+   4. LONG UNBREAKABLE STRINGS FORCED CELLS WIDER THAN THEIR COLUMN.
+
+   /sectors/data-obligation at 320: "deletion-and-attestation" measured 168px
+   inside a 152px definition cell. `overflow-wrap: anywhere` rather than
+   `break-word` deliberately — only `anywhere` is taken into account when the
+   browser computes a min-content width, which is exactly what a flex or grid
+   cell sizes itself from. `break-word` would let the word overhang and leave
+   the cell just as wide.
+
+   Scoped to the cells that are genuinely width-constrained. Ordinary prose
+   runs the full column and needs no help.
+   --------------------------------------------------------------------------- */
+
+.mk-buyer dt,
+.mk-buyer dd,
+.mk-summary dt,
+.mk-summary dd,
+.industry-table dt,
+.industry-table dd,
+.iv-table th,
+.iv-table td,
+.mk-internal-item,
+.car-role-head,
+.dh-cert {
+	overflow-wrap: anywhere;
+}
+
+
+/* ---------------------------------------------------------------------------
+   5. TAP TARGETS.
+
+   WCAG 2.2 SC 2.5.8 (AA) asks 24x24 CSS px; SC 2.5.5 (AAA) and every native
+   platform guideline ask 44x44. Both carry an explicit exception for a link
+   sitting inside a sentence, whose box is set by the line-height around it —
+   those are left alone below and listed in the report rather than padded out,
+   because padding them would fight the prose they live in.
+
+   Two techniques, chosen per element:
+
+   (a) Where the control owns its line — form fields, filter chips, the
+       contents rail, the application tab strip, disclosure summaries — the
+       box itself grows. Nothing else moves.
+
+   (b) Where a standalone link sits in the flow of a text block, growing the
+       box would re-space the paragraph around it. Those get an absolutely
+       positioned `::after` that enlarges the hit area to 44px without
+       occupying a single pixel of layout. Measured gaps to the nearest other
+       target are 33px and up in every case, so no two expanded areas touch.
+   --------------------------------------------------------------------------- */
+
+/* (a) --- controls that own their line ------------------------------------ */
+
+.form-field-input {
+	min-height: 44px;
+}
+
+.faq-chip {
+	min-height: 44px;
+}
+
+/* Baseline alignment is kept: the mono index and the label read as one line.
+   Padding, not `align-items: center`, therefore does the growing here. */
+.feature-toc a {
+	padding-block: 10px;
+}
+
+.appnav a {
+	min-height: 44px;
+	align-items: center;
+}
+
+/* 4px between adjacent pills in a scrolling strip is a mis-tap waiting to
+   happen. 8px is the floor every tap-target guideline names. */
+.appnav ul {
+	gap: var(--space-sm);
+}
+
+.mk-sources-disclosure summary,
+.disclosure-label {
+	min-height: 44px;
+}
+
+/* (b) --- layout-neutral hit-area expansion -------------------------------- */
+
+.faq-a-link,
+.application-link,
+.application-head h3 a,
+.lic-licence-link a,
+.mk-lead h3 a,
+.mk-rest a,
+.feature-markets a,
+main .btn--tertiary {
+	position: relative;
+}
+
+.faq-a-link::after,
+.application-link::after,
+.application-head h3 a::after,
+.lic-licence-link a::after,
+.mk-lead h3 a::after,
+.mk-rest a::after,
+.feature-markets a::after,
+main .btn--tertiary::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 50%;
+	height: 44px;
+	min-height: 100%;
+	transform: translateY(-50%);
+	/* Hit area only — it must never paint over the text it belongs to. */
+	background: none;
+	pointer-events: auto;
+}
+
+
+/* ---------------------------------------------------------------------------
+   6. THE SIDEWAYS-SCROLLING REGIONS.
+
+   The /invest tables were verified by dispatching real touch events, not by
+   reading the CSS: all three wrappers took a horizontal swipe and moved
+   scrollLeft 0 -> 290 (their full range) while the page itself stayed put.
+   The pattern works. Two things were missing around it.
+
+   `overscroll-behavior-x: contain` stops a swipe that reaches the end of a
+   table from chaining outwards into the browser's back-navigation gesture —
+   the same guard `.appnav-inner` already sets on itself.
+
+   Keyboard reach is handled by `tabindex="0"` plus `role="region"` and a name
+   in the markup; a scroll region with no tab stop can only be read by people
+   who can drag it. The focus ring below is what makes that tab stop visible.
+   --------------------------------------------------------------------------- */
+
+.iv-table-wrap,
+.iv-chart,
+.tech-chart-wrap {
+	overscroll-behavior-x: contain;
+}
+
+.iv-table-wrap:focus-visible,
+.iv-chart:focus-visible,
+.tech-chart-wrap:focus-visible {
+	outline: 2px solid var(--accent-dark);
+	outline-offset: 3px;
+}
+
+
+/* ============================================================
+   CHART TYPE, AND A CUE FOR THE TABLES THAT SCROLL
+   ============================================================
+   Both figures are drawn on a 780-unit viewBox and, above, are held at that width on a phone
+   so the geometry renders at scale 1.00 rather than being shrunk. That fixed the labels that
+   were rendering at 7.2px and 7.9px. It did not fix the ones that were authored small: the
+   axis ticks, the bar values, the year ticks and the "who" line are 9px to 10px in the
+   stylesheet, so at scale 1.00 they render at 9px to 10px, which is under the 12px floor and
+   is genuinely hard to read on a phone.
+
+   Raised to 12px on phones only. The desktop sizes are a deliberate part of the figure's
+   visual weight and are untouched — the argument for changing them is aesthetic, and the
+   argument for changing these is that they cannot be read.
+
+   THE ROOM WAS CHECKED, NOT ASSUMED. The binding case is `.tech-val` on the widest bar:
+   94.6% ends at x=726, the label starts at 734, and six monospace characters at 12px is
+   about 43 units, finishing near 777 inside a 780 viewBox. The axis ticks are centred, so
+   the last one ("100%", ~29 units at 12px) spans roughly 739–769. Both clear. The year ticks
+   sit about 95 units apart on the invest timeline and need ~29. `.iv-chart-who` is baselined
+   15 units under `.iv-chart-label`, which clears 12px type. Verified by measurement after
+   the change, not by this arithmetic alone. */
+@media (max-width: 719px) {
+	.tech-axis,
+	.tech-val {
+		font-size: 12px;
+	}
+
+	.iv-chart-year,
+	.iv-chart-nowlabel,
+	.iv-chart-who {
+		font-size: 12px;
+	}
+
+	/* The three /invest tables scroll sideways and said nothing about it, while both charts
+	   on the same page already append a cue to their captions. A table that scrolls silently
+	   reads as a table with columns missing.
+
+	   This is the identical mechanism and the identical wording the charts use — CSS
+	   generated content appended to a heading that is already on the page. No copy on
+	   /invest changes, and nothing is added to the markup. The three ids are the ones the
+	   table wrappers already point at with `aria-labelledby`, so the cue lands on exactly
+	   the heading that names each scrolling region. */
+	#iv-alternatives-h::after,
+	#iv-projection-h::after,
+	#iv-provenance-h::after {
+		content: ' · scroll sideways';
+		color: var(--accent-dark);
+		font-weight: 400;
+	}
+}

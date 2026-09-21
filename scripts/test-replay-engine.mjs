@@ -101,6 +101,9 @@ for (const key of keys) {
 // on the fourth is worth less than none, because the reader being walked through this is
 // deciding whether the account can be trusted at exactly that moment.
 const PANELS = ['.rp-panes', '.rp-verdict', '.rp-ledger'];
+/* The transport. Not a panel: nothing is read here, it is the thing the closing stop
+   asks the reader to press. */
+const CTA_TARGET = '.rp-controls';
 console.log('\nguided read');
 for (const key of keys) {
 	const b = JSON.parse(readFileSync(
@@ -108,19 +111,38 @@ for (const key of keys) {
 	const g = buildGuide(b);
 	const last = b.series.ormas.accuracy.length - 1;
 
-	ok(g.length >= 4, `${b.key}: ${g.length} stops`);
+	/* THE GUIDE ENDS ON A CALL TO ACTION, AND IT IS NOT PART OF THE NARRATIVE.
+	   The read finishes by rewinding the run to epoch 0 and pointing at the transport,
+	   so the reader who has just been shown the argument can run it themselves. That
+	   closing stop therefore breaks three things every OTHER stop must satisfy: it goes
+	   backwards in time, it targets a control strip rather than a data panel, and it
+	   does not quote a result. Those are the properties that make it the call to action.
+
+	   So it is separated out and checked on its own terms, rather than the narrative
+	   rules being loosened to accommodate it — which would have stopped them catching a
+	   genuinely out-of-order stop in the middle of the read. */
+	const cta = g.filter((s) => s.target === CTA_TARGET);
+	const story = g.slice(0, g.length - cta.length);
+
+	ok(cta.length === 1, `${b.key}: exactly one closing call to action`);
+	ok(g[g.length - 1].target === CTA_TARGET,
+		`${b.key}: the call to action is the last stop`);
+	ok(cta[0]?.epoch === 0,
+		`${b.key}: the call to action rewinds the run to the first epoch`);
+
+	ok(story.length >= 4, `${b.key}: ${story.length} narrative stops`);
 	ok(g.every((s) => s.epoch >= 0 && s.epoch <= last),
 		`${b.key}: every stop lands inside the run`);
-	ok(g.every((s, i) => i === 0 || s.epoch >= g[i - 1].epoch),
+	ok(story.every((s, i) => i === 0 || s.epoch >= story[i - 1].epoch),
 		`${b.key}: stops advance monotonically through the run`);
-	ok(g.every((s) => PANELS.includes(s.target)),
+	ok(story.every((s) => PANELS.includes(s.target)),
 		`${b.key}: every stop lights a panel that exists`);
 	ok(g.every((s) => s.title && s.body && s.eyebrow),
 		`${b.key}: no stop is missing copy`);
 	ok(!g.some((s) => /undefined|NaN|\[object/.test(s.body + s.title + s.eyebrow)),
 		`${b.key}: no stop interpolated a missing field`);
-	ok(g[g.length - 1].epoch === last,
-		`${b.key}: the last stop is the end of the run`);
+	ok(story[story.length - 1].epoch === last,
+		`${b.key}: the last narrative stop is the end of the run`);
 
 	if (b.event) {
 		const shock = g.find((s) => s.eyebrow === `EPOCH ${b.event.epoch}`);
@@ -131,7 +153,9 @@ for (const key of keys) {
 	}
 
 	const gap = b.summary.gap_pp;
-	const closing = g[g.length - 1].body;
+	/* The result is quoted by the last NARRATIVE stop. The call to action after it
+	   deliberately states no number. */
+	const closing = story[story.length - 1].body;
 	if (gap < 0) {
 		ok(/finishes ahead/.test(closing) && closing.includes(Math.abs(gap).toFixed(2)),
 			`${b.key}: the adverse result is stated as a loss of ${Math.abs(gap).toFixed(2)} points`);

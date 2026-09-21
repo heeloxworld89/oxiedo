@@ -404,11 +404,46 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 	const rotZ = (p: V3, a: number): V3 =>
 		({ x: p.x * Math.cos(a) - p.y * Math.sin(a), y: p.x * Math.sin(a) + p.y * Math.cos(a), z: p.z });
 
+	/* ── A FIGURE THAT IS NOT DRAWN DOES NOT GET A LOOP ──────────────────────────
+	   Below the phone/tablet breakpoint responsive-hero.css takes the figure off the
+	   page, because at that size `is-compact` has already removed every word in it
+	   and what is left is thirteen dots. display: none on its own does not stop this
+	   script: measured at 390px before the change, 60 requestAnimationFrame calls a
+	   second were still coming from here — a thirteen-body separation solver, eight
+	   passes, every frame, for a drawing nobody can see. rAF is throttled for a
+	   background tab, not for content that is merely invisible, so it ran the whole
+	   visit.
+
+	   NO COPY OF THE BREAKPOINT IN HERE. A media query repeated in the script is a
+	   second source of truth that goes stale the first time the stylesheet moves.
+	   What is asked instead is the thing that actually matters — does this element
+	   have a layout box? getClientRects() is empty exactly when the element or an
+	   ancestor is display: none, whatever rule put it there and at whatever width. */
+	const isHidden = (el: Element) => el.getClientRects().length === 0;
+
+	/* Mount if the viewport later grows past the breakpoint. Guarded on the WIDTH
+	   having changed: on a phone `resize` fires on every scroll that grows or
+	   shrinks the URL bar, and none of those can cross a max-width query. */
+	let widthWatched = false;
+	let lastWidth = 0;
+	function watchWidth() {
+		if (widthWatched) return;
+		widthWatched = true;
+		lastWidth = window.innerWidth;
+		window.addEventListener('resize', () => {
+			if (window.innerWidth === lastWidth) return;
+			lastWidth = window.innerWidth;
+			mountHeroModel();
+		}, { passive: true });
+	}
+
 	function mountHeroModel() {
 		const svg = document.querySelector<SVGSVGElement>('[data-hm-svg]');
 		if (!svg || svg.dataset.live === '1') return;
 		const fig = svg.closest<HTMLElement>('[data-hm]');
 		if (!fig) return;
+		watchWidth();
+		if (isHidden(fig)) return;
 		svg.dataset.live = '1';
 
 		const hint = fig.querySelector<HTMLElement>('[data-hm-hint]');
@@ -1160,17 +1195,45 @@ const fmtDep = (d: number) => (0.34 + ((d + 1) / 2) * 0.66).toFixed(3);
 			fig.classList.toggle('is-compact', (11 * w) / W < MIN_LABEL_PX);
 		};
 		fitViewBox();
-		window.addEventListener('resize', fitViewBox);
 
 		svg.addEventListener('pointerdown', onDown);
 		svg.addEventListener('pointermove', onMove);
 		svg.addEventListener('pointerup', onUp);
 		svg.addEventListener('pointercancel', onUp);
 
-		let raf = requestAnimationFrame(frame);
-		document.addEventListener('astro:before-swap', () => {
+		/* ── THE LOOP RUNS ONLY WHILE THE FIGURE IS ON THE PAGE ──────────────────
+		   Suspended rather than torn down when the viewport shrinks past the
+		   breakpoint: every listener above is attached once, at mount, and a
+		   teardown-and-remount cycle would either have to unpick all of them or
+		   attach a second copy of each — and a second `keydown` on a label opens its
+		   panel and closes it again in the same press. Stopping the loop is the whole
+		   cost anyway; the DOM is display: none and costs nothing to leave wired. */
+		let raf = 0;
+		let running = false;
+		const run = () => {
+			if (running) return;
+			running = true;
+			raf = requestAnimationFrame(frame);
+		};
+		const halt = () => {
+			if (!running) return;
+			running = false;
 			cancelAnimationFrame(raf);
-			window.removeEventListener('resize', fitViewBox);
+		};
+		/* Also the figure's own resize handler: `fitViewBox` used to be registered
+		   directly and is called from here instead, so there is one listener and one
+		   decision about what a width change means. */
+		const onResize = () => {
+			if (isHidden(fig)) { halt(); return; }
+			run();
+			fitViewBox();
+		};
+		window.addEventListener('resize', onResize);
+		run();
+
+		document.addEventListener('astro:before-swap', () => {
+			halt();
+			window.removeEventListener('resize', onResize);
 		}, { once: true });
 	}
 
