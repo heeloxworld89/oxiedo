@@ -2,9 +2,13 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
-      "_comment": "www SERVES A SECOND COPY OF THE SITE. Both hosts answer 200, so every page exists at two addresses and Google has to decide which is real. The canonical tag says oxiedo.com, which is why this has not done visible damage, but a canonical is a hint and a 301 is an instruction. Search Console also reported www as a 4xx once, which only a host answering on its own can do. First in the list so a www request lands on the apex before any path rule runs.",
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.oxiedo.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.oxiedo.com"
+        }
+      ],
       "destination": "https://oxiedo.com/$1",
       "permanent": true
     },
