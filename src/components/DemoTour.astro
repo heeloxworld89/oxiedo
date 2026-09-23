@@ -57,6 +57,9 @@ const HOOK_CLIPS = ['hinton', 'coxon', 'musk'];
 	    with sound — the choice is the click a browser needs before it will play audio. */}
 	<div class="dt-offer" data-dt-offer hidden role="dialog" aria-modal="true" aria-labelledby="dt-offer-title" aria-describedby="dt-offer-lead">
 		<div class="dt-offer-card">
+			<button type="button" class="dt-offer-x" data-dt-decline aria-label="Close, and go to the console" title="Close">
+				<svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M2.5 2.5 L11.5 11.5 M11.5 2.5 L2.5 11.5" /></svg>
+			</button>
 			<p class="dt-offer-eyebrow">ORMAS <span>·</span> narrated demo <span>·</span> sound on</p>
 			<h2 class="dt-offer-title" id="dt-offer-title">Watch the black box open.</h2>
 			<p class="dt-offer-lead" id="dt-offer-lead">
@@ -88,12 +91,7 @@ const HOOK_CLIPS = ['hinton', 'coxon', 'musk'];
 			</div>
 			<div class="dt-offer-foot">
 				<button type="button" class="dt-offer-no" data-dt-decline>No thanks</button>
-				<span class="dt-offer-end">
-					<span class="dt-offer-keys"><kbd>space</kbd> pauses <kbd>m</kbd> mutes <kbd>esc</kbd> leaves</span>
-					<button type="button" class="dt-offer-x" data-dt-decline aria-label="Close, and go to the console" title="Close">
-						<svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M2.5 2.5 L11.5 11.5 M11.5 2.5 L2.5 11.5" /></svg>
-					</button>
-				</span>
+				<span class="dt-offer-keys"><kbd>space</kbd> pauses <kbd>m</kbd> mutes <kbd>esc</kbd> leaves</span>
 			</div>
 		</div>
 	</div>
@@ -328,6 +326,7 @@ const HOOK_CLIPS = ['hinton', 'coxon', 'musk'];
 	.dt-offer:not([hidden]) { display: grid; }
 	.dt-offer.is-on { opacity: 1; }
 	.dt-offer-card {
+		position: relative;
 		width: min(780px, 100%);
 		box-sizing: border-box;
 		padding: 34px 36px 26px;
@@ -425,9 +424,11 @@ const HOOK_CLIPS = ['hinton', 'coxon', 'musk'];
 	}
 	.dt-offer-no:hover { color: var(--dt-fg); text-decoration-color: var(--dt-mid); }
 	.dt-offer-no:focus-visible { outline: 2px solid var(--dt-amber); outline-offset: 3px; }
-	.dt-offer-end { display: flex; align-items: center; gap: 18px; }
-	/* The close cross, bottom right: the same as "No thanks". */
+	/* The close cross, top right: the same as "No thanks". */
 	.dt-offer-x {
+		position: absolute;
+		top: 18px;
+		right: 18px;
 		display: grid;
 		place-items: center;
 		flex: none;
