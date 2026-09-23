@@ -181,7 +181,8 @@ export function bootDemoTour(): void {
 			start(asCut(b.dataset.dtChoose) ?? 'demo', ac);
 		});
 	});
-	q('[data-dt-decline]').addEventListener('click', decline);
+	// "No thanks" and the close cross.
+	host.querySelectorAll('[data-dt-decline]').forEach((b) => b.addEventListener('click', decline));
 	q('[data-dt-open]').addEventListener('click', () => openOffer(false));
 
 	const params = new URLSearchParams(location.search);

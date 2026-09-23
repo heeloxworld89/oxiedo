@@ -88,7 +88,12 @@ const HOOK_CLIPS = ['hinton', 'coxon', 'musk'];
 			</div>
 			<div class="dt-offer-foot">
 				<button type="button" class="dt-offer-no" data-dt-decline>No thanks</button>
-				<span class="dt-offer-keys"><kbd>space</kbd> pauses <kbd>m</kbd> mutes <kbd>esc</kbd> leaves</span>
+				<span class="dt-offer-end">
+					<span class="dt-offer-keys"><kbd>space</kbd> pauses <kbd>m</kbd> mutes <kbd>esc</kbd> leaves</span>
+					<button type="button" class="dt-offer-x" data-dt-decline aria-label="Close, and go to the console" title="Close">
+						<svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M2.5 2.5 L11.5 11.5 M11.5 2.5 L2.5 11.5" /></svg>
+					</button>
+				</span>
 			</div>
 		</div>
 	</div>
@@ -420,6 +425,25 @@ const HOOK_CLIPS = ['hinton', 'coxon', 'musk'];
 	}
 	.dt-offer-no:hover { color: var(--dt-fg); text-decoration-color: var(--dt-mid); }
 	.dt-offer-no:focus-visible { outline: 2px solid var(--dt-amber); outline-offset: 3px; }
+	.dt-offer-end { display: flex; align-items: center; gap: 18px; }
+	/* The close cross, bottom right: the same as "No thanks". */
+	.dt-offer-x {
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		border: 1px solid var(--dt-rule);
+		border-radius: 50%;
+		background: transparent;
+		color: var(--dt-mid);
+		cursor: pointer;
+		transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+	}
+	.dt-offer-x svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+	.dt-offer-x:hover { color: var(--dt-fg); border-color: var(--dt-mid); background: rgba(255, 255, 255, 0.05); }
+	.dt-offer-x:focus-visible { outline: 2px solid var(--dt-amber); outline-offset: 3px; }
 	.dt-offer-keys { font-family: var(--dt-mono); font-size: 10.5px; color: var(--dt-dim); white-space: nowrap; }
 	.dt-offer-keys kbd {
 		display: inline-block;
