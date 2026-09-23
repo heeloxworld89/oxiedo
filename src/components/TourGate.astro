@@ -16,10 +16,16 @@
  * WHY ITS OWN COMPONENT, AND WHY FIRST. It has to run during parse, before ReplayDemo's
  * module script can start autoplay or the guided read. Placed ahead of the console on the
  * page, it is the one place the decision is made.
+ *
+ * EVERY ARRIVAL, NOT JUST THE FIRST. The site moves between pages with Astro's ClientRouter,
+ * which remembers every inline script it has run in the tab and never runs the same one
+ * twice — so without `data-astro-rerun` the offer came up on the first visit to /black-box
+ * and never again (leave, come back: straight to the console). The swap also resets the
+ * <html> attributes from the new page, so the stamp has to be made again each time anyway.
  */
 ---
 
-<script is:inline>
+<script is:inline data-astro-rerun>
 	(function () {
 		try {
 			var html = document.documentElement;
