@@ -76,11 +76,20 @@ const GAP = 16;          // between the two panels
 const LABEL_W_WIDE = 78; // reserved gutter for the direct labels
 const LABEL_W_TIGHT = 46;
 
+/** Backing-store multiplier while the demo tour's camera has the console zoomed, so
+ *  the chart is re-rendered at the zoom rather than scaled up as a bitmap. 1 otherwise. */
+let renderScale = 1;
+export function setChartScale(s: number): void {
+	renderScale = Math.min(2.5, Math.max(1, s));
+}
+
 export function sizeCanvas(cv: HTMLCanvasElement): { w: number; h: number } {
-	const dpr = Math.min(3, window.devicePixelRatio || 1);
-	const rect = cv.getBoundingClientRect();
-	const w = Math.max(1, Math.round(rect.width));
-	const h = Math.max(1, Math.round(rect.height));
+	const dpr = Math.min(3, (window.devicePixelRatio || 1) * renderScale);
+	// Layout size, not rendered size: the demo tour zooms the console with a CSS
+	// transform, and getBoundingClientRect() would size the backing store to the
+	// scaled box while the element keeps its layout box. See anatomy.ts size().
+	const w = Math.max(1, cv.offsetWidth);
+	const h = Math.max(1, cv.offsetHeight);
 	if (cv.width !== w * dpr || cv.height !== h * dpr) {
 		cv.width = w * dpr;
 		cv.height = h * dpr;

@@ -15,13 +15,16 @@
 		"check:schema": "node scripts/check-schema.mjs",
 		"test:guide": "node scripts/test-guide-browser.mjs",
 		"build:lastmod": "python3 scripts/build-lastmod.py",
-		"verify": "python3 scripts/build-lastmod.py && npm run build && python3 check.py && python3 scripts/verify-replay-bundle.py && node scripts/check-schema.mjs && node scripts/check-replay-scoping.mjs && npm run check:hero && npm run check:panels && npm run check:overflow && node scripts/test-replay-engine.mjs && npm run test:nav && npm run test:guide && npm run test:coldopen",
+		"verify": "python3 scripts/build-lastmod.py && npm run build && python3 check.py && python3 scripts/verify-replay-bundle.py && node scripts/check-schema.mjs && node scripts/check-replay-scoping.mjs && npm run check:hero && npm run check:panels && npm run check:overflow && node scripts/test-replay-engine.mjs && npm run test:nav && npm run test:guide && npm run test:tour",
 		"build:bundles": "python3 scripts/build-replay-bundle.py && python3 scripts/verify-replay-bundle.py",
 		"test:replay": "node scripts/test-replay-engine.mjs",
-		"test:coldopen": "node scripts/test-coldopen.mjs",
 		"check:hero": "node scripts/check-hero-collisions.mjs",
 		"check:panels": "node scripts/check-hero-panels.mjs",
-		"check:overflow": "node scripts/check-mobile-overflow.mjs"
+		"check:overflow": "node scripts/check-mobile-overflow.mjs",
+		"narration": "node scripts/build-narration.mjs",
+		"clips": "node scripts/build-clips.mjs",
+		"test:tour": "node scripts/test-tour.mjs",
+		"record:tour": "node scripts/record-tour.mjs"
 	},
 	"dependencies": {
 		"astro": "7.3.1",

@@ -1,0 +1,1370 @@
+---
+/* THE DEMO TOUR — /black-box only. Added 2026-09-23; rebuilt around a narrator the same day.
+ *
+ * WHAT IT IS. A button that turns the page into its own product film: the site steps
+ * aside, a narrator speaks, a presenter cursor drives the real console, the camera frames
+ * whatever the voice is talking about, both networks are shut in literal black boxes and
+ * one is opened, a stage is taken apart into its bounded chain, and a real archived run
+ * breaks and repairs itself on cue. It is what gets screen-recorded for an application,
+ * and any visitor can press it and watch the same thing live, with sound.
+ *
+ * WHAT IT IS NOT. A video, or a simulation. The tour presses the console's real Play, rate
+ * and scenario buttons, so their own handlers run; the narration's every figure was filled
+ * from the same bundles the console plays (scripts/narration/lines.mjs), and the tags name
+ * what the run's own event record names.
+ *
+ * ALL MARKUP IS STATIC, AND IT HAS TO BE. Astro scopes a component's styles by an attribute
+ * that elements created in script never carry. Every element the tour shows is here; the
+ * only script-made nodes are the subtitle's words and the kinetic word's letters, styled
+ * through :global() under a scoped parent.
+ *
+ * DESKTOP ONLY, AND NOT UNDER REDUCED MOTION. The console is one screen from 1240px up and
+ * stacks below it, which a self-driving tour cannot follow; and a tour is motion by nature,
+ * so a reader who has asked for less of it gets the guided read instead.
+ *
+ * HOW IT STARTS. On an ordinary desktop landing the OFFER opens first: watch the demo
+ * (2 min 15 s) or the full tour (the same opening, then all four failures, 3 min 40 s),
+ * each with its running time — measured, and held to the measured runs by test-tour.mjs —
+ * or no thanks. The corner button opens
+ * the same offer later. ?tour=demo | ?tour=full lands on a one-press start (sound needs the
+ * press). &rec=1 hides the key hints for a clean recording. &mute=1 runs silent without the
+ * press. &tourspeed=N is for the test harness, and is always silent.
+ */
+const TAGS = [0, 1, 2, 3, 4];
+/* The hook's three windows, in the order they speak. Their files, captions and names are set
+   from src/data/narration/clips.json by hook.ts; the markup is here for the scoped styles. */
+const HOOK_CLIPS = ['hinton', 'coxon', 'musk'];
+---
+
+{/* The landing is decided before this renders — see TourGate.astro, which stamps
+    html[data-tour] as "pending" (a tour link) or "offer" (the pop-up below, first thing a
+    visitor sees). */}
+<div class="dt" data-demotour>
+	<div class="dt-launch" data-dt-launch hidden>
+		<button type="button" class="dt-launch-main" data-dt-open aria-haspopup="dialog">
+			<span class="dt-launch-icon" aria-hidden="true">
+				<svg viewBox="0 0 16 16" width="14" height="14"><path d="M4 2.6v10.8L13 8z" fill="currentColor" /></svg>
+			</span>
+			<span class="dt-launch-text">
+				<b>Play the demo</b>
+				<small>Narrated · sound on</small>
+			</span>
+		</button>
+	</div>
+
+	{/* THE OFFER. What a visitor sees first on /black-box: two lengths, each with what it
+	    covers and how long it takes, and a plain way out. Choosing one starts it at once,
+	    with sound — the choice is the click a browser needs before it will play audio. */}
+	<div class="dt-offer" data-dt-offer hidden role="dialog" aria-modal="true" aria-labelledby="dt-offer-title" aria-describedby="dt-offer-lead">
+		<div class="dt-offer-card">
+			<p class="dt-offer-eyebrow">ORMAS <span>·</span> narrated demo <span>·</span> sound on</p>
+			<h2 class="dt-offer-title" id="dt-offer-title">Watch the black box open.</h2>
+			<p class="dt-offer-lead" id="dt-offer-lead">
+				A narrated walkthrough of this console, driven live on a real archived training run.
+			</p>
+			<div class="dt-offer-choices">
+				<button type="button" class="dt-choice dt-choice--primary" data-dt-choose="demo">
+					<span class="dt-choice-top">
+						<span class="dt-choice-kind">The demo</span>
+						<span class="dt-choice-time" data-dt-time="demo">2 min 15 s</span>
+					</span>
+					<span class="dt-choice-desc">The warnings, the idea, then one failure from start to repair.</span>
+					<span class="dt-choice-go" aria-hidden="true">
+						<svg viewBox="0 0 16 16" width="12" height="12"><path d="M4 2.6v10.8L13 8z" fill="currentColor" /></svg>
+						Play
+					</span>
+				</button>
+				<button type="button" class="dt-choice" data-dt-choose="full">
+					<span class="dt-choice-top">
+						<span class="dt-choice-kind">The full tour</span>
+						<span class="dt-choice-time" data-dt-time="full">3 min 40 s</span>
+					</span>
+					<span class="dt-choice-desc">The same opening, then all four failures — including the one we lose.</span>
+					<span class="dt-choice-go" aria-hidden="true">
+						<svg viewBox="0 0 16 16" width="12" height="12"><path d="M4 2.6v10.8L13 8z" fill="currentColor" /></svg>
+						Play
+					</span>
+				</button>
+			</div>
+			<div class="dt-offer-foot">
+				<button type="button" class="dt-offer-no" data-dt-decline>No thanks</button>
+				<span class="dt-offer-keys"><kbd>space</kbd> pauses <kbd>m</kbd> mutes <kbd>esc</kbd> leaves</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="dt-gate" data-dt-gate hidden>
+		<button type="button" class="dt-gate-play" data-dt-gate-play>
+			<span class="dt-gate-disc" aria-hidden="true">
+				<svg viewBox="0 0 24 24" width="30" height="30"><path d="M7 4.5v15L20 12z" fill="currentColor" /></svg>
+			</span>
+			<span class="dt-gate-text">
+				<b>Play the demo</b>
+				<small data-dt-gate-sub>Sound on</small>
+			</span>
+		</button>
+		<p class="dt-gate-note"><kbd>esc</kbd> go straight to the console</p>
+	</div>
+
+	<div class="dt-shield" data-dt-shield hidden></div>
+	<div class="dt-vignette" aria-hidden="true"></div>
+	<div class="dt-flash" data-dt-flash hidden aria-hidden="true"></div>
+
+	{/* THE HOOK — thirty seconds of the people building AI warning about it, before the
+	    narrator speaks. See src/scripts/tour/hook.ts. */}
+	<div class="dt-hook" data-dt-hook hidden aria-hidden="true">
+		<canvas class="dt-hook-code" data-dt-hook-code></canvas>
+		<div class="dt-hook-echo" data-dt-hook-echo></div>
+		<div class="dt-hook-news" data-dt-hook-news></div>
+		{HOOK_CLIPS.map((id) => (
+			<figure class="dt-win" data-dt-win={id} data-shape={id === 'hinton' ? 'wide' : id === 'musk' ? 'square' : 'tall'} data-cap={id === 'hinton' ? 'below' : id === 'coxon' ? 'left' : 'right'} hidden>
+				<div class="dt-win-frame">
+					<video muted playsinline preload="none" disablepictureinpicture>
+						<source type="video/webm" />
+						<source type="video/mp4" />
+					</video>
+					<span class="dt-win-scan"></span>
+				</div>
+				<figcaption class="dt-win-meta">
+					<p class="dt-win-who"><i class="dt-win-live"></i><b data-dt-who></b><span data-dt-role></span></p>
+					<div class="dt-win-cap" data-dt-win-cap hidden><p class="dt-win-line" data-dt-win-line></p></div>
+					<p class="dt-win-src" data-dt-src></p>
+				</figcaption>
+			</figure>
+		))}
+		<div class="dt-hook-vignette"></div>
+		<div class="dt-hook-tear"></div>
+	</div>
+
+	{/* THE BRIDGE: a network in training, under the narrator's first line (tour/mesh.ts). */}
+	<canvas class="dt-mesh" data-dt-mesh hidden aria-hidden="true"></canvas>
+
+	<svg class="dt-lines" data-dt-lines aria-hidden="true">
+		{TAGS.map(() => (
+			<g class="dt-lead" data-dt-lead>
+				<path pathLength="1" />
+				<circle data-dt-ring r="10" />
+				<circle data-dt-dot r="3.6" />
+			</g>
+		))}
+	</svg>
+	{TAGS.map(() => (
+		<div class="dt-tag" data-dt-tag hidden>
+			<small data-dt-tag-k></small>
+			<b data-dt-tag-v></b>
+		</div>
+	))}
+
+	<div class="dt-kin-scrim" data-dt-kin-scrim aria-hidden="true"></div>
+	<div class="dt-kin" data-dt-kin hidden aria-hidden="true">
+		<p class="dt-kin-word" data-dt-kin-word></p>
+		<p class="dt-kin-sub" data-dt-kin-sub></p>
+	</div>
+
+	<div class="dt-rew" data-dt-rew hidden aria-hidden="true">
+		<svg viewBox="0 0 20 12" width="20" height="12"><path d="M9 1v10L1 6zM19 1v10l-8-5z" fill="currentColor" /></svg>
+		Rewind
+	</div>
+
+	<div class="dt-hair" data-dt-hair hidden aria-hidden="true"><i data-dt-progress></i></div>
+
+	<p class="dt-chip" data-dt-chip hidden>
+		<span class="dt-chip-num" data-dt-chip-num></span>
+		<span class="dt-chip-title" data-dt-chip-title></span>
+	</p>
+
+	<div class="dt-sub" data-dt-sub hidden aria-live="polite">
+		<p class="dt-sub-line" data-dt-sub-line></p>
+	</div>
+
+	<p class="dt-keys" data-dt-keys hidden><kbd>space</kbd> pause <kbd>m</kbd> mute <kbd>esc</kbd> exit</p>
+
+	<div class="dt-paused" data-dt-paused hidden role="status">
+		<b>Paused</b><span>space or click to resume · esc to leave the tour</span>
+	</div>
+
+	<div class="dt-curtain" data-dt-curtain hidden aria-hidden="true">
+		<p class="dt-curtain-note" data-dt-curtain-note hidden>Loading the narration…</p>
+	</div>
+
+	<section class="dt-end" data-dt-end hidden aria-labelledby="dt-end-title">
+		<div class="dt-end-inner">
+			<p class="dt-end-eyebrow">ORMAS <span>·</span> by Oxiedo</p>
+			<h2 class="dt-end-title" id="dt-end-title">The black box, opened.</h2>
+			<p class="dt-end-body">
+				Every figure on screen was read from archived training runs on CIFAR-10. Nothing was
+				simulated, and the console is now free to drive.
+			</p>
+			<div class="dt-end-actions">
+				<button type="button" class="dt-end-btn dt-end-btn--primary" data-dt-close>Explore the console</button>
+				<button type="button" class="dt-end-btn" data-dt-replay>Watch again</button>
+				<button type="button" class="dt-end-btn" data-dt-full>Watch the full tour</button>
+				<button type="button" class="dt-end-btn" data-dt-short hidden>Watch the short demo</button>
+			</div>
+		</div>
+	</section>
+
+	<span class="dt-ring" data-dt-ring hidden aria-hidden="true"></span>
+	<canvas class="dt-trail" data-dt-trail aria-hidden="true"></canvas>
+
+	<div class="dt-cursor" data-dt-cursor hidden aria-hidden="true">
+		<span class="dt-cursor-halo"></span>
+		<span class="dt-cursor-wave" data-dt-wave></span>
+		<svg class="dt-cursor-arrow" viewBox="0 0 30 34" width="30" height="34">
+			<defs>
+				<linearGradient id="dt-cur-fill" x1="0" y1="0" x2="1" y2="1">
+					<stop offset="0" stop-color="#FFFFFF" />
+					<stop offset="0.55" stop-color="#EEF0F7" />
+					<stop offset="1" stop-color="#C9CFE0" />
+				</linearGradient>
+				<linearGradient id="dt-cur-rim" x1="0" y1="0" x2="1" y2="1">
+					<stop offset="0" stop-color="#F7CF7C" />
+					<stop offset="1" stop-color="#D4901E" />
+				</linearGradient>
+			</defs>
+			<path class="dt-cur-body" d="M3 2.2 L26.4 14.9 Q27.9 15.8 26.3 16.5 L17.1 20.2 Q16.4 20.5 16.1 21.2 L11.9 30.4 Q11.2 31.9 10.8 30.3 Z" />
+			<path class="dt-cur-shine" d="M5.6 6 L10.4 27" />
+		</svg>
+		<span class="dt-cursor-label" data-dt-clabel></span>
+	</div>
+</div>
+
+<script>
+	import { bootDemoTour } from '../scripts/tour/director';
+	document.addEventListener('astro:page-load', bootDemoTour);
+	if (document.readyState !== 'loading') bootDemoTour();
+	else document.addEventListener('DOMContentLoaded', bootDemoTour);
+</script>
+
+<style>
+	/* The tour's own palette — the console's, restated, because the tour's elements sit
+	   outside the console and do not inherit its custom properties. */
+	.dt {
+		--dt-plate: #141625;
+		--dt-sunk: #0F111C;
+		--dt-ink: #07080D;
+		--dt-raised: #1A1D2E;
+		--dt-rule: #2F3550;
+		--dt-fg: #F1EFE8;
+		--dt-mid: #A9AEC4;
+		--dt-dim: #828AA8;
+		--dt-amber: #E0A233;
+		--dt-warn: #E0645F;
+		--dt-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		--dt-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+		--dt-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+		--dt-top: 2147483000;
+		--dt-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+
+	/* ── the launcher ─────────────────────────────────────────────────────────── */
+	.dt-launch {
+		position: fixed;
+		right: 24px;
+		bottom: 24px;
+		z-index: 150;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 8px;
+		animation: dt-rise 520ms var(--dt-ease) both;
+	}
+	/* Display only while shown: the hidden attribute must win (check.py, audit 4). */
+	.dt-launch:not([hidden]) { display: flex; }
+	.dt-launch-main {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 10px 18px 10px 10px;
+		border-radius: 999px;
+		border: 1px solid color-mix(in srgb, var(--dt-amber) 55%, transparent);
+		background: var(--dt-plate);
+		color: var(--dt-fg);
+		font-family: var(--dt-sans);
+		text-align: left;
+		cursor: pointer;
+		box-shadow: 0 14px 36px rgba(8, 9, 14, 0.42);
+		transition: transform 180ms ease, box-shadow 220ms ease;
+	}
+	.dt-launch-main:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 18px 42px rgba(8, 9, 14, 0.5), 0 0 0 6px rgba(224, 162, 51, 0.14);
+	}
+	.dt-launch-main:focus-visible { outline: 2px solid var(--dt-amber); outline-offset: 3px; }
+	.dt-launch-icon {
+		display: grid;
+		place-items: center;
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		background: var(--dt-amber);
+		color: #141625;
+		flex: none;
+	}
+	.dt-launch-icon svg { margin-left: 2px; }
+	.dt-launch-text { display: flex; flex-direction: column; line-height: 1.25; }
+	.dt-launch-text b { font-size: 14px; font-weight: 700; letter-spacing: 0.01em; }
+	.dt-launch-text small { font-size: 11.5px; color: var(--dt-mid); }
+	@media (max-width: 1239px) { .dt-launch:not([hidden]) { display: none; } }
+	@media (prefers-reduced-motion: reduce) { .dt-launch:not([hidden]) { display: none; } }
+
+	/* ── the offer ────────────────────────────────────────────────────────────── */
+	.dt-offer {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--dt-top) + 6);
+		place-items: center;
+		padding: 24px;
+		background: radial-gradient(ellipse at 50% 42%, rgba(20, 22, 37, 0.6) 0%, rgba(5, 6, 10, 0.88) 72%);
+		-webkit-backdrop-filter: blur(5px);
+		backdrop-filter: blur(5px);
+		opacity: 0;
+		transition: opacity 380ms ease;
+	}
+	.dt-offer:not([hidden]) { display: grid; }
+	.dt-offer.is-on { opacity: 1; }
+	.dt-offer-card {
+		width: min(780px, 100%);
+		box-sizing: border-box;
+		padding: 34px 36px 26px;
+		border-radius: 16px;
+		border: 1px solid var(--dt-rule);
+		border-top: 2px solid var(--dt-amber);
+		background: linear-gradient(180deg, #1A1D2E 0%, #141625 100%);
+		box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
+		color: var(--dt-fg);
+		transform: translateY(14px) scale(0.985);
+		transition: transform 520ms var(--dt-ease);
+	}
+	.dt-offer.is-on .dt-offer-card { transform: none; }
+	.dt-offer-eyebrow {
+		margin: 0 0 12px;
+		font-family: var(--dt-mono);
+		font-size: 11px;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+		color: var(--dt-amber);
+	}
+	.dt-offer-eyebrow span { color: var(--dt-dim); }
+	.dt-offer-title {
+		margin: 0;
+		font-family: var(--dt-serif);
+		font-size: clamp(32px, 3vw, 44px);
+		font-weight: 600;
+		line-height: 1.08;
+		letter-spacing: -0.015em;
+	}
+	.dt-offer-lead { margin: 12px 0 0; font-family: var(--dt-sans); font-size: 15.5px; line-height: 1.5; color: var(--dt-mid); }
+	.dt-offer-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 26px; }
+	.dt-choice {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 18px 18px 16px;
+		border-radius: 12px;
+		border: 1px solid var(--dt-rule);
+		background: rgba(255, 255, 255, 0.02);
+		color: var(--dt-fg);
+		font-family: var(--dt-sans);
+		text-align: left;
+		cursor: pointer;
+		transition: border-color 180ms ease, background 180ms ease, transform 200ms var(--dt-ease), box-shadow 220ms ease;
+	}
+	.dt-choice:hover { border-color: var(--dt-mid); background: rgba(255, 255, 255, 0.04); transform: translateY(-2px); }
+	.dt-choice:focus-visible { outline: 2px solid var(--dt-amber); outline-offset: 3px; }
+	.dt-choice--primary {
+		border-color: color-mix(in srgb, var(--dt-amber) 70%, transparent);
+		background: linear-gradient(180deg, rgba(224, 162, 51, 0.12) 0%, rgba(224, 162, 51, 0.04) 100%);
+		box-shadow: 0 0 0 4px rgba(224, 162, 51, 0.06);
+	}
+	.dt-choice--primary:hover { border-color: var(--dt-amber); background: linear-gradient(180deg, rgba(224, 162, 51, 0.18) 0%, rgba(224, 162, 51, 0.06) 100%); }
+	.dt-choice-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+	.dt-choice-kind { font-size: 19px; font-weight: 700; letter-spacing: -0.005em; }
+	.dt-choice-time {
+		flex: none;
+		padding: 3px 8px;
+		border-radius: 999px;
+		border: 1px solid var(--dt-rule);
+		font-family: var(--dt-mono);
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--dt-fg);
+		white-space: nowrap;
+	}
+	.dt-choice--primary .dt-choice-time { border-color: color-mix(in srgb, var(--dt-amber) 60%, transparent); color: #F2BC54; }
+	.dt-choice-desc { font-size: 14px; line-height: 1.45; color: var(--dt-mid); }
+	.dt-choice-go {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		margin-top: 4px;
+		font-family: var(--dt-mono);
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--dt-fg);
+	}
+	.dt-choice--primary .dt-choice-go { color: var(--dt-amber); }
+	.dt-offer-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; }
+	.dt-offer-no {
+		padding: 8px 2px;
+		border: 0;
+		background: none;
+		color: var(--dt-mid);
+		font-family: var(--dt-sans);
+		font-size: 14px;
+		text-decoration: underline;
+		text-decoration-color: var(--dt-rule);
+		text-underline-offset: 4px;
+		cursor: pointer;
+	}
+	.dt-offer-no:hover { color: var(--dt-fg); text-decoration-color: var(--dt-mid); }
+	.dt-offer-no:focus-visible { outline: 2px solid var(--dt-amber); outline-offset: 3px; }
+	.dt-offer-keys { font-family: var(--dt-mono); font-size: 10.5px; color: var(--dt-dim); white-space: nowrap; }
+	.dt-offer-keys kbd {
+		display: inline-block;
+		margin: 0 3px 0 8px;
+		padding: 1px 5px;
+		border: 1px solid var(--dt-rule);
+		border-radius: 3px;
+		font-family: inherit;
+		font-size: 10px;
+		color: var(--dt-mid);
+	}
+
+	/* ── the start gate, for a shared link ────────────────────────────────────── */
+	.dt-gate {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--dt-top) + 6);
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 22px;
+		background: radial-gradient(ellipse at 50% 45%, rgba(20, 22, 37, 0.55) 0%, rgba(5, 6, 10, 0.9) 70%);
+		-webkit-backdrop-filter: blur(6px);
+		backdrop-filter: blur(6px);
+		opacity: 0;
+		transition: opacity 420ms ease;
+	}
+	.dt-gate:not([hidden]) { display: flex; }
+	.dt-gate.is-on { opacity: 1; }
+	.dt-gate-play {
+		display: flex;
+		align-items: center;
+		gap: 22px;
+		padding: 14px 34px 14px 14px;
+		border: 1px solid color-mix(in srgb, var(--dt-amber) 45%, transparent);
+		border-radius: 999px;
+		background: rgba(20, 22, 37, 0.9);
+		color: var(--dt-fg);
+		font-family: var(--dt-sans);
+		text-align: left;
+		cursor: pointer;
+		box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 0 10px rgba(224, 162, 51, 0.06);
+		transition: transform 220ms var(--dt-ease), box-shadow 260ms ease;
+	}
+	.dt-gate-play:hover { transform: scale(1.02); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 0 14px rgba(224, 162, 51, 0.1); }
+	.dt-gate-play:focus-visible { outline: 2px solid var(--dt-amber); outline-offset: 4px; }
+	.dt-gate-disc {
+		display: grid;
+		place-items: center;
+		width: 76px;
+		height: 76px;
+		border-radius: 50%;
+		background: radial-gradient(circle at 35% 30%, #F6CB76 0%, var(--dt-amber) 60%, #B97C16 100%);
+		color: #141625;
+		box-shadow: 0 0 40px rgba(224, 162, 51, 0.45);
+	}
+	.dt-gate-disc svg { margin-left: 4px; }
+	.dt-gate-text { display: flex; flex-direction: column; gap: 4px; }
+	.dt-gate-text b { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+	.dt-gate-text small { font-family: var(--dt-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--dt-mid); }
+	.dt-gate-note { margin: 0; font-family: var(--dt-mono); font-size: 11px; color: var(--dt-dim); }
+	.dt-gate-note kbd, .dt-keys kbd {
+		display: inline-block;
+		margin: 0 4px 0 10px;
+		padding: 1px 5px;
+		border: 1px solid var(--dt-rule);
+		border-radius: 3px;
+		font-family: inherit;
+		font-size: 10px;
+		color: var(--dt-mid);
+	}
+
+	/* ── the shield, the curtain, the vignette, the flash ────────────────────── */
+	.dt-shield {
+		position: fixed;
+		inset: 0;
+		z-index: var(--dt-top);
+		background: transparent;
+	}
+	.dt-curtain {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--dt-top) + 1);
+		background: #05060A;
+		opacity: 0;
+		transition: opacity 460ms ease;
+		place-items: center;
+	}
+	.dt-curtain:not([hidden]) { display: grid; }
+	.dt-curtain.is-on { opacity: 1; }
+	.dt-curtain-note {
+		margin: 0;
+		font-family: var(--dt-mono);
+		font-size: 11px;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--dt-dim);
+		animation: dt-breathe 1.6s ease-in-out infinite;
+	}
+	.dt-vignette {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--dt-top) + 1);
+		pointer-events: none;
+		display: none;
+		background: radial-gradient(ellipse 80% 75% at 50% 45%, rgba(0, 0, 0, 0) 62%, rgba(3, 4, 8, 0.42) 100%);
+	}
+	.dt-flash {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--dt-top) + 2);
+		pointer-events: none;
+		opacity: 0;
+		background: radial-gradient(ellipse at 50% 50%, rgba(224, 100, 95, 0) 35%, rgba(224, 100, 95, 0.5) 100%);
+	}
+	.dt-flash[data-tone='amber'] { background: radial-gradient(ellipse at 50% 50%, rgba(224, 162, 51, 0) 35%, rgba(224, 162, 51, 0.4) 100%); }
+	.dt-flash.is-on { animation: dt-flash 1100ms ease-out both; }
+	@keyframes dt-flash {
+		0% { opacity: 0; }
+		8% { opacity: 1; }
+		100% { opacity: 0; }
+	}
+
+	/* ── the hook ────────────────────────────────────────────────────────────────
+	   Above the curtain (which is black behind it), below the subtitles and the cursor. */
+	.dt-hook {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--dt-top) + 2);
+		overflow: hidden;
+		background: radial-gradient(ellipse 90% 80% at 50% 45%, #0B0D16 0%, #05060A 70%);
+		opacity: 0;
+		transition: opacity 600ms ease;
+	}
+	.dt-hook.is-on { opacity: 1; }
+	.dt-hook.is-cut { opacity: 0; transition: none; }
+	.dt-hook-code { position: absolute; inset: 0; width: 100%; height: 100%; }
+	.dt-hook-echo, .dt-hook-news { position: absolute; inset: 0; pointer-events: none; }
+	/* From Musk on, the headlines build into a wall over the receded windows (z-index 1) —
+	   never over the one still up (3) or the speaker (4). */
+	.dt-hook.is-wall .dt-hook-news { z-index: 2; }
+	/* Over a picture, a card needs a plate to be read: a dark one, spread by a shadow so the
+	   card's size — and so the spacing hook.ts measured — does not change. */
+	.dt-hook.is-wall .dt-hook-news :global(.dt-news) {
+		background: rgba(5, 6, 10, 0.88);
+		box-shadow: 0 0 0 10px rgba(5, 6, 10, 0.88);
+		transition: background 300ms ease, box-shadow 300ms ease;
+	}
+	.dt-hook.is-wall .dt-win.is-back .dt-win-frame::after { background: rgba(5, 6, 10, 0.7); }
+	.dt-hook-vignette {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(ellipse 75% 70% at 50% 46%, rgba(0, 0, 0, 0) 55%, rgba(3, 4, 8, 0.72) 100%);
+	}
+
+	/* The wall: the speakers, still moving, on small muted screens. */
+	.dt-hook-echo :global(.dt-echo) {
+		position: absolute;
+		left: 0;
+		top: 0;
+		border-radius: 4px;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		opacity: 0;
+		transition: opacity 900ms ease;
+	}
+	.dt-hook-echo :global(.dt-echo.is-on) { opacity: 0.26; }
+	.dt-hook.is-peak .dt-hook-echo :global(.dt-echo.is-on) { opacity: 0.42; }
+
+	/* The headlines and quotes: plain type, outlet or speaker and date as text — never a
+	   masthead. Two sizes (--depth 1, large and bright; 0.62, smaller), and a narrow column
+	   with smaller type for the strips beside a window. Upright, never on top of one another
+	   (hook.ts places them). No blur: a filter on a moving element is re-rasterised every
+	   frame, and that was part of what made the picture stutter. */
+	.dt-hook-news :global(.dt-news) {
+		position: absolute;
+		left: 0;
+		top: 0;
+		box-sizing: border-box;
+		padding: 2px 0 4px 16px;
+		border-left: 3px solid rgba(224, 100, 95, 0.85);
+		transform-origin: 0 0;
+		opacity: 0;
+		will-change: transform, opacity;
+	}
+	.dt-hook-news :global(.dt-news p) {
+		margin: 0;
+		font-family: var(--dt-serif);
+		font-size: calc(15px + var(--depth, 1) * 10px);
+		font-weight: 700;
+		line-height: 1.15;
+		letter-spacing: -0.01em;
+		color: rgba(241, 239, 232, calc(0.34 + var(--depth, 1) * 0.66));
+		text-shadow: 0 2px 16px rgba(0, 0, 0, 0.9);
+	}
+	.dt-hook-news :global(.dt-news small) {
+		display: block;
+		margin-top: 7px;
+		font-family: var(--dt-mono);
+		font-size: 10.5px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: rgba(224, 100, 95, calc(0.45 + var(--depth, 1) * 0.5));
+	}
+	/* The narrow column that fits beside a window: same card, smaller type. */
+	.dt-hook-news :global(.dt-news.is-narrow p) { font-size: calc(13px + var(--depth, 1) * 5px); }
+	.dt-hook-news :global(.dt-news.is-quote) { border-left-color: rgba(224, 162, 51, 0.9); }
+	.dt-hook-news :global(.dt-news.is-quote p) { font-style: italic; font-weight: 600; }
+	.dt-hook-news :global(.dt-news.is-quote small) { color: rgba(224, 162, 51, calc(0.5 + var(--depth, 1) * 0.5)); }
+
+	/* The windows. Each has its own spot, spread across the frame — Hinton upper left of
+	   centre, CNN to the right, Musk lower left — with the frame's centre at (--cx, --cy)
+	   and its height --fh; the width follows the clip's own aspect (--arn, from the
+	   manifest). The caption hangs where there is room: under Hinton, to the left of CNN,
+	   to the right of Musk. */
+	.dt-win {
+		--frame-h: var(--fh, 44vh);
+		position: absolute;
+		left: var(--cx, 50vw);
+		top: var(--cy, 45vh);
+		width: calc(var(--frame-h) * var(--arn, 1.7778));
+		margin: 0;
+		z-index: 3;
+		opacity: 0;
+		transform: translate(-50%, -50%) scale(0.84) rotate(var(--tilt, 0deg));
+		transition: opacity 260ms ease, transform 620ms cubic-bezier(0.18, 1.3, 0.32, 1);
+		will-change: transform, opacity;
+	}
+	.dt-win:not([hidden]) { display: block; }
+	.dt-win[data-dt-win='hinton'] { --cx: 37vw; --cy: 32vh; --fh: min(43vh, 36vw * 9 / 16 * 1.6); --tilt: -1.5deg; }
+	.dt-win[data-dt-win='coxon'] { --cx: 79vw; --cy: 44vh; --fh: min(66vh, 60vw); --tilt: 2deg; }
+	.dt-win[data-dt-win='musk'] { --cx: 18vw; --cy: 72vh; --fh: min(34vh, 26vw); --tilt: -2deg; }
+	.dt-win.is-in { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+	/* Hinton speaks first, alone, in the middle of the screen; when CNN arrives he glides to
+	   his own spot. A transform, so the move costs the compositor and nothing else. */
+	.dt-win[data-dt-win='hinton'].is-solo.is-in {
+		transform: translate(calc(-50% + 50vw - var(--cx)), calc(-50% + 46vh - var(--cy))) scale(1.12);
+	}
+	.dt-win[data-dt-win='hinton'].is-in:not(.is-solo) { transition: opacity 260ms ease, transform 1100ms cubic-bezier(0.65, 0, 0.35, 1); }
+	.dt-win.is-in .dt-win-frame { animation: dt-pop 420ms steps(4) both; }
+	.dt-win.is-speaking { z-index: 4; }
+	.dt-win.is-back { z-index: 1; transform: translate(-50%, -50%) scale(0.94); }
+	.dt-win.is-back .dt-win-meta,
+	.dt-win:not(.is-speaking) .dt-win-meta { opacity: 0; }
+	/* Receded: dimmed by a plate over the picture, not a filter on the video — a CSS filter
+	   on a playing video takes it off the fast path and costs every frame. */
+	.dt-win-frame::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: rgba(5, 6, 10, 0.55);
+		opacity: 0;
+		transition: opacity 500ms ease;
+		pointer-events: none;
+	}
+	.dt-win.is-back .dt-win-frame::after { opacity: 1; }
+	@keyframes dt-pop {
+		0% { clip-path: inset(0 0 60% 0); }
+		35% { clip-path: inset(30% 0 0 0); }
+		70% { clip-path: inset(0 0 12% 0); }
+		100% { clip-path: inset(0 0 0 0); }
+	}
+	.dt-win-frame {
+		position: relative;
+		width: 100%;
+		height: var(--frame-h);
+		overflow: hidden;
+		border-radius: 10px;
+		background: #000;
+		box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 34px 90px rgba(0, 0, 0, 0.7);
+	}
+	/* The two reposts are phone-shaped: a bezel, as on the screen they were shared from. */
+	.dt-win[data-shape='tall'] .dt-win-frame,
+	.dt-win[data-shape='square'] .dt-win-frame {
+		border-radius: 20px;
+		box-shadow: 0 0 0 6px #0B0C12, 0 0 0 7px rgba(255, 255, 255, 0.14), 0 34px 90px rgba(0, 0, 0, 0.7);
+	}
+	.dt-win video { display: block; width: 100%; height: 100%; object-fit: cover; }
+	.dt-win-scan {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.1) 2px 3px);
+	}
+
+	/* The caption: who, what they are saying, and where it is from — on a solid plate (no
+	   backdrop blur over moving video: that is recomputed every frame). */
+	.dt-win-meta {
+		position: absolute;
+		box-sizing: border-box;
+		width: 400px;
+		padding: 10px 14px 11px;
+		border-radius: 8px;
+		background: rgba(5, 6, 10, 0.9);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+		transition: opacity 500ms ease;
+	}
+	.dt-win[data-cap='below'] .dt-win-meta { top: calc(100% + 14px); left: 50%; transform: translateX(-50%); width: max(100%, 420px); text-align: center; }
+	.dt-win[data-cap='left'] .dt-win-meta { right: calc(100% + 18px); bottom: 0; text-align: right; }
+	.dt-win[data-cap='right'] .dt-win-meta { left: calc(100% + 18px); top: 50%; transform: translateY(-50%); text-align: left; }
+	.dt-win-who {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+		margin: 0 0 7px;
+		font-family: var(--dt-mono);
+		font-size: 11px;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--dt-mid);
+	}
+	.dt-win[data-cap='below'] .dt-win-who { justify-content: center; }
+	.dt-win[data-cap='left'] .dt-win-who { justify-content: flex-end; }
+	.dt-win-who b { color: var(--dt-fg); font-weight: 700; }
+	.dt-win-live {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--dt-warn);
+		opacity: 0;
+		align-self: center;
+	}
+	.dt-win.is-speaking .dt-win-live { opacity: 1; animation: dt-breathe 1s ease-in-out infinite; }
+	.dt-win-cap { opacity: 0; transition: opacity 260ms ease; }
+	.dt-win-cap:not([hidden]) { display: block; }
+	.dt-win-cap.is-on { opacity: 1; }
+	.dt-win-line {
+		margin: 0;
+		font-family: var(--dt-sans);
+		font-size: clamp(18px, 1.4vw, 25px);
+		font-weight: 600;
+		line-height: 1.3;
+		text-wrap: balance;
+	}
+	.dt-win-line :global(span) { color: rgba(241, 239, 232, 0.3); transition: color 160ms ease; }
+	.dt-win-line :global(span.is-said) { color: var(--dt-fg); }
+	.dt-win-src {
+		margin: 8px 0 0;
+		font-family: var(--dt-mono);
+		font-size: 10px;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--dt-dim);
+	}
+
+	/* The peak, and the tear. */
+	.dt-hook.is-peak .dt-win.is-in { animation: dt-tremor 140ms steps(2) infinite; }
+	.dt-hook-tear {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		opacity: 0;
+		background:
+			repeating-linear-gradient(180deg, rgba(224, 100, 95, 0.0) 0 11px, rgba(224, 100, 95, 0.22) 11px 13px, rgba(0, 0, 0, 0) 13px 29px),
+			linear-gradient(90deg, rgba(0, 255, 255, 0.12), rgba(255, 0, 80, 0.12));
+		mix-blend-mode: screen;
+	}
+	.dt-hook.is-glitch .dt-hook-tear { animation: dt-tear 420ms steps(6) both; }
+	.dt-hook.is-glitch .dt-win.is-in { animation: dt-slice 420ms steps(5) both; }
+	@keyframes dt-tremor {
+		0% { translate: 0 0; }
+		50% { translate: 1.5px -1px; }
+		100% { translate: -1px 1px; }
+	}
+	@keyframes dt-tear {
+		0% { opacity: 0; transform: translateY(0); }
+		20% { opacity: 1; transform: translateY(-6px); }
+		60% { opacity: 0.7; transform: translateY(9px); }
+		100% { opacity: 1; transform: translateY(0); }
+	}
+	@keyframes dt-slice {
+		0% { clip-path: inset(0 0 0 0); translate: 0 0; filter: none; }
+		20% { clip-path: inset(12% 0 58% 0); translate: -18px 0; filter: hue-rotate(80deg) saturate(3); }
+		40% { clip-path: inset(46% 0 22% 0); translate: 22px 0; filter: invert(0.2); }
+		60% { clip-path: inset(0 0 72% 0); translate: -9px 0; filter: hue-rotate(-60deg) saturate(2.5); }
+		80% { clip-path: inset(66% 0 4% 0); translate: 14px 0; filter: brightness(2); }
+		100% { clip-path: inset(40% 0 40% 0); translate: 0 0; filter: brightness(3); }
+	}
+
+	/* ── the bridge: a network training, then a black box shutting over it ──────── */
+	.dt-mesh {
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: calc(var(--dt-top) + 2);
+		background: radial-gradient(ellipse 85% 75% at 50% 46%, #0A0C15 0%, #05060A 72%);
+		opacity: 0;
+		transition: opacity 500ms ease;
+		pointer-events: none;
+	}
+	.dt-mesh.is-on { opacity: 1; }
+	.dt-mesh.is-out { opacity: 0; }
+
+	/* ── leader lines and tags ────────────────────────────────────────────────── */
+	.dt-lines {
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: calc(var(--dt-top) + 3);
+		pointer-events: none;
+		overflow: visible;
+	}
+	.dt-lead { --tone: var(--dt-amber); }
+	.dt-lead[data-tone='warn'] { --tone: var(--dt-warn); }
+	.dt-lead[data-tone='dim'] { --tone: var(--dt-mid); }
+	.dt-lead[data-tone='fg'] { --tone: var(--dt-fg); }
+	.dt-lead path {
+		fill: none;
+		stroke: var(--tone);
+		stroke-width: 1.3;
+		stroke-dasharray: 1;
+		stroke-dashoffset: 1;
+		opacity: 0.9;
+		transition: stroke-dashoffset 520ms var(--dt-ease) 120ms;
+		filter: drop-shadow(0 0 4px color-mix(in srgb, var(--tone) 60%, transparent));
+	}
+	.dt-lead [data-dt-dot] {
+		fill: var(--tone);
+		opacity: 0;
+		transform-box: fill-box;
+		transform-origin: center;
+		transform: scale(0.2);
+		transition: opacity 200ms ease, transform 360ms var(--dt-ease);
+	}
+	.dt-lead [data-dt-ring] {
+		fill: none;
+		stroke: var(--tone);
+		stroke-width: 1.4;
+		opacity: 0;
+		transform-box: fill-box;
+		transform-origin: center;
+	}
+	.dt-lead.is-on path { stroke-dashoffset: 0; }
+	.dt-lead.is-on [data-dt-dot] { opacity: 1; transform: none; }
+	.dt-lead.is-on [data-dt-ring] { animation: dt-ping 1600ms ease-out infinite; }
+	.dt-lead.is-bare [data-dt-dot] { r: 4.6; }
+	@keyframes dt-ping {
+		0% { opacity: 0.85; transform: scale(0.35); }
+		80%, 100% { opacity: 0; transform: scale(2.1); }
+	}
+	.dt-tag {
+		--tone: var(--dt-amber);
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: calc(var(--dt-top) + 3);
+		flex-direction: column;
+		gap: 2px;
+		padding: 7px 11px 8px;
+		border: 1px solid color-mix(in srgb, var(--tone) 55%, transparent);
+		border-radius: 6px;
+		background: rgba(12, 13, 22, 0.82);
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 18px color-mix(in srgb, var(--tone) 18%, transparent);
+		pointer-events: none;
+		white-space: nowrap;
+		opacity: 0;
+		translate: 0 6px;
+		transition: opacity 260ms ease 280ms, translate 420ms var(--dt-ease) 280ms;
+	}
+	.dt-tag:not([hidden]) { display: flex; }
+	.dt-tag[data-tone='warn'] { --tone: var(--dt-warn); }
+	.dt-tag[data-tone='dim'] { --tone: var(--dt-mid); }
+	.dt-tag[data-tone='fg'] { --tone: var(--dt-fg); }
+	.dt-tag.is-on { opacity: 1; translate: 0 0; }
+	.dt-tag small {
+		font-family: var(--dt-mono);
+		font-size: 9.5px;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--dt-dim);
+	}
+	.dt-tag b {
+		font-family: var(--dt-mono);
+		font-size: 14px;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+		color: var(--tone);
+	}
+
+	/* ── kinetic words ────────────────────────────────────────────────────────── */
+	/* A chapter title gets the stage to itself: the console steps back behind a dark
+	   field for the second it is up, the way a title card does in a film. */
+	.dt-kin-scrim {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--dt-top) + 4);
+		pointer-events: none;
+		opacity: 0;
+		background: radial-gradient(ellipse 70% 55% at 50% 50%, rgba(5, 6, 10, 0.86) 0%, rgba(5, 6, 10, 0.62) 60%, rgba(5, 6, 10, 0.35) 100%);
+		-webkit-backdrop-filter: blur(4px);
+		backdrop-filter: blur(4px);
+		transition: opacity 480ms ease;
+	}
+	.dt-kin-scrim.is-on { opacity: 1; }
+	.dt-kin {
+		position: fixed;
+		z-index: calc(var(--dt-top) + 4);
+		transform: translate(-50%, -50%);
+		text-align: center;
+		pointer-events: none;
+	}
+	.dt-kin-word {
+		margin: 0;
+		font-family: var(--dt-sans);
+		font-size: clamp(56px, 6.4vw, 120px);
+		font-weight: 800;
+		line-height: 1;
+		letter-spacing: 0.3em;
+		margin-right: -0.3em;
+		color: var(--dt-fg);
+		white-space: nowrap;
+		transition: letter-spacing 1400ms var(--dt-ease);
+		text-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
+	}
+	.dt-kin[data-tone='amber'] .dt-kin-word { color: #F2BC54; text-shadow: 0 0 40px rgba(224, 162, 51, 0.45), 0 10px 50px rgba(0, 0, 0, 0.6); }
+	.dt-kin[data-tone='warn'] .dt-kin-word { color: #EC7A74; text-shadow: 0 0 40px rgba(224, 100, 95, 0.35), 0 10px 50px rgba(0, 0, 0, 0.6); }
+	.dt-kin.is-on .dt-kin-word { letter-spacing: 0.2em; }
+	.dt-kin-word :global(span) {
+		display: inline-block;
+		opacity: 0;
+		filter: blur(14px);
+		transform: translateY(18px) scale(1.06);
+		transition: opacity 520ms ease, filter 620ms ease, transform 760ms var(--dt-ease);
+	}
+	.dt-kin.is-on .dt-kin-word :global(span) { opacity: 1; filter: blur(0); transform: none; }
+	.dt-kin.is-out .dt-kin-word :global(span) {
+		opacity: 0;
+		filter: blur(10px);
+		transform: translateY(-10px);
+		transition-duration: 380ms;
+		transition-delay: 0ms !important;
+	}
+	.dt-kin-sub {
+		margin: 16px 0 0;
+		font-family: var(--dt-mono);
+		font-size: 12px;
+		letter-spacing: 0.34em;
+		text-transform: uppercase;
+		color: var(--dt-mid);
+		opacity: 0;
+		transition: opacity 500ms ease 300ms;
+	}
+	.dt-kin.is-on .dt-kin-sub { opacity: 1; }
+	.dt-kin.is-out .dt-kin-sub { opacity: 0; transition-delay: 0ms; }
+
+	/* ── rewind ───────────────────────────────────────────────────────────────── */
+	.dt-rew {
+		position: fixed;
+		top: 22px;
+		left: 50%;
+		z-index: calc(var(--dt-top) + 5);
+		transform: translateX(-50%);
+		align-items: center;
+		gap: 10px;
+		padding: 6px 14px;
+		border: 1px solid var(--dt-rule);
+		border-radius: 999px;
+		background: rgba(12, 13, 22, 0.8);
+		font-family: var(--dt-mono);
+		font-size: 11px;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: var(--dt-fg);
+		animation: dt-breathe 700ms ease-in-out infinite;
+	}
+	.dt-rew:not([hidden]) { display: flex; }
+
+	/* ── progress, chapter, keys ──────────────────────────────────────────────── */
+	.dt-hair {
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: 0;
+		height: 2px;
+		z-index: calc(var(--dt-top) + 5);
+		background: rgba(255, 255, 255, 0.05);
+		pointer-events: none;
+	}
+	.dt-hair i {
+		display: block;
+		height: 100%;
+		width: 0;
+		background: linear-gradient(90deg, #B97C16, var(--dt-amber) 70%, #F7CF7C);
+		box-shadow: 0 0 10px rgba(224, 162, 51, 0.7);
+		transition: width 900ms var(--dt-ease);
+	}
+	.dt-chip {
+		position: fixed;
+		left: 24px;
+		bottom: 18px;
+		z-index: calc(var(--dt-top) + 5);
+		margin: 0;
+		align-items: center;
+		gap: 10px;
+		padding: 6px 12px 6px 8px;
+		border: 1px solid var(--dt-rule);
+		border-radius: 999px;
+		background: rgba(12, 13, 22, 0.78);
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
+		font-family: var(--dt-mono);
+		font-size: 11px;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--dt-fg);
+		opacity: 0;
+		translate: -10px 0;
+		transition: opacity 320ms ease, translate 520ms var(--dt-ease);
+		pointer-events: none;
+	}
+	.dt-chip:not([hidden]) { display: flex; }
+	.dt-chip.is-on { opacity: 1; translate: 0 0; }
+	.dt-chip-num {
+		padding: 2px 6px;
+		border-radius: 999px;
+		background: var(--dt-amber);
+		color: #141625;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+	}
+	.dt-chip-title { white-space: nowrap; }
+	.dt-keys {
+		position: fixed;
+		right: 20px;
+		bottom: 16px;
+		z-index: calc(var(--dt-top) + 5);
+		margin: 0;
+		font-family: var(--dt-mono);
+		font-size: 10.5px;
+		color: rgba(130, 138, 168, 0.8);
+		pointer-events: none;
+	}
+
+	/* ── subtitles ────────────────────────────────────────────────────────────── */
+	.dt-sub {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: calc(var(--dt-top) + 5);
+		justify-content: center;
+		padding: 0 8vw 7.5vh;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 360ms ease;
+	}
+	.dt-sub::before {
+		content: '';
+		position: absolute;
+		inset: auto 0 0 0;
+		height: 30vh;
+		background: linear-gradient(180deg, rgba(5, 6, 10, 0) 0%, rgba(5, 6, 10, 0.62) 55%, rgba(5, 6, 10, 0.86) 100%);
+		z-index: -1;
+	}
+	.dt-sub:not([hidden]) { display: flex; }
+	.dt-sub.is-on { opacity: 1; }
+	.dt-sub-line {
+		max-width: 1080px;
+		margin: 0;
+		font-family: var(--dt-sans);
+		font-size: clamp(21px, 1.7vw, 32px);
+		font-weight: 600;
+		line-height: 1.34;
+		letter-spacing: -0.005em;
+		text-align: center;
+		text-wrap: balance;
+		text-shadow: 0 2px 20px rgba(0, 0, 0, 0.65);
+	}
+	.dt-sub-line :global(span) {
+		color: rgba(241, 239, 232, 0.28);
+		transition: color 200ms ease;
+	}
+	.dt-sub-line :global(span.is-said) { color: var(--dt-fg); }
+	.dt-sub-line :global(span.is-key.is-said) { color: #F2BC54; }
+
+	/* ── paused ───────────────────────────────────────────────────────────────── */
+	.dt-paused {
+		position: fixed;
+		left: 50%;
+		top: 50%;
+		z-index: calc(var(--dt-top) + 7);
+		transform: translate(-50%, -50%);
+		align-items: center;
+		gap: 12px;
+		padding: 12px 18px;
+		border-radius: 999px;
+		border: 1px solid var(--dt-rule);
+		background: rgba(15, 17, 28, 0.94);
+		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+		font-family: var(--dt-sans);
+		color: var(--dt-fg);
+	}
+	.dt-paused:not([hidden]) { display: flex; }
+	.dt-paused b { font-size: 14px; }
+	.dt-paused span { font-size: 12.5px; color: var(--dt-mid); }
+
+	/* ── the end card ─────────────────────────────────────────────────────────── */
+	.dt-end {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--dt-top) + 6);
+		place-items: center;
+		background: radial-gradient(ellipse at 50% 45%, rgba(20, 22, 37, 0.86) 0%, rgba(5, 6, 10, 0.96) 70%);
+		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
+		opacity: 0;
+		transition: opacity 900ms ease;
+	}
+	.dt-end:not([hidden]) { display: grid; }
+	.dt-end.is-on { opacity: 1; }
+	.dt-end-inner {
+		width: min(820px, calc(100vw - 64px));
+		text-align: center;
+	}
+	.dt-end-eyebrow {
+		margin: 0 0 18px;
+		font-family: var(--dt-mono);
+		font-size: 12px;
+		letter-spacing: 0.34em;
+		text-transform: uppercase;
+		color: var(--dt-amber);
+		opacity: 0;
+		transition: opacity 700ms ease 500ms;
+	}
+	.dt-end-eyebrow span { color: var(--dt-dim); }
+	.dt-end-title {
+		margin: 0;
+		font-family: var(--dt-serif);
+		font-size: clamp(44px, 4.6vw, 80px);
+		font-weight: 600;
+		line-height: 1.05;
+		letter-spacing: -0.02em;
+		color: var(--dt-fg);
+		opacity: 0;
+		filter: blur(12px);
+		transform: translateY(14px);
+		transition: opacity 900ms ease 150ms, filter 1100ms ease 150ms, transform 1200ms var(--dt-ease) 150ms;
+	}
+	.dt-end-body {
+		margin: 20px auto 0;
+		max-width: 560px;
+		font-family: var(--dt-sans);
+		font-size: 15px;
+		line-height: 1.55;
+		color: var(--dt-mid);
+		opacity: 0;
+		transition: opacity 700ms ease 900ms;
+	}
+	.dt-end.is-on .dt-end-eyebrow,
+	.dt-end.is-on .dt-end-body { opacity: 1; }
+	.dt-end.is-on .dt-end-title { opacity: 1; filter: blur(0); transform: none; }
+	.dt-end-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 10px;
+		margin-top: 30px;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 500ms ease;
+	}
+	.dt-end.is-live .dt-end-actions { opacity: 1; pointer-events: auto; }
+	.dt-end-btn {
+		padding: 11px 18px;
+		border-radius: 6px;
+		border: 1px solid var(--dt-rule);
+		background: transparent;
+		color: var(--dt-fg);
+		font-family: var(--dt-sans);
+		font-size: 14px;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.dt-end-btn:hover { border-color: var(--dt-mid); }
+	.dt-end-btn--primary { background: var(--dt-amber); border-color: var(--dt-amber); color: #141625; }
+	.dt-end-btn--primary:hover { filter: brightness(1.06); border-color: var(--dt-amber); }
+	.dt-end-btn:focus-visible { outline: 2px solid var(--dt-amber); outline-offset: 2px; }
+
+	/* ── the presenter cursor ─────────────────────────────────────────────────────
+	   The tip is the element's origin, so a transform of (x, y) puts it exactly there. */
+	.dt-cursor {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 2147483646;
+		width: 0;
+		height: 0;
+		pointer-events: none;
+		opacity: 0;
+		will-change: transform;
+	}
+	.dt-cursor-arrow {
+		position: absolute;
+		left: -3px;
+		top: -2.2px;
+		width: 30px;
+		height: 34px;
+		overflow: visible;
+		transform-origin: 3px 2.2px;
+		filter: drop-shadow(0 0 7px rgba(224, 162, 51, 0.55)) drop-shadow(0 5px 9px rgba(0, 0, 0, 0.5));
+		transition: transform 160ms var(--dt-ease), opacity 200ms ease;
+	}
+	.dt-cur-body {
+		fill: url(#dt-cur-fill);
+		stroke: url(#dt-cur-rim);
+		stroke-width: 1.7;
+		stroke-linejoin: round;
+	}
+	.dt-cur-shine { fill: none; stroke: rgba(255, 255, 255, 0.9); stroke-width: 1; stroke-linecap: round; opacity: 0.7; }
+	.dt-cursor.is-magnet .dt-cursor-arrow { transform: scale(0.84); }
+	.dt-cursor.is-press .dt-cursor-arrow { transform: scale(0.74); }
+	.dt-cursor-halo {
+		position: absolute;
+		left: -22px;
+		top: -22px;
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(224, 162, 51, 0.3) 0%, rgba(224, 162, 51, 0.08) 50%, rgba(224, 162, 51, 0) 72%);
+		transition: transform 240ms var(--dt-ease);
+	}
+	.dt-cursor.is-hover .dt-cursor-halo { transform: scale(1.3); }
+	.dt-cursor.is-press .dt-cursor-halo { transform: scale(0.7); }
+	.dt-cursor-wave,
+	.dt-cursor-wave::after {
+		position: absolute;
+		left: -36px;
+		top: -36px;
+		width: 72px;
+		height: 72px;
+		border-radius: 50%;
+		border: 2px solid rgba(247, 207, 124, 0.95);
+		opacity: 0;
+		transform: scale(0.1);
+	}
+	.dt-cursor-wave::after {
+		content: '';
+		left: -2px;
+		top: -2px;
+		border-color: rgba(255, 255, 255, 0.7);
+		border-width: 1px;
+	}
+	.dt-cursor-wave.is-on { animation: dt-wave 620ms var(--dt-ease) both; }
+	.dt-cursor-wave.is-on::after { animation: dt-wave 760ms var(--dt-ease) 90ms both; }
+	@keyframes dt-wave {
+		0% { opacity: 1; transform: scale(0.1); }
+		100% { opacity: 0; transform: scale(1.25); }
+	}
+	.dt-cursor-label {
+		position: absolute;
+		left: 24px;
+		top: 26px;
+		padding: 3px 8px;
+		border-radius: 4px;
+		background: linear-gradient(180deg, #F2BC54, var(--dt-amber));
+		color: #141625;
+		font-family: var(--dt-mono);
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+		opacity: 0;
+		transform: translateY(-4px) scale(0.9);
+		transform-origin: 0 0;
+		transition: opacity 180ms ease, transform 260ms var(--dt-ease);
+	}
+	.dt-cursor.has-label .dt-cursor-label { opacity: 1; transform: none; }
+
+	/* The magnetic ring: the target, not the arrow, becomes the lit thing. */
+	.dt-ring {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: calc(var(--dt-top) + 8);
+		box-sizing: border-box;
+		border: 1.5px solid rgba(247, 207, 124, 0.95);
+		background: rgba(224, 162, 51, 0.07);
+		box-shadow: 0 0 0 4px rgba(224, 162, 51, 0.12), 0 0 26px rgba(224, 162, 51, 0.38);
+		pointer-events: none;
+		opacity: 0;
+		scale: 1.14;
+		transition: opacity 240ms ease, scale 380ms var(--dt-ease);
+	}
+	.dt-ring.is-on { opacity: 1; scale: 1; }
+	.dt-ring.is-press { scale: 0.96; transition-duration: 90ms; }
+	.dt-trail {
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: calc(var(--dt-top) + 9);
+		pointer-events: none;
+	}
+
+	@keyframes dt-rise {
+		from { opacity: 0; transform: translateY(14px); }
+		to { opacity: 1; transform: none; }
+	}
+	@keyframes dt-breathe {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.45; }
+	}
+
+	/* ── page-wide rules while a tour holds the page ──────────────────────────────
+	   Global on purpose: they reach the site's nav, the console and <html>, which this
+	   component does not own. Keyed to the tour's own attributes, so nothing changes
+	   without one. */
+	:global(html[data-tour='pending']),
+	:global(html[data-tour='pending'] *),
+	:global(html[data-tour='running']),
+	:global(html[data-tour='running'] *) { cursor: none !important; }
+	/* PRESENTATION MODE: the nav steps away and the console takes the screen. --nav-h is
+	   what main's offset and the console's height both read (responsive-chrome.css). */
+	:global(html[data-tour='running']) { --nav-h: 0px; }
+	:global(html[data-tour='running'] .nav) { visibility: hidden; }
+	:global(html[data-tour='running'] .rp--app .rp-orient) { display: none; }
+	:global(html[data-tour='running']) .dt-vignette { display: block; }
+	:global(.rp.is-touring) { overflow: clip; }
+	:global(.rp.is-touring .dt-dofable) { transition: opacity 620ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+	/* Dimmed, not blurred — see camera.ts. Opacity is the one property a compositor can
+	   change without repainting what is under it. */
+	:global(.rp.is-touring .dt-blur) { opacity: 0.32; }
+	:global(.rp.dt-rewinding .rp-console) { filter: saturate(0.25) contrast(1.15) brightness(0.9); }
+	:global(html[data-tour-rec]) .dt-keys { display: none; }
+	:global(html[data-tour]:not([data-tour='done'])) .dt-launch:not([hidden]) { display: none; }
+	/* While the offer is up the page behind it is still the page: nothing may start under it,
+	   and the visitor's own pointer stays theirs. */
+	/* OUT OF THE GUIDED READ'S WAY, NOT OUT OF SIGHT. The guided read opens by itself on a
+	   first landing, and its dock sits at the foot of the viewport with Next where this
+	   button lives. Hiding the button then meant a first-time visitor never saw it at all.
+	   While the guide is open it moves to the top right, over the console's run string,
+	   and drops to the one button. */
+	:global(body:has(.rp.is-guided)) .dt-launch:not([hidden]) {
+		top: calc(var(--nav-h, 88px) + 5px);
+		bottom: auto;
+		right: 16px;
+		animation: none;
+	}
+	:global(body:has(.rp.is-guided)) .dt-launch-text small { display: none; }
+	:global(body:has(.rp.is-guided)) .dt-launch-main { padding: 4px 14px 4px 4px; gap: 9px; }
+	:global(body:has(.rp.is-guided)) .dt-launch-icon { width: 28px; height: 28px; }
+</style>

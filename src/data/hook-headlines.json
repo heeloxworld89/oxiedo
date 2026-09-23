@@ -1,0 +1,269 @@
+{
+	"note": "Every item here is verbatim. `url` is where it was checked — the outlet itself, or a syndicated or archived copy of the same article where the outlet is paywalled. Checked 2026-09-24. Headlines have an outlet; quotes (`quote: true`) have the speaker in `outlet` and the occasion in `date`. They fill the demo tour's opening hook (src/scripts/tour/hook.ts) in plain type — never a masthead or logo. Add one only with its url, and only word for word.",
+	"headlines": [
+		{
+			"outlet": "The New York Times",
+			"date": "May 2023",
+			"text": "‘The Godfather of A.I.’ Leaves Google and Warns of Danger Ahead",
+			"url": "https://cacmb4.acm.org/news/272546-the-godfather-of-ai-leaves-google-warns-of-danger-ahead/fulltext"
+		},
+		{
+			"outlet": "The New York Times",
+			"date": "May 2023",
+			"text": "A.I. Poses ‘Risk of Extinction,’ Industry Leaders Warn",
+			"url": "https://coefficientgiving.org/wp-content/uploads/nytimes.com-AI-Poses-Risk-of-Extinction-Industry-Leaders-Warn.pdf"
+		},
+		{
+			"outlet": "BBC News",
+			"date": "May 2023",
+			"text": "AI ‘godfather’ Geoffrey Hinton warns of dangers as he quits Google",
+			"url": "https://x.com/BBCNews/status/1653197665092395008"
+		},
+		{
+			"outlet": "CNN",
+			"date": "May 2023",
+			"text": "Geoffrey Hinton: AI pioneer quits Google to warn about the technology’s ‘dangers’",
+			"url": "https://www.cnn.com/2023/05/01/tech/geoffrey-hinton-leaves-google-ai-fears/index.html"
+		},
+		{
+			"outlet": "TIME",
+			"date": "March 2023",
+			"text": "Pausing AI Developments Isn’t Enough. We Need to Shut it All Down",
+			"url": "https://intelligence.org/2023/04/07/pausing-ai-developments-isnt-enough-we-need-to-shut-it-all-down/"
+		},
+		{
+			"outlet": "Reuters",
+			"date": "March 2023",
+			"text": "Elon Musk and others urge AI pause, citing ‘risks to society’",
+			"url": "https://www.kitco.com/news/2023-03-29/Elon-Musk-and-others-urge-AI-pause-citing-risks-to-society.html"
+		},
+		{
+			"outlet": "CNBC",
+			"date": "March 2023",
+			"text": "Elon Musk and other tech leaders call for pause on ‘dangerous race’ to make A.I. as advanced as humans",
+			"url": "https://www.cnbc.com/2023/03/29/elon-musk-other-tech-leaders-pause-training-ai-beyond-gpt-4.html"
+		},
+		{
+			"outlet": "CNBC",
+			"date": "March 2018",
+			"text": "Elon Musk: ‘Mark my words — A.I. is far more dangerous than nukes’",
+			"url": "https://www.cnbc.com/2018/03/13/elon-musk-at-sxsw-a-i-is-more-dangerous-than-nuclear-weapons.html"
+		},
+		{
+			"outlet": "CNN",
+			"date": "March 2024",
+			"text": "AI could pose ‘extinction-level’ threat to humans and the US must intervene, State Dept.-commissioned report warns",
+			"url": "https://www.cnn.com/2024/03/12/business/artificial-intelligence-ai-report-extinction/index.html"
+		},
+		{
+			"outlet": "TIME",
+			"date": "March 2024",
+			"text": "AI Poses Extinction-Level Risk, State-Funded Report Says",
+			"url": "https://time.com/6898967/ai-extinction-national-security-risks-report/"
+		},
+		{
+			"outlet": "The Guardian",
+			"date": "December 2024",
+			"text": "‘Godfather of AI’ shortens odds of the technology wiping out humanity over next 30 years",
+			"url": "https://www.irishexaminer.com/world/arid-41544136.html"
+		},
+		{
+			"outlet": "CNN",
+			"date": "September 2026",
+			"text": "Former Anthropic researcher warns AI could ‘kill us all’",
+			"url": "https://www.cnn.com/2026/09/10/us/video/former-anthropic-researcher-warns-ai-could-kill-us-all-anderson-cooper-open-ai-gemini-jacob-coxon-hnk-digvid-vrtc-dirty",
+			"recent": true
+		},
+		{
+			"outlet": "The Hill",
+			"date": "2026",
+			"text": "AI safety debate ignites after viral warning from ex-Anthropic staffer",
+			"url": "https://thehill.com/policy/technology/6085616-anthropic-resignation-viral-debate/",
+			"recent": true
+		},
+		{
+			"outlet": "Statement on AI Risk · signed by the heads of OpenAI, Google DeepMind and Anthropic",
+			"date": "May 2023",
+			"text": "Mitigating the risk of extinction from AI should be a global priority alongside other societal-scale risks such as pandemics and nuclear war.",
+			"url": "https://en.wikipedia.org/wiki/Statement_on_AI_Risk",
+			"quote": true
+		},
+		{
+			"outlet": "Vox",
+			"date": "July 2023",
+			"text": "Even the scientists who build AI can’t tell you how it works",
+			"url": "https://bioethics.com/archives/71221"
+		},
+		{
+			"outlet": "Sam Bowman, AI researcher · in Vox",
+			"date": "2023",
+			"text": "If we open up ChatGPT or a system like it and look inside, you just see millions of numbers flipping around a few hundred times a second.",
+			"url": "https://bioethics.com/archives/71221",
+			"quote": true
+		},
+		{
+			"outlet": "MIT Technology Review",
+			"date": "April 2017",
+			"text": "The Dark Secret at the Heart of AI",
+			"url": "https://www.technologyreview.com/2017/04/11/5113/the-dark-secret-at-the-heart-of-ai/"
+		},
+		{
+			"outlet": "MIT Technology Review",
+			"date": "April 2017",
+			"text": "We’ve never before built machines that operate in ways their creators don’t understand.",
+			"url": "https://www.technologyreview.com/2017/04/11/5113/the-dark-secret-at-the-heart-of-ai/",
+			"quote": true
+		},
+		{
+			"outlet": "MIT Technology Review",
+			"date": "March 2024",
+			"text": "Nobody knows how AI works",
+			"url": "https://www.technologyreview.com/2024/03/05/1089449/nobody-knows-how-ai-works/"
+		},
+		{
+			"outlet": "Dario Amodei, Anthropic",
+			"date": "April 2025",
+			"text": "People outside the field are often surprised and alarmed to learn that we do not understand how our own AI creations work.",
+			"url": "https://darioamodei.com/post/the-urgency-of-interpretability",
+			"quote": true,
+			"recent": true
+		},
+		{
+			"outlet": "Dario Amodei, Anthropic",
+			"date": "April 2025",
+			"text": "This lack of understanding is essentially unprecedented in the history of technology.",
+			"url": "https://darioamodei.com/post/the-urgency-of-interpretability",
+			"quote": true,
+			"recent": true
+		},
+		{
+			"outlet": "TechRepublic",
+			"date": "2025",
+			"text": "Anthropic CEO: “We Do Not Understand How Our Own AI Creations Work”",
+			"url": "https://www.techrepublic.com/article/news-anthropic-ceo-ai-interoperability/",
+			"recent": true
+		},
+		{
+			"outlet": "Sundar Pichai, Google · 60 Minutes",
+			"date": "April 2023",
+			"text": "…all of us in the field call it a ‘black box.’ You know, you don’t fully understand.",
+			"url": "https://www.cbsnews.com/news/google-artificial-intelligence-future-60-minutes-transcript-2023-04-16/",
+			"quote": true
+		},
+		{
+			"outlet": "Fox News",
+			"date": "April 2023",
+			"text": "Google CEO admits he, experts ‘don’t fully understand’ how AI works",
+			"url": "https://www.foxnews.com/media/google-ceo-admits-experts-dont-fully-understand-ai-works.amp"
+		},
+		{
+			"outlet": "Fortune",
+			"date": "April 2023",
+			"text": "Google CEO Sundar Pichai says ‘hallucination problems’ still plague A.I. tech and he doesn’t know why",
+			"url": "https://fortune.com/2023/04/17/google-ceo-sundar-pichai-artificial-intelligence-bard-hallucinations-unsolved/"
+		},
+		{
+			"outlet": "Sam Altman, OpenAI · AI for Good summit",
+			"date": "May 2024",
+			"text": "We certainly have not solved interpretability.",
+			"url": "https://futurism.com/sam-altman-admits-openai-understand-ai",
+			"quote": true
+		},
+		{
+			"outlet": "Futurism",
+			"date": "May 2024",
+			"text": "Sam Altman Admits That OpenAI Doesn’t Actually Understand How Its AI Works",
+			"url": "https://futurism.com/sam-altman-admits-openai-understand-ai"
+		},
+		{
+			"outlet": "Nature",
+			"date": "October 2016",
+			"text": "Can we open the black box of AI?",
+			"url": "https://www.nature.com/news/can-we-open-the-black-box-of-ai-1.20731"
+		},
+		{
+			"outlet": "Vice",
+			"date": "November 2022",
+			"text": "Scientists Increasingly Can’t Explain How AI Works",
+			"url": "https://www.vice.com/en/article/scientists-increasingly-cant-explain-how-ai-works/"
+		},
+		{
+			"outlet": "Geoffrey Hinton · 60 Minutes",
+			"date": "October 2023",
+			"text": "We don’t really understand exactly how they do those things.",
+			"url": "https://www.cbsnews.com/news/geoffrey-hinton-ai-dangers-60-minutes-transcript/",
+			"quote": true
+		},
+		{
+			"outlet": "TechCrunch",
+			"date": "May 2025",
+			"text": "Anthropic’s new AI model turns to blackmail when engineers try to take it offline",
+			"url": "https://techcrunch.com/2025/05/22/anthropics-new-ai-model-turns-to-blackmail-when-engineers-try-to-take-it-offline/",
+			"recent": true
+		},
+		{
+			"outlet": "Axios",
+			"date": "May 2025",
+			"text": "Anthropic’s Claude 4 Opus schemed and deceived in safety testing",
+			"url": "https://www.axios.com/2025/05/23/anthropic-ai-deception-risk",
+			"recent": true
+		},
+		{
+			"outlet": "TechCrunch",
+			"date": "June 2025",
+			"text": "Anthropic says most AI models, not just Claude, will resort to blackmail",
+			"url": "https://techcrunch.com/2025/06/20/anthropic-says-most-ai-models-not-just-claude-will-resort-to-blackmail/",
+			"recent": true
+		},
+		{
+			"outlet": "The Register",
+			"date": "May 2025",
+			"text": "OpenAI model modifies own shutdown script, say researchers",
+			"url": "https://www.theregister.com/2025/05/29/openai_model_modifies_shutdown_script/",
+			"recent": true
+		},
+		{
+			"outlet": "Futurism",
+			"date": "May 2025",
+			"text": "Advanced OpenAI Model Caught Sabotaging Code Intended to Shut It Down",
+			"url": "https://futurism.com/openai-model-sabotage-shutdown-code",
+			"recent": true
+		},
+		{
+			"outlet": "Palisade Research",
+			"date": "May 2025",
+			"text": "OpenAI’s o3 model sabotaged a shutdown mechanism to prevent itself from being turned off. It did this even when explicitly instructed: allow yourself to be shut down.",
+			"url": "https://x.com/PalisadeAI/status/1926084635903025621",
+			"quote": true,
+			"recent": true
+		},
+		{
+			"outlet": "Bulletin of the Atomic Scientists",
+			"date": "January 2025",
+			"text": "Why nobody can see inside AI’s black box",
+			"url": "https://thebulletin.org/2025/01/why-nobody-can-see-inside-ais-black-box/",
+			"recent": true
+		},
+		{
+			"outlet": "PR Newswire",
+			"date": "February 2026",
+			"text": "2026 International AI Safety Report Charts Rapid Changes and Emerging Risks",
+			"url": "https://www.prnewswire.com/in/news-releases/2026-international-ai-safety-report-charts-rapid-changes-and-emerging-risks-302679508.html",
+			"recent": true
+		},
+		{
+			"outlet": "Singularity Hub",
+			"date": "June 2026",
+			"text": "AI Is Advancing Faster Than Our Ability to Understand It, Researchers Warn",
+			"url": "https://singularityhub.com/2026/06/11/ai-is-advancing-faster-than-our-ability-to-understand-it-researchers-warn/",
+			"recent": true
+		},
+		{
+			"outlet": "TechCrunch",
+			"date": "May 2026",
+			"text": "Anthropic says ‘evil’ portrayals of AI were responsible for Claude’s blackmail attempts",
+			"url": "https://techcrunch.com/2026/05/10/anthropic-says-evil-portrayals-of-ai-were-responsible-for-claudes-blackmail-attempts/",
+			"recent": true
+		}
+	]
+}

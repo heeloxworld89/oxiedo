@@ -1,0 +1,41 @@
+---
+/* THE LANDING GATE — /black-box only. Decides, before anything on the page runs, which of
+ * three landings this is, and stamps it on <html data-tour> for everyone else to read:
+ *
+ *   "pending" — a shared ?tour=demo|full link. The narrated tour takes the page; the title
+ *               sequence and the guided read stand down (DemoTour.astro, ColdOpen.astro,
+ *               ReplayDemo.astro all read this).
+ *   "offer"   — an ordinary desktop landing. The offer to watch the demo is the first thing
+ *               a visitor sees, with both lengths and their running times — there is no
+ *               title sequence any more (removed 2026-09-24; its closing black box lives on in
+ *               the tour's bridge, tour/mesh.ts). The guided read and autoplay WAIT on the
+ *               answer: a tour takes the page, and "no thanks" hands the console over.
+ *   (none)    — a phone, reduced motion, ?intro=0 (the console, straight away — for tests
+ *               and for demonstrating it in a meeting), or ?offer=0.
+ *
+ * WHY ITS OWN COMPONENT, AND WHY FIRST. It has to run during parse, before ReplayDemo's
+ * module script can start autoplay or the guided read. Placed ahead of the console on the
+ * page, it is the one place the decision is made.
+ */
+---
+
+<script is:inline>
+	(function () {
+		try {
+			var html = document.documentElement;
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+			if (window.innerWidth < 1240) return;
+			var q = new URLSearchParams(location.search);
+			var cut = q.get('tour');
+			if (cut === 'demo' || cut === 'full' || cut === 'short') {
+				html.setAttribute('data-tour', 'pending');
+				if (q.get('rec') === '1') html.setAttribute('data-tour-rec', '');
+				return;
+			}
+			if (q.get('intro') === '0' || q.get('offer') === '0') return;
+			// A tab-scoped off switch, for the title-sequence test suite only.
+			try { if (sessionStorage.getItem('dt-offer') === 'off') return; } catch (e) { /* storage blocked */ }
+			html.setAttribute('data-tour', 'offer');
+		} catch (e) { /* no gate; the page is unchanged */ }
+	})();
+</script>

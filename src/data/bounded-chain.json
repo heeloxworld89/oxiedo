@@ -1,0 +1,9 @@
+{
+	"source": "three_signal_learning/src/core/shared_readout.py:15-26; its self-test asserts the 4,715 total (line 73)",
+	"chain": [
+		{ "name": "LayerNorm", "shape": "128", "params": 256 },
+		{ "name": "Linear", "shape": "128→32", "params": 4128 },
+		{ "name": "PReLU", "shape": "one slope", "params": 1 },
+		{ "name": "Linear", "shape": "32→10", "params": 330 }
+	]
+}

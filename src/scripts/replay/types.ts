@@ -1,6 +1,32 @@
 // Shape of a replay bundle, as emitted by scripts/build-replay-bundle.py.
 // Kept in one place so the renderer and the engine cannot disagree about it.
 
+import type { ReplayEngine } from './engine';
+import type { Anatomy } from './anatomy';
+
+/** What the console exposes on its root element as `replayApi`, for the demo tour.
+ *
+ *  ONLY WHAT A CURSOR CANNOT CLICK. Play, the rates, the scenarios and the event
+ *  button are pressed by the tour like a reader presses them, so their own handlers
+ *  run. This handle covers the rest: turning a drawing, opening a stage, and a
+ *  freeze-frame that keeps the Play label honest. */
+export interface ReplayHandle {
+	readonly bundle: Bundle | null;
+	readonly engine: ReplayEngine | null;
+	readonly sealed: Anatomy;
+	readonly ormas: Anatomy;
+	/** Pause or resume without a click, keeping the Play label in step. */
+	pause(): void;
+	play(): void;
+	/** Multiplies the rate the buttons show. Test harness only; 1 everywhere else. */
+	setTimeScale(k: number): void;
+	/** Re-render both drawings and the chart at `k` times the device ratio, for a
+	 *  console the tour's camera has zoomed by `k`. */
+	setRenderScale(k: number): void;
+	/** Stop both drawings while the console is covered, and resume them. */
+	hold(on: boolean): void;
+}
+
 export interface Node { id: number; in: number; out: number; params: number }
 
 export interface HealthNode {

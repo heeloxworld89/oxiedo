@@ -37,7 +37,8 @@ import Page from '../layouts/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import Accordion from '../components/Accordion.astro';
 import ReplayDemo from '../components/ReplayDemo.astro';
-import ColdOpen from '../components/ColdOpen.astro';
+import TourGate from '../components/TourGate.astro';
+import DemoTour from '../components/DemoTour.astro';
 
 // The social card is generated from the bundle by scripts/build-replay-cards.py
 // and rasterised by scripts/rasterise-cards.sh, which needs librsvg. Point
@@ -187,12 +188,22 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 	    inside a column — it is the screen. Wrapping it in .container would box an application
 	    into a 1280px measure with cream either side, which is the "boxed into a place on a
 	    website" look this replaces. */}
-	{/* /black-box only. It mounts nowhere else, and it removes itself when it ends. */}
-	<ColdOpen />
+	{/* Decides the landing — a tour link, the offer to watch the demo, or the plain page —
+	    before the console can start. Must stay above it. There is no title sequence any more
+	    (removed 2026-09-24): the offer is the first thing a visitor sees, and the demo's own
+	    opening does the work the title sequence did. */}
+	<TourGate />
+
+	
 
 	<div class="demo-app">
 		<ReplayDemo scenario="dead-layer-lesion" guide="auto" app trail={trail} />
 	</div>
+
+	{/* "Play the demo": the self-driving walkthrough of the console above. /black-box only,
+	    desktop only; it drives the real console rather than a recording of it. Placed after
+	    the console so its parse-time gate runs before the console's module script. */}
+	<DemoTour />
 
 	{/* THIS SECTION NO LONGER INTRODUCES THE SCREEN — the stripe at the top of the console
 	    does that, and it says: two networks, the same data, the same damage; one names what

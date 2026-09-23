@@ -9,7 +9,10 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 
 OUT = 'site-content'
 DROP_CLASS = {'faq-q-icon', 'accordion-icon', 'eyebrow-bullet', 'contact-form-honeypot',
-              'nav-mobile', 'skip-link', 'reveal-sr'}
+              'nav-mobile', 'skip-link', 'reveal-sr',
+              # The demo tour's overlay: a launcher, a caption bar and pop-ups filled at run
+              # time. Interactive chrome, like the nav, not something a reader reads.
+              'dt'}
 
 def inline(node):
     """Inline markup only. Links keep their href; decorative spans are dropped."""

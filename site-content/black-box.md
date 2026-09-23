@@ -21,7 +21,7 @@ Neither is affiliated with Oxiedo.
 
 - ~8%of medical AI can be updated
 
-- Aug 2026 — EU logging rules apply
+- Dec 2027 — EU record-keeping rules apply
 
 **Two neural networks, the same data, the same damage.** **ORMAS**, on the right, names which parts broke — two steps later — and repairs itself. The **sealed network** on the left cannot say anything about it, and never will. Every figure is read from one archived training run.
 

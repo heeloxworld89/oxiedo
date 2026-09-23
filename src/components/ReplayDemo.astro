@@ -393,9 +393,9 @@ const SCENARIOS = [
 
 <script>
 	import { ReplayEngine } from '../scripts/replay/engine';
-	import { draw, readTheme, sizeCanvas } from '../scripts/replay/render';
+	import { draw, readTheme, setChartScale, sizeCanvas } from '../scripts/replay/render';
 	import { Anatomy } from '../scripts/replay/anatomy';
-	import type { Bundle, Correction } from '../scripts/replay/types';
+	import type { Bundle, Correction, ReplayHandle } from '../scripts/replay/types';
 	import { buildGuide, type GuideStep } from '../scripts/replay/guide';
 
 	const DIAGNOSIS: Record<string, string> = {
@@ -437,6 +437,47 @@ const SCENARIOS = [
 		let theme = readTheme(root);
 		const recordAlwaysOn = root.classList.contains('rp--app');
 		let recordShown = -1;
+
+		/* THE RATE IS WHAT THE BUTTONS SAY, TIMES THE HARNESS'S SCALE. `timeScale` is 1
+		   for every reader; the demo tour's test harness raises it so a four-minute tour
+		   can be asserted in twenty seconds without the buttons showing a rate nobody
+		   pressed. */
+		let timeScale = 1;
+		let renderScale = 1;
+		function pressedRate(): number {
+			const on = root.querySelector('[data-rate][aria-pressed="true"]');
+			return Number(on?.getAttribute('data-rate')) || 1;
+		}
+		function syncRate() { engine?.setRate(pressedRate() * timeScale); }
+
+		/* THE HANDLE THE DEMO TOUR DRIVES. See ReplayHandle in types.ts for why it is this
+		   small: everything a reader can click, the tour clicks. */
+		const handle: ReplayHandle = {
+			get bundle() { return bundle; },
+			get engine() { return engine; },
+			sealed: anaBase,
+			ormas: anaOrmas,
+			pause() { engine?.pause(); setPlayLabel(); },
+			play() { engine?.play(); setPlayLabel(); },
+			setTimeScale(k: number) { timeScale = k > 0 ? k : 1; syncRate(); },
+			hold(on: boolean) {
+				anaBase.hold(on);
+				anaOrmas.hold(on);
+			},
+			setRenderScale(k: number) {
+				/* In steps of a half, and only on a change. Every step reallocates three canvas
+				   backing stores; asked for on every camera move at the exact zoom, that was a
+				   reallocation — and a dropped frame — at the start of every move. */
+				const q = k <= 1 ? 1 : Math.min(2, Math.ceil(k * 2) / 2);
+				if (q === renderScale) return;
+				renderScale = q;
+				anaBase.setRenderScale(q);
+				anaOrmas.setRenderScale(q);
+				setChartScale(q);
+				if (engine) render(engine.epoch);
+			},
+		};
+		(root as HTMLElement & { replayApi?: ReplayHandle }).replayApi = handle;
 
 		function render(epoch: number) {
 			if (!bundle || !engine) return;
@@ -826,7 +867,7 @@ const SCENARIOS = [
 
 		/** Set the playback rate and make the rate buttons agree with it. */
 		function applyRate(r: number) {
-			engine?.setRate(r);
+			engine?.setRate(r * timeScale);
 			for (const b of root.querySelectorAll('[data-rate]')) {
 				b.setAttribute('aria-pressed', String(Number(b.getAttribute('data-rate')) === r));
 			}
@@ -1026,6 +1067,7 @@ const SCENARIOS = [
 			if (appRun) appRun.textContent = msg;
 			const box = root.querySelector('[data-failed]');
 			if (box) (box as HTMLElement).hidden = !on;
+			if (on) root.dispatchEvent(new CustomEvent('replay:failed', { detail: { reason } }));
 		}
 
 		async function load(key: string) {
@@ -1057,6 +1099,11 @@ const SCENARIOS = [
 
 			engine?.destroy();
 			engine = new ReplayEngine(bundle);
+			/* A NEW ENGINE STARTS AT 1x, AND THE BUTTONS DID NOT KNOW. Switching scenario
+			   with 4x or 16x pressed left that button lit over a run playing at 1x — the
+			   one control on the screen reporting a state that was not true. The new
+			   engine takes the rate the buttons show. */
+			syncRate();
 			engine.onFrame = (e) => {
 				render(e);
 				// Travelling: fill the live rail segment so the wait reads as motion rather
@@ -1142,6 +1189,7 @@ const SCENARIOS = [
 			}
 			setPlayLabel();
 			maybeAutoStart();   // the observer may already have fired
+			root.dispatchEvent(new CustomEvent('replay:loaded', { detail: { key } }));
 		}
 
 		// TAKING A CONTROL ENDS THE GUIDE. Someone who reaches for the scrubber or the play
@@ -1179,9 +1227,9 @@ const SCENARIOS = [
 		});
 		root.querySelectorAll<HTMLButtonElement>('[data-rate]').forEach((btn) => {
 			btn.addEventListener('click', () => {
-				engine?.setRate(Number(btn.dataset.rate));
 				root.querySelectorAll('[data-rate]').forEach((o) =>
 					o.setAttribute('aria-pressed', String(o === btn)));
+				syncRate();
 			});
 		});
 		select?.addEventListener('change', () => {
@@ -1295,6 +1343,12 @@ const SCENARIOS = [
 		);
 
 		function maybeAutoStart() {
+			/* THE DEMO TOUR OWNS THE CONSOLE while html[data-tour] is set — stamped during
+			   parse by DemoTour.astro when the URL asks for it. Neither autoplay nor the
+			   guided read may start under it: the tour presses Play itself, on its own
+			   schedule, and a second onboarding over the top is the thing every rule on
+			   this page exists to prevent. */
+			if (document.documentElement.hasAttribute('data-tour')) return;
 			if (autoStarted) return;
 			if (coldOpen() === 'running') return;   // before autoStarted, so it can retry after
 			if (root.dataset.openRecord === 'true') return;
@@ -1370,6 +1424,7 @@ const SCENARIOS = [
 		   waited for, because the observer will not report until after the scroll has
 		   settled and the reader would watch a still console until then. */
 		const onColdOpenDone = () => {
+			if (document.documentElement.hasAttribute('data-tour')) return;
 			if (root.dataset.guideMode === 'auto' && !guideAlreadySeen()) {
 				root.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
 				inView = true;
@@ -1407,6 +1462,7 @@ const SCENARIOS = [
 			document.removeEventListener('visibilitychange', onVisibility);
 			document.removeEventListener('coldopen:done', onColdOpenDone);
 			clearTimeout(rt);
+			delete (root as HTMLElement & { replayApi?: ReplayHandle }).replayApi;
 			delete root.dataset.replayReady;
 		});
 
