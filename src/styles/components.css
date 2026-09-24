@@ -1230,6 +1230,8 @@ main > section:last-child.band--dark {
 	   anyone reads. */
 	font-size: clamp(2.25rem, 4vw + 0.5rem, 4.25rem);
 	max-width: 20ch;
+	/* Evens the line lengths so a short last word never sits alone on its own line. */
+	text-wrap: balance;
 	margin-top: var(--space-md);
 }
 
@@ -10810,4 +10812,45 @@ main > section:last-child.band--dark {
 
 .frontier .block-label + .whynow-grid {
 	margin-top: var(--space-lg);
+}
+
+/* ------------------------------------------------------------
+   HOME · HERO PROOF ROW — three measured figures under the headline. Two-column layout only:
+   below 1024px the columns stack and the row would push the CTAs below the first screen. */
+.hero-proof {
+	display: none;
+}
+
+@media (min-width: 1024px) {
+	.hero-proof {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--space-lg);
+		margin-top: var(--space-xl);
+		padding: 0;
+		list-style: none;
+		max-width: 44rem;
+	}
+
+	.hero-proof li {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xs);
+		padding-top: var(--space-md);
+		border-top: 1px solid var(--accent-on-dark);
+	}
+
+	.hero-proof-figure {
+		font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+		font-size: var(--text-figure-sm);
+		line-height: 1;
+		color: var(--accent-on-dark);
+	}
+
+	.hero-proof-label {
+		font-size: var(--text-small);
+		line-height: 1.45;
+		color: var(--text-on-dark);
+		opacity: 0.72;
+	}
 }
