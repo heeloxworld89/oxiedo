@@ -7,15 +7,15 @@
 ---
 **ORMAS · A NEW KIND OF NEURAL NETWORK**
 
-## For forty years, neural networks have learned blind. ORMAS opens their eyes.
+## For forty years, networks learned blind. ORMAS opens their eyes.
 
 Machines that cannot lie.
 
 Not about the world. About themselves.
 
-The people building the most powerful networks on earth say, in public, that they cannot see inside them, and that none of them can keep learning without erasing what it knew.
+The labs building the most powerful networks on earth say they cannot see inside them, or teach them to learn without forgetting.
 
-**ORMAS** makes a network record every change it makes to itself, as it happens, by arithmetic it cannot route around. It names the part that broke, repairs it, and learns the new without replaying the old. That record is also the account that unlocks the world's most valuable data.
+**ORMAS** makes a network record every change it makes to itself, as it happens: it names the part that broke, repairs it, and keeps what it learned. That record unlocks the world's most valuable data.
 
 [Pre-book ORMAS](/contact)
 
