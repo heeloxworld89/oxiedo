@@ -1,25 +1,25 @@
 # Oxiedo
 
 - **URL:** `/`
-- **Page title:** Oxiedo — the architecture that unlocks locked data
-- **Meta description:** Oxiedo builds ORMAS, a neural network training architecture that records what a model took from each source of data as it trains. The account a custodian needs.
+- **Page title:** Oxiedo — neural networks that know what they did to themselves
+- **Meta description:** ORMAS is a neural network architecture that records every change it makes to itself as it trains, names the part that broke, repairs it, and keeps what it learned. The account that unlocks the world's locked data.
 
 ---
-**ORMAS · THE ARCHITECTURE THAT UNLOCKS LOCKED DATA**
+**ORMAS · A NEW KIND OF NEURAL NETWORK**
 
-## The most valuable data in the world is locked up. ORMAS opens it.
+## For forty years, networks learned blind. ORMAS opens their eyes.
 
 Machines that cannot lie.
 
 Not about the world. About themselves.
 
-Data stays locked because no model can say what it did with it, and the custodian who holds that data is right not to release it on a promise.
+The labs building the most powerful networks on earth say they cannot see inside them, or teach them to learn without forgetting.
 
-**ORMAS** makes a network record every change it makes to itself, as it happens, by arithmetic it cannot route around. That record is the account a custodian has been waiting for.
+**ORMAS** makes a network record every change it makes to itself, as it happens: it names the part that broke, repairs it, and keeps what it learned. That record unlocks the world's most valuable data.
 
 [Pre-book ORMAS](/contact)
 
-[See the technology](/technology)
+[Watch it heal itself](/black-box)
 
 Five sectors. One question about data, asked five ways.
 
@@ -39,11 +39,11 @@ What that costs today
 
 - $15M
 
-  Of computing burned on one training run that failed.
+  Estimated compute lost to restarts on one frontier run.
 
 - 419
 
-  Times that run stopped in 54 days. Nobody knew why.
+  Stops on that run in 54 days. One every three hours.
 
 - 7%
 
@@ -221,7 +221,7 @@ What replaces it
 
 - No mystery
 
-  Every stop arrives with its cause named, not a guess.
+  When a run degrades, the part at fault is named.
 
 - Proof, built in
 
@@ -441,7 +441,105 @@ Correction ledger · written during training
 
 Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
 
-[Why the black box is not a law of deep learning](/black-box) — the argument in full, with three further scenarios including the one where this architecture measures worse than the baseline.
+[Open the live demo](/black-box)
+
+The full console: four scenarios to replay, a two-minute narrated tour on desktop, and [the one run where this architecture loses](/black-box).
+
+**THE FRONTIER**
+
+### The field names two problems as unsolved. ORMAS has measured baselines against both.
+
+For two years the leaders of the largest AI laboratories have said the same two things in public. Nobody can see what a trained network is doing inside itself. And no network can keep learning without erasing what it already knew. These are their words, not ours. None of the people or publications quoted is affiliated with Oxiedo.
+
+Open problem 01 · Seeing inside
+
+Dario Amodei · Anthropic
+
+“People outside the field are often surprised and alarmed to learn that we do not understand how our own AI creations work.”
+
+[The Urgency of Interpretability · April 2025](https://darioamodei.com/post/the-urgency-of-interpretability)
+
+MIT Technology Review
+
+“…nobody really understands what they are, how they work, or exactly what they can and can't do—not even the people who build them.”
+
+[10 Breakthrough Technologies · January 2026](https://www.technologyreview.com/2026/01/12/1130003/mechanistic-interpretability-ai-research-models-2026-breakthrough-technologies/)
+
+Dario Amodei · Anthropic
+
+“We are thus in a race between interpretability and model intelligence.”
+
+[The Urgency of Interpretability · April 2025](https://darioamodei.com/post/the-urgency-of-interpretability)
+
+Open problem 02 · Learning without forgetting
+
+Demis Hassabis · Google DeepMind
+
+“…maybe we need one or two more big breakthroughs before we'll get to AGI. And I think they're along the lines of things like continual learning, better memory…”
+
+[Big Technology · January 2026](https://www.bigtechnology.com/p/google-deepmind-ceo-demis-hassabis-946)
+
+Dwarkesh Patel
+
+“The fundamental problem is that LLMs don't get better over time the way a human would.”
+
+[Why I don't think AGI is right around the corner · June 2025](https://www.dwarkesh.com/p/timelines-june-2025)
+
+Google Research
+
+“…‘catastrophic forgetting’, where learning new tasks sacrifices proficiency on old tasks.”
+
+[Introducing Nested Learning · November 2025](https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/)
+
+It sees itself
+
+Not a microscope pointed at a finished model. The network reports on itself from inside, while it trains: a destroyed layer diagnosed within one epoch, both damaged components named two steps later.
+
+It heals itself
+
++70.3 points recovered after a layer was destroyed mid-training. The standard network of the same size stayed at chance on every seed, permanently.
+
+It keeps what it learned
+
+94.6% of the first task retained after learning a second, with no replay buffer and no task identifier. A standard ResNet-18 kept 47.3%.
+
+What comes next
+
+Every result so far is on CIFAR. Transformer scale is the next measurement, and the entire remaining programme can be proven wrong in under thirty GPU-hours. That is the shot, stated with its odds.
+
+**THE EVIDENCE**
+
+### Four results, with every condition stated.
+
+Each figure comes from a controlled experiment against a standard network matched for parameter count, data and training schedule.
+
+[Read the full evidence](/technology)
+
+80.3%
+
+#### Recovery from total structural collapse
+
+A layer was destroyed mid-training, on a network that had reached 85.1%. The standard network stayed at 10%, chance level, on every seed, permanently. ORMAS diagnosed the failure within one epoch and climbed back to 80.3%.
+
+94.6%
+
+#### Retained through a shift in the task
+
+Trained on one task, then another, with no replay buffer and no task identifier. These are the conditions under which a deployed model is normally retrained. The standard network kept 47.3% of what it knew.
+
+22,014
+
+#### Stable where standard training failed outright
+
+A fifty-node network at 30% label noise across 200 epochs. Standard training returned NaN and stopped. ORMAS stayed stable, and every one of those corrections is on the record with its component, magnitude and limit.
+
+58.8%
+
+#### Structure nobody designed
+
+After the same task shift, the network answered combinations it had never been shown at 58.8%, against 25% chance. No modularity was built in. It organised its own internal structure out of the conflict between the two tasks.
+
+383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and the one result that went against us.
 
 A frontier run fails at 60 percent · current practice
 
@@ -680,34 +778,6 @@ The interagency guidance that replaced SR 11-7 in April 2026 keeps the disciplin
 GDPR · Article 17
 
 The right to erasure is being enforced against trained models, not only against databases. Compliance vendors have already named the category they need (unlearning-ready architectures) ahead of any supply existing.
-
-**THE EVIDENCE**
-
-### Three results, with every condition stated.
-
-Each figure comes from a controlled experiment against a standard network matched for parameter count, data and training schedule.
-
-[Read the full evidence](/technology)
-
-80.3%
-
-#### Recovery from total structural collapse
-
-A layer was destroyed mid-training, on a network that had reached 85.1%. The standard network stayed at 10%, chance level, on every seed, permanently. ORMAS diagnosed the failure within one epoch and climbed back to 80.3%.
-
-94.6%
-
-#### Retained through a shift in the task
-
-Trained on one task, then another, with no replay buffer and no task identifier. These are the conditions under which a deployed model is normally retrained. The standard network kept 47.3% of what it knew.
-
-22,014
-
-#### Stable where standard training failed outright
-
-A fifty-node network at 30% label noise across 200 epochs. Standard training returned NaN and stopped. ORMAS stayed stable, and every one of those corrections is on the record with its component, magnitude and limit.
-
-383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and the one result that went against us.
 
 **PRE-BOOKING**
 

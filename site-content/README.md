@@ -24,6 +24,14 @@ when every fact in it is true. The argument runs:
 5. **So transparency is the mechanism, and unlocked data is the product.** That distinction is
    the one most easily lost in a rewrite. Transparency is not what is being sold.
 
+**The home page leads one level above that thesis** (since 2026-09-24): *"For forty years, neural
+networks have learned blind. ORMAS opens their eyes."* The field's leaders name two problems as
+unsolved, seeing inside a network and learning without forgetting, and the home page quotes them
+verbatim, then gives the measured baseline ORMAS has against each. Locked data is the payoff of
+that headline and remains the commercial thesis of every other page. Two rules keep the ambition
+safe: every quote is word for word with its source, and every claim above the evidence carries
+a measured number or is stated as the next measurement.
+
 Three vocabulary rules follow from it, and they are load-bearing:
 
 - **Seven features, not seven products.** One architecture, one licence, nothing priced per

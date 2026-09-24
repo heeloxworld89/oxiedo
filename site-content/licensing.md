@@ -69,7 +69,7 @@ Research
 
 Deployment
 
-Submission-grade record generation
+Reviewer-format record generation
 
 The record in the shape a reviewer expects to receive, rather than a research log.
 

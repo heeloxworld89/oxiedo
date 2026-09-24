@@ -349,7 +349,7 @@ Each is falsifiable, each carries a written prediction against it, and each runs
 
   Monitoring lead time
 
-  How many steps before the global loss visibly degrades does per-component health cross its own threshold. Opens or closes an entire market.
+  How many steps ahead of a visible degradation in global loss per-component health crosses its own threshold. Opens or closes an entire market.
 
   8.4 GPU-hr
 

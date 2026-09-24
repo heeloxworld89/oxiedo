@@ -5,24 +5,6 @@
 - **Meta description:** Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running.
 
 ---
-This lack of understanding is essentially unprecedented in the history of technology.
-
-> Dario Amodei, Anthropic · 2025
-
-We don’t really understand exactly how they do those things.
-
-> Geoffrey Hinton · 60 Minutes, 2023
-
-Neither is affiliated with Oxiedo.
-
-- 419 — interruptions in one 54-day run
-
-- $15M — of compute burned on it
-
-- ~8%of medical AI can be updated
-
-- Dec 2027 — EU record-keeping rules apply
-
 **Two neural networks, the same data, the same damage.** **ORMAS**, on the right, names which parts broke — two steps later — and repairs itself. The **sealed network** on the left cannot say anything about it, and never will. Every figure is read from one archived training run.
 
 ORMAS·replay console

@@ -94,8 +94,8 @@ export const markets: Record<string, MarketDeep> = {
 			},
 			{
 				figure: '$15M',
-				unit: 'of compute wasted on that one run',
-				note: 'At 30-minute checkpointing, a single failure at that scale forces roughly 4,096 GPU-hours of work to be repeated. Multiplied across 419 failures.',
+				unit: 'of compute estimated lost to restarts on that run',
+				note: 'Our estimate. At 30-minute checkpointing, each interruption at that scale repeats roughly 4,096 GPU-hours of work; across 419 interruptions that is about 1.7M GPU-hours, priced below on-demand H100 rates. The run itself completed.',
 			},
 			{
 				figure: '20+',

@@ -424,9 +424,9 @@ Cap-only is how roughly 72% of SAFEs were written in 2025. A discount layered on
 
 ### Where every number on this page comes from.
 
-Four of these eight rows are unvalidated, and they are the four this round exists to validate. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
+Three of these seven rows are unvalidated, and they are the three this round exists to validate. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
 
-Figure Source Status 80.3% against 10.0%, +70.3 pp 383 controlled experiments, reproducible from seed Measured, replayable−91% / +1,300%Twelve-month ablation on a live company, SHA-256 reconciled Measured, prior work$8.3B market, 9.7% CAGR Third-party analyst, AI model-risk management, 2026 Third-party~1,000 institutions Our own bottom-up count across four segments Estimate, unvalidated$250K ACV, $150K–$500K band Benchmarked against model-risk tooling No pricing conversations CAC $85K, LTV:CAC 10.8:1 Modelled on a six-to-eighteen-month enterprise cycle Assumption, no data$15M cap, 10% dilution 2026 AI pre-seed band; $15M is the norm at this raise size Market benchmark Competitor pricing ~$50K Published enterprise quote floors Third-party
+Figure Source Status 80.3% against 10.0%, +70.3 pp 383 controlled experiments, reproducible from seed Measured, replayable$8.3B market, 9.7% CAGR Third-party analyst, AI model-risk management, 2026 Third-party~1,000 institutions Our own bottom-up count across four segments Estimate, unvalidated$250K ACV, $150K–$500K band Benchmarked against model-risk tooling No pricing conversations CAC $85K, LTV:CAC 10.8:1 Modelled on a six-to-eighteen-month enterprise cycle Assumption, no data$15M cap, 10% dilution 2026 AI pre-seed band; $15M is the norm at this raise size Market benchmark Competitor pricing ~$50K Published enterprise quote floors Third-party
 
 **THE ASK**
 
