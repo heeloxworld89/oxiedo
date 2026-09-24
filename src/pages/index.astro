@@ -299,7 +299,12 @@ const whyNow = [
 				</p>
 				<div class="hero-cta-row">
 					<Button variant="primary" href="/contact">Pre-book ORMAS</Button>
-					<Button variant="secondary" href="/technology">See the technology</Button>
+					{/* 2026-09-24. Was "See the technology". /black-box is the live instrument — an archived
+					    run replayed, with a narrated tour on desktop — and it is the strongest thing on
+					    the site, so the hero's second door goes there. The label names what the replay shows — a
+					    network destroyed mid-run that names the damage and recovers — and is sized to keep
+					    both buttons on one row at every width from 390px up. */}
+					<Button variant="secondary" href="/black-box">Watch it heal itself</Button>
 				</div>
 			</div>
 		</div>
@@ -439,10 +444,12 @@ const whyNow = [
 			telemetry, and the run identifier and seed are on screen.
 		</p>
 		<ReplayDemo scenario="dead-layer-lesion" fixed loop />
+		<div class="hero-cta-row">
+			<Button variant="primary" href="/black-box">Open the live demo</Button>
+		</div>
 		<p class="replay-home-note">
-			<a href="/black-box">Why the black box is not a law of deep learning</a> — the argument in full,
-			with three further scenarios including the one where this architecture measures worse than
-			the baseline.
+			The full console: four scenarios to replay, a two-minute narrated tour on desktop,
+			and <a href="/black-box">the one run where this architecture loses</a>.
 		</p>
 	</section>
 

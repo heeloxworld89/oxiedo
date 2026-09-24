@@ -19,7 +19,7 @@ The labs building the most powerful networks on earth say they cannot see inside
 
 [Pre-book ORMAS](/contact)
 
-[See the technology](/technology)
+[Watch it heal itself](/black-box)
 
 Five sectors. One question about data, asked five ways.
 
@@ -441,7 +441,9 @@ Correction ledger · written during training
 
 Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
 
-[Why the black box is not a law of deep learning](/black-box) — the argument in full, with three further scenarios including the one where this architecture measures worse than the baseline.
+[Open the live demo](/black-box)
+
+The full console: four scenarios to replay, a two-minute narrated tour on desktop, and [the one run where this architecture loses](/black-box).
 
 **THE FRONTIER**
 
