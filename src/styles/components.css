@@ -10799,3 +10799,15 @@ main > section:last-child.band--dark {
 	font-weight: 600;
 	color: var(--accent-dark);
 }
+
+/* ------------------------------------------------------------
+   HOME · THE FRONTIER — two labelled quote grids, then the measured answer.
+   Reuses .whynow-grid / .whynow-item and .catsplit; only the spacing between the stacked blocks
+   is new, because .block-label has no margin of its own. */
+.frontier .block-label {
+	margin-top: var(--space-2xl);
+}
+
+.frontier .block-label + .whynow-grid {
+	margin-top: var(--space-lg);
+}

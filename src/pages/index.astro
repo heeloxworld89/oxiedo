@@ -185,6 +185,54 @@ const alternatives = [
 ];
 
 
+// THE FRONTIER — added 2026-09-24. The two problems the field's own leaders name in public as
+// unsolved, in their words. EVERY QUOTE IS VERBATIM, checked word for word against the page at
+// `url` on 2026-09-24 — the same rule as data/hook-headlines.json. Add one only with its url, and
+// only word for word. None of the people or outlets quoted is affiliated with Oxiedo, and the
+// section says so; they are here as the field's statement of the problem, never as endorsement.
+// The claim this section makes is narrow on purpose: ORMAS has a MEASURED BASELINE against both
+// problems, on CIFAR, and the scale question is stated in the same breath.
+const frontierSeeing = [
+	{
+		who: 'Dario Amodei · Anthropic',
+		where: 'The Urgency of Interpretability · April 2025',
+		url: 'https://darioamodei.com/post/the-urgency-of-interpretability',
+		text: 'People outside the field are often surprised and alarmed to learn that we do not understand how our own AI creations work.',
+	},
+	{
+		who: 'MIT Technology Review',
+		where: '10 Breakthrough Technologies · January 2026',
+		url: 'https://www.technologyreview.com/2026/01/12/1130003/mechanistic-interpretability-ai-research-models-2026-breakthrough-technologies/',
+		text: '…nobody really understands what they are, how they work, or exactly what they can and can\'t do—not even the people who build them.',
+	},
+	{
+		who: 'Dario Amodei · Anthropic',
+		where: 'The Urgency of Interpretability · April 2025',
+		url: 'https://darioamodei.com/post/the-urgency-of-interpretability',
+		text: 'We are thus in a race between interpretability and model intelligence.',
+	},
+];
+const frontierLearning = [
+	{
+		who: 'Demis Hassabis · Google DeepMind',
+		where: 'Big Technology · January 2026',
+		url: 'https://www.bigtechnology.com/p/google-deepmind-ceo-demis-hassabis-946',
+		text: '…maybe we need one or two more big breakthroughs before we\'ll get to AGI. And I think they\'re along the lines of things like continual learning, better memory…',
+	},
+	{
+		who: 'Dwarkesh Patel',
+		where: 'Why I don\'t think AGI is right around the corner · June 2025',
+		url: 'https://www.dwarkesh.com/p/timelines-june-2025',
+		text: 'The fundamental problem is that LLMs don\'t get better over time the way a human would.',
+	},
+	{
+		who: 'Google Research',
+		where: 'Introducing Nested Learning · November 2025',
+		url: 'https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/',
+		text: '…‘catastrophic forgetting’, where learning new tasks sacrifices proficiency on old tasks.',
+	},
+];
+
 // Tied to published, dated obligations rather than to our own release schedule — the one urgency
 // argument on this page that does not depend on us.
 const whyNow = [
@@ -204,17 +252,21 @@ const whyNow = [
 ---
 
 <Page
-	title="Oxiedo — the architecture that unlocks locked data"
-	description="Oxiedo builds ORMAS, a neural network training architecture that records what a model took from each source of data as it trains. The account a custodian needs."
+	title="Oxiedo — neural networks that know what they did to themselves"
+	description="ORMAS is a neural network architecture that records every change it makes to itself as it trains, names the part that broke, repairs it, and keeps what it learned. The account that unlocks the world's locked data."
 >
 	<!-- 1. HERO. Capability-led: the headline states the thing nothing else can do, and the three
 	     figures beneath it are the evidence for that specific sentence, not general credentials. -->
 	<section class="hero">
 		<div class="hero-inner container">
 			<div class="hero-copy">
-				<Eyebrow>ORMAS · THE ARCHITECTURE THAT UNLOCKS LOCKED DATA</Eyebrow>
+				<Eyebrow>ORMAS · A NEW KIND OF NEURAL NETWORK</Eyebrow>
+				{/* 2026-09-24. The locked-data sentence was the headline; it is now the payoff of the
+				    answer beneath, and still the commercial thesis of every page below this one.
+				    "Forty years" is dated from the 1986 backpropagation paper. No priority claim:
+				    the sentence describes a property, not a first. */}
 				<h1 class="hero-headline">
-					The most valuable data in the world is locked up. ORMAS opens it.
+					For forty years, neural networks have learned blind. ORMAS opens their eyes.
 				</h1>
 			</div>
 			<div class="hero-lede">
@@ -237,13 +289,14 @@ const whyNow = [
 				    it. */}
 				<p class="hero-qualifier">Not about the world. About themselves.</p>
 				<p class="hero-problem">
-					Data stays locked because no model can say what it did with it, and the custodian who
-					holds that data is right not to release it on a promise.
+					The people building the most powerful networks on earth say, in public, that they cannot
+					see inside them, and that none of them can keep learning without erasing what it knew.
 				</p>
 				<p class="hero-answer">
 					<strong>ORMAS</strong> makes a network record every change it makes to itself, as it
-					happens, by arithmetic it cannot route around. That record is the account a custodian
-					has been waiting for.
+					happens, by arithmetic it cannot route around. It names the part that broke, repairs it,
+					and learns the new without replaying the old. That record is also the account that
+					unlocks the world's most valuable data.
 				</p>
 				<div class="hero-cta-row">
 					<Button variant="primary" href="/contact">Pre-book ORMAS</Button>
@@ -394,6 +447,145 @@ const whyNow = [
 		</p>
 	</section>
 
+
+	<!-- 2c. THE FRONTIER. Added 2026-09-24. The field's leaders name two problems as unsolved:
+	     nobody can see inside a trained network, and no network keeps learning without erasing
+	     what it knew. Their words, verbatim, then the measured baseline ORMAS has against each,
+	     then the evidence in full directly beneath. Quotes and sources live in `frontierSeeing` /
+	     `frontierLearning` at the top of this file. -->
+	<section class="section container reveal frontier">
+		<Eyebrow>THE FRONTIER</Eyebrow>
+		<h2 class="section-title">The field names two problems as unsolved. ORMAS has measured baselines against both.</h2>
+		<p class="section-lede">
+			For two years the leaders of the largest AI laboratories have said the same two things in
+			public. Nobody can see what a trained network is doing inside itself. And no network can keep
+			learning without erasing what it already knew. These are their words, not ours. None of the
+			people or publications quoted is affiliated with Oxiedo.
+		</p>
+		<p class="block-label">Open problem 01 · Seeing inside</p>
+		<div class="whynow-grid">
+			{frontierSeeing.map((q) => (
+				<article class="whynow-item">
+					<p class="whynow-framework">{q.who}</p>
+					<p class="whynow-body">“{q.text}”</p>
+					<p class="whynow-body"><a href={q.url} rel="noopener noreferrer" target="_blank">{q.where}</a></p>
+				</article>
+			))}
+		</div>
+		<p class="block-label">Open problem 02 · Learning without forgetting</p>
+		<div class="whynow-grid">
+			{frontierLearning.map((q) => (
+				<article class="whynow-item">
+					<p class="whynow-framework">{q.who}</p>
+					<p class="whynow-body">“{q.text}”</p>
+					<p class="whynow-body"><a href={q.url} rel="noopener noreferrer" target="_blank">{q.where}</a></p>
+				</article>
+			))}
+		</div>
+		<div class="catsplit">
+			<div class="catsplit-row">
+				<p class="catsplit-k">It sees itself</p>
+				<p class="catsplit-v">
+					Not a microscope pointed at a finished model. The network reports on itself from inside,
+					while it trains: a destroyed layer diagnosed within one epoch, both damaged components
+					named two steps later.
+				</p>
+			</div>
+			<div class="catsplit-row">
+				<p class="catsplit-k">It heals itself</p>
+				<p class="catsplit-v">
+					+70.3 points recovered after a layer was destroyed mid-training. The standard network
+					of the same size stayed at chance on every seed, permanently.
+				</p>
+			</div>
+			<div class="catsplit-row">
+				<p class="catsplit-k">It keeps what it learned</p>
+				<p class="catsplit-v">
+					94.6% of the first task retained after learning a second, with no replay buffer and no
+					task identifier. A standard ResNet-18 kept 47.3%.
+				</p>
+			</div>
+			<div class="catsplit-row">
+				<p class="catsplit-k">What comes next</p>
+				<p class="catsplit-v">
+					Every result so far is on CIFAR. Transformer scale is the next measurement, and the
+					entire remaining programme can be proven wrong in under thirty GPU-hours. That is the
+					shot, stated with its odds.
+				</p>
+			</div>
+		</div>
+	</section>
+	<!-- 8. CLOSING. One ask, for one audience. The investor card that used to sit here at equal
+	     weight is gone — /invest is in the nav and in the footer. The citation strip that used to
+	     close the dark band is gone too: it restated the 383 experiments and the adverse result
+	     thirty lines after the qualifier below already said both, and a duplicate figure at the
+	     bottom of a page reads as padding rather than as evidence. -->
+	<section class="section container reveal">
+		<div class="evidence-split">
+			<div class="evidence-split-intro">
+				<Eyebrow>THE EVIDENCE</Eyebrow>
+				<h2 class="section-title">Four results, with every condition stated.</h2>
+				<p class="section-lede">
+					Each figure comes from a controlled experiment against a standard network matched for
+					parameter count, data and training schedule.
+				</p>
+				<Button variant="secondary" href="/technology">Read the full evidence</Button>
+			</div>
+
+			<div class="evidence-rows">
+				<div class="evidence-row">
+					<p class="evidence-row-figure tabular">80.3%</p>
+					<div class="evidence-row-body">
+						<h3>Recovery from total structural collapse</h3>
+						<p>
+							A layer was destroyed mid-training, on a network that had reached 85.1%. The
+							standard network stayed at 10%, chance level, on every seed, permanently.
+							ORMAS diagnosed the failure within one epoch and climbed back to 80.3%.
+						</p>
+					</div>
+				</div>
+				<div class="evidence-row">
+					<p class="evidence-row-figure tabular">94.6%</p>
+					<div class="evidence-row-body">
+						<h3>Retained through a shift in the task</h3>
+						<p>
+							Trained on one task, then another, with no replay buffer and no task identifier.
+							These are the conditions under which a deployed model is normally retrained. The standard
+							network kept 47.3% of what it knew.
+						</p>
+					</div>
+				</div>
+				<div class="evidence-row">
+					<p class="evidence-row-figure tabular">22,014</p>
+					<div class="evidence-row-body">
+						<h3>Stable where standard training failed outright</h3>
+						<p>
+							A fifty-node network at 30% label noise across 200 epochs. Standard training
+							returned NaN and stopped. ORMAS stayed stable, and every one of those corrections
+							is on the record with its component, magnitude and limit.
+						</p>
+					</div>
+				</div>
+				<div class="evidence-row">
+					<p class="evidence-row-figure tabular">58.8%</p>
+					<div class="evidence-row-body">
+						<h3>Structure nobody designed</h3>
+						<p>
+							After the same task shift, the network answered combinations it had never been
+							shown at 58.8%, against 25% chance. No modularity was built in. It organised its
+							own internal structure out of the conflict between the two tasks.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<p class="evidence-qualifier">
+			383 controlled experiments across four architecture families. All results on CIFAR-10 and
+			CIFAR-100. <a href="/technology">The technology page</a> carries the full conditions, the error
+			bars, and the one result that went against us.
+		</p>
+	</section>
 
 	<!-- 5. THE EVIDENCE. It was three prose cards that RE-ARGUED the comparison two sections above
 	     — "failures get a name and a time" is matrix row 1, "every correction is on the record" is
@@ -665,67 +857,6 @@ const whyNow = [
 				</article>
 			))}
 		</div>
-	</section>
-
-	<!-- 8. CLOSING. One ask, for one audience. The investor card that used to sit here at equal
-	     weight is gone — /invest is in the nav and in the footer. The citation strip that used to
-	     close the dark band is gone too: it restated the 383 experiments and the adverse result
-	     thirty lines after the qualifier below already said both, and a duplicate figure at the
-	     bottom of a page reads as padding rather than as evidence. -->
-	<section class="section container reveal">
-		<div class="evidence-split">
-			<div class="evidence-split-intro">
-				<Eyebrow>THE EVIDENCE</Eyebrow>
-				<h2 class="section-title">Three results, with every condition stated.</h2>
-				<p class="section-lede">
-					Each figure comes from a controlled experiment against a standard network matched for
-					parameter count, data and training schedule.
-				</p>
-				<Button variant="secondary" href="/technology">Read the full evidence</Button>
-			</div>
-
-			<div class="evidence-rows">
-				<div class="evidence-row">
-					<p class="evidence-row-figure tabular">80.3%</p>
-					<div class="evidence-row-body">
-						<h3>Recovery from total structural collapse</h3>
-						<p>
-							A layer was destroyed mid-training, on a network that had reached 85.1%. The
-							standard network stayed at 10%, chance level, on every seed, permanently.
-							ORMAS diagnosed the failure within one epoch and climbed back to 80.3%.
-						</p>
-					</div>
-				</div>
-				<div class="evidence-row">
-					<p class="evidence-row-figure tabular">94.6%</p>
-					<div class="evidence-row-body">
-						<h3>Retained through a shift in the task</h3>
-						<p>
-							Trained on one task, then another, with no replay buffer and no task identifier.
-							These are the conditions under which a deployed model is normally retrained. The standard
-							network kept 47.3% of what it knew.
-						</p>
-					</div>
-				</div>
-				<div class="evidence-row">
-					<p class="evidence-row-figure tabular">22,014</p>
-					<div class="evidence-row-body">
-						<h3>Stable where standard training failed outright</h3>
-						<p>
-							A fifty-node network at 30% label noise across 200 epochs. Standard training
-							returned NaN and stopped. ORMAS stayed stable, and every one of those corrections
-							is on the record with its component, magnitude and limit.
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<p class="evidence-qualifier">
-			383 controlled experiments across four architecture families. All results on CIFAR-10 and
-			CIFAR-100. <a href="/technology">The technology page</a> carries the full conditions, the error
-			bars, and the one result that went against us.
-		</p>
 	</section>
 
 	<!-- 6. MARKETS. Reads from data/sectors.ts and frames each market by the question it asks and
