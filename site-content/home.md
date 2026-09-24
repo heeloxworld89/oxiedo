@@ -7,7 +7,13 @@
 ---
 **ORMAS · A NEW KIND OF NEURAL NETWORK**
 
-## For forty years, networks learned blind. ORMAS opens their eyes.
+## AI that can see inside itself, and fix what it finds.
+
+- +70.3 — points recovered after a layer was destroyed mid-training
+
+- 94.6%kept after learning a new task, with no replay
+
+- 383 — controlled experiments, each reproducible from seed
 
 Machines that cannot lie.
 

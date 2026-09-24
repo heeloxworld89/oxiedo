@@ -261,13 +261,23 @@ const whyNow = [
 		<div class="hero-inner container">
 			<div class="hero-copy">
 				<Eyebrow>ORMAS · A NEW KIND OF NEURAL NETWORK</Eyebrow>
-				{/* 2026-09-24. The locked-data sentence was the headline; it is now the payoff of the
-				    answer beneath, and still the commercial thesis of every page below this one.
-				    "Forty years" is dated from the 1986 backpropagation paper. No priority claim:
-				    the sentence describes a property, not a first. */}
+				{/* 2026-09-24, second pass. "For forty years, networks learned blind" read as a riddle to
+				    anyone outside the field. This says the two things the product does in words a
+				    non-specialist parses on first read: it sees inside itself (the per-component
+				    record) and fixes what it finds (the measured self-repair). Optimistic, plain, and
+				    no priority claim. Locked data stays the payoff of the answer beneath. */}
 				<h1 class="hero-headline">
-					For forty years, networks learned blind. ORMAS opens their eyes.
+					AI that can see inside itself, and fix what it finds.
 				</h1>
+				{/* THE PROOF ROW. Fills the left column under the headline on the two-column layout,
+				    where it otherwise stood empty while the lede ran long on the right. Three
+				    measured figures, each the evidence for one verb in the headline. Hidden below
+				    1024px, where the columns stack and it would push the CTAs off the first screen. */}
+				<ul class="hero-proof">
+					<li><span class="hero-proof-figure tabular">+70.3</span><span class="hero-proof-label">points recovered after a layer was destroyed mid-training</span></li>
+					<li><span class="hero-proof-figure tabular">94.6%</span><span class="hero-proof-label">kept after learning a new task, with no replay</span></li>
+					<li><span class="hero-proof-figure tabular">383</span><span class="hero-proof-label">controlled experiments, each reproducible from seed</span></li>
+				</ul>
 			</div>
 			<div class="hero-lede">
 				{/* FOUR WORDS. The claim is about the RECORD, not the predictions — a model trained
