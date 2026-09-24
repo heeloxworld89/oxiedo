@@ -39,11 +39,11 @@ What that costs today
 
 - $15M
 
-  Of computing burned on one training run that failed.
+  Estimated compute lost to restarts on one frontier run.
 
 - 419
 
-  Times that run stopped in 54 days. Nobody knew why.
+  Stops on that run in 54 days. One every three hours.
 
 - 7%
 
@@ -221,7 +221,7 @@ What replaces it
 
 - No mystery
 
-  Every stop arrives with its cause named, not a guess.
+  When a run degrades, the part at fault is named.
 
 - Proof, built in
 

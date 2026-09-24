@@ -283,7 +283,7 @@ const GS = 0.84; // ghost scale — the mesh is a motif, the numbers under it ar
 // not have to learn what an epoch is to see why the number changes. Same claims, plain English:
 //   Keep the run   — damage diagnosed within one epoch and repaired through attributed structural
 //                    corrections, so the run is not discarded back to the last checkpoint.
-//   No mystery     — per-node attribution: each failure is traceable to a component.
+//   No mystery     — per-node attribution: each degradation is traceable to a component.
 //   Proof, not     — the record is a by-product of the backward pass, which is what Article 12
 //   paperwork        asks a high-risk system to be capable of producing.
 //   It can change  — every correction is capped as a fraction of the component's own weight and
@@ -298,7 +298,7 @@ const GS = 0.84; // ghost scale — the mesh is a motif, the numbers under it ar
 // run. Claiming it in the hero would be the overclaim the rest of the site refuses.
 const resultRows = [
 	{ figure: 'Keep the run', unit: '', body: 'Names the component that failed, so it is repaired rather than the run rerun.' },
-	{ figure: 'No mystery', unit: '', body: 'Every stop arrives with its cause named, not a guess.' },
+	{ figure: 'No mystery', unit: '', body: 'When a run degrades, the part at fault is named.' },
 	{ figure: 'Proof, built in', unit: '', body: 'The evidence a regulator wants, written as it learns.' },
 	{ figure: 'It can change', unit: '', body: 'Every change capped and logged against a limit declared in advance.' },
 ];
@@ -306,8 +306,8 @@ const resultRows = [
 // WHAT IT COSTS TODAY — money and exposure, each from that market's sourced evidence in
 // data/markets.ts, written to land without any background in machine learning.
 const failureRows = [
-	{ figure: '$15M', unit: '', body: 'Of computing burned on one training run that failed.' },
-	{ figure: '419', unit: '', body: 'Times that run stopped in 54 days. Nobody knew why.' },
+	{ figure: '$15M', unit: '', body: 'Estimated compute lost to restarts on one frontier run.' },
+	{ figure: '419', unit: '', body: 'Stops on that run in 54 days. One every three hours.' },
 	{ figure: '7', unit: '%', body: 'Of worldwide revenue. The EU fine ceiling, from August 2026.' },
 	{ figure: '92', unit: '%', body: 'Of approved medical AI can never be updated at all.' },
 ];
@@ -349,7 +349,7 @@ const ghostEdges: [number, number][] = [
 	{/* ── THE BOARD ───────────────────────────────────────────────────────────
 	    Two columns of four rows became four columns of two, and the change is not
 	    decoration: the rows were already pairs and nothing on the page said so.
-	    $15M burned on a failed run sat in the left column while "keep the run —
+	    $15M lost to restarts sat in the left column while "keep the run —
 	    names the component that failed" sat in the right, four hundred pixels away
 	    and two rows down. Stacking each answer under its own cost puts the pair in
 	    one glance, which is the argument the section exists to make.
@@ -363,7 +363,7 @@ const ghostEdges: [number, number][] = [
 	    is between them because that is the actual relationship: the left column is
 	    what a network that cannot be named costs today, the right is what is true
 	    instead, and the thing in the middle is what turns one into the other. Read
-	    across any row and it is a sentence — $15M burned on a failed run · this ·
+	    across any row and it is a sentence — $15M lost to restarts · this ·
 	    keep the run.
 
 	    The pairing survives the move. Four rows, cost on the left and its own answer

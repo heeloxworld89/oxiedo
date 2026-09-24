@@ -143,13 +143,12 @@ const plan = [
 	{ k: 'Net burn', y1: '$820K', y2: '$680K', y3: 'Near breakeven', note: 'Compute front-loaded to year one' },
 ];
 
-/* WHERE EVERY NUMBER COMES FROM. Four of the eight rows are unvalidated, and those
-   four are what this round exists to validate. A provenance table is the cheapest
+/* WHERE EVERY NUMBER COMES FROM. Three of the seven rows are unvalidated, and those
+   three are what this round exists to validate. A provenance table is the cheapest
    credibility on an investor page precisely because it is the one thing a founder
    with weak numbers cannot publish. */
 const provenance = [
 	{ figure: '80.3% against 10.0%, +70.3 pp', source: '383 controlled experiments, reproducible from seed', status: 'Measured, replayable' },
-	{ figure: '−91% / +1,300%', source: 'Twelve-month ablation on a live company, SHA-256 reconciled', status: 'Measured, prior work' },
 	{ figure: '$8.3B market, 9.7% CAGR', source: 'Third-party analyst, AI model-risk management, 2026', status: 'Third-party' },
 	{ figure: '~1,000 institutions', source: 'Our own bottom-up count across four segments', status: 'Estimate, unvalidated', weak: true },
 	{ figure: '$250K ACV, $150K–$500K band', source: 'Benchmarked against model-risk tooling', status: 'No pricing conversations', weak: true },
@@ -799,7 +798,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 		<Eyebrow>PROVENANCE</Eyebrow>
 		<h2 class="iv-h2" id="iv-provenance-h">Where every number on this page comes from.</h2>
 		<p class="iv-lede">
-			Four of these eight rows are unvalidated, and they are the four this round exists to
+			Three of these seven rows are unvalidated, and they are the three this round exists to
 			validate. An investor who takes the measured rows and discounts the rest is reading this
 			page exactly as intended.
 		</p>

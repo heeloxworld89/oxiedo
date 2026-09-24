@@ -29,7 +29,7 @@ The standard operating picture for a large training job is a loss curve on a das
 
 That gap is not a tooling oversight. In a standard network every error signal reaches every parameter on every step, so there is no component whose behaviour can be isolated from the aggregate. The information required to answer "which part?" is not being withheld. It was never separable.
 
-> A big training run breaks, and today the first sign is the crash itself. ORMAS watches each machine separately, so when two were destroyed mid-run it named both of them two steps later — before the aggregate loss had moved at all.
+> A big training run breaks, and today the first sign is the crash itself. ORMAS watches each component of the network separately, so when two were destroyed mid-run it named both of them two steps later.
 
 **WHAT IT COSTS**
 
@@ -43,9 +43,9 @@ Meta's Llama 3 405B pre-training, on 16,384 H100s. Roughly one failure every thr
 
 $15M
 
-of compute wasted on that one run
+of compute estimated lost to restarts on that run
 
-At 30-minute checkpointing, a single failure at that scale forces roughly 4,096 GPU-hours of work to be repeated. Multiplied across 419 failures.
+Our estimate. At 30-minute checkpointing, each interruption at that scale repeats roughly 4,096 GPU-hours of work; across 419 interruptions that is about 1.7M GPU-hours, priced below on-demand H100 rates. The run itself completed.
 
 20+
 

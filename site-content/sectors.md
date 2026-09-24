@@ -21,7 +21,7 @@ SCALE
 
 Is this run failing, and where?
 
-> A big training run breaks, and today the first sign is the crash itself. ORMAS watches each machine separately, so when two were destroyed mid-run it named both of them two steps later — before the aggregate loss had moved at all.
+> A big training run breaks, and today the first sign is the crash itself. ORMAS watches each component of the network separately, so when two were destroyed mid-run it named both of them two steps later.
 
 Read the market
 
