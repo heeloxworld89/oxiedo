@@ -25,6 +25,18 @@ Layers of causal telemetry emitted natively, from system health to per-parameter
 
 Published runs where ORMAS loses to the baseline, named on this page next to the wins
 
+The paper behind every number on this page
+
+### [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363)
+
+[Rokib Al Dhin Raadh](/about#founder) · Sole author · Preprint, Zenodo · 1 August 2026 · 47 pages · DOI 10.5281/zenodo.21730363
+
+The full method, all 383 experiments and every run where it loses. Each result below cites the table or section it comes from, so any figure can be checked against the source in one click.
+
+[Read the paper](https://doi.org/10.5281/zenodo.21730363)
+
+[Download PDF](https://zenodo.org/records/21730363/files/ORMAS_preprint.pdf?download=1)
+
 One line covers what this technology is for. Data that would be worth training on is locked away, and it is locked away because a model cannot account for what it took from it. Everything below is the work of building a network that can.
 
 Neural networks fail opaquely, and not because anybody built them carelessly. Global backpropagation diffuses every error signal across every parameter simultaneously, so precise fault localisation is not difficult; it is mathematically unavailable. When a layer dies mid-training, what a practitioner observes is a collapsed loss curve and no mechanism whatsoever for identifying which component failed, when, or why. The same property is why no model can say which of its parts came from which source of data.
@@ -224,6 +236,7 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — A layer surgically zeroed at epoch 100, on a network that had reached 85.1%.
   - **Result** — Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance.
   - **Baseline** — Parameter-matched standard CNN: 10.0% ± 0.0%, permanently, on every seed.
+  - **Source** — [Paper §4.1–4.2, Table 1](https://doi.org/10.5281/zenodo.21730363)
 
 2. 02
 
@@ -234,6 +247,7 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — Every convolutional stage zeroed at once, rather than a single layer.
   - **Result** — Recovered to 70.8% ± 2.2% across three seeds; 72.9% on the seed shown in the replay.
   - **Baseline** — Parameter-matched standard network: 10.0% ± 0.0%, permanent.
+  - **Source** — [Paper Table 2](https://doi.org/10.5281/zenodo.21730363)
 
 3. 03
 
@@ -244,6 +258,7 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — Task A then Task B, with no replay buffer, no task identifier and no modularity constraint.
   - **Result** — 94.6% of Task A retained across 3/3 seeds. Zero-shot 4-way compositional accuracy of 58.8% against 25% chance. The factorisation was not designed, it emerged from gradient conflict.
   - **Baseline** — Standard ResNet-18 retained 47.3%.
+  - **Source** — [Paper §4.4, Table 3](https://doi.org/10.5281/zenodo.21730363)
 
 4. 04
 
@@ -254,6 +269,7 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — 40% symmetric label noise across 200 epochs.
   - **Result** — −2.5 pp from peak, without ever being told the data was corrupted.
   - **Baseline** — Standard training: −7.8 pp.
+  - **Source** — [Paper §4.2](https://doi.org/10.5281/zenodo.21730363)
 
 5. 05
 
@@ -264,6 +280,7 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — A 50-node fully-connected DAG at 30% continuous label noise, 200 epochs.
   - **Result** — Stable throughout, via 22,014 autonomous corrections, each attributed and bounded.
   - **Baseline** — Standard training returned NaN.
+  - **Source** — [Paper, supplementary Table S2](https://doi.org/10.5281/zenodo.21730363)
 
 6. 06
 
@@ -274,8 +291,9 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — Bottleneck dimension varied across a 16× range.
   - **Result** — Accuracy variance below 0.8%. The correction mechanism compensates for capacity imbalance rather than requiring it to be tuned away.
   - **Baseline** — —
+  - **Source** — [Paper §4.3](https://doi.org/10.5281/zenodo.21730363)
 
-All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in the full technical record, alongside the reproducibility checklist and the scripts that regenerate every run.
+All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in[the paper](https://doi.org/10.5281/zenodo.21730363), alongside the reproducibility checklist and the scripts that regenerate every run.
 
 **WHAT IT UNLOCKS**
 
@@ -383,7 +401,7 @@ What is held is the programme above: the mechanism by which attribution extends 
 
 ### Three runs finish behind the baseline. All three are here.
 
-A results page that shows only the wins is not a record. These are the published runs where a standard network does better, with the numbers from the paper and the reason for each.
+A results page that shows only the wins is not a record. These are the published runs where a standard network does better, with the numbers from[the paper](https://doi.org/10.5281/zenodo.21730363)(Table 2 and supplementary §O) and the reason for each.
 
 Adversarial weight injection
 

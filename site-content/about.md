@@ -29,23 +29,22 @@ Turning one property into one product, licensed to institutions that hold data u
 
 **THE FOUNDER**
 
-### Oxiedo was founded by Rokib Al Dhin Raadh.
-
-Rokib Al Dhin Raadh
-
-Founder & CEO · Inventor of ORMAS
-
-- **Role** — Founder and CEO of Oxiedo
-- **Built** — ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments
-- **Paper** — Sole author, [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363) (preprint, 1 August 2026)
-- **Before** — Built and sold a company
-- **On X** — [@Raad_X](https://x.com/Raad_X)
+### Founded by Rokib Al Dhin Raadh, the inventor of ORMAS.
 
 Rokib Al Dhin Raadh founded Oxiedo and leads it as CEO. He is the inventor of ORMAS, the training architecture the company licenses: a neural network that records every change it makes to itself while it trains, names the part that broke, and repairs it.
 
 He started on the question in 2023: can a neural network give a truthful account of what it does to itself, while it does it? He spent 2024 and 2025 on research, the first attempt failing against its own destruction suite, and reached the first working version on 11 July 2026. He designed the architecture, wrote the code, ran every experiment and wrote the paper, which has been public since 1 August 2026.
 
 Before Oxiedo he built and sold a company. He is relocating Oxiedo to San Francisco, and he is the person who signs the licence and answers for every claim on this site.
+
+Rokib Al Dhin Raadh
+
+Founder & CEO · Oxiedo
+
+- **Built** — ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments
+- **Paper** — Sole author, [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363) (preprint, 1 August 2026)
+- **Before** — Built and sold a company
+- **On X** — [@Raad_X](https://x.com/Raad_X)
 
 **ORIGIN**
 

@@ -133,6 +133,7 @@ const fieldState = [
 const results = [
 	{
 		n: '01',
+		source: 'Paper §4.1–4.2, Table 1',
 		name: 'Recovery from catastrophic structural collapse',
 		condition: 'A layer surgically zeroed at epoch 100, on a network that had reached 85.1%.',
 		outcome: 'Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance.',
@@ -141,6 +142,7 @@ const results = [
 	},
 	{
 		n: '02',
+		source: 'Paper Table 2',
 		name: 'Recovery from simultaneous full-hierarchy collapse',
 		condition: 'Every convolutional stage zeroed at once, rather than a single layer.',
 		outcome: 'Recovered to 70.8% ± 2.2% across three seeds; 72.9% on the seed shown in the replay.',
@@ -149,6 +151,7 @@ const results = [
 	},
 	{
 		n: '03',
+		source: 'Paper §4.4, Table 3',
 		name: 'Retention through sequential task shift',
 		condition: 'Task A then Task B, with no replay buffer, no task identifier and no modularity constraint.',
 		outcome: '94.6% of Task A retained across 3/3 seeds. Zero-shot 4-way compositional accuracy of 58.8% against 25% chance. The factorisation was not designed, it emerged from gradient conflict.',
@@ -157,6 +160,7 @@ const results = [
 	},
 	{
 		n: '04',
+		source: 'Paper §4.2',
 		name: 'Degradation under label noise',
 		condition: '40% symmetric label noise across 200 epochs.',
 		outcome: '−2.5 pp from peak, without ever being told the data was corrupted.',
@@ -165,6 +169,7 @@ const results = [
 	},
 	{
 		n: '05',
+		source: 'Paper, supplementary Table S2',
 		name: 'Numerical stability at graph scale',
 		condition: 'A 50-node fully-connected DAG at 30% continuous label noise, 200 epochs.',
 		outcome: 'Stable throughout, via 22,014 autonomous corrections, each attributed and bounded.',
@@ -173,6 +178,7 @@ const results = [
 	},
 	{
 		n: '06',
+		source: 'Paper §4.3',
 		name: 'Insensitivity to the one hyperparameter that matters',
 		condition: 'Bottleneck dimension varied across a 16× range.',
 		outcome: 'Accuracy variance below 0.8%. The correction mechanism compensates for capacity imbalance rather than requiring it to be tuned away.',
@@ -244,6 +250,32 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 			))}
 		</div>
 	</div>
+
+	{/* THE PAPER. Every figure on this page is taken from it, and each result below names the
+	    table or section it comes from, so the page reads as a guide to the paper rather than a
+	    claim beside it. */}
+	<section class="section container">
+		<div class="tech-paper">
+			<div class="tech-paper-main">
+				<p class="tech-paper-label">The paper behind every number on this page</p>
+				<h2 class="tech-paper-title">
+					<a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction</a>
+				</h2>
+				<p class="tech-paper-meta">
+					<a href="/about#founder">Rokib Al Dhin Raadh</a> · Sole author · Preprint, Zenodo · 1 August 2026 · 47 pages · DOI 10.5281/zenodo.21730363
+				</p>
+				<p class="tech-paper-body">
+					The full method, all 383 experiments and every run where it loses. Each result below cites
+					the table or section it comes from, so any figure can be checked against the source in
+					one click.
+				</p>
+			</div>
+			<div class="tech-paper-actions">
+				<Button variant="primary" href="https://doi.org/10.5281/zenodo.21730363" target="_blank" rel="noopener noreferrer">Read the paper</Button>
+				<Button variant="secondary" href="https://zenodo.org/records/21730363/files/ORMAS_preprint.pdf?download=1" rel="noopener noreferrer">Download PDF</Button>
+			</div>
+		</div>
+	</section>
 
 	<section class="section container">
 		<div class="tech-intro">
@@ -447,14 +479,15 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 						<div><dt>Condition</dt><dd>{r.condition}</dd></div>
 						<div><dt>Result</dt><dd>{r.outcome}</dd></div>
 						<div><dt>Baseline</dt><dd>{r.baseline}</dd></div>
+						<div><dt>Source</dt><dd><a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">{r.source}</a></dd></div>
 					</dl>
 				</li>
 			))}
 		</ol>
 		<p class="tech-results-note">
 			All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in
-			the full technical record, alongside the reproducibility checklist and the scripts that
-			regenerate every run.
+			<a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">the paper</a>,
+			alongside the reproducibility checklist and the scripts that regenerate every run.
 		</p>
 	</section>
 
@@ -559,7 +592,9 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 		<h2 class="section-title">Three runs finish behind the baseline. All three are here.</h2>
 		<p class="section-lede">
 			A results page that shows only the wins is not a record. These are the published runs where a
-			standard network does better, with the numbers from the paper and the reason for each.
+			standard network does better, with the numbers from
+			<a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">the paper</a>
+			(Table 2 and supplementary §O) and the reason for each.
 		</p>
 		<div class="catsplit">
 			{losses.map((l) => (

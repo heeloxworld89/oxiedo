@@ -117,7 +117,6 @@ const principalFacts = [
 // THE FOUNDER SECTION. Facts only, each one checkable: the role, what he built, the paper he
 // wrote, and where to find him. Age stays absent, as the note at the top of this file records.
 const founderFacts = [
-	{ k: 'Role', v: 'Founder and CEO of Oxiedo' },
 	{ k: 'Built', v: 'ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments' },
 	{ k: 'Paper', v: 'Sole author, <a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction</a> (preprint, 1 August 2026)' },
 	{ k: 'Before', v: 'Built and sold a company' },
@@ -223,23 +222,21 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'About' }];
 	    to check it. Anchored at #founder; the footer on every page links here. */}
 	<section class="band band--surface section reveal" id="founder">
 		<div class="container">
-			<div class="ab-note">
-				<div class="ab-note-side">
-					<Eyebrow>THE FOUNDER</Eyebrow>
-					<h2 class="section-title">Oxiedo was founded by Rokib Al Dhin Raadh.</h2>
-					<div class="ab-note-card">
-						<p class="ab-note-name">Rokib Al Dhin Raadh</p>
-						<p class="ab-note-role">Founder &amp; CEO · Inventor of ORMAS</p>
-						<dl class="ab-note-facts">
-							{founderFacts.map((f) => (
-								<div><dt>{f.k}</dt><dd set:html={f.v} /></div>
-							))}
-						</dl>
-					</div>
-				</div>
+			<Eyebrow>THE FOUNDER</Eyebrow>
+			<h2 class="section-title">Founded by Rokib Al Dhin Raadh, the inventor of ORMAS.</h2>
+			<div class="ab-founder">
 				<div class="ab-note-body">
 					{founderBio.map((para) => <p>{para}</p>)}
 				</div>
+				<aside class="ab-founder-card" aria-label="Founder facts">
+					<p class="ab-note-name">Rokib Al Dhin Raadh</p>
+					<p class="ab-note-role">Founder &amp; CEO · Oxiedo</p>
+					<dl class="ab-note-facts">
+						{founderFacts.map((f) => (
+							<div><dt>{f.k}</dt><dd set:html={f.v} /></div>
+						))}
+					</dl>
+				</aside>
 			</div>
 		</div>
 	</section>
