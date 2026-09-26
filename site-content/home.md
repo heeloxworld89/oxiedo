@@ -15,9 +15,9 @@
 
 - 383 — controlled experiments, each reproducible from seed
 
-Machines that cannot lie.
+Break it mid-training. It tells you what broke.
 
-Not about the world. About themselves.
+Two steps later, by name. Then it repairs itself.
 
 The labs building the most powerful networks on earth say they cannot see inside them, or teach them to learn without forgetting.
 
@@ -51,13 +51,13 @@ What that costs today
 
   Stops on that run in 54 days. One every three hours.
 
-- 7%
+- 3%
 
-  Of worldwide revenue. The EU fine ceiling, from August 2026.
+  Of worldwide turnover (or €15M): the EU AI Act ceiling for high-risk non-compliance, from 2 December 2027.
 
 - 92%
 
-  Of approved medical AI can never be updated at all.
+  Of new medical AI approvals (2024–25) can't be updated without a fresh submission.
 
 Published figures · one per sector
 
@@ -449,7 +449,7 @@ Every correction, with its component, diagnosis, step, magnitude and declared ce
 
 [Open the live demo](/black-box)
 
-The full console: four scenarios to replay, a two-minute narrated tour on desktop, and [the one run where this architecture loses](/black-box).
+The full console: four scenarios to replay, a two-minute narrated tour on desktop, and [a run where this architecture loses](/black-box).
 
 **THE FRONTIER**
 
@@ -511,7 +511,7 @@ It keeps what it learned
 
 What comes next
 
-Every result so far is on CIFAR. Transformer scale is the next measurement, and the entire remaining programme can be proven wrong in under thirty GPU-hours. That is the shot, stated with its odds.
+Every result so far is on CIFAR. Transformer scale is the next measurement, and the prediction for it is written down before it runs. That is the shot, stated with its odds.
 
 **THE EVIDENCE**
 
@@ -545,7 +545,7 @@ A fifty-node network at 30% label noise across 200 epochs. Standard training ret
 
 After the same task shift, the network answered combinations it had never been shown at 58.8%, against 25% chance. No modularity was built in. It organised its own internal structure out of the conflict between the two tasks.
 
-383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and the one result that went against us.
+383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and every run where it loses.
 
 A frontier run fails at 60 percent · current practice
 

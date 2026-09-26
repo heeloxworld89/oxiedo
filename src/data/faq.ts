@@ -128,7 +128,7 @@ export const faqs: FaqItem[] = [
 		q: 'What is ORMAS?',
 		a: [
 			'A neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns.',
-			'Every node in an ORMAS network carries a bounded local gradient chain of four operations, through a shared 4,715-parameter bottleneck. Because that chain is bounded, the contribution of each node to the loss is not estimated after training, it is read directly off the backward pass. Attribution stops being an interpretation of the model and becomes a measurement taken from it.',
+			'Every node in an ORMAS network carries a bounded local gradient chain of four operations, through a shared 4,416-parameter bottleneck. Because that chain is bounded, the contribution of each node to the loss is not estimated after training, it is read directly off the backward pass. Attribution stops being an interpretation of the model and becomes a measurement taken from it.',
 			'The practical consequence is that a model trained under ORMAS arrives with a record of what it did, which component was responsible, and what changed. The record is produced during training, not reconstructed afterwards.',
 		],
 		link: { href: '/technology', label: 'The architecture in full' },
@@ -237,8 +237,8 @@ export const faqs: FaqItem[] = [
 		cat: 'evidence',
 		q: 'Where does ORMAS lose?',
 		a: [
-			'Under adversarial weight injection, it performs 1.0 percentage point worse than a parameter-matched baseline. That is the one adverse result in the programme and it is published on the technology page and named in every market where it bears on the decision.',
-			'It is a real deficit and it is small. It sits alongside a +70.3 pp recovery advantage under structural collapse, and any evaluator weighing the two should weigh them against the failure mode their own systems actually encounter.',
+			'In three published runs. Under adversarial weight injection it finishes 1.0 percentage point behind a parameter-matched baseline. Under a 100× weight explosion it finishes 0.9 pp behind. And on ResNet-18, a standard network with no instrumentation recovers slightly better from the same damage: 92.6% against 91.7%.',
+			'Each is a real deficit and each is small. The adversarial one has a known cause: crafted weights keep activation statistics looking normal, which evades exactly what ORMAS monitors, and there is no current mitigation. All three are on the technology page, next to a +70.3 pp recovery advantage under structural collapse, and any evaluator should weigh them against the failure modes their own systems actually meet.',
 		],
 	},
 	{
@@ -247,7 +247,7 @@ export const faqs: FaqItem[] = [
 		q: 'What has not been established?',
 		a: [
 			'Three things, and they are the outer edge of what is claimed anywhere on this site: behaviour at frontier scale, behaviour on any regulated dataset, and behaviour in production over time. No deployment, pilot or customer exists, so none of the three has been observed, and nothing here is sold as though it had been.',
-			'Everything inside that boundary is claimed without hedging: 383 controlled experiments across four architecture families, 67 archived runs that regenerate from seed, and the one adverse result published alongside the rest. The technology page carries a section drawing the same line, written before anyone asked for it.',
+			'Everything inside that boundary is claimed without hedging: 383 controlled experiments across four architecture families, 67 archived runs that regenerate from seed, and every run where it loses published alongside the rest. The technology page carries a section drawing the same line, written before anyone asked for it.',
 		],
 		link: { href: '/technology', label: 'What is not established' },
 	},
@@ -256,7 +256,7 @@ export const faqs: FaqItem[] = [
 		cat: 'evidence',
 		q: 'Does it scale to large models?',
 		a: [
-			'The bottleneck is 4,715 parameters and is shared, so the instrumentation cost does not grow with model size the way the model does. The architecture has no scale-dependent term in it.',
+			'The bottleneck is 4,416 parameters and is shared, so the instrumentation cost does not grow with model size the way the model does. The architecture has no scale-dependent term in it.',
 			'That is the structural argument, and it is a good one. It is not the same as having run it at frontier scale, which has not been done and is listed among the things a first partner would establish.',
 		],
 	},
@@ -265,7 +265,7 @@ export const faqs: FaqItem[] = [
 		cat: 'evidence',
 		q: 'What would prove this wrong?',
 		a: [
-			'Under 30 GPU-hours on a single card. The remaining research programme is designed so that its central claims can be falsified cheaply and quickly, and the experiment that would do it is specified rather than described.',
+			'Four measurements, each with a prediction written down before it runs. The remaining research programme is designed so that its central claims can be falsified directly, and the experiment that would do it is specified rather than described.',
 			'A programme that cannot be killed inexpensively is not a research programme. Any serious technical evaluator should ask for that specification, and it is provided on request.',
 		],
 	},
@@ -323,7 +323,7 @@ export const faqs: FaqItem[] = [
 		cat: 'deploy',
 		q: 'What does the instrumentation cost in compute?',
 		a: [
-			'Two different numbers, and conflating them would flatter the answer. In parameters the cost is a bounded constant: the bottleneck is 4,715 shared parameters and the local chain is fixed at four operations, so it does not scale with the model. In wall-clock throughput it is not a constant. The full system has been measured at 1.35\u00d7 on a graph backbone.',
+			'Two different numbers, and conflating them would flatter the answer. In parameters the cost is a bounded constant: the bottleneck is 4,416 shared parameters and the local chain is fixed at four operations, so it does not scale with the model. In wall-clock throughput it is not a constant. The full system has been measured at 1.35\u00d7 on a graph backbone.',
 			'Most of that 1.35\u00d7 is gradient surgery, which monitoring does not need. The read-only path runs none of it, and its wall-clock cost has been characterised as negligible but not separately benchmarked, so it is a measurement we will run against the customer configuration rather than quote. Anyone sizing a frontier run should assume the full figure until that measurement exists.',
 			'Set against it is the cost of the failure it prevents. A frontier run that dies at 60 percent and is restarted blind burns thousands of GPU-hours to reach the same checkpoint twice. The telemetry is not a tax on training; it is what stops an organisation paying for the same training more than once.',
 		],
@@ -589,7 +589,7 @@ export const faqs: FaqItem[] = [
 		q: 'Who is behind this?',
 		a: [
 			'Oxiedo is a licensing company. What it licenses is train-time accountability: ORMAS, the training architecture, licensed to institutions that hold regulated data and carry the obligation to account for what a model did with it. The company is incorporating as a Delaware C-corporation alongside a move to San Francisco, and until that completes it contracts through an existing registered company, named in full in any agreement.',
-			'One named principal, Rokib Al Dhin Raadh, is accountable for the architecture: it was designed, built and adversarially tested under that name, and the counterparty an institution contracts with is the party that wrote it. That accountability is the substance of the licence. Institutions under obligation are not buying a repository; they are buying somebody who will stand behind a number in a filing.',
+			'Rokib Al Dhin Raadh, founder and CEO, is accountable for the architecture: it was designed, built and adversarially tested under that name, and the counterparty an institution contracts with is the party that wrote it. That accountability is the substance of the licence. Institutions under obligation are not buying a repository; they are buying somebody who will stand behind a number in a filing.',
 			'Commercial, research and regulatory roles are open, and the full position on structure and funding is set out on the investor page rather than buried.',
 		],
 		link: { href: '/about', label: 'The company' },
@@ -599,7 +599,7 @@ export const faqs: FaqItem[] = [
 		cat: 'company',
 		q: 'How much of this actually exists?',
 		a: [
-			'16,316 lines across 85 files, 383 controlled experiments across four architecture families, and 67 archived runs that regenerate from seed. The architecture is complete and the experimental programme is closed.',
+			'16,316 lines of ORMAS code across 85 files (around 37,000 including the experiment infrastructure), 383 controlled experiments across four architecture families, and 67 archived runs that regenerate from seed. The architecture is complete and the experimental programme is closed.',
 			'The right way to weigh that is not to take it on trust. Every run regenerates from seed, and the mechanism is released in full on publication, so the work becomes checkable in a way that a larger team behind a permanently closed implementation never is.',
 		],
 	},
@@ -619,7 +619,7 @@ export const faqs: FaqItem[] = [
 		q: 'Why should we engage a company with no paying customers?',
 		a: [
 			'Because every established tool in this category inspects a model that has already finished training, and an inspection performed afterwards is an approximation however long the vendor has been selling it. ORMAS produces the record as the model trains. That is a different position inside an existing, budgeted market \u2014 AI model-risk management \u2014 rather than a new one, and the question an institution under obligation is actually deciding is which supplier produces evidence that survives a regulator.',
-			'What is normally opaque at this stage is not opaque here. The release commitment is written into the licence, every experiment regenerates from seed, the one adverse result is disclosed on this site, and the falsification test costs under 30 GPU-hours. Most established vendors disclose none of it.',
+			'What is normally opaque at this stage is not opaque here. The release commitment is written into the licence, every experiment regenerates from seed, every result where it loses is disclosed on this site, and the falsification test is specified in advance. Most established vendors disclose none of it.',
 		],
 	},
 	{

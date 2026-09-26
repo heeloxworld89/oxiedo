@@ -29,7 +29,7 @@ Turning one property into one product, licensed to institutions that hold data u
 
 **ORIGIN**
 
-### Three years on one question, then the company the answer required.
+### One question in 2023, two years of research, then the company the answer required.
 
 Nothing here was planned from the beginning. The work began as a research question two years before there was a legal person behind it, the company went where the problem was, and the problem turned out to be considerably larger than the one it set out to solve.
 
@@ -75,17 +75,17 @@ Nothing here was planned from the beginning. The work began as a research questi
 
 Rokib Al Dhin Raadh
 
-Founder and named principal
+Founder & CEO
 
 - **Accountable for** — The calibrated bound, the record behind it, and every claim published against either.
-- **Background** — Technical founder. Built and exited companies before this one.
+- **Background** — Technical founder. Built and sold a company before this one.
 - **Based** — Relocating to San Francisco.
 
 A custodian deciding whether to release regulated data asks for three things before anything else: a calibrated bound, a record that survives an audit, and a named counterparty who will stand behind both.
 
 The first two are architecture. The third is not something an architecture can supply. A published mechanism has no counterparty of its own, and a bound with nobody behind it cannot be entered into a filing or defended in a review. What a licence adds to a published mechanism is a person who signs the declaration and answers for it when a regulator, an auditor or an opposing expert puts it under pressure.
 
-Rokib Al Dhin Raadh is that person here. The architecture, the results published against it and the one adverse result published alongside them are attributable to a single named principal, and every archived run behind them regenerates from seed, so the claim can be checked rather than taken on trust. Corrections are issued under the same name as the original claim.
+Rokib Al Dhin Raadh is that person here. The architecture, the results published against it and every run where it loses are attributable to one named person, the founder and CEO, and every archived run behind them regenerates from seed, so the claim can be checked rather than taken on trust. Corrections are issued under the same name as the original claim.
 
 That is a deliberate structure rather than a stage the company is passing through. Accountability distributed across a vendor is accountability nobody can locate, which is the reason a compliance function asks who signs before it asks how the method works. A licence that function can rely on names someone, and this one does.
 
@@ -123,7 +123,7 @@ Each of these costs something. They are listed because a company is what it does
 
   #### State the limit before it is found
 
-  The one adverse result, 1.0 pp worse than baseline under adversarial weight injection, is published on the technology page and named in every market where it is relevant. In fields whose central complaint is that vendors overstate their approximations, being exact about their own limit is the position rather than a caveat on it.
+  Every run where it loses is published on the technology page: adversarial weight injection (−1.0 pp), a 100× weight explosion (−0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.6% vs 91.7%). In fields whose central complaint is that vendors overstate their approximations, being exact about their own limit is the position rather than a caveat on it.
 
 6. 06
 

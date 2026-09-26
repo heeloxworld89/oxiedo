@@ -21,9 +21,9 @@ Controlled experiments across four architecture families, every run reproducible
 
 Layers of causal telemetry emitted natively, from system health to per-parameter attribution
 
-<30
+3
 
-GPU-hours to falsify the entire remaining research programme, on one card
+Published runs where ORMAS loses to the baseline, named on this page next to the wins
 
 One line covers what this technology is for. Data that would be worth training on is locked away, and it is locked away because a model cannot account for what it took from it. Everything below is the work of building a network that can.
 
@@ -109,7 +109,7 @@ loss
 
 measured, not estimated
 
-Four operations, through a shared 4,715-parameter bottleneck. The chain cannot grow with the network, so the contribution of each node is read directly off the backward pass.
+Four operations, through a shared 4,416-parameter bottleneck. The chain cannot grow with the network, so the contribution of each node is read directly off the backward pass.
 
 > The bound is the product — everything else on this site follows from the second row having a fixed length.
 
@@ -123,7 +123,7 @@ Four operations, through a shared 4,715-parameter bottleneck. The chain cannot g
 
   #### Per-node local loss
 
-  Each node carries its own bounded chain of LayerNorm, Linear, PReLU and Linear, anchored through one shared low-rank bottleneck of 4,715 parameters. This is the health baseline.
+  Each node carries its own bounded chain of LayerNorm, Linear, PReLU and Linear, anchored through one shared low-rank bottleneck of 4,416 parameters. This is the health baseline.
 
 3. SIGNAL 3
 
@@ -163,7 +163,7 @@ Parameter attribution
 
 Causal saliency through the bounded chain, per parameter
 
-Gradient conflict between the signals is resolved by PCGrad projection. Every continuous correction satisfies a mean-centring conservation constraint and is bounded by an Input-to-State Stability argument under local strong convexity, and the observed correction rate settles exactly as that bound predicts, which is the part that matters: the stability argument is testable, and it was tested.
+Gradient conflict between the signals is resolved by PCGrad projection. Every continuous correction satisfies a mean-centring conservation constraint and is bounded by an Input-to-State Stability argument under local strong convexity, and the observed correction rate is consistent with that bound, which is the part that matters: the stability argument is testable, and it was tested.
 
 **THE FIRST RESULT, REPLAYED**
 
@@ -197,7 +197,7 @@ Correction ledger · written during training
 
 Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
 
-[The full replay page](/black-box) carries the other three scenarios, including the adversarial injection where this architecture measures worse than the baseline.
+[The full replay page](/black-box) carries the other three scenarios, including the adversarial injection where this architecture finishes behind the baseline.
 
 **WHAT IS PUBLISHED**
 
@@ -219,18 +219,18 @@ Written for a reader who works in this field. Every figure in it appears with it
 
   +70.3 pp
 
-  - **Condition** — A layer surgically zeroed at epoch 101, on a network that had reached 85.1%.
-  - **Result** — Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance reclaimed.
+  - **Condition** — A layer surgically zeroed at epoch 100, on a network that had reached 85.1%.
+  - **Result** — Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance.
   - **Baseline** — Parameter-matched standard CNN: 10.0% ± 0.0%, permanently, on every seed.
 
 2. 02
 
   #### Recovery from simultaneous full-hierarchy collapse
 
-  +61.5 pp
+  +60.8 pp
 
   - **Condition** — Every convolutional stage zeroed at once, rather than a single layer.
-  - **Result** — Recovered to 71.5% ± 2.5% across three seeds; 72.9% on the seed shown in the replay.
+  - **Result** — Recovered to 70.8% ± 2.2% across three seeds; 72.9% on the seed shown in the replay.
   - **Baseline** — Parameter-matched standard network: 10.0% ± 0.0%, permanent.
 
 3. 03
@@ -333,7 +333,7 @@ The programme underway supplies it. What follows is stated as objectives and con
 
 **HOW IT GETS DE-RISKED**
 
-### Four measurements decide the rest of this, and together they cost under thirty GPU-hours.
+### Four measurements decide the rest of this.
 
 Each is falsifiable, each carries a written prediction against it, and each runs on hardware already in the building. The uncertainty in this programme is not spread across years of research. It sits in four measurements, and one of them is free.
 
@@ -377,6 +377,24 @@ The completed architecture is released in full on publication: reproducible, fre
 
 What is held is the programme above: the mechanism by which attribution extends from components to data, the artefact format, the calibration procedure that turns a general bound into a validated one for a specific deployment, and the record a customer accumulates by running it. The first is a trade secret until we release it on our own terms. The last cannot be transferred at all, because it belongs to them.
 
+**WHERE IT LOSES**
+
+### Three runs finish behind the baseline. All three are here.
+
+A results page that shows only the wins is not a record. These are the published runs where a standard network does better, with the numbers from the paper and the reason for each.
+
+Adversarial weight injection
+
+83.1% against the baseline's 84.1%: 1.0 pp behind. Crafted weights keep activation statistics looking normal while moving decision boundaries, which evades exactly what ORMAS monitors. No current mitigation.
+
+Weight explosion (100×)
+
+85.1% against 86.0%: 0.9 pp behind. Both networks recover almost at once; the paper reads it as ORMAS not over-correcting when the damage is mild.
+
+ResNet-18, stages killed
+
+An uninstrumented ResNet-18 recovers slightly better, blind: 92.6% against ORMAS at 91.7%. ORMAS names the damage through 264 attributed corrections; the standard network says nothing about it.
+
 **WHAT IS NOT ESTABLISHED**
 
 ### Stated here, in the same place as the results.
@@ -388,8 +406,6 @@ A research page that lists only what worked is a marketing page wearing a lab co
 - The architecture is demonstrated on fully-connected, convolutional and residual families. Transformers are a stated generalisation target, not a demonstrated result.
 
 - Test-time distribution shift is an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.
-
-- Under adversarial weight injection the architecture measures 1.0 pp worse than a standard baseline. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors. Published rather than omitted, and unmitigated.
 
 - Whether the signal survives at small n, meaning tens of examples rather than tens of thousands, is untested.
 

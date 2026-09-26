@@ -520,7 +520,8 @@ export class Anatomy {
 		   LayerNorm over 128, Linear 128→32, PReLU, Linear 32→10, then the local loss
 		   whose running value IS the stage's health. Those are the real shapes of
 		   SharedBottleneckReadout (three_signal_learning/src/core/shared_readout.py),
-		   and the four parameter counts sum to the 4,715 printed under the drawing —
+		   and the four parameter counts sum to the 4,715 printed under the drawing (4,416 of them are
+		   the two projection weight matrices, which is the figure the paper quotes) —
 		   so the picture is the architecture, not an illustration of it.
 
 		   Drawn as blocks whose square faces are sized by the width they carry, so the
@@ -1243,8 +1244,8 @@ export class Anatomy {
 			ctx.fillStyle = AMBER;
 			ctx.fillText(
 				pick(
-					'one shared bottleneck · 4,715 parameters · the chain cannot grow with the network',
-					'bounded chain · 4,715 parameters',
+					'one shared bottleneck · 4,416 shared weights · the chain cannot grow with the network',
+					'bounded chain · 4,416 shared weights',
 				),
 				14,
 				cssH - 26,
@@ -1339,7 +1340,7 @@ export class Anatomy {
 				const total = pieces.reduce((s, pc) => s + pc.params, 0);
 				ctx.font = BOLD10;
 				ctx.fillStyle = AMBER;
-				say(`= ${fmt(total)} parameters · one shared bottleneck`, (a + b) / 2, by + 14);
+				say(`= ${fmt(total)} parameters · 4,416 of them shared weights`, (a + b) / 2, by + 14);
 				ctx.font = REG9;
 				ctx.fillStyle = DIM;
 				say('four operations for every stage · the chain cannot grow with the network', (a + b) / 2, by + 26);

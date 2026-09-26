@@ -74,11 +74,11 @@ const benchmarks = [
 // will not scroll.
 const brief = [
 	{ k: 'The insight', v: 'Every interpretability and monitoring tool estimates a model from outside it, and an estimate is an opinion. ORMAS bounds each node’s gradient chain to four operations, so attribution stops being an estimate and becomes a measurement taken during training. If that is right, every regulated training run eventually has to be built this way, and the layer the market is currently funding is the wrong layer.' },
-	{ k: 'What exists', v: 'An architecture that reached maturity on 1 August 2026, after three years in which the earlier versions failed their own destruction suite. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.' },
+	{ k: 'What exists', v: 'The question in 2023; two years of research in 2024–25, the first of them a failure against its own destruction suite; a first working version on 11 July 2026, and the complete system on 1 August 2026. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.' },
 	{ k: 'Why now', v: 'The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.' },
 	{ k: 'The moat', v: 'The mechanism publishes on release, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.' },
 	{ k: 'The ask', v: '$1.5M pre-seed, 18 months, six milestones with acceptance criteria. Team $650K · compute $250K · one dataset partnership $150K · structure and filings $100K · operating $200K · buffer $150K. Sized to the next result rather than to the whole plan, and deliberately below the deep tech band.' },
-	{ k: 'The risk', v: 'No revenue, no customers, zero customer conversations. One person. Every result on CIFAR-10 and CIFAR-100. The whole remaining programme is falsifiable for under 30 GPU-hours, which is the fastest way to find out if we are wrong.' },
+	{ k: 'The risk', v: 'No revenue, no customers, zero customer conversations. One person. Every result on CIFAR-10 and CIFAR-100. The whole remaining programme comes down to four specified measurements, which is the fastest way to find out if we are wrong.' },
 ];
 
 /* ── THE MARKET, COUNTED UPWARD ───────────────────────────────────────────────
@@ -160,7 +160,7 @@ const provenance = [
 const stats = [
 	{ figure: '+70.3', unit: 'pp', label: 'Recovery from catastrophic structural collapse, where a parameter-matched baseline is permanently dead' },
 	{ figure: '383', unit: '', label: 'Controlled experiments across four architecture families, every run reproducible from seed' },
-	{ figure: '<30', unit: 'GPU-hrs', label: 'To falsify the entire remaining research programme, on a single card' },
+	{ figure: '3', unit: 'losses', label: 'Published runs where ORMAS finishes behind the baseline, named next to the wins' },
 	{ figure: '1', unit: 'person', label: 'Who built all of it. The second is the most consequential thing this round buys' },
 ];
 
@@ -260,7 +260,7 @@ const derisked = [
 	{ k: 'Does the mechanism work', v: 'Removed. 383 controlled experiments, 67 archived runs reproducible from seed, +70.3 pp recovery under structural collapse, published and checkable.', done: true },
 	{ k: 'Is it a real architecture or a wrapper', v: 'Removed. 16,316 lines across 85 files, four architecture families, an adversarial suite the first version failed and the second had to clear.', done: true },
 	{ k: 'Is the demand real', v: 'Removed by legislation rather than by us. The obligations arrive on dates already in law.', done: true },
-	{ k: 'Does it hold beyond CIFAR', v: 'Live. This is what the compute in this round buys, on a transformer backbone, and the weak form of it is falsifiable for under 30 GPU-hours.', done: false },
+	{ k: 'Does it hold beyond CIFAR', v: 'Live. This is what the compute in this round buys, on a transformer backbone, and the weak form of it is specified as one of four measurements.', done: false },
 	{ k: 'Does it hold at frontier scale', v: 'Open, and not what this round claims to answer. That is the result the round after this one is priced against.', done: false },
 	{ k: 'Does it hold on regulated data', v: 'Live. Requires one dataset partner, which is the third line item in this round.', done: false },
 	{ k: 'Will institutions buy it', v: 'Live. Zero customer conversations have taken place.', done: false },
@@ -319,7 +319,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 				</p>
 				<p class="iv-thesis-p">
 					ORMAS bounds each node’s local gradient chain to four operations through a shared
-					4,715-parameter bottleneck. Because the chain is bounded, per-node attribution stops
+					4,416-parameter bottleneck. Because the chain is bounded, per-node attribution stops
 					being an estimate and becomes a measurement taken from the backward pass. A model
 					trained this way arrives with the account already made.
 				</p>
@@ -483,7 +483,8 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 					the route runs through the same failures: an architecture that lost to a plain CNN at
 					every noise level tested, a correction mechanism that never triggered once across 42
 					runs, and ablation arms indistinguishable from the full system. Those runs are logged
-					and kept. Three years separated the question from the first version that worked, and
+					and kept. The question came in 2023, two years of research followed, and the first version
+					that worked arrived on 11 July 2026;
 					the reason the rest of the field does not have this is that the path to it is not
 					visible from the outside.
 				</p>
@@ -743,19 +744,19 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 		</p>
 		<div class="iv-wait">
 			<p class="iv-wait-lead">
-				The entire remaining research programme can be falsified for under 30 GPU-hours, on a
-				single card, using a specification we supply.
+				The entire remaining research programme comes down to four measurements, each with a
+				prediction written down in advance, using a specification we supply.
 			</p>
 			<p class="iv-wait-body">
-				That is not a claim about how confident we are. It is a statement about how cheap the
-				experiment is. What a quarter of waiting would establish is available this week, for
-				roughly the cost of a business lunch, and it can be run by their own technical partner on
-				customer hardware without us in the room.
+				That is not a claim about how confident we are. It is a statement about how directly the
+				claims can be tested. What a quarter of waiting would establish can be checked now, and
+				it can be run by their own technical partner on their own hardware without us in the
+				room.
 			</p>
 			<p class="iv-wait-body">
 				Everything else is checkable now, under a short agreement: the mechanism, all 383 seeded
-				runs including the ones that failed, the adversarial suite, and the full technical account. The
-				one adverse result is already on the technology page. The data room does not contain a
+				runs including the ones that failed, the adversarial suite, and the full technical account. Every
+				run where it loses is already on the technology page. The data room does not contain a
 				better story than this page does. It contains the same story with the workings attached.
 			</p>
 		</div>

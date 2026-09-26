@@ -47,7 +47,7 @@ recovery from the same damage
 
 Diagnosed within one epoch and repaired through 85 individually attributed structural corrections. A system that degrades to eighty rather than ten is in a different safety category.
 
-71.5%
+70.8%
 
 recovery from simultaneous full-hierarchy damage
 
@@ -117,7 +117,7 @@ The current answer for anything safety-critical: fix the weights, certify that a
 
   #### Graceful degradation as a measured property
 
-  A layer was destroyed mid-training on a network that had reached 85.1%. The parameter-matched baseline sat at chance level permanently, on every seed. This architecture diagnosed the failure within one epoch and recovered to 80.3% through 85 individually attributed corrections. Under simultaneous damage to every convolutional stage it recovered to 71.5%.
+  A layer was destroyed mid-training on a network that had reached 85.1%. The parameter-matched baseline sat at chance level permanently, on every seed. This architecture diagnosed the failure within one epoch and recovered to 80.3% through 85 individually attributed corrections. Under simultaneous damage to every convolutional stage it recovered to 70.8%.
 
 2. 02
 
@@ -245,7 +245,7 @@ Nobody has deployed this, and we are not going to imply otherwise. What we can p
 
 - The lesion experiments in full: single-layer and simultaneous full-hierarchy, with error bars and seeds
 
-- The adverse result, unprompted: the 1.0 pp adversarial deficit and its mechanism
+- Where it loses, unprompted: the 1.0 pp adversarial deficit and its mechanism, and the other two runs that finish behind
 
 - The bound table and a worked self-modification record
 

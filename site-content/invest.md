@@ -12,17 +12,17 @@ INVEST
 The whole thing, in one screen
 
 - **The insight** — Every interpretability and monitoring tool estimates a model from outside it, and an estimate is an opinion. ORMAS bounds each node’s gradient chain to four operations, so attribution stops being an estimate and becomes a measurement taken during training. If that is right, every regulated training run eventually has to be built this way, and the layer the market is currently funding is the wrong layer.
-- **What exists** — An architecture that reached maturity on 1 August 2026, after three years in which the earlier versions failed their own destruction suite. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.
+- **What exists** — The question in 2023; two years of research in 2024–25, the first of them a failure against its own destruction suite; a first working version on 11 July 2026, and the complete system on 1 August 2026. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.
 - **Why now** — The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.
 - **The moat** — The mechanism publishes on release, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.
 - **The ask** — $1.5M pre-seed, 18 months, six milestones with acceptance criteria. Team $650K · compute $250K · one dataset partnership $150K · structure and filings $100K · operating $200K · buffer $150K. Sized to the next result rather than to the whole plan, and deliberately below the deep tech band.
-- **The risk** — No revenue, no customers, zero customer conversations. One person. Every result on CIFAR-10 and CIFAR-100. The whole remaining programme is falsifiable for under 30 GPU-hours, which is the fastest way to find out if we are wrong.
+- **The risk** — No revenue, no customers, zero customer conversations. One person. Every result on CIFAR-10 and CIFAR-100. The whole remaining programme comes down to four specified measurements, which is the fastest way to find out if we are wrong.
 
 The entire field treats attribution as something reconstructed after training. It is not. It is something a network either computes about itself, or does not.
 
 Interpretability, monitoring and governance tooling all share one assumption: that a simpler model of a trained network can be built and its approximation reported. That assumption is why two of those tools disagree on the same input, and why none of their output can be entered as evidence by an institution that is legally obliged to produce some.
 
-ORMAS bounds each node’s local gradient chain to four operations through a shared 4,715-parameter bottleneck. Because the chain is bounded, per-node attribution stops being an estimate and becomes a measurement taken from the backward pass. A model trained this way arrives with the account already made.
+ORMAS bounds each node’s local gradient chain to four operations through a shared 4,416-parameter bottleneck. Because the chain is bounded, per-node attribution stops being an estimate and becomes a measurement taken from the backward pass. A model trained this way arrives with the account already made.
 
 If that is right, every regulated training run eventually has to be built this way, and the layer everyone is currently investing in is the wrong layer.
 
@@ -34,9 +34,9 @@ Recovery from catastrophic structural collapse, where a parameter-matched baseli
 
 Controlled experiments across four architecture families, every run reproducible from seed
 
-<30 GPU-hrs
+3 losses
 
-To falsify the entire remaining research programme, on a single card
+Published runs where ORMAS finishes behind the baseline, named next to the wins
 
 1 person
 
@@ -120,7 +120,7 @@ The mechanism is published on release, so defensibility does not rest on secrecy
 
 #### The dead ends are the barrier to entry
 
-A competitor does not start where this is now. They start where this was in 2023, and the route runs through the same failures: an architecture that lost to a plain CNN at every noise level tested, a correction mechanism that never triggered once across 42 runs, and ablation arms indistinguishable from the full system. Those runs are logged and kept. Three years separated the question from the first version that worked, and the reason the rest of the field does not have this is that the path to it is not visible from the outside.
+A competitor does not start where this is now. They start where this was in 2023, and the route runs through the same failures: an architecture that lost to a plain CNN at every noise level tested, a correction mechanism that never triggered once across 42 runs, and ablation arms indistinguishable from the full system. Those runs are logged and kept. The question came in 2023, two years of research followed, and the first version that worked arrived on 11 July 2026; the reason the rest of the field does not have this is that the path to it is not visible from the outside.
 
 #### Regulatory acceptance is not compressible
 
@@ -336,7 +336,7 @@ SOC 2 Type II and ISO 27001 are procurement gates for a company with a pipeline.
 
   #### Does it hold beyond CIFAR
 
-  Live. This is what the compute in this round buys, on a transformer backbone, and the weak form of it is falsifiable for under 30 GPU-hours.
+  Live. This is what the compute in this round buys, on a transformer backbone, and the weak form of it is specified as one of four measurements.
 
 - LIVE
 
@@ -392,11 +392,11 @@ They can, and they have moved before: the Omnibus shifted Annex III to December 
 
 The rational default on any pre-seed is to wait. More data arrives, the founder becomes better known, and the option costs nothing. That default is usually correct, and on this company it is not, for one specific reason.
 
-The entire remaining research programme can be falsified for under 30 GPU-hours, on a single card, using a specification we supply.
+The entire remaining research programme comes down to four measurements, each with a prediction written down in advance, using a specification we supply.
 
-That is not a claim about how confident we are. It is a statement about how cheap the experiment is. What a quarter of waiting would establish is available this week, for roughly the cost of a business lunch, and it can be run by their own technical partner on customer hardware without us in the room.
+That is not a claim about how confident we are. It is a statement about how directly the claims can be tested. What a quarter of waiting would establish can be checked now, and it can be run by their own technical partner on their own hardware without us in the room.
 
-Everything else is checkable now, under a short agreement: the mechanism, all 383 seeded runs including the ones that failed, the adversarial suite, and the full technical account. The one adverse result is already on the technology page. The data room does not contain a better story than this page does. It contains the same story with the workings attached.
+Everything else is checkable now, under a short agreement: the mechanism, all 383 seeded runs including the ones that failed, the adversarial suite, and the full technical account. Every run where it loses is already on the technology page. The data room does not contain a better story than this page does. It contains the same story with the workings attached.
 
 What goes in front of an investor
 

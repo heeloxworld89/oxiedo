@@ -31,14 +31,13 @@ import GetInTouch from '../components/GetInTouch.astro';
 import DisclosurePanel from '../components/DisclosurePanel.astro';
 import ReplayDemo from '../components/ReplayDemo.astro';
 
-// LEAD WITH NUMBERS. Four figures, above everything else on the page. The fourth matters most to
-// anyone assessing this as an investment: the entire remaining programme can be falsified for
-// under thirty GPU-hours on a single card.
+// LEAD WITH NUMBERS. Four figures, above everything else on the page. The fourth is the count of
+// published runs where ORMAS loses, stated next to the wins rather than under them.
 const headline = [
 	{ figure: '+70.3 pp', label: 'Recovery from catastrophic structural collapse, where a parameter-matched baseline is permanently dead' },
 	{ figure: '383', label: 'Controlled experiments across four architecture families, every run reproducible from seed' },
 	{ figure: '5', label: 'Layers of causal telemetry emitted natively, from system health to per-parameter attribution' },
-	{ figure: '<30', label: 'GPU-hours to falsify the entire remaining research programme, on one card' },
+	{ figure: '3', label: 'Published runs where ORMAS loses to the baseline, named on this page next to the wins' },
 ];
 
 // The implication, at the scale it operates on. Each of these is a domain currently closed to deep
@@ -85,7 +84,7 @@ const ladder = [
 const CH = { w: 780, rowH: 56, top: 30, labelW: 240, plotR: 754, barH: 13 };
 const chart = [
 	{ label: 'Recovery from a killed layer', ormas: 80.3, base: 10.0, unit: '%' },
-	{ label: 'Every stage killed at once', ormas: 71.5, base: 10.0, unit: '%' },
+	{ label: 'Every stage killed at once', ormas: 70.8, base: 10.0, unit: '%' },
 	{ label: 'Retained after a task shift', ormas: 94.6, base: 47.3, unit: '%' },
 	{ label: 'Zero-shot compositional', ormas: 58.8, base: 25.0, unit: '%' },
 ];
@@ -96,7 +95,7 @@ const CH_H = CH.top + chart.length * CH.rowH + 26;
 // named the way the paper names them.
 const signals = [
 	{ id: 'SIGNAL 1', name: 'Global backpropagation', body: 'Standard cross-entropy over the full network. Unmodified: the ordinary learning signal is left exactly as it is.' },
-	{ id: 'SIGNAL 2', name: 'Per-node local loss', body: 'Each node carries its own bounded chain of LayerNorm, Linear, PReLU and Linear, anchored through one shared low-rank bottleneck of 4,715 parameters. This is the health baseline.' },
+	{ id: 'SIGNAL 2', name: 'Per-node local loss', body: 'Each node carries its own bounded chain of LayerNorm, Linear, PReLU and Linear, anchored through one shared low-rank bottleneck of 4,416 parameters. This is the health baseline.' },
 	{ id: 'SIGNAL 3', name: 'Health-gated self-correction', body: 'Eight diagnoses, each routed to its own treatment, each capped as a fraction of the component\'s own weight, mean-centred and logged.' },
 ];
 
@@ -135,8 +134,8 @@ const results = [
 	{
 		n: '01',
 		name: 'Recovery from catastrophic structural collapse',
-		condition: 'A layer surgically zeroed at epoch 101, on a network that had reached 85.1%.',
-		outcome: 'Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance reclaimed.',
+		condition: 'A layer surgically zeroed at epoch 100, on a network that had reached 85.1%.',
+		outcome: 'Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance.',
 		baseline: 'Parameter-matched standard CNN: 10.0% ± 0.0%, permanently, on every seed.',
 		gap: '+70.3 pp',
 	},
@@ -144,9 +143,9 @@ const results = [
 		n: '02',
 		name: 'Recovery from simultaneous full-hierarchy collapse',
 		condition: 'Every convolutional stage zeroed at once, rather than a single layer.',
-		outcome: 'Recovered to 71.5% ± 2.5% across three seeds; 72.9% on the seed shown in the replay.',
+		outcome: 'Recovered to 70.8% ± 2.2% across three seeds; 72.9% on the seed shown in the replay.',
 		baseline: 'Parameter-matched standard network: 10.0% ± 0.0%, permanent.',
-		gap: '+61.5 pp',
+		gap: '+60.8 pp',
 	},
 	{
 		n: '03',
@@ -202,11 +201,18 @@ const programme = [
 	},
 ];
 
+// WHERE IT LOSES. Its own section, not a bullet among the limits. Every figure is the
+// published paper's (Table 2 and supplementary O): three runs finish behind the baseline.
+const losses = [
+	{ k: 'Adversarial weight injection', v: '83.1% against the baseline\'s 84.1%: 1.0 pp behind. Crafted weights keep activation statistics looking normal while moving decision boundaries, which evades exactly what ORMAS monitors. No current mitigation.' },
+	{ k: 'Weight explosion (100×)', v: '85.1% against 86.0%: 0.9 pp behind. Both networks recover almost at once; the paper reads it as ORMAS not over-correcting when the damage is mild.' },
+	{ k: 'ResNet-18, stages killed', v: 'An uninstrumented ResNet-18 recovers slightly better, blind: 92.6% against ORMAS at 91.7%. ORMAS names the damage through 264 attributed corrections; the standard network says nothing about it.' },
+];
+
 const open = [
 	'Every result on this page is CIFAR-10 or CIFAR-100. No clinical, financial, biological or production data has been used.',
 	'The architecture is demonstrated on fully-connected, convolutional and residual families. Transformers are a stated generalisation target, not a demonstrated result.',
 	'Test-time distribution shift is an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.',
-	'Under adversarial weight injection the architecture measures 1.0 pp worse than a standard baseline. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors. Published rather than omitted, and unmitigated.',
 	'Whether the signal survives at small n, meaning tens of examples rather than tens of thousands, is untested.',
 ];
 
@@ -346,7 +352,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 					Gradient conflict between the signals is resolved by PCGrad projection. Every continuous
 					correction satisfies a mean-centring conservation constraint and is bounded by an
 					Input-to-State Stability argument under local strong convexity, and the observed
-					correction rate settles exactly as that bound predicts, which is the part that matters:
+					correction rate is consistent with that bound, which is the part that matters:
 					the stability argument is testable, and it was tested.
 				</p>
 			</div>
@@ -365,7 +371,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 		<ReplayDemo scenario="dead-layer-lesion" fixed loop />
 		<p class="tech-replay-note">
 			<a href="/black-box">The full replay page</a> carries the other three scenarios, including the
-			adversarial injection where this architecture measures worse than the baseline.
+			adversarial injection where this architecture finishes behind the baseline.
 		</p>
 	</section>
 
@@ -382,7 +388,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 				</span>
 			</figcaption>
 			<div class="tech-chart-wrap" tabindex="0" role="region" aria-labelledby="tech-chart-title">
-			<svg viewBox={`0 0 ${CH.w} ${CH_H}`} role="img" aria-label="Grouped bar chart on a 0 to 100 percent scale. Recovery from a killed layer: ORMAS 80.3, baseline 10.0. Every stage killed at once: ORMAS 71.5, baseline 10.0. Retained after a task shift: ORMAS 94.6, baseline 47.3. Zero-shot compositional: ORMAS 58.8, chance 25.0.">
+			<svg viewBox={`0 0 ${CH.w} ${CH_H}`} role="img" aria-label="Grouped bar chart on a 0 to 100 percent scale. Recovery from a killed layer: ORMAS 80.3, baseline 10.0. Every stage killed at once: ORMAS 70.8, baseline 10.0. Retained after a task shift: ORMAS 94.6, baseline 47.3. Zero-shot compositional: ORMAS 58.8, chance 25.0.">
 				{[0, 25, 50, 75, 100].map((t) => (
 					<>
 						<line class="tech-grid" x1={px(t)} y1={CH.top - 8} x2={px(t)} y2={CH.top + chart.length * CH.rowH - 14} />
@@ -503,7 +509,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 
 	<section class="section container reveal">
 		<Eyebrow>HOW IT GETS DE-RISKED</Eyebrow>
-		<h2 class="section-title">Four measurements decide the rest of this, and together they cost under thirty GPU-hours.</h2>
+		<h2 class="section-title">Four measurements decide the rest of this.</h2>
 		<p class="section-lede">
 			Each is falsifiable, each carries a written prediction against it, and each runs on hardware
 			already in the building. The uncertainty in this programme is not spread across years of
@@ -540,6 +546,23 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 				accumulates by running it. The first is a trade secret until we release it on our own
 				terms. The last cannot be transferred at all, because it belongs to them.
 			</p>
+		</div>
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>WHERE IT LOSES</Eyebrow>
+		<h2 class="section-title">Three runs finish behind the baseline. All three are here.</h2>
+		<p class="section-lede">
+			A results page that shows only the wins is not a record. These are the published runs where a
+			standard network does better, with the numbers from the paper and the reason for each.
+		</p>
+		<div class="catsplit">
+			{losses.map((l) => (
+				<div class="catsplit-row">
+					<p class="catsplit-k">{l.k}</p>
+					<p class="catsplit-v">{l.v}</p>
+				</div>
+			))}
 		</div>
 	</section>
 

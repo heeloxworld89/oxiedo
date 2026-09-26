@@ -373,9 +373,11 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 				Demonstrated on fully-connected, convolutional and residual families.
 			</li>
 			<li>
-				<strong>Under adversarial weight injection the architecture measures 1.0 percentage
-				point worse</strong> than a parameter-matched baseline, with no current mitigation. That
-				run is in the scenario selector above, and it plays, and it loses.
+				<strong>Where it loses.</strong> Under adversarial weight injection the architecture
+				finishes 1.0 percentage point behind a parameter-matched baseline, with no current
+				mitigation; that run is in the scenario selector above, and it plays, and it loses. It also
+				finishes 0.9 pp behind under a 100× weight explosion, and on ResNet-18 an uninstrumented
+				network recovers slightly better (92.6% vs 91.7%).
 			</li>
 			<li>
 				<strong>The claim stops where the evidence stops.</strong> Frontier scale, regulated data
@@ -416,8 +418,8 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 			<article class="demo-cta">
 				<h3>Run the falsification specification</h3>
 				<p>
-					The remaining research programme can be falsified for under thirty GPU-hours on a
-					single card, against a specification we supply. It runs on customer hardware, by the
+					The remaining research programme comes down to four measurements, each with a
+					written prediction, against a specification we supply. It runs on customer hardware, by the
 					institution's own technical partner, without us in the room.
 				</p>
 				<a class="demo-cta-link" href="/contact?intent=falsify#falsify">Request the specification</a>
@@ -462,7 +464,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 			Every figure on this page is measured on CIFAR-10 across the controlled experiment
 			programme, and is labelled as such wherever it appears.
 			<a href="/technology">The technology page</a> carries the conditions for each, the error
-			bars, and the one result that went against us.
+			bars, and every run where it loses.
 		</p>
 	</section>
 </Page>

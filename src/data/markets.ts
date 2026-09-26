@@ -776,7 +776,7 @@ export const markets: Record<string, MarketDeep> = {
 				note: 'Diagnosed within one epoch and repaired through 85 individually attributed structural corrections. A system that degrades to eighty rather than ten is in a different safety category.',
 			},
 			{
-				figure: '71.5%',
+				figure: '70.8%',
 				unit: 'recovery from simultaneous full-hierarchy damage',
 				note: 'Every convolutional stage zeroed at once, not one layer. The baseline collapses permanently. Measured on CIFAR-10.',
 			},
@@ -825,7 +825,7 @@ export const markets: Record<string, MarketDeep> = {
 		mechanism: [
 			{
 				title: 'Graceful degradation as a measured property',
-				body: 'A layer was destroyed mid-training on a network that had reached 85.1%. The parameter-matched baseline sat at chance level permanently, on every seed. This architecture diagnosed the failure within one epoch and recovered to 80.3% through 85 individually attributed corrections. Under simultaneous damage to every convolutional stage it recovered to 71.5%.',
+				body: 'A layer was destroyed mid-training on a network that had reached 85.1%. The parameter-matched baseline sat at chance level permanently, on every seed. This architecture diagnosed the failure within one epoch and recovered to 80.3% through 85 individually attributed corrections. Under simultaneous damage to every convolutional stage it recovered to 70.8%.',
 			},
 			{
 				title: 'A bounded, timestamped record of every self-modification',
@@ -914,7 +914,7 @@ export const markets: Record<string, MarketDeep> = {
 		replayScenario: 'adversarial',
 		proof: [
 			'The lesion experiments in full: single-layer and simultaneous full-hierarchy, with error bars and seeds',
-			'The adverse result, unprompted: the 1.0 pp adversarial deficit and its mechanism',
+			'Where it loses, unprompted: the 1.0 pp adversarial deficit and its mechanism, and the other two runs that finish behind',
 			'The bound table and a worked self-modification record',
 			'The read-only configuration, in which nothing is modified at all',
 			'Evaluation access to the mechanism itself, inspectable without a contract or a clearance',

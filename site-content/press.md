@@ -27,9 +27,9 @@ Available, including on the parts of this that are not working yet. For a scepti
 - **Name** — ORMAS, short for Orchestrated Repair and Monitoring with Architectural Self-correction. Oxiedo is the company; ORMAS is the architecture.
 - **Founded** — 2023 as a research effort. The architecture reached maturity on 1 August 2026; every result published here was measured on or after that date.
 - **Entity** — A Delaware C-corporation is being established alongside the move to San Francisco. Contracting and payments run through an existing UK-registered company, which is named in full in any agreement.
-- **Founder** — Rokib Al Dhin Raadh, founder, and the named principal accountable for the architecture. Companies built and exited before this one.
+- **Founder** — Rokib Al Dhin Raadh, Founder & CEO, accountable for the architecture. Built and sold a company before this one.
 - **Funding** — Raising a pre-seed round.
-- **Structure** — One named principal is accountable for the architecture and for every claim made about it. Hiring across commercial, research and regulatory functions; see /careers.
+- **Structure** — The founder and CEO is accountable for the architecture and for every claim made about it. Hiring across commercial, research and regulatory functions; see /careers.
 - **Customers** — None. No deployment or pilot exists; every published result comes from controlled experiments.
 - **Licence** — A research licence, free for research, teaching and evaluation from the moment the release lands. Production use is licensed. Not open source, and not described as one.
 - **Evidence base** — 383 controlled experiments, four architecture families, 67 archived runs each regenerating from seed. The architecture and the full archive are released on publication.
@@ -47,7 +47,7 @@ Available, including on the parts of this that are not working yet. For a scepti
 
 - −2.5 pp — Degradation under 40% label noise. Baseline: −7.8 pp.
 
-- −1.0 pp — Under adversarial weight injection, ORMAS performs worse than baseline. This is the one adverse result in the programme and is published alongside the others.
+- −1.0 pp — Where it loses: under adversarial weight injection ORMAS finishes behind the baseline. It also finishes 0.9 pp behind under a 100× weight explosion, and on ResNet-18 an uninstrumented network recovers slightly better (92.6% vs 91.7%). All three are published.
 
 All results on CIFAR-10 and CIFAR-100, with the architecture and the full experimental archive released on publication. Every run regenerates from seed, so every figure here is reproducible rather than asserted, and journalists who want to verify one before then should ask.
 

@@ -94,7 +94,7 @@ FALSIFICATION
 
 #### Run the specification
 
-The remaining research programme can be falsified for under thirty GPU-hours on a single card. The specification is supplied on request, it runs on the requester’s own hardware, and it needs nobody from here in the room. A negative result is a result, and we would rather the field established it quickly.
+The remaining research programme comes down to four measurements, each with a written prediction. The specification is supplied on request, it runs on the requester’s own hardware, and it needs nobody from here in the room. A negative result is a result, and we would rather the field established it quickly.
 
 - Field: Name and organisation *
 
