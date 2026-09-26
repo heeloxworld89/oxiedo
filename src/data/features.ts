@@ -124,7 +124,7 @@ export const features: Feature[] = [
 			'Produces a signed, timestamped record of every modification made during training: the component, the diagnosis, the treatment, the step, and the limit it remained inside. Diffable against the last approved version.',
 		requires: 'Training on the architecture',
 		problem:
-			'Regulators and auditors now demand a per-component record of every modification a model made to itself during training. Writing that record after the fact is testimony, not evidence. It will not survive a hostile regulatory review.',
+			'Regulators now ask for evidence of how a model was developed; this is that evidence. A record written after the fact is testimony, not evidence. It will not survive a hostile regulatory review.',
 		delivers:
 			'Emits a signed, regulator-legible record of every structural modification made during training. It documents exactly which component changed, what diagnosis triggered it, what treatment was applied, at what step, and within what declared bound. This is generated natively during training. It is not written after the fact.',
 		buyer:

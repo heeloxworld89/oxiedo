@@ -23,7 +23,7 @@ What did the model do to itself, and when?
 
 ### The problem
 
-Regulators and auditors now demand a per-component record of every modification a model made to itself during training. Writing that record after the fact is testimony, not evidence. It will not survive a hostile regulatory review.
+Regulators now ask for evidence of how a model was developed; this is that evidence. A record written after the fact is testimony, not evidence. It will not survive a hostile regulatory review.
 
 02
 
