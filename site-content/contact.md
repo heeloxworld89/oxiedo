@@ -2,7 +2,7 @@
 
 - **URL:** `/contact`
 - **Page title:** Contact: pre-book, invest, or ask — Oxiedo
-- **Meta description:** Six ways in: pre-book a deployment, an investment conversation, press, a data request, a falsification attempt, or anything else. Every message is read by a person and answered within a few days.
+- **Meta description:** Six ways in: pre-book a deployment, an investment conversation, press, a data request, a falsification attempt, or anything else. Every message is read by the founder, Rokib Al Dhin Raadh, and answered within a few days.
 
 ---
 CONTACT
@@ -94,7 +94,7 @@ FALSIFICATION
 
 #### Run the specification
 
-The remaining research programme can be falsified for under thirty GPU-hours on a single card. The specification is supplied on request, it runs on the requester’s own hardware, and it needs nobody from here in the room. A negative result is a result, and we would rather the field established it quickly.
+The remaining research programme comes down to four measurements, each with a written prediction. The specification is supplied on request, it runs on the requester’s own hardware, and it needs nobody from here in the room. A negative result is a result, and we would rather the field established it quickly.
 
 - Field: Name and organisation *
 
@@ -126,7 +126,7 @@ Pre-booking is the one route to the product, whichever application is in mind. I
 
 #### How long before someone replies?
 
-Within a few days, usually less. Every message is read by a person, and if the message does not fit we will say so directly rather than sending a non-answer.
+Within a few days, usually less. Every message is read by the founder, and if the message does not fit we will say so directly rather than sending a non-answer.
 
 #### Why does the form ask what a failure costs us?
 

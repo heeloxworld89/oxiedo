@@ -10854,3 +10854,94 @@ main > section:last-child.band--dark {
 		opacity: 0.72;
 	}
 }
+
+/* ---- /about · the founder section ----
+   Heading across the full width, then the story beside a compact fact card. The card is the
+   narrower column and sits level with the first paragraph, so neither side runs on alone. */
+.ab-founder {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--space-xl);
+	align-items: start;
+	margin-top: var(--space-xl);
+}
+
+.ab-founder-card {
+	min-width: 0;
+	padding: var(--space-lg);
+	border: 1px solid var(--border-hairline);
+	border-top: 2px solid var(--accent-dark);
+}
+
+@media (min-width: 1024px) {
+	.ab-founder {
+		grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+		gap: var(--space-3xl);
+	}
+}
+
+/* ---- /technology · the paper ----
+   The source document, set as the first object after the headline figures. */
+.tech-paper {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--space-lg);
+	padding: var(--space-xl);
+	border: 1px solid var(--border-hairline);
+	border-left: 3px solid var(--accent-dark);
+}
+
+.tech-paper-label {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--accent-dark);
+}
+
+.tech-paper-title {
+	font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+	font-size: clamp(1.375rem, 1.6vw + 0.8rem, 2rem);
+	line-height: 1.2;
+	margin-top: var(--space-sm);
+	max-width: 32ch;
+}
+
+.tech-paper-title a {
+	color: var(--text-primary);
+	text-decoration: none;
+}
+
+.tech-paper-title a:hover { text-decoration: underline; }
+
+.tech-paper-meta {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-small);
+	color: var(--text-secondary);
+	margin-top: var(--space-sm);
+	overflow-wrap: anywhere;
+}
+
+.tech-paper-body {
+	color: var(--text-secondary);
+	margin-top: var(--space-md);
+	max-width: 62ch;
+}
+
+.tech-paper-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-md);
+	align-items: center;
+}
+
+@media (min-width: 1024px) {
+	.tech-paper {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--space-2xl);
+	}
+	.tech-paper-actions { flex-direction: column; align-items: stretch; }
+}
+
+.tech-paper-main { min-width: 0; }

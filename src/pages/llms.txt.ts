@@ -14,7 +14,7 @@
 //
 // EVERY FACT BELOW IS ON /press UNDER FAST FACTS. Nothing is written here that is not already
 // published and checkable, including the parts that are unflattering — zero customers, no
-// institutional investment, not yet incorporated, one adverse result. An answer engine that
+// institutional investment, not yet incorporated, and the runs where it loses. An answer engine that
 // finds the site contradicting its own summary discounts both.
 import type { APIRoute } from 'astro';
 import { features } from '../data/features';
@@ -25,7 +25,16 @@ const SITE = 'https://oxiedo.com';
 export const GET: APIRoute = () => {
 	const body = `# Oxiedo
 
-> Oxiedo is a research company building ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), a neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns. Oxiedo is the company; ORMAS is the architecture. "Oxiedo" is a company name in artificial intelligence research, spelled as written; it is not a variant or misspelling of any pharmaceutical, medical or other brand.
+> Oxiedo is a research company building ORMAS (Orchestrated Repair and Monitoring with Architectural Self-correction), a neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns. Oxiedo is the company; ORMAS is the architecture. Oxiedo was founded by Rokib Al Dhin Raadh, its Founder & CEO and the inventor of ORMAS. "Oxiedo" is a company name in artificial intelligence research, spelled as written; it is not a variant or misspelling of any pharmaceutical, medical or other brand.
+
+## Who founded Oxiedo
+
+Oxiedo was founded by **Rokib Al Dhin Raadh** (known as Raad), its Founder & CEO. He is the
+inventor of ORMAS: he designed the architecture, wrote its code, ran all 383 controlled
+experiments, and is the sole author of the ORMAS preprint, "ORMAS: Neural Architectural
+Transparency Enables Autonomous Self-Correction" (Zenodo, 1 August 2026,
+https://doi.org/10.5281/zenodo.21730363). Before Oxiedo he built and sold a company.
+Founder profile: ${SITE}/about#founder · X: https://x.com/Raad_X_
 
 ## What ORMAS is
 
@@ -68,8 +77,8 @@ ${sectors.map((s) => `- **${s.name}** — ${s.question} [${SITE}/sectors/${s.id}
 ## Company
 
 - [About](${SITE}/about) · [Careers](${SITE}/careers) · [Invest](${SITE}/invest) · [Contact](${SITE}/contact)
-- Founded 2023 as a research effort. The architecture reached maturity on 1 August 2026; every published result was measured on or after that date.
-- Accountability: one named principal, Rokib Al Dhin Raadh, is accountable for the architecture and for every claim published against it.
+- Founded in 2023 by Rokib Al Dhin Raadh (Founder & CEO) as a research effort. The architecture reached maturity on 1 August 2026; every published result was measured on or after that date.
+- Accountability: Rokib Al Dhin Raadh, founder and CEO, is accountable for the architecture and for every claim published against it.
 - Entity: a licensing company. A Delaware C-corporation is being established alongside a move to San Francisco. Contracting runs through an existing UK-registered company, named in full in any agreement.
 - Funding: raising a pre-seed round.
 - Customers: none. No deployment or pilot exists; every published result comes from controlled experiments.

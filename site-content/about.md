@@ -1,8 +1,8 @@
-# About Oxiedo: the company and the research
+# About Oxiedo: founded by Rokib Al Dhin Raadh
 
 - **URL:** `/about`
-- **Page title:** About Oxiedo: the company and the research
-- **Meta description:** A licensing company built around one goal: making the world’s locked data usable. The origin, the accountability behind the licence, the operating principles, and where this honestly stands today.
+- **Page title:** About Oxiedo: founded by Rokib Al Dhin Raadh
+- **Meta description:** Oxiedo was founded by Rokib Al Dhin Raadh, its CEO and the inventor of ORMAS. The founder, the origin of the research, the accountability behind the licence, and where the company honestly stands today.
 
 ---
 ABOUT
@@ -27,9 +27,28 @@ Data is the asset of the next decade and most of the valuable part of it is lock
 
 Turning one property into one product, licensed to institutions that hold data under obligation. Transparency is the mechanism rather than the goal. The goal is that data currently locked by regulation and contract becomes data an institution can defensibly train on, because the record now exists to show what was taken from it and to take it back out on request. Behind those doors are applications nobody has reached, in sectors that have never had a model trained on their own data because the data was never releasable. The mechanism is published so it can be checked, and the release is committed in the licence rather than promised in a blog post.
 
+**THE FOUNDER**
+
+### Founded by Rokib Al Dhin Raadh, the inventor of ORMAS.
+
+Rokib Al Dhin Raadh founded Oxiedo and leads it as CEO. He is the inventor of ORMAS, the training architecture the company licenses: a neural network that records every change it makes to itself while it trains, names the part that broke, and repairs it.
+
+He started on the question in 2023: can a neural network give a truthful account of what it does to itself, while it does it? He spent 2024 and 2025 on research, the first attempt failing against its own destruction suite, and reached the first working version on 11 July 2026. He designed the architecture, wrote the code, ran every experiment and wrote the paper, which has been public since 1 August 2026.
+
+Before Oxiedo he built and sold a company. He is relocating Oxiedo to San Francisco, and he is the person who signs the licence and answers for every claim on this site.
+
+Rokib Al Dhin Raadh
+
+Founder & CEO · Oxiedo
+
+- **Built** — ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments
+- **Paper** — Sole author, [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363) (preprint, 1 August 2026)
+- **Before** — Built and sold a company
+- **On X** — [@Raad_X_](https://x.com/Raad_X_)
+
 **ORIGIN**
 
-### Three years on one question, then the company the answer required.
+### One question in 2023, two years of research, then the company the answer required.
 
 Nothing here was planned from the beginning. The work began as a research question two years before there was a legal person behind it, the company went where the problem was, and the problem turned out to be considerably larger than the one it set out to solve.
 
@@ -75,17 +94,17 @@ Nothing here was planned from the beginning. The work began as a research questi
 
 Rokib Al Dhin Raadh
 
-Founder and named principal
+Founder & CEO
 
 - **Accountable for** — The calibrated bound, the record behind it, and every claim published against either.
-- **Background** — Technical founder. Built and exited companies before this one.
+- **Background** — Technical founder. Built and sold a company before this one.
 - **Based** — Relocating to San Francisco.
 
 A custodian deciding whether to release regulated data asks for three things before anything else: a calibrated bound, a record that survives an audit, and a named counterparty who will stand behind both.
 
 The first two are architecture. The third is not something an architecture can supply. A published mechanism has no counterparty of its own, and a bound with nobody behind it cannot be entered into a filing or defended in a review. What a licence adds to a published mechanism is a person who signs the declaration and answers for it when a regulator, an auditor or an opposing expert puts it under pressure.
 
-Rokib Al Dhin Raadh is that person here. The architecture, the results published against it and the one adverse result published alongside them are attributable to a single named principal, and every archived run behind them regenerates from seed, so the claim can be checked rather than taken on trust. Corrections are issued under the same name as the original claim.
+Rokib Al Dhin Raadh is that person here. The architecture, the results published against it and every run where it loses are attributable to one named person, the founder and CEO, and every archived run behind them regenerates from seed, so the claim can be checked rather than taken on trust. Corrections are issued under the same name as the original claim.
 
 That is a deliberate structure rather than a stage the company is passing through. Accountability distributed across a vendor is accountability nobody can locate, which is the reason a compliance function asks who signs before it asks how the method works. A licence that function can rely on names someone, and this one does.
 
@@ -123,7 +142,7 @@ Each of these costs something. They are listed because a company is what it does
 
   #### State the limit before it is found
 
-  The one adverse result, 1.0 pp worse than baseline under adversarial weight injection, is published on the technology page and named in every market where it is relevant. In fields whose central complaint is that vendors overstate their approximations, being exact about their own limit is the position rather than a caveat on it.
+  Every run where it loses is published on the technology page: adversarial weight injection (−1.0 pp), a 100× weight explosion (−0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.6% vs 91.7%). In fields whose central complaint is that vendors overstate their approximations, being exact about their own limit is the position rather than a caveat on it.
 
 6. 06
 

@@ -43,7 +43,7 @@ loss
 
 measured, not estimated
 
-Four operations, through a shared 4,715-parameter bottleneck. The chain cannot grow with the network, so the contribution of each node is read directly off the backward pass.
+Four operations, through a shared 4,416-parameter bottleneck. The chain cannot grow with the network, so the contribution of each node is read directly off the backward pass.
 
 > The bound is the product — everything else on this site follows from the second row having a fixed length.
 

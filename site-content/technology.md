@@ -21,9 +21,21 @@ Controlled experiments across four architecture families, every run reproducible
 
 Layers of causal telemetry emitted natively, from system health to per-parameter attribution
 
-<30
+3
 
-GPU-hours to falsify the entire remaining research programme, on one card
+Published runs where ORMAS loses to the baseline, named on this page next to the wins
+
+The paper behind every number on this page
+
+### [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363)
+
+[Rokib Al Dhin Raadh](/about#founder) · Sole author · Preprint, Zenodo · 1 August 2026 · 47 pages · DOI 10.5281/zenodo.21730363
+
+The full method, all 383 experiments and every run where it loses. Each result below cites the table or section it comes from, so any figure can be checked against the source in one click.
+
+[Read the paper](https://doi.org/10.5281/zenodo.21730363)
+
+[Download PDF](https://zenodo.org/records/21730363/files/ORMAS_preprint.pdf?download=1)
 
 One line covers what this technology is for. Data that would be worth training on is locked away, and it is locked away because a model cannot account for what it took from it. Everything below is the work of building a network that can.
 
@@ -109,7 +121,7 @@ loss
 
 measured, not estimated
 
-Four operations, through a shared 4,715-parameter bottleneck. The chain cannot grow with the network, so the contribution of each node is read directly off the backward pass.
+Four operations, through a shared 4,416-parameter bottleneck. The chain cannot grow with the network, so the contribution of each node is read directly off the backward pass.
 
 > The bound is the product — everything else on this site follows from the second row having a fixed length.
 
@@ -123,7 +135,7 @@ Four operations, through a shared 4,715-parameter bottleneck. The chain cannot g
 
   #### Per-node local loss
 
-  Each node carries its own bounded chain of LayerNorm, Linear, PReLU and Linear, anchored through one shared low-rank bottleneck of 4,715 parameters. This is the health baseline.
+  Each node carries its own bounded chain of LayerNorm, Linear, PReLU and Linear, anchored through one shared low-rank bottleneck of 4,416 parameters. This is the health baseline.
 
 3. SIGNAL 3
 
@@ -163,7 +175,7 @@ Parameter attribution
 
 Causal saliency through the bounded chain, per parameter
 
-Gradient conflict between the signals is resolved by PCGrad projection. Every continuous correction satisfies a mean-centring conservation constraint and is bounded by an Input-to-State Stability argument under local strong convexity, and the observed correction rate settles exactly as that bound predicts, which is the part that matters: the stability argument is testable, and it was tested.
+Gradient conflict between the signals is resolved by PCGrad projection. Every continuous correction satisfies a mean-centring conservation constraint and is bounded by an Input-to-State Stability argument under local strong convexity, and the observed correction rate is consistent with that bound, which is the part that matters: the stability argument is testable, and it was tested.
 
 **THE FIRST RESULT, REPLAYED**
 
@@ -197,7 +209,7 @@ Correction ledger · written during training
 
 Every correction, with its component, diagnosis, step, magnitude and declared ceiling Step Component Diagnosis Magnitude Ceiling
 
-[The full replay page](/black-box) carries the other three scenarios, including the adversarial injection where this architecture measures worse than the baseline.
+[The full replay page](/black-box) carries the other three scenarios, including the adversarial injection where this architecture finishes behind the baseline.
 
 **WHAT IS PUBLISHED**
 
@@ -211,6 +223,8 @@ Two further results do not share this scale and are not forced onto it. Under 40
 
 The neural network black box is not an inherent property of deep learning—it is a mathematical consequence of global backpropagation, where a single entangled error signal renders mid-training structural collapse invisible. We show that structurally isolating gradient chains to bounded 4-operation local paths transforms a standard neural network into a transparent, self-correcting system. Our protocol, ORMAS, extends backpropagation with a per-node local loss anchored through a capacity-constrained shared bottleneck and a health-gated self-correction mechanism that autonomously diagnoses and repairs structural pathologies in real time. Gradient conflicts between signals are resolved via PCGrad projection, and all continuous corrections satisfy a mean-centering conservation constraint, bounded by an Input-to-State Stability (ISS) convergence analysis under local strong convexity. The architecture natively emits five layers of causal telemetry—from system-level health to exact per-parameter attribution—as physical properties of the forward and backward pass, not post-hoc approximations. Empirically, correction frequency decays from 4.2 to 0.05 per epoch as the network stabilizes, consistent with the predicted ISS bound. Across 383 controlled experiments on four architectures (FC-DAG, CNN, Fat CNN, ResNet-18), ORMAS matches standard baselines on clean data while limiting accuracy decay under 40% label noise to 2.5 percentage points versus 7.8 for standard training. Under catastrophic mid-training structural collapse, ORMAS autonomously recovers to 80.3 ± 1.6% accuracy where parameter-matched baselines permanently collapse to 10.0% across all independent initializations. Under sequential task shift with no replay buffer or modularity constraint, the network self-organizes into partially factorized internal representations, achieving 58.8% mean zero-shot compositional accuracy on novel combinations versus 25% chance. These results establish architectural transparency as a structural prerequisite for autonomous robustness.
 
+From the preprint by [Rokib Al Dhin Raadh](/about#founder), founder of Oxiedo:[ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363)(Zenodo, 1 August 2026).
+
 Written for a reader who works in this field. Every figure in it appears with its conditions above.
 
 1. 01
@@ -219,19 +233,21 @@ Written for a reader who works in this field. Every figure in it appears with it
 
   +70.3 pp
 
-  - **Condition** — A layer surgically zeroed at epoch 101, on a network that had reached 85.1%.
-  - **Result** — Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance reclaimed.
+  - **Condition** — A layer surgically zeroed at epoch 100, on a network that had reached 85.1%.
+  - **Result** — Diagnosed within one epoch. Recovered to 80.3% ± 1.6% by epoch 195 through 85 individually attributed corrections, recovering 94% of lost performance.
   - **Baseline** — Parameter-matched standard CNN: 10.0% ± 0.0%, permanently, on every seed.
+  - **Source** — [Paper §4.1–4.2, Table 1](https://doi.org/10.5281/zenodo.21730363)
 
 2. 02
 
   #### Recovery from simultaneous full-hierarchy collapse
 
-  +61.5 pp
+  +60.8 pp
 
   - **Condition** — Every convolutional stage zeroed at once, rather than a single layer.
-  - **Result** — Recovered to 71.5% ± 2.5% across three seeds; 72.9% on the seed shown in the replay.
+  - **Result** — Recovered to 70.8% ± 2.2% across three seeds; 72.9% on the seed shown in the replay.
   - **Baseline** — Parameter-matched standard network: 10.0% ± 0.0%, permanent.
+  - **Source** — [Paper Table 2](https://doi.org/10.5281/zenodo.21730363)
 
 3. 03
 
@@ -242,6 +258,7 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — Task A then Task B, with no replay buffer, no task identifier and no modularity constraint.
   - **Result** — 94.6% of Task A retained across 3/3 seeds. Zero-shot 4-way compositional accuracy of 58.8% against 25% chance. The factorisation was not designed, it emerged from gradient conflict.
   - **Baseline** — Standard ResNet-18 retained 47.3%.
+  - **Source** — [Paper §4.4, Table 3](https://doi.org/10.5281/zenodo.21730363)
 
 4. 04
 
@@ -252,6 +269,7 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — 40% symmetric label noise across 200 epochs.
   - **Result** — −2.5 pp from peak, without ever being told the data was corrupted.
   - **Baseline** — Standard training: −7.8 pp.
+  - **Source** — [Paper §4.2](https://doi.org/10.5281/zenodo.21730363)
 
 5. 05
 
@@ -262,6 +280,7 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — A 50-node fully-connected DAG at 30% continuous label noise, 200 epochs.
   - **Result** — Stable throughout, via 22,014 autonomous corrections, each attributed and bounded.
   - **Baseline** — Standard training returned NaN.
+  - **Source** — [Paper, supplementary Table S2](https://doi.org/10.5281/zenodo.21730363)
 
 6. 06
 
@@ -272,8 +291,9 @@ Written for a reader who works in this field. Every figure in it appears with it
   - **Condition** — Bottleneck dimension varied across a 16× range.
   - **Result** — Accuracy variance below 0.8%. The correction mechanism compensates for capacity imbalance rather than requiring it to be tuned away.
   - **Baseline** — —
+  - **Source** — [Paper §4.3](https://doi.org/10.5281/zenodo.21730363)
 
-All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in the full technical record, alongside the reproducibility checklist and the scripts that regenerate every run.
+All results on CIFAR-10 and CIFAR-100. Each figure carries its error bars and seed count in[the paper](https://doi.org/10.5281/zenodo.21730363), alongside the reproducibility checklist and the scripts that regenerate every run.
 
 **WHAT IT UNLOCKS**
 
@@ -333,7 +353,7 @@ The programme underway supplies it. What follows is stated as objectives and con
 
 **HOW IT GETS DE-RISKED**
 
-### Four measurements decide the rest of this, and together they cost under thirty GPU-hours.
+### Four measurements decide the rest of this.
 
 Each is falsifiable, each carries a written prediction against it, and each runs on hardware already in the building. The uncertainty in this programme is not spread across years of research. It sits in four measurements, and one of them is free.
 
@@ -377,6 +397,24 @@ The completed architecture is released in full on publication: reproducible, fre
 
 What is held is the programme above: the mechanism by which attribution extends from components to data, the artefact format, the calibration procedure that turns a general bound into a validated one for a specific deployment, and the record a customer accumulates by running it. The first is a trade secret until we release it on our own terms. The last cannot be transferred at all, because it belongs to them.
 
+**WHERE IT LOSES**
+
+### Three runs finish behind the baseline. All three are here.
+
+A results page that shows only the wins is not a record. These are the published runs where a standard network does better, with the numbers from[the paper](https://doi.org/10.5281/zenodo.21730363)(Table 2 and supplementary §O) and the reason for each.
+
+Adversarial weight injection
+
+83.1% against the baseline's 84.1%: 1.0 pp behind. Crafted weights keep activation statistics looking normal while moving decision boundaries, which evades exactly what ORMAS monitors. No current mitigation.
+
+Weight explosion (100×)
+
+85.1% against 86.0%: 0.9 pp behind. Both networks recover almost at once; the paper reads it as ORMAS not over-correcting when the damage is mild.
+
+ResNet-18, stages killed
+
+An uninstrumented ResNet-18 recovers slightly better, blind: 92.6% against ORMAS at 91.7%. ORMAS names the damage through 264 attributed corrections; the standard network says nothing about it.
+
 **WHAT IS NOT ESTABLISHED**
 
 ### Stated here, in the same place as the results.
@@ -388,8 +426,6 @@ A research page that lists only what worked is a marketing page wearing a lab co
 - The architecture is demonstrated on fully-connected, convolutional and residual families. Transformers are a stated generalisation target, not a demonstrated result.
 
 - Test-time distribution shift is an unrun extension. The health signal is computed from gradients and local losses, and at inference there are neither.
-
-- Under adversarial weight injection the architecture measures 1.0 pp worse than a standard baseline. Adversarially crafted perturbations hold nominal activation statistics while moving decision boundaries, which evades precisely what this monitors. Published rather than omitted, and unmitigated.
 
 - Whether the signal survives at small n, meaning tens of examples rather than tens of thousands, is untested.
 

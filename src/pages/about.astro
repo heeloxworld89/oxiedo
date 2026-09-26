@@ -65,7 +65,7 @@ import Button from '../components/Button.astro';
 const accountability = [
 	'A custodian deciding whether to release regulated data asks for three things before anything else: a calibrated bound, a record that survives an audit, and a named counterparty who will stand behind both.',
 	'The first two are architecture. The third is not something an architecture can supply. A published mechanism has no counterparty of its own, and a bound with nobody behind it cannot be entered into a filing or defended in a review. What a licence adds to a published mechanism is a person who signs the declaration and answers for it when a regulator, an auditor or an opposing expert puts it under pressure.',
-	'Rokib Al Dhin Raadh is that person here. The architecture, the results published against it and the one adverse result published alongside them are attributable to a single named principal, and every archived run behind them regenerates from seed, so the claim can be checked rather than taken on trust. Corrections are issued under the same name as the original claim.',
+	'Rokib Al Dhin Raadh is that person here. The architecture, the results published against it and every run where it loses are attributable to one named person, the founder and CEO, and every archived run behind them regenerates from seed, so the claim can be checked rather than taken on trust. Corrections are issued under the same name as the original claim.',
 	'That is a deliberate structure rather than a stage the company is passing through. Accountability distributed across a vendor is accountability nobody can locate, which is the reason a compliance function asks who signs before it asks how the method works. A licence that function can rely on names someone, and this one does.',
 ];
 // RESEARCH FIRST. Per the founder's correction, the origin section does not open on a software
@@ -110,8 +110,22 @@ const timeline = [
 // Age is deliberately absent — see the note at the top of the file.
 const principalFacts = [
 	{ k: 'Accountable for', v: 'The calibrated bound, the record behind it, and every claim published against either.' },
-	{ k: 'Background', v: 'Technical founder. Built and exited companies before this one.' },
+	{ k: 'Background', v: 'Technical founder. Built and sold a company before this one.' },
 	{ k: 'Based', v: 'Relocating to San Francisco.' },
+];
+
+// THE FOUNDER SECTION. Facts only, each one checkable: the role, what he built, the paper he
+// wrote, and where to find him. Age stays absent, as the note at the top of this file records.
+const founderFacts = [
+	{ k: 'Built', v: 'ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments' },
+	{ k: 'Paper', v: 'Sole author, <a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction</a> (preprint, 1 August 2026)' },
+	{ k: 'Before', v: 'Built and sold a company' },
+	{ k: 'On X', v: '<a href="https://x.com/Raad_X_" rel="me noopener" target="_blank">@Raad_X_</a>' },
+];
+const founderBio = [
+	'Rokib Al Dhin Raadh founded Oxiedo and leads it as CEO. He is the inventor of ORMAS, the training architecture the company licenses: a neural network that records every change it makes to itself while it trains, names the part that broke, and repairs it.',
+	'He started on the question in 2023: can a neural network give a truthful account of what it does to itself, while it does it? He spent 2024 and 2025 on research, the first attempt failing against its own destruction suite, and reached the first working version on 11 July 2026. He designed the architecture, wrote the code, ran every experiment and wrote the paper, which has been public since 1 August 2026.',
+	'Before Oxiedo he built and sold a company. He is relocating Oxiedo to San Francisco, and he is the person who signs the licence and answers for every claim on this site.',
 ];
 
 const what = [
@@ -151,7 +165,7 @@ const principles = [
 	},
 	{
 		title: 'State the limit before it is found',
-		body: 'The one adverse result, 1.0 pp worse than baseline under adversarial weight injection, is published on the technology page and named in every market where it is relevant. In fields whose central complaint is that vendors overstate their approximations, being exact about their own limit is the position rather than a caveat on it.',
+		body: 'Every run where it loses is published on the technology page: adversarial weight injection (−1.0 pp), a 100× weight explosion (−0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.6% vs 91.7%). In fields whose central complaint is that vendors overstate their approximations, being exact about their own limit is the position rather than a caveat on it.',
 	},
 	{
 		title: 'One product, not a portfolio',
@@ -184,7 +198,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'About' }];
 
 ---
 
-<Page title="About Oxiedo: the company and the research" description={"A licensing company built around one goal: making the world’s locked data usable. The origin, the accountability behind the licence, the operating principles, and where this honestly stands today."} trail={trail}>
+<Page title="About Oxiedo: founded by Rokib Al Dhin Raadh" description={"Oxiedo was founded by Rokib Al Dhin Raadh, its CEO and the inventor of ORMAS. The founder, the origin of the research, the accountability behind the licence, and where the company honestly stands today."} trail={trail}>
 	<PageBanner
 		eyebrow="ABOUT"
 		title="We build the thing that lets locked data be used."
@@ -203,9 +217,33 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'About' }];
 		</div>
 	</section>
 
+	{/* THE FOUNDER, stated up front. A reader (or an answer engine) asking "who founded Oxiedo"
+	    finds the answer in the first screen after the introduction, with what he built and where
+	    to check it. Anchored at #founder; the footer on every page links here. */}
+	<section class="band band--surface section reveal" id="founder">
+		<div class="container">
+			<Eyebrow>THE FOUNDER</Eyebrow>
+			<h2 class="section-title">Founded by Rokib Al Dhin Raadh, the inventor of ORMAS.</h2>
+			<div class="ab-founder">
+				<div class="ab-note-body">
+					{founderBio.map((para) => <p>{para}</p>)}
+				</div>
+				<aside class="ab-founder-card" aria-label="Founder facts">
+					<p class="ab-note-name">Rokib Al Dhin Raadh</p>
+					<p class="ab-note-role">Founder &amp; CEO · Oxiedo</p>
+					<dl class="ab-note-facts">
+						{founderFacts.map((f) => (
+							<div><dt>{f.k}</dt><dd set:html={f.v} /></div>
+						))}
+					</dl>
+				</aside>
+			</div>
+		</div>
+	</section>
+
 	<section class="section container reveal">
 		<Eyebrow>ORIGIN</Eyebrow>
-		<h2 class="section-title">Three years on one question, then the company the answer required.</h2>
+		<h2 class="section-title">One question in 2023, two years of research, then the company the answer required.</h2>
 		<p class="section-lede">
 			Nothing here was planned from the beginning. The work began as a research question two years
 			before there was a legal person behind it, the company went where the problem was, and the
@@ -232,7 +270,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'About' }];
 					<h2 class="section-title">A licence has to have a name on it.</h2>
 					<div class="ab-note-card">
 						<p class="ab-note-name">Rokib Al Dhin Raadh</p>
-						<p class="ab-note-role">Founder and named principal</p>
+						<p class="ab-note-role">Founder &amp; CEO</p>
 						<dl class="ab-note-facts">
 							{principalFacts.map((f) => (
 								<div><dt>{f.k}</dt><dd>{f.v}</dd></div>

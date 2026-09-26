@@ -197,7 +197,7 @@ A page arguing that half of a decade-old problem is closed has to say exactly wh
 
 - **Transformers are a stated target, not a demonstrated result.**Demonstrated on fully-connected, convolutional and residual families.
 
-- **Under adversarial weight injection the architecture measures 1.0 percentage point worse** than a parameter-matched baseline, with no current mitigation. That run is in the scenario selector above, and it plays, and it loses.
+- **Where it loses.** Under adversarial weight injection the architecture finishes 1.0 percentage point behind a parameter-matched baseline, with no current mitigation; that run is in the scenario selector above, and it plays, and it loses. It also finishes 0.9 pp behind under a 100× weight explosion, and on ResNet-18 an uninstrumented network recovers slightly better (92.6% vs 91.7%).
 
 - **The claim stops where the evidence stops.** Frontier scale, regulated data and production over time are outside it — no deployment exists, and nothing here is asserted about behaviour under any of the three.
 
@@ -223,7 +223,7 @@ An architecture cannot be retrofitted into a model that has already been trained
 
 #### Run the falsification specification
 
-The remaining research programme can be falsified for under thirty GPU-hours on a single card, against a specification we supply. It runs on customer hardware, by the institution's own technical partner, without us in the room.
+The remaining research programme comes down to four measurements, each with a written prediction, against a specification we supply. It runs on customer hardware, by the institution's own technical partner, without us in the room.
 
 [Request the specification](/contact?intent=falsify#falsify)
 
@@ -239,4 +239,4 @@ Terms are agreed per institution and written into the contract, and pre-booking 
 
 [Pre-book a deployment](/contact?intent=pre-book#pre-book)
 
-Every figure on this page is measured on CIFAR-10 across the controlled experiment programme, and is labelled as such wherever it appears.[The technology page](/technology) carries the conditions for each, the error bars, and the one result that went against us.
+Every figure on this page is measured on CIFAR-10 across the controlled experiment programme built by founder [Rokib Al Dhin Raadh](/about#founder), and is labelled as such wherever it appears.[The technology page](/technology) carries the conditions for each, the error bars, and every run where it loses.
