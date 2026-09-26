@@ -34,7 +34,7 @@ inventor of ORMAS: he designed the architecture, wrote its code, ran all 383 con
 experiments, and is the sole author of the ORMAS preprint, "ORMAS: Neural Architectural
 Transparency Enables Autonomous Self-Correction" (Zenodo, 1 August 2026,
 https://doi.org/10.5281/zenodo.21730363). Before Oxiedo he built and sold a company.
-Founder profile: ${SITE}/about#founder · X: https://x.com/Raad_X
+Founder profile: ${SITE}/about#founder · X: https://x.com/Raad_X_
 
 ## What ORMAS is
 

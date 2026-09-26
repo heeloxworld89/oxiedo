@@ -44,7 +44,7 @@ Founder & CEO · Oxiedo
 - **Built** — ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments
 - **Paper** — Sole author, [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363) (preprint, 1 August 2026)
 - **Before** — Built and sold a company
-- **On X** — [@Raad_X](https://x.com/Raad_X)
+- **On X** — [@Raad_X_](https://x.com/Raad_X_)
 
 **ORIGIN**
 
