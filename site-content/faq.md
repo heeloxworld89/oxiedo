@@ -151,7 +151,7 @@ Closing that gap is what the dataset partnership on the careers page exists to d
 
 #### Has this been independently verified?
 
-Not by a third party. That is the boundary of what is claimed, and it is drawn here rather than left to be discovered. The architecture is not public today, and the commitment to release it in full is written into the licence rather than promised.
+Not by a third party. That is the boundary of what is claimed, and it is drawn here rather than left to be discovered. The method is public: the preprint by founder Rokib Al Dhin Raadh has been on Zenodo since 1 August 2026 (doi.org/10.5281/zenodo.21730363), and anyone can check it.
 
 What an evaluating institution or an investor can have now, under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. Third-party verification is a meaningful signal, it is not yet held, and it is not claimed anywhere on this site. Seeded reproducibility is the stronger signal in any case, because it puts the check in the evaluator’s hands rather than asking anyone to take our word for a number.
 
@@ -425,7 +425,9 @@ We hold no standing credentials to any customer environment. Where a support que
 
 Who is behind it, how it is funded, and what happens if it fails.
 
-#### Who is behind this?
+#### Who founded Oxiedo?
+
+Oxiedo was founded by Rokib Al Dhin Raadh, its Founder & CEO and the inventor of ORMAS. He designed the architecture, wrote the code, ran all 383 controlled experiments, and is the sole author of the ORMAS preprint (Zenodo, 1 August 2026). Before Oxiedo he built and sold a company.
 
 Oxiedo is a licensing company. What it licenses is train-time accountability: ORMAS, the training architecture, licensed to institutions that hold regulated data and carry the obligation to account for what a model did with it. The company is incorporating as a Delaware C-corporation alongside a move to San Francisco, and until that completes it contracts through an existing registered company, named in full in any agreement.
 
@@ -433,7 +435,7 @@ Rokib Al Dhin Raadh, founder and CEO, is accountable for the architecture: it wa
 
 Commercial, research and regulatory roles are open, and the full position on structure and funding is set out on the investor page rather than buried.
 
-[The company →](/about)
+[About the founder →](/about#founder)
 
 #### How much of this actually exists?
 

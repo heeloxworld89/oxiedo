@@ -83,7 +83,7 @@ const orgLd = {
 	name: 'Oxiedo',
 	url: SITE,
 	description:
-		'Oxiedo is a research company building ORMAS, a neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns.',
+		'Oxiedo is a research company founded by Rokib Al Dhin Raadh, building ORMAS, a neural network training architecture that produces a causal account of its own behaviour as a physical consequence of how it learns.',
 	foundingDate: '2023',
 	// REQUIRED, and it was missing entirely. Google's organisation result does
 	// not render a logo it has to infer from a favicon; the property has to name
@@ -166,12 +166,35 @@ const ormasLd = {
 	},
 };
 
+// THE FOUNDER. Stated as fully as the facts allow, because an entity with one named person behind
+// it resolves only if that person resolves too: name, the name he is known by, role, what he built,
+// the paper he wrote, and the one profile that links back to oxiedo.com from its own bio.
 const founderLd = {
 	'@type': 'Person',
 	'@id': FOUNDER_ID,
 	name: 'Rokib Al Dhin Raadh',
-	jobTitle: 'Founder',
+	alternateName: 'Raad',
+	jobTitle: 'Founder & CEO',
+	description:
+		'Rokib Al Dhin Raadh is the founder and CEO of Oxiedo and the inventor of ORMAS, a neural network training architecture that records every change it makes to itself as it trains. He designed the architecture, built it, ran its 383 controlled experiments and is the sole author of the ORMAS preprint.',
+	url: `${SITE}/about#founder`,
 	worksFor: { '@id': ORG_ID },
+	knowsAbout: ['Neural network training', 'Machine learning interpretability', 'Self-correcting neural networks', 'Continual learning'],
+	sameAs: ['https://x.com/Raad_X'],
+};
+
+// The preprint, authored by the founder. Public on Zenodo with a DOI since 1 August 2026.
+const PAPER_ID = `${SITE}/#ormas-preprint`;
+const paperLd = {
+	'@type': 'ScholarlyArticle',
+	'@id': PAPER_ID,
+	headline: 'ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction',
+	author: { '@id': FOUNDER_ID },
+	datePublished: '2026-08-01',
+	url: 'https://zenodo.org/records/21730363',
+	sameAs: 'https://doi.org/10.5281/zenodo.21730363',
+	publisher: { '@type': 'Organization', name: 'Zenodo' },
+	about: { '@id': ORMAS_ID },
 };
 
 // WebSite is the node that declares what this domain IS, distinct from the
@@ -235,6 +258,7 @@ const graph = [
 	orgLd,
 	logoLd,
 	founderLd,
+	paperLd,
 	websiteLd,
 	ormasLd,
 	webPageLd,
@@ -254,6 +278,7 @@ const pageLd = { '@context': 'https://schema.org', '@graph': graph };
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{pageTitle}</title>
 		<meta name="description" content={desc} />
+		<meta name="author" content="Rokib Al Dhin Raadh" />
 		<link rel="canonical" href={canonical} />
 		{!indexable && <meta name="robots" content="noindex, follow" />}
 

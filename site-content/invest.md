@@ -40,7 +40,7 @@ Published runs where ORMAS finishes behind the baseline, named next to the wins
 
 1 person
 
-Who built all of it. The second is the most consequential thing this round buys
+Founder Rokib Al Dhin Raadh built all of it. The second person is the most consequential thing this round buys
 
 **WHY NOW**
 

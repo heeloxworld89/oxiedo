@@ -2,7 +2,7 @@
 
 - **URL:** `/contact`
 - **Page title:** Contact: pre-book, invest, or ask — Oxiedo
-- **Meta description:** Six ways in: pre-book a deployment, an investment conversation, press, a data request, a falsification attempt, or anything else. Every message is read by a person and answered within a few days.
+- **Meta description:** Six ways in: pre-book a deployment, an investment conversation, press, a data request, a falsification attempt, or anything else. Every message is read by the founder, Rokib Al Dhin Raadh, and answered within a few days.
 
 ---
 CONTACT
@@ -126,7 +126,7 @@ Pre-booking is the one route to the product, whichever application is in mind. I
 
 #### How long before someone replies?
 
-Within a few days, usually less. Every message is read by a person, and if the message does not fit we will say so directly rather than sending a non-answer.
+Within a few days, usually less. Every message is read by the founder, and if the message does not fit we will say so directly rather than sending a non-answer.
 
 #### Why does the form ask what a failure costs us?
 

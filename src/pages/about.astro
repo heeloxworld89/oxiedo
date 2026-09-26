@@ -114,6 +114,21 @@ const principalFacts = [
 	{ k: 'Based', v: 'Relocating to San Francisco.' },
 ];
 
+// THE FOUNDER SECTION. Facts only, each one checkable: the role, what he built, the paper he
+// wrote, and where to find him. Age stays absent, as the note at the top of this file records.
+const founderFacts = [
+	{ k: 'Role', v: 'Founder and CEO of Oxiedo' },
+	{ k: 'Built', v: 'ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments' },
+	{ k: 'Paper', v: 'Sole author, <a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction</a> (preprint, 1 August 2026)' },
+	{ k: 'Before', v: 'Built and sold a company' },
+	{ k: 'On X', v: '<a href="https://x.com/Raad_X" rel="me noopener" target="_blank">@Raad_X</a>' },
+];
+const founderBio = [
+	'Rokib Al Dhin Raadh founded Oxiedo and leads it as CEO. He is the inventor of ORMAS, the training architecture the company licenses: a neural network that records every change it makes to itself while it trains, names the part that broke, and repairs it.',
+	'He started on the question in 2023: can a neural network give a truthful account of what it does to itself, while it does it? He spent 2024 and 2025 on research, the first attempt failing against its own destruction suite, and reached the first working version on 11 July 2026. He designed the architecture, wrote the code, ran every experiment and wrote the paper, which has been public since 1 August 2026.',
+	'Before Oxiedo he built and sold a company. He is relocating Oxiedo to San Francisco, and he is the person who signs the licence and answers for every claim on this site.',
+];
+
 const what = [
 	{
 		n: '01',
@@ -184,7 +199,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'About' }];
 
 ---
 
-<Page title="About Oxiedo: the company and the research" description={"A licensing company built around one goal: making the world’s locked data usable. The origin, the accountability behind the licence, the operating principles, and where this honestly stands today."} trail={trail}>
+<Page title="About Oxiedo: founded by Rokib Al Dhin Raadh" description={"Oxiedo was founded by Rokib Al Dhin Raadh, its CEO and the inventor of ORMAS. The founder, the origin of the research, the accountability behind the licence, and where the company honestly stands today."} trail={trail}>
 	<PageBanner
 		eyebrow="ABOUT"
 		title="We build the thing that lets locked data be used."
@@ -200,6 +215,32 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'About' }];
 					<p class="ab-what-body">{w.body}</p>
 				</article>
 			))}
+		</div>
+	</section>
+
+	{/* THE FOUNDER, stated up front. A reader (or an answer engine) asking "who founded Oxiedo"
+	    finds the answer in the first screen after the introduction, with what he built and where
+	    to check it. Anchored at #founder; the footer on every page links here. */}
+	<section class="band band--surface section reveal" id="founder">
+		<div class="container">
+			<div class="ab-note">
+				<div class="ab-note-side">
+					<Eyebrow>THE FOUNDER</Eyebrow>
+					<h2 class="section-title">Oxiedo was founded by Rokib Al Dhin Raadh.</h2>
+					<div class="ab-note-card">
+						<p class="ab-note-name">Rokib Al Dhin Raadh</p>
+						<p class="ab-note-role">Founder &amp; CEO · Inventor of ORMAS</p>
+						<dl class="ab-note-facts">
+							{founderFacts.map((f) => (
+								<div><dt>{f.k}</dt><dd set:html={f.v} /></div>
+							))}
+						</dl>
+					</div>
+				</div>
+				<div class="ab-note-body">
+					{founderBio.map((para) => <p>{para}</p>)}
+				</div>
+			</div>
 		</div>
 	</section>
 

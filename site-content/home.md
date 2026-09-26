@@ -545,7 +545,7 @@ A fifty-node network at 30% label noise across 200 epochs. Standard training ret
 
 After the same task shift, the network answered combinations it had never been shown at 58.8%, against 25% chance. No modularity was built in. It organised its own internal structure out of the conflict between the two tasks.
 
-383 controlled experiments across four architecture families. All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and every run where it loses.
+383 controlled experiments across four architecture families, designed, built and run by founder [Rokib Al Dhin Raadh](/about#founder). All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and every run where it loses.
 
 A frontier run fails at 60 percent · current practice
 

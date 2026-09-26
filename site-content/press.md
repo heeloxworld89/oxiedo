@@ -27,7 +27,7 @@ Available, including on the parts of this that are not working yet. For a scepti
 - **Name** — ORMAS, short for Orchestrated Repair and Monitoring with Architectural Self-correction. Oxiedo is the company; ORMAS is the architecture.
 - **Founded** — 2023 as a research effort. The architecture reached maturity on 1 August 2026; every result published here was measured on or after that date.
 - **Entity** — A Delaware C-corporation is being established alongside the move to San Francisco. Contracting and payments run through an existing UK-registered company, which is named in full in any agreement.
-- **Founder** — Rokib Al Dhin Raadh, Founder & CEO, accountable for the architecture. Built and sold a company before this one.
+- **Founder** — Rokib Al Dhin Raadh, Founder & CEO, and the inventor of ORMAS. Sole author of the ORMAS preprint (Zenodo, 1 August 2026). Built and sold a company before this one.
 - **Funding** — Raising a pre-seed round.
 - **Structure** — The founder and CEO is accountable for the architecture and for every claim made about it. Hiring across commercial, research and regulatory functions; see /careers.
 - **Customers** — None. No deployment or pilot exists; every published result comes from controlled experiments.

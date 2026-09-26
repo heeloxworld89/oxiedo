@@ -71,12 +71,12 @@ page mirror by hand, because the next run overwrites it.
 
 - The company is **not registered**. It contracts through an existing UK-registered company; a
   Delaware C-corporation is in formation, with headquarters relocating to San Francisco.
-- **No research paper is named, described or referred to anywhere on the site**, and this is
-  deliberate. No title, no author byline in a citation, no venue, no preprint, and no status —
-  not "under review", not "submitted", not "on acceptance". The architecture is not public yet;
-  the commitment to release it in full is written into the licence and phrased as "on
-  publication". Do not reintroduce any of it. Where the site needs to refer to the underlying
-  document it says **"the full technical account"**.
+- **The paper is public and is named** (since 2026-09-26): "ORMAS: Neural Architectural
+  Transparency Enables Autonomous Self-Correction", sole author Rokib Al Dhin Raadh, Zenodo,
+  1 August 2026, https://doi.org/10.5281/zenodo.21730363. Site figures must match it.
+- **The founder is named wherever it helps a reader or an answer engine**: Rokib Al Dhin Raadh,
+  Founder & CEO and inventor of ORMAS. Footer on every page, /about#founder, /faq, /press,
+  llms.txt, and the Person and ScholarlyArticle nodes in the site-wide structured data.
 - ORMAS is **one product under one licence**. The seven are features of it, not separate
   purchases, and nothing is priced per feature.
 - Every experimental number is on **CIFAR-10/100**. No clinical, financial, defence or market data

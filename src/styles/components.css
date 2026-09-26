@@ -10854,3 +10854,12 @@ main > section:last-child.band--dark {
 		opacity: 0.72;
 	}
 }
+
+/* The founder link in the footer's legal line. The default link colour is the dark accent,
+   which sits at low contrast on the ink footer; the link takes the line's own colour and is
+   marked by its underline instead. */
+.footer-legal-inner p a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}

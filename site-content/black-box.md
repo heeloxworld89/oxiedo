@@ -239,4 +239,4 @@ Terms are agreed per institution and written into the contract, and pre-booking 
 
 [Pre-book a deployment](/contact?intent=pre-book#pre-book)
 
-Every figure on this page is measured on CIFAR-10 across the controlled experiment programme, and is labelled as such wherever it appears.[The technology page](/technology) carries the conditions for each, the error bars, and every run where it loses.
+Every figure on this page is measured on CIFAR-10 across the controlled experiment programme built by founder [Rokib Al Dhin Raadh](/about#founder), and is labelled as such wherever it appears.[The technology page](/technology) carries the conditions for each, the error bars, and every run where it loses.
