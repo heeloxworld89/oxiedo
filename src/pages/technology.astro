@@ -255,49 +255,41 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 	    table or section it comes from, so the page reads as a guide to the paper rather than a
 	    claim beside it. */}
 	<section class="section container" id="deepmath">
-		<div class="tech-paper tech-paper--accepted">
-			<div class="tech-paper-main">
-				<p class="tech-paper-label">Accepted · DeepMath 2026 · Poster</p>
-				<h2 class="tech-paper-title">
-					Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics
-				</h2>
-				<p class="tech-paper-meta">
-					<a href="/about#founder">Rokib Al Dhin Raadh</a> · DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · 29–30 October 2026
-				</p>
-				<p class="tech-paper-body">
-					The stability analysis behind ORMAS, reviewed and accepted for a poster on 30 September
-					2026. It treats self-repair as a bounded disturbance and characterises when training stays
-					stable while the network corrects itself. The accepted paper is not public until the
-					conference; the full method and every experiment are in the public preprint.
-				</p>
-			</div>
-			<div class="tech-paper-actions">
-				<Button variant="primary" href="https://doi.org/10.5281/zenodo.21730363" target="_blank" rel="noopener noreferrer">Read the preprint</Button>
-				<Button variant="secondary" href="https://deepmath-conference.com/" target="_blank" rel="noopener noreferrer">About DeepMath 2026</Button>
-			</div>
-		</div>
-	</section>
+		<div class="tech-papers">
+			<p class="tech-paper-label">The research behind every number on this page</p>
+			<p class="tech-papers-lede">
+				Every figure below comes from the preprint, and each result cites the table or section it
+				comes from. The stability analysis behind it is accepted at DeepMath 2026.
+			</p>
 
-	<section class="section container">
-		<div class="tech-paper">
-			<div class="tech-paper-main">
-				<p class="tech-paper-label">The paper behind every number on this page</p>
-				<h2 class="tech-paper-title">
-					<a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction</a>
-				</h2>
-				<p class="tech-paper-meta">
-					<a href="/about#founder">Rokib Al Dhin Raadh</a> · Sole author · Preprint, Zenodo · 1 August 2026 · 47 pages · DOI 10.5281/zenodo.21730363
-				</p>
-				<p class="tech-paper-body">
-					The full method, all 383 experiments and every run where it loses. Each result below cites
-					the table or section it comes from, so any figure can be checked against the source in
-					one click.
-				</p>
-			</div>
-			<div class="tech-paper-actions">
-				<Button variant="primary" href="https://doi.org/10.5281/zenodo.21730363" target="_blank" rel="noopener noreferrer">Read the paper</Button>
-				<Button variant="secondary" href="https://zenodo.org/records/21730363/files/ORMAS_preprint.pdf?download=1" rel="noopener noreferrer">Download PDF</Button>
-			</div>
+			<article class="tech-papers-row">
+				<div class="tech-paper-main">
+					<p class="tech-papers-tag tech-papers-tag--accepted">Accepted · DeepMath 2026 · Poster</p>
+					<h2 class="tech-papers-title">Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics</h2>
+					<p class="tech-paper-meta">
+						<a href="/about#founder">Rokib Al Dhin Raadh</a> · Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · 29–30 October 2026 · Public after the conference
+					</p>
+				</div>
+				<div class="tech-paper-actions">
+					<Button variant="secondary" href="https://deepmath-conference.com/" target="_blank" rel="noopener noreferrer">About DeepMath 2026</Button>
+				</div>
+			</article>
+
+			<article class="tech-papers-row">
+				<div class="tech-paper-main">
+					<p class="tech-papers-tag">Preprint · Zenodo · 1 August 2026</p>
+					<h2 class="tech-papers-title">
+						<a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction</a>
+					</h2>
+					<p class="tech-paper-meta">
+						<a href="/about#founder">Rokib Al Dhin Raadh</a> · Sole author · 47 pages · The full method, all 383 experiments and every run where it loses · DOI 10.5281/zenodo.21730363
+					</p>
+				</div>
+				<div class="tech-paper-actions">
+					<Button variant="primary" href="https://doi.org/10.5281/zenodo.21730363" target="_blank" rel="noopener noreferrer">Read the paper</Button>
+					<Button variant="secondary" href="https://zenodo.org/records/21730363/files/ORMAS_preprint.pdf?download=1" rel="noopener noreferrer">Download PDF</Button>
+				</div>
+			</article>
 		</div>
 	</section>
 
