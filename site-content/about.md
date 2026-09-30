@@ -33,7 +33,7 @@ Turning one property into one product, licensed to institutions that hold data u
 
 Rokib Al Dhin Raadh founded Oxiedo and leads it as CEO. He is the inventor of ORMAS, the training architecture the company licenses: a neural network that records every change it makes to itself while it trains, names the part that broke, and repairs it.
 
-He started on the question in 2023: can a neural network give a truthful account of what it does to itself, while it does it? He spent 2024 and 2025 on research, the first attempt failing against its own destruction suite, and reached the first working version on 11 July 2026. He designed the architecture, wrote the code, ran every experiment and wrote the paper, which has been public since 1 August 2026.
+He started on the question in 2023: can a neural network give a truthful account of what it does to itself, while it does it? He spent 2024 and 2025 on research, the first attempt failing against its own destruction suite, and reached the first working version on 11 July 2026. He designed the architecture, wrote the code, ran every experiment and wrote the paper, which has been public since 1 August 2026. On 30 September 2026 his paper on the stability theory behind it was accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks.
 
 Before Oxiedo he built and sold a company. He is relocating Oxiedo to San Francisco, and he is the person who signs the licence and answers for every claim on this site.
 
@@ -43,6 +43,7 @@ Founder & CEO · Oxiedo
 
 - **Built** — ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments
 - **Paper** — Sole author, [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363) (preprint, 1 August 2026)
+- **Accepted** — [Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics](/technology#deepmath), poster at DeepMath 2026
 - **Before** — Built and sold a company
 - **On X** — [@Raad_X_](https://x.com/Raad_X_)
 
@@ -82,7 +83,13 @@ Nothing here was planned from the beginning. The work began as a research questi
 
   The complete system: 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, and 16,316 lines of instrumentation. Every result on this site was measured on or after this date. It is worth being exact about the timing, because it explains the rest of the position. Before that date there was nothing here an institution could have been sold, and selling it anyway would have broken the operating principle below that says nothing ships while a known defect is open.
 
-6. Now
+6. 30 September 2026
+
+  #### Accepted at DeepMath 2026
+
+  The stability analysis behind ORMAS, “Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics”, is accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks, held in Columbus, Ohio on 29–30 October. It is the first time the work has been reviewed and accepted outside the company.
+
+7. Now
 
   #### Licensing is open, and the headquarters moves to San Francisco
 

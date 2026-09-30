@@ -17,13 +17,23 @@ Recovery from catastrophic structural collapse, where a parameter-matched baseli
 
 Controlled experiments across four architecture families, every run reproducible from seed
 
-5
+DeepMath
 
-Layers of causal telemetry emitted natively, from system health to per-parameter attribution
+The stability analysis is accepted for a poster at DeepMath 2026, 29–30 October
 
 3
 
 Published runs where ORMAS loses to the baseline, named on this page next to the wins
+
+Accepted · DeepMath 2026 · Poster
+
+### [Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics](https://openreview.net/group?id=deepmath-conference.com%2FDeepMath%2F2026)
+
+[Rokib Al Dhin Raadh](/about#founder) · DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · 29–30 October 2026
+
+The stability analysis behind ORMAS, reviewed and accepted for a poster on 30 September 2026. It treats self-repair as a bounded disturbance and characterises when training stays stable while the network corrects itself. The full method and every experiment are in the preprint below.
+
+[View on OpenReview](https://openreview.net/group?id=deepmath-conference.com%2FDeepMath%2F2026)
 
 The paper behind every number on this page
 

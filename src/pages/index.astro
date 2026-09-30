@@ -260,6 +260,12 @@ const whyNow = [
 	<section class="hero">
 		<div class="hero-inner container">
 			<div class="hero-copy">
+				{/* 2026-09-30. The first external acceptance, stated where everyone looks first. */}
+				<a class="hero-news" href="/technology#deepmath">
+					<span class="hero-news-tag">Accepted</span>
+					<span class="hero-news-text">DeepMath 2026 · poster · the stability theory behind ORMAS</span>
+					<span class="hero-news-arrow" aria-hidden="true">→</span>
+				</a>
 				<Eyebrow>ORMAS · A NEW KIND OF NEURAL NETWORK</Eyebrow>
 				{/* 2026-09-24, second pass. "For forty years, networks learned blind" read as a riddle to
 				    anyone outside the field. This says the two things the product does in words a
@@ -315,6 +321,13 @@ const whyNow = [
 					    both buttons on one row at every width from 390px up. */}
 					<Button variant="secondary" href="/black-box">Watch it heal itself</Button>
 				</div>
+				{/* The same announcement, placed under the buttons on narrow screens so it never pushes
+				    them off the first screen. Above the headline from 1024px up. */}
+				<a class="hero-news hero-news--below" href="/technology#deepmath">
+					<span class="hero-news-tag">Accepted</span>
+					<span class="hero-news-text">DeepMath 2026 · poster</span>
+					<span class="hero-news-arrow" aria-hidden="true">→</span>
+				</a>
 			</div>
 		</div>
 
@@ -596,6 +609,7 @@ const whyNow = [
 		</div>
 
 		<p class="evidence-qualifier">
+			Its stability analysis is accepted for a poster at <a href="/technology#deepmath">DeepMath 2026</a>.
 			383 controlled experiments across four architecture families, designed, built and run by
 			founder <a href="/about#founder">Rokib Al Dhin Raadh</a>. All results on CIFAR-10 and
 			CIFAR-100. <a href="/technology">The technology page</a> carries the full conditions, the error

@@ -12,7 +12,7 @@ INVEST
 The whole thing, in one screen
 
 - **The insight** — Every interpretability and monitoring tool estimates a model from outside it, and an estimate is an opinion. ORMAS bounds each node’s gradient chain to four operations, so attribution stops being an estimate and becomes a measurement taken during training. If that is right, every regulated training run eventually has to be built this way, and the layer the market is currently funding is the wrong layer.
-- **What exists** — The question in 2023; two years of research in 2024–25, the first of them a failure against its own destruction suite; a first working version on 11 July 2026, and the complete system on 1 August 2026. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.
+- **What exists** — The question in 2023; two years of research in 2024–25, the first of them a failure against its own destruction suite; a first working version on 11 July 2026, and the complete system on 1 August 2026. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. Three runs where it loses, disclosed. The stability analysis is accepted for a poster at DeepMath 2026; the experiments are not yet independently replicated.
 - **Why now** — The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.
 - **The moat** — The mechanism publishes on release, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.
 - **The ask** — $1.5M pre-seed, 18 months, six milestones with acceptance criteria. Team $650K · compute $250K · one dataset partnership $150K · structure and filings $100K · operating $200K · buffer $150K. Sized to the next result rather than to the whole plan, and deliberately below the deep tech band.
@@ -366,9 +366,9 @@ None of this is disclosed reluctantly. An investor who finds these in week three
 
 Zero customer conversations have taken place. Nothing on this site claims otherwise, and any diligence process will confirm it quickly. The reason is a date rather than a reluctance: the architecture reached maturity on 1 August 2026, and before that there was no product an institution could have been sold. Starting those conversations earlier would have meant selling a system that had not yet cleared its own destruction suite.
 
-#### One adverse published result.
+#### Three published runs where it loses.
 
-Under adversarial weight injection the architecture is 1.0 pp worse than a parameter-matched baseline. It is published on the technology page and named in every market where it bears on a decision.
+Adversarial weight injection (−1.0 pp), a 100× weight explosion (−0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.6% vs 91.7%). All three are on the technology page.
 
 #### Key-person risk is total.
 
@@ -424,9 +424,9 @@ Cap-only is how roughly 72% of SAFEs were written in 2025. A discount layered on
 
 ### Where every number on this page comes from.
 
-Three of these seven rows are unvalidated, and they are the three this round exists to validate. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
+Three of these eight rows are unvalidated, and they are the three this round exists to validate. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
 
-Figure Source Status 80.3% against 10.0%, +70.3 pp 383 controlled experiments, reproducible from seed Measured, replayable$5.9B (2025) → $19.1B by 2035 Third-party analyst, AI model-risk management Third-party~1,000 institutions Our own bottom-up count across four segments Estimate, unvalidated$250K ACV, $150K–$500K band Benchmarked against model-risk tooling No pricing conversations CAC $85K, LTV:CAC 10.8:1 Modelled on a six-to-eighteen-month enterprise cycle Assumption, no data$15M cap, 10% dilution 2026 AI pre-seed band; $15M is the norm at this raise size Market benchmark Competitor pricing ~$50K Published enterprise quote floors Third-party
+Figure Source Status Accepted, DeepMath 2026 (poster)OpenReview decision on the stability analysis, 30 September 2026 External review 80.3% against 10.0%, +70.3 pp 383 controlled experiments, reproducible from seed Measured, replayable$5.9B (2025) → $19.1B by 2035 Third-party analyst, AI model-risk management Third-party~1,000 institutions Our own bottom-up count across four segments Estimate, unvalidated$250K ACV, $150K–$500K band Benchmarked against model-risk tooling No pricing conversations CAC $85K, LTV:CAC 10.8:1 Modelled on a six-to-eighteen-month enterprise cycle Assumption, no data$15M cap, 10% dilution 2026 AI pre-seed band; $15M is the norm at this raise size Market benchmark Competitor pricing ~$50K Published enterprise quote floors Third-party
 
 **THE ASK**
 

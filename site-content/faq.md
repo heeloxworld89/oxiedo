@@ -151,7 +151,7 @@ Closing that gap is what the dataset partnership on the careers page exists to d
 
 #### Has this been independently verified?
 
-Not by a third party. That is the boundary of what is claimed, and it is drawn here rather than left to be discovered. The method is public: the preprint by founder Rokib Al Dhin Raadh has been on Zenodo since 1 August 2026 (doi.org/10.5281/zenodo.21730363), and anyone can check it.
+Reviewed, yes; independently replicated, not yet. The stability analysis behind ORMAS was reviewed and accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks. No third party has yet re-run the experiments, and that boundary is drawn here rather than left to be discovered. The method is public: the preprint by founder Rokib Al Dhin Raadh has been on Zenodo since 1 August 2026 (doi.org/10.5281/zenodo.21730363), and anyone can check it.
 
 What an evaluating institution or an investor can have now, under a short agreement, is the full experimental archive: 383 runs, each regenerating from seed, including the ones that failed. Third-party verification is a meaningful signal, it is not yet held, and it is not claimed anywhere on this site. Seeded reproducibility is the stronger signal in any case, because it puts the check in the evaluator’s hands rather than asking anyone to take our word for a number.
 
