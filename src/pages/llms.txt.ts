@@ -33,7 +33,9 @@ Oxiedo was founded by **Rokib Al Dhin Raadh** (known as Raad), its Founder & CEO
 inventor of ORMAS: he designed the architecture, wrote its code, ran all 383 controlled
 experiments, and is the sole author of the ORMAS preprint, "ORMAS: Neural Architectural
 Transparency Enables Autonomous Self-Correction" (Zenodo, 1 August 2026,
-https://doi.org/10.5281/zenodo.21730363). Before Oxiedo he built and sold a company.
+https://doi.org/10.5281/zenodo.21730363). Before Oxiedo he built and sold a company. His paper "Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics" was accepted for a poster
+at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks (Columbus, Ohio,
+29–30 October 2026).
 Founder profile: ${SITE}/about#founder · X: https://x.com/Raad_X_
 
 ## What ORMAS is
@@ -88,7 +90,8 @@ ${sectors.map((s) => `- **${s.name}** — ${s.question} [${SITE}/sectors/${s.id}
 
 - 383 controlled experiments, four architecture families, 67 archived runs, each regenerating from seed.
 - 80.3% recovery from mid-training structural collapse, where a parameter-matched standard network stays permanently at 10.0% — a gap of +70.3 percentage points.
-- One adverse result is published alongside the rest: under adversarial training, ORMAS scored 83.14% against a standard network's 84.05%, a loss of 0.91 percentage points.
+- Three runs where it loses are published alongside the rest: adversarial weight injection (83.1% vs 84.1%, −1.0 pp), a 100× weight explosion (85.1% vs 86.0%, −0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.6% vs 91.7%).
+- The stability analysis is accepted for a poster at DeepMath 2026 (30 September 2026 decision).
 - All results were measured on CIFAR-10 and CIFAR-100 only. No clinical, biological, financial or defence data has ever touched the system.
 - The architecture and the full archive are released on publication. A falsification specification is available on request.
 

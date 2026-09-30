@@ -10945,3 +10945,55 @@ main > section:last-child.band--dark {
 }
 
 .tech-paper-main { min-width: 0; }
+
+/* ---- HOME · hero news pill (DeepMath 2026 acceptance) ---- */
+.hero-news {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	max-width: 100%;
+	margin-bottom: var(--space-md);
+	padding: 6px 12px 6px 6px;
+	border: 1px solid var(--accent-on-dark);
+	border-radius: 999px;
+	color: var(--text-on-dark);
+	text-decoration: none;
+	font-size: var(--text-small);
+	line-height: 1.3;
+}
+
+.hero-news:hover { background: color-mix(in oklab, var(--accent-on-dark) 14%, transparent); }
+
+.hero-news-tag {
+	flex: none;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: var(--accent-on-dark);
+	color: var(--text-primary);
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.hero-news-text { min-width: 0; }
+
+.hero-news-arrow { flex: none; }
+
+/* ---- TECHNOLOGY · accepted paper card ---- */
+.tech-paper--accepted {
+	border-left-color: var(--accent-mid);
+	background: var(--accent-ghost);
+}
+
+.tech-paper--accepted + .tech-paper { margin-top: var(--space-lg); }
+
+.hero-news--below { margin: var(--space-lg) 0 0; }
+
+@media (max-width: 1023px) {
+	.hero-copy .hero-news { display: none; }
+}
+
+@media (min-width: 1024px) {
+	.hero-news--below { display: none; }
+}

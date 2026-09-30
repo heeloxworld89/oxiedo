@@ -74,6 +74,11 @@ page mirror by hand, because the next run overwrites it.
 - **The paper is public and is named** (since 2026-09-26): "ORMAS: Neural Architectural
   Transparency Enables Autonomous Self-Correction", sole author Rokib Al Dhin Raadh, Zenodo,
   1 August 2026, https://doi.org/10.5281/zenodo.21730363. Site figures must match it.
+- **DeepMath 2026 acceptance** (decision 30 September 2026): "Self-Repair as a Bounded Disturbance:
+  Input-to-State Stability of Neural Network Training Dynamics", accepted for a poster at DeepMath
+  2026, the Conference on the Mathematical Theory of Deep Neural Networks (Columbus, Ohio, 29–30
+  October 2026). Say "accepted for a poster", never "published"; it is reviewed, not independently
+  replicated.
 - **The founder is named wherever it helps a reader or an answer engine**: Rokib Al Dhin Raadh,
   Founder & CEO and inventor of ORMAS. Footer on every page, /about#founder, /faq, /press,
   llms.txt, and the Person and ScholarlyArticle nodes in the site-wide structured data.

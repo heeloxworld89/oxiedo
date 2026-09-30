@@ -74,7 +74,7 @@ const benchmarks = [
 // will not scroll.
 const brief = [
 	{ k: 'The insight', v: 'Every interpretability and monitoring tool estimates a model from outside it, and an estimate is an opinion. ORMAS bounds each node’s gradient chain to four operations, so attribution stops being an estimate and becomes a measurement taken during training. If that is right, every regulated training run eventually has to be built this way, and the layer the market is currently funding is the wrong layer.' },
-	{ k: 'What exists', v: 'The question in 2023; two years of research in 2024–25, the first of them a failure against its own destruction suite; a first working version on 11 July 2026, and the complete system on 1 August 2026. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. One adverse result, disclosed. Not yet independently verified.' },
+	{ k: 'What exists', v: 'The question in 2023; two years of research in 2024–25, the first of them a failure against its own destruction suite; a first working version on 11 July 2026, and the complete system on 1 August 2026. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. Three runs where it loses, disclosed. The stability analysis is accepted for a poster at DeepMath 2026; the experiments are not yet independently replicated.' },
 	{ k: 'Why now', v: 'The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.' },
 	{ k: 'The moat', v: 'The mechanism publishes on release, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.' },
 	{ k: 'The ask', v: '$1.5M pre-seed, 18 months, six milestones with acceptance criteria. Team $650K · compute $250K · one dataset partnership $150K · structure and filings $100K · operating $200K · buffer $150K. Sized to the next result rather than to the whole plan, and deliberately below the deep tech band.' },
@@ -143,11 +143,12 @@ const plan = [
 	{ k: 'Net burn', y1: '$820K', y2: '$680K', y3: 'Near breakeven', note: 'Compute front-loaded to year one' },
 ];
 
-/* WHERE EVERY NUMBER COMES FROM. Three of the seven rows are unvalidated, and those
+/* WHERE EVERY NUMBER COMES FROM. Three of the eight rows are unvalidated, and those
    three are what this round exists to validate. A provenance table is the cheapest
    credibility on an investor page precisely because it is the one thing a founder
    with weak numbers cannot publish. */
 const provenance = [
+	{ figure: 'Accepted, DeepMath 2026 (poster)', source: 'OpenReview decision on the stability analysis, 30 September 2026', status: 'External review' },
 	{ figure: '80.3% against 10.0%, +70.3 pp', source: '383 controlled experiments, reproducible from seed', status: 'Measured, replayable' },
 	{ figure: '$5.9B (2025) → $19.1B by 2035', source: 'Third-party analyst, AI model-risk management', status: 'Third-party' },
 	{ figure: '~1,000 institutions', source: 'Our own bottom-up count across four segments', status: 'Estimate, unvalidated', weak: true },
@@ -268,7 +269,7 @@ const derisked = [
 
 const risks = [
 	{ q: 'No revenue, no customers, no pilot.', a: 'Zero customer conversations have taken place. Nothing on this site claims otherwise, and any diligence process will confirm it quickly. The reason is a date rather than a reluctance: the architecture reached maturity on 1 August 2026, and before that there was no product an institution could have been sold. Starting those conversations earlier would have meant selling a system that had not yet cleared its own destruction suite.' },
-	{ q: 'One adverse published result.', a: 'Under adversarial weight injection the architecture is 1.0 pp worse than a parameter-matched baseline. It is published on the technology page and named in every market where it bears on a decision.' },
+	{ q: 'Three published runs where it loses.', a: 'Adversarial weight injection (−1.0 pp), a 100× weight explosion (−0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.6% vs 91.7%). All three are on the technology page.' },
 	{ q: 'Key-person risk is total.', a: 'One person wrote all of it. It is the first line item in the round and the largest, at roughly 43 percent, and it buys two people rather than five because three who can each work unsupervised is a company.' },
 	{ q: 'The mechanism is being given away.', a: 'Deliberately, and on release rather than now. A result nobody can check is worth nothing to a regulator, and the defensibility was never intended to rest on secrecy. What is not published is the programme extending it, which stays unpublished until it is protected.' },
 	{ q: 'The evidence base is CIFAR-10 and CIFAR-100.', a: 'Stated on every page where a result appears. The architecture is domain-independent by construction; that is an argument, and this round converts it into a result.' },
@@ -799,7 +800,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 		<Eyebrow>PROVENANCE</Eyebrow>
 		<h2 class="iv-h2" id="iv-provenance-h">Where every number on this page comes from.</h2>
 		<p class="iv-lede">
-			Three of these seven rows are unvalidated, and they are the three this round exists to
+			Three of these eight rows are unvalidated, and they are the three this round exists to
 			validate. An investor who takes the measured rows and discounts the rest is reading this
 			page exactly as intended.
 		</p>

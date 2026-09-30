@@ -36,7 +36,7 @@ import ReplayDemo from '../components/ReplayDemo.astro';
 const headline = [
 	{ figure: '+70.3 pp', label: 'Recovery from catastrophic structural collapse, where a parameter-matched baseline is permanently dead' },
 	{ figure: '383', label: 'Controlled experiments across four architecture families, every run reproducible from seed' },
-	{ figure: '5', label: 'Layers of causal telemetry emitted natively, from system health to per-parameter attribution' },
+	{ figure: 'DeepMath', label: 'The stability analysis is accepted for a poster at DeepMath 2026, 29–30 October' },
 	{ figure: '3', label: 'Published runs where ORMAS loses to the baseline, named on this page next to the wins' },
 ];
 
@@ -254,6 +254,29 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 	{/* THE PAPER. Every figure on this page is taken from it, and each result below names the
 	    table or section it comes from, so the page reads as a guide to the paper rather than a
 	    claim beside it. */}
+	<section class="section container" id="deepmath">
+		<div class="tech-paper tech-paper--accepted">
+			<div class="tech-paper-main">
+				<p class="tech-paper-label">Accepted · DeepMath 2026 · Poster</p>
+				<h2 class="tech-paper-title">
+					<a href="https://openreview.net/group?id=deepmath-conference.com%2FDeepMath%2F2026" rel="noopener noreferrer" target="_blank">Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics</a>
+				</h2>
+				<p class="tech-paper-meta">
+					<a href="/about#founder">Rokib Al Dhin Raadh</a> · DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · 29–30 October 2026
+				</p>
+				<p class="tech-paper-body">
+					The stability analysis behind ORMAS, reviewed and accepted for a poster on 30 September
+					2026. It treats self-repair as a bounded disturbance and characterises when training stays
+					stable while the network corrects itself. The full method and every experiment are in the
+					preprint below.
+				</p>
+			</div>
+			<div class="tech-paper-actions">
+				<Button variant="primary" href="https://openreview.net/group?id=deepmath-conference.com%2FDeepMath%2F2026" target="_blank" rel="noopener noreferrer">View on OpenReview</Button>
+			</div>
+		</div>
+	</section>
+
 	<section class="section container">
 		<div class="tech-paper">
 			<div class="tech-paper-main">

@@ -28,6 +28,7 @@ Available, including on the parts of this that are not working yet. For a scepti
 - **Founded** — 2023 as a research effort. The architecture reached maturity on 1 August 2026; every result published here was measured on or after that date.
 - **Entity** — A Delaware C-corporation is being established alongside the move to San Francisco. Contracting and payments run through an existing UK-registered company, which is named in full in any agreement.
 - **Founder** — Rokib Al Dhin Raadh, Founder & CEO, and the inventor of ORMAS. Sole author of the ORMAS preprint (Zenodo, 1 August 2026). Built and sold a company before this one.
+- **Recognition** — Accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks (Columbus, Ohio, 29–30 October 2026): “Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics”.
 - **Funding** — Raising a pre-seed round.
 - **Structure** — The founder and CEO is accountable for the architecture and for every claim made about it. Hiring across commercial, research and regulatory functions; see /careers.
 - **Customers** — None. No deployment or pilot exists; every published result comes from controlled experiments.

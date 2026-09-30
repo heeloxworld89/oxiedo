@@ -5,6 +5,8 @@
 - **Meta description:** ORMAS is a neural network architecture that records every change it makes to itself as it trains, names the part that broke, repairs it, and keeps what it learned. The account that unlocks the world's locked data.
 
 ---
+[Accepted — DeepMath 2026 · poster · the stability theory behind ORMAS→](/technology#deepmath)
+
 **ORMAS · A NEW KIND OF NEURAL NETWORK**
 
 ## AI that can see inside itself, and fix what it finds.
@@ -26,6 +28,8 @@ The labs building the most powerful networks on earth say they cannot see inside
 [Pre-book ORMAS](/contact)
 
 [Watch it heal itself](/black-box)
+
+[Accepted — DeepMath 2026 · poster→](/technology#deepmath)
 
 Five sectors. One question about data, asked five ways.
 
@@ -545,7 +549,7 @@ A fifty-node network at 30% label noise across 200 epochs. Standard training ret
 
 After the same task shift, the network answered combinations it had never been shown at 58.8%, against 25% chance. No modularity was built in. It organised its own internal structure out of the conflict between the two tasks.
 
-383 controlled experiments across four architecture families, designed, built and run by founder [Rokib Al Dhin Raadh](/about#founder). All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and every run where it loses.
+Its stability analysis is accepted for a poster at [DeepMath 2026](/technology#deepmath). 383 controlled experiments across four architecture families, designed, built and run by founder [Rokib Al Dhin Raadh](/about#founder). All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and every run where it loses.
 
 A frontier run fails at 60 percent · current practice
 
