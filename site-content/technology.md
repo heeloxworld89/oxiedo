@@ -25,25 +25,23 @@ The stability analysis is accepted for a poster at DeepMath 2026, 29–30 Octobe
 
 Published runs where ORMAS loses to the baseline, named on this page next to the wins
 
+The research behind every number on this page
+
+Every figure below comes from the preprint, and each result cites the table or section it comes from. The stability analysis behind it is accepted at DeepMath 2026.
+
 Accepted · DeepMath 2026 · Poster
 
 ### Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics
 
-[Rokib Al Dhin Raadh](/about#founder) · DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · 29–30 October 2026
-
-The stability analysis behind ORMAS, reviewed and accepted for a poster on 30 September 2026. It treats self-repair as a bounded disturbance and characterises when training stays stable while the network corrects itself. The accepted paper is not public until the conference; the full method and every experiment are in the public preprint.
-
-[Read the preprint](https://doi.org/10.5281/zenodo.21730363)
+[Rokib Al Dhin Raadh](/about#founder) · Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · 29–30 October 2026 · Public after the conference
 
 [About DeepMath 2026](https://deepmath-conference.com/)
 
-The paper behind every number on this page
+Preprint · Zenodo · 1 August 2026
 
 ### [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363)
 
-[Rokib Al Dhin Raadh](/about#founder) · Sole author · Preprint, Zenodo · 1 August 2026 · 47 pages · DOI 10.5281/zenodo.21730363
-
-The full method, all 383 experiments and every run where it loses. Each result below cites the table or section it comes from, so any figure can be checked against the source in one click.
+[Rokib Al Dhin Raadh](/about#founder) · Sole author · 47 pages · The full method, all 383 experiments and every run where it loses · DOI 10.5281/zenodo.21730363
 
 [Read the paper](https://doi.org/10.5281/zenodo.21730363)
 

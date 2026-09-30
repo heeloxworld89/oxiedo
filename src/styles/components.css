@@ -10980,13 +10980,58 @@ main > section:last-child.band--dark {
 
 .hero-news-arrow { flex: none; }
 
-/* ---- TECHNOLOGY · accepted paper card ---- */
-.tech-paper--accepted {
-	border-left-color: var(--accent-mid);
-	background: var(--accent-ghost);
+/* ---- TECHNOLOGY · the research block ----
+   One block, two papers: the accepted paper and the preprint, each a compact row with its own
+   action, so the two read as a set rather than as the same card twice. */
+.tech-papers {
+	padding: var(--space-xl);
+	border: 1px solid var(--border-hairline);
+	border-left: 3px solid var(--accent-dark);
 }
 
-.tech-paper--accepted + .tech-paper { margin-top: var(--space-lg); }
+.tech-papers-lede {
+	color: var(--text-secondary);
+	margin-top: var(--space-sm);
+	max-width: 70ch;
+}
+
+.tech-papers-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--space-md);
+	padding-top: var(--space-lg);
+	margin-top: var(--space-lg);
+	border-top: 1px solid var(--border-hairline);
+}
+
+.tech-papers-tag {
+	font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	font-size: var(--text-eyebrow);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+
+.tech-papers-tag--accepted { color: var(--accent-dark); }
+
+.tech-papers-title {
+	font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+	font-size: clamp(1.125rem, 0.9vw + 0.8rem, 1.4rem);
+	line-height: 1.3;
+	margin-top: var(--space-xs);
+	max-width: 48ch;
+}
+
+.tech-papers-title a { color: var(--text-primary); text-decoration: none; }
+.tech-papers-title a:hover { text-decoration: underline; }
+
+@media (min-width: 1024px) {
+	.tech-papers-row {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--space-2xl);
+	}
+}
 
 .hero-news--below { margin: var(--space-lg) 0 0; }
 
