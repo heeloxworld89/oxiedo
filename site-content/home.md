@@ -1,8 +1,8 @@
-# Oxiedo
+# Oxiedo: AI that can see inside itself, and fix what it finds
 
 - **URL:** `/`
-- **Page title:** Oxiedo — neural networks that know what they did to themselves
-- **Meta description:** ORMAS is a neural network architecture that records every change it makes to itself as it trains, names the part that broke, repairs it, and keeps what it learned. The account that unlocks the world's locked data.
+- **Page title:** Oxiedo: AI that can see inside itself, and fix what it finds
+- **Meta description:** ORMAS is a neural network architecture that names the part of itself that broke while it trains, repairs it, and keeps what it learned. Accepted for a poster at DeepMath 2026.
 
 ---
 [Accepted — DeepMath 2026 · poster · the stability theory behind ORMAS→](/technology#deepmath)

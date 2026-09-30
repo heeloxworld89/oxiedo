@@ -74,7 +74,11 @@ for (const file of files) {
 		continue;
 	}
 
-	const types = graph.flatMap((n) => (Array.isArray(n['@type']) ? n['@type'] : [n['@type']]));
+	// WebPage subtypes (AboutPage, ContactPage, CollectionPage) count as the WebPage node.
+	const SUBTYPES = { AboutPage: 'WebPage', ContactPage: 'WebPage', CollectionPage: 'WebPage' };
+	const types = graph
+		.flatMap((n) => (Array.isArray(n['@type']) ? n['@type'] : [n['@type']]))
+		.map((t) => SUBTYPES[t] ?? t);
 	for (const t of REQUIRED) {
 		if (!types.includes(t)) failures.push(`${route}: missing a ${t} node`);
 	}
@@ -113,7 +117,7 @@ for (const file of files) {
 	// 5. THE PAGE NODE IS THIS PAGE. A copy-pasted @id pointing at another route is the quiet
 	//    way a whole section of a site collapses into one entity.
 	const expected = `${SITE}${route === '' ? '/' : route}#webpage`;
-	const page = graph.find((n) => String(n['@type']).endsWith('WebPage'));
+	const page = graph.find((n) => String(n['@id']).endsWith('#webpage'));
 	if (page && page['@id'] !== expected) {
 		failures.push(`${route}: WebPage @id is ${page['@id']}, expected ${expected}`);
 	}
@@ -186,7 +190,7 @@ try {
 			continue;
 		}
 		const block = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
-		const page = JSON.parse(block[1])['@graph'].find((n) => String(n['@type']).endsWith('WebPage'));
+		const page = JSON.parse(block[1])['@graph'].find((n) => String(n['@id']).endsWith('#webpage'));
 		if (page?.dateModified !== mod) {
 			failures.push(
 				`${route || '/'}: sitemap says lastmod ${mod}, WebPage says dateModified ${page?.dateModified}`,

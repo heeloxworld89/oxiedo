@@ -65,6 +65,7 @@ structural attribution, and the distinction is load-bearing.
 - [Licensing](${SITE}/licensing): research licence free for research and teaching; production deployment licensed per institution.
 - [Data handling](${SITE}/data): the three modes and their distinct legal shapes.
 - [FAQ](${SITE}/faq): the questions a technical evaluation, a security review and a procurement process actually ask.
+- [Full site text](${SITE}/llms-full.txt): the complete text of the main pages in one file.
 
 ## The seven features
 
@@ -94,6 +95,17 @@ ${sectors.map((s) => `- **${s.name}** — ${s.question} [${SITE}/sectors/${s.id}
 - The stability analysis is accepted for a poster at DeepMath 2026 (30 September 2026 decision).
 - All results were measured on CIFAR-10 and CIFAR-100 only. No clinical, biological, financial or defence data has ever touched the system.
 - The architecture and the full archive are released on publication. A falsification specification is available on request.
+
+## Where each claim can be checked
+
+- Recovery, losses and experiment count: the ORMAS preprint (https://doi.org/10.5281/zenodo.21730363), and ${SITE}/technology, where every result names its table.
+- The replayed training run: ${SITE}/black-box. It plays an archived run step by step, including a run where ORMAS loses.
+- Company facts, founder and entity status: ${SITE}/press (fast facts) and ${SITE}/about#founder.
+- DeepMath 2026 acceptance: decided 30 September 2026. The accepted paper is not yet public; the conference site is https://deepmath-conference.com/.
+
+## How to cite
+
+Rokib Al Dhin Raadh. "ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction." Zenodo, 1 August 2026. https://doi.org/10.5281/zenodo.21730363
 
 ## Terms this site uses precisely
 

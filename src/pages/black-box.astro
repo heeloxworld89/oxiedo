@@ -40,15 +40,7 @@ import ReplayDemo from '../components/ReplayDemo.astro';
 import TourGate from '../components/TourGate.astro';
 import DemoTour from '../components/DemoTour.astro';
 
-// The social card is generated from the bundle by scripts/build-replay-cards.py
-// and rasterised by scripts/rasterise-cards.sh, which needs librsvg. Point
-// og:image at it only once the PNG actually exists: a card URL that 404s is
-// worse than the site default, because the link then previews as nothing at all.
-// Resolved at build time by Vite, so no filesystem types are needed.
-const cards = import.meta.glob('/public/black-box/cards/*.png');
-const cardPath = Object.keys(cards).some((k) => k.endsWith('dead-layer-lesion.png'))
-	? '/black-box/cards/dead-layer-lesion.png'
-	: undefined;
+// The social card is public/og/black-box-v2.png, rendered by scripts/build-og-cards.mjs.
 
 const objections = [
 	{
@@ -175,8 +167,8 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'The black box' }];
 
 <Page
 	title="The black box is not a law of nature"
-	description="Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running."
-	ogImagePath={cardPath}
+	description="Watch a real training run break mid-way. Two steps later ORMAS names the part that broke, then repairs it. An archived run, replayed step by step, including one where it loses."
+	ogImagePath="/og/black-box-v2.png"
 	trail={trail}
 >
 	{/* NO BANNER ON THIS PAGE. Every other page opens with one; this one opens with the

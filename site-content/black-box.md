@@ -2,7 +2,7 @@
 
 - **URL:** `/black-box`
 - **Page title:** The black box is not a law of nature — Oxiedo
-- **Meta description:** Opacity is not inherent to deep learning. It is a consequence of one design decision, made early and never revisited. Change the decision and half the problem stops existing — here is that half, running.
+- **Meta description:** Watch a real training run break mid-way. Two steps later ORMAS names the part that broke, then repairs it. An archived run, replayed step by step, including one where it loses.
 
 ---
 **Two neural networks, the same data, the same damage.** **ORMAS**, on the right, names which parts broke — two steps later — and repairs itself. The **sealed network** on the left cannot say anything about it, and never will. Every figure is read from one archived training run.
