@@ -27,13 +27,15 @@ Published runs where ORMAS loses to the baseline, named on this page next to the
 
 Accepted · DeepMath 2026 · Poster
 
-### [Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics](https://openreview.net/group?id=deepmath-conference.com%2FDeepMath%2F2026)
+### Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics
 
 [Rokib Al Dhin Raadh](/about#founder) · DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · 29–30 October 2026
 
-The stability analysis behind ORMAS, reviewed and accepted for a poster on 30 September 2026. It treats self-repair as a bounded disturbance and characterises when training stays stable while the network corrects itself. The full method and every experiment are in the preprint below.
+The stability analysis behind ORMAS, reviewed and accepted for a poster on 30 September 2026. It treats self-repair as a bounded disturbance and characterises when training stays stable while the network corrects itself. The accepted paper is not public until the conference; the full method and every experiment are in the public preprint.
 
-[View on OpenReview](https://openreview.net/group?id=deepmath-conference.com%2FDeepMath%2F2026)
+[Read the preprint](https://doi.org/10.5281/zenodo.21730363)
+
+[About DeepMath 2026](https://deepmath-conference.com/)
 
 The paper behind every number on this page
 
