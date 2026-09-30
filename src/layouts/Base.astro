@@ -51,7 +51,11 @@ const desc =
 	description ??
 	'ORMAS is a neural network training architecture that makes per-component causal attribution a physical property of training, not something reconstructed afterwards.';
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', SITE).href;
-const ogImage = new URL(ogImagePath ?? '/og.png', SITE).href;
+// Per-page cards are rendered by scripts/build-og-cards.mjs into public/og/. The version
+// suffix is in the filename because X and LinkedIn cache a card by URL for weeks: a
+// redesigned card at the same URL keeps previewing as the old one.
+const ogImage = new URL(ogImagePath ?? '/og/home-v2.png', SITE).href;
+const ogAlt = pageTitle;
 
 // ─── JSON-LD ────────────────────────────────────────────────────────────────
 // STABLE @ids, and everything points at them. Before 2026-09-18 this layout
@@ -150,6 +154,8 @@ const ormasLd = {
 	url: `${SITE}/product`,
 	author: { '@id': ORG_ID },
 	provider: { '@id': ORG_ID },
+	creator: { '@id': FOUNDER_ID },
+	subjectOf: [{ '@id': `${SITE}/#ormas-preprint` }, { '@id': `${SITE}/#deepmath-2026` }],
 	// NO aggregateRating and NO price. Both are what a rich result for this type
 	// needs, and both would have to be invented: there are zero customers and the
 	// licence fee is agreed per institution. An ineligible listing is the correct
@@ -193,7 +199,12 @@ const paperLd = {
 	datePublished: '2026-08-01',
 	url: 'https://zenodo.org/records/21730363',
 	sameAs: 'https://doi.org/10.5281/zenodo.21730363',
-	publisher: { '@type': 'Organization', name: 'Zenodo' },
+	// The DOI as a typed identifier, not only a URL: it is the one string a citation manager,
+	// Google Scholar and an answer engine can all resolve to the same record.
+	identifier: { '@type': 'PropertyValue', propertyID: 'DOI', value: '10.5281/zenodo.21730363' },
+	publisher: { '@type': 'Organization', name: 'Zenodo', url: 'https://zenodo.org' },
+	isAccessibleForFree: true,
+	inLanguage: 'en',
 	about: { '@id': ORMAS_ID },
 };
 
@@ -204,13 +215,25 @@ const deepmathLd = {
 	headline: 'Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics',
 	author: { '@id': FOUNDER_ID },
 	url: 'https://deepmath-conference.com/',
+	// Accepted, not published: the paper is not public yet, so there is no datePublished and no
+	// link to the text. Replace url with the paper's own page once DeepMath releases it.
+	creativeWorkStatus: 'Accepted for a poster presentation',
+	dateCreated: '2026-09-30',
+	inLanguage: 'en',
 	about: { '@id': ORMAS_ID },
 	isPartOf: {
 		'@type': 'Event',
 		name: 'DeepMath 2026: Conference on the Mathematical Theory of Deep Neural Networks',
 		startDate: '2026-10-29',
 		endDate: '2026-10-30',
-		location: { '@type': 'Place', name: 'Columbus, Ohio, USA' },
+		eventStatus: 'https://schema.org/EventScheduled',
+		eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+		url: 'https://deepmath-conference.com/',
+		location: {
+			'@type': 'Place',
+			name: 'Columbus, Ohio, USA',
+			address: { '@type': 'PostalAddress', addressLocality: 'Columbus', addressRegion: 'OH', addressCountry: 'US' },
+		},
 	},
 };
 
@@ -335,12 +358,17 @@ const pageLd = { '@context': 'https://schema.org', '@graph': graph };
 		<meta property="og:image" content={ogImage} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:image:alt" content={ogAlt} />
+		<meta property="og:locale" content="en_GB" />
 
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:site" content="@oxiedo_ai" />
 		<meta name="twitter:title" content={pageTitle} />
 		<meta name="twitter:description" content={desc} />
 		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={ogAlt} />
+		<meta name="twitter:creator" content="@Raad_X_" />
 
 		<script type="application/ld+json" set:html={JSON.stringify(pageLd)} is:inline />
 		<ClientRouter />
