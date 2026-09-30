@@ -65,6 +65,7 @@ structural attribution, and the distinction is load-bearing.
 - [Licensing](${SITE}/licensing): research licence free for research and teaching; production deployment licensed per institution.
 - [Data handling](${SITE}/data): the three modes and their distinct legal shapes.
 - [FAQ](${SITE}/faq): the questions a technical evaluation, a security review and a procurement process actually ask.
+- [Full site text](${SITE}/llms-full.txt): the complete text of the main pages in one file.
 
 ## The seven features
 

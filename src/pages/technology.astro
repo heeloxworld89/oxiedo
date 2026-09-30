@@ -227,12 +227,28 @@ const open = [
 // see the `trail` prop in layouts/Page.astro for what that cost.
 const trail = [{ label: 'Home', href: '/' }, { label: 'Technology' }];
 
+// The page as a technical article by the founder, citing the two papers its numbers come from.
+// The @ids are declared once in layouts/Base.astro; this node only points at them.
+const techLd = {
+	'@type': 'TechArticle',
+	'@id': 'https://oxiedo.com/technology#article',
+	headline: 'The ORMAS architecture, and 383 experiments',
+	author: { '@id': 'https://oxiedo.com/#founder' },
+	publisher: { '@id': 'https://oxiedo.com/#organization' },
+	about: { '@id': 'https://oxiedo.com/#ormas' },
+	mainEntityOfPage: { '@id': 'https://oxiedo.com/technology#webpage' },
+	citation: [{ '@id': 'https://oxiedo.com/#ormas-preprint' }, { '@id': 'https://oxiedo.com/#deepmath-2026' }],
+	proficiencyLevel: 'Expert',
+	inLanguage: 'en',
+};
+
 ---
 
 <Page
 	title="The ORMAS architecture, and 383 experiments"
 	description="How a bounded gradient chain makes a network account for what it took from each source of data. 383 controlled experiments, and what is not yet established."
 	ogImagePath="/og/technology-v2.png"
+	schema={techLd}
 	trail={trail}
 >
 	<PageBanner

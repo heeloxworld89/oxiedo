@@ -98,6 +98,8 @@ const orgLd = {
 	logo: { '@id': LOGO_ID },
 	image: { '@id': LOGO_ID },
 	founder: { '@id': FOUNDER_ID },
+	slogan: 'AI that can see inside itself, and fix what it finds.',
+	contactPoint: { '@type': 'ContactPoint', contactType: 'sales', url: `${SITE}/contact`, availableLanguage: 'en' },
 	// knowsAbout is the topic declaration. It is the one place the site states,
 	// in machine-readable form, which field this name belongs to — which is the
 	// question a search engine is actually failing to answer when it decides
@@ -280,8 +282,18 @@ const ORG_PAGES = new Set(['/', '/about', '/press']);
 // the specific thing that makes Google stop reading them.
 const modified = (lastmod as Record<string, string>)[pathname];
 
+// The specific WebPage subtype where one exists, so a crawler knows what kind of page it is
+// reading without inferring it. /faq is not here: it declares its own FAQPage node.
+const PAGE_TYPES: Record<string, string> = {
+	'/about': 'AboutPage',
+	'/contact': 'ContactPage',
+	'/product': 'CollectionPage',
+	'/sectors': 'CollectionPage',
+	'/insights': 'CollectionPage',
+};
+
 const webPageLd = {
-	'@type': 'WebPage',
+	'@type': PAGE_TYPES[pathname] ?? 'WebPage',
 	'@id': PAGE_ID,
 	url: canonical,
 	name: pageTitle,
@@ -291,6 +303,12 @@ const webPageLd = {
 	inLanguage: 'en',
 	...(modified ? { dateModified: modified } : {}),
 	...(ORG_PAGES.has(pathname) ? { about: { '@id': ORG_ID } } : {}),
+	...(pathname === '/about' ? { mainEntity: { '@id': FOUNDER_ID } } : {}),
+	// speakable names the two lines an assistant should read aloud or quote for "what is
+	// Oxiedo": the headline and the line under it, both of which are plain statements.
+	...(pathname === '/'
+		? { speakable: { '@type': 'SpeakableSpecification', cssSelector: ['.hero-headline', '.hero-subhead'] } }
+		: {}),
 	...(breadcrumbLd ? { breadcrumb: { '@id': CRUMB_ID } } : {}),
 };
 
