@@ -143,25 +143,24 @@ const logoLd = {
 // at one thing the site cannot describe consistently. Every page now carries
 // the same node, so 26 pages corroborate one architecture instead of two pages
 // each asserting their own.
+// TYPED AS Service, NOT SoftwareApplication (changed 2026-10-01). Google treats every
+// SoftwareApplication as a candidate app listing and raises an error when its offer has no
+// price, on all 26 pages this graph is on. ORMAS has no price list and is not an app anyone
+// downloads: what Oxiedo sells is a licence, per institution, which is what a Service is.
 const ormasLd = {
-	'@type': 'SoftwareApplication',
+	'@type': 'Service',
 	'@id': ORMAS_ID,
 	name: 'ORMAS',
 	alternateName: 'Orchestrated Repair and Monitoring with Architectural Self-correction',
-	applicationCategory: 'DeveloperApplication',
-	applicationSubCategory: 'Machine learning training architecture',
-	operatingSystem: 'Linux',
+	serviceType: 'Neural network training architecture, licensed per institution',
+	category: 'Machine learning training architecture',
 	description:
 		'A neural network training architecture that records what a model took from each source of data as it trains, so data locked by regulation and contract becomes data an institution can defensibly train on.',
 	url: `${SITE}/product`,
-	author: { '@id': ORG_ID },
 	provider: { '@id': ORG_ID },
-	creator: { '@id': FOUNDER_ID },
 	subjectOf: [{ '@id': `${SITE}/#ormas-preprint` }, { '@id': `${SITE}/#deepmath-2026` }],
-	// NO aggregateRating and NO price. Both are what a rich result for this type
-	// needs, and both would have to be invented: there are zero customers and the
-	// licence fee is agreed per institution. An ineligible listing is the correct
-	// outcome; a fabricated rating is a manual action.
+	// NO aggregateRating and NO price: there are zero customers and the licence fee is agreed
+	// per institution. A fabricated rating is a manual action.
 	offers: {
 		'@type': 'Offer',
 		category: 'Annual deployment licence, per institution',
@@ -207,6 +206,7 @@ const paperLd = {
 	publisher: { '@type': 'Organization', name: 'Zenodo', url: 'https://zenodo.org' },
 	isAccessibleForFree: true,
 	inLanguage: 'en',
+	image: `${SITE}/og/technology-v2.png`,
 	about: { '@id': ORMAS_ID },
 };
 
@@ -223,27 +223,13 @@ const deepmathLd = {
 	dateCreated: '2026-09-30',
 	inLanguage: 'en',
 	about: { '@id': ORMAS_ID },
-	isPartOf: {
-		'@type': 'Event',
-		name: 'DeepMath 2026: Conference on the Mathematical Theory of Deep Neural Networks',
-		// description, organizer and image were flagged missing by Search Console on 2026-09-30.
-		// The organizer is the conference itself; the image is our own card for the poster.
-		description:
-			'DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks, in Columbus, Ohio. Rokib Al Dhin Raadh of Oxiedo presents an accepted poster on the input-to-state stability of self-repairing neural network training.',
-		organizer: { '@type': 'Organization', name: 'DeepMath', url: 'https://deepmath-conference.com/' },
-		performer: { '@id': FOUNDER_ID },
-		image: `${SITE}/og/deepmath-2026-v2.png`,
-		startDate: '2026-10-29',
-		endDate: '2026-10-30',
-		eventStatus: 'https://schema.org/EventScheduled',
-		eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-		url: 'https://deepmath-conference.com/',
-		location: {
-			'@type': 'Place',
-			name: 'Columbus, Ohio, USA',
-			address: { '@type': 'PostalAddress', addressLocality: 'Columbus', addressRegion: 'OH', addressCountry: 'US' },
-		},
-	},
+	description:
+		'Accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks (Columbus, Ohio, 29–30 October 2026). Decision: 30 September 2026.',
+	image: `${SITE}/og/deepmath-2026-v2.png`,
+	// NO Event NODE. Until 2026-10-01 the conference was an Event under isPartOf, and because
+	// this graph is on all 26 pages, Google read it as 26 event listings, /licensing included,
+	// and raised Events warnings for each. Event markup belongs on the event's own page, which
+	// is deepmath-conference.com, not ours. The conference is named in plain text instead.
 };
 
 // WebSite is the node that declares what this domain IS, distinct from the

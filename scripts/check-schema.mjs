@@ -36,7 +36,7 @@ const files = pages();
 if (files.length === 0) failures.push('dist/ has no pages — run the build first');
 
 // Nodes every page must carry, so that a reference to any of them resolves from anywhere.
-const REQUIRED = ['Organization', 'WebSite', 'WebPage', 'ImageObject', 'SoftwareApplication', 'Person'];
+const REQUIRED = ['Organization', 'WebSite', 'WebPage', 'ImageObject', 'Service', 'Person'];
 
 let refCount = 0;
 let trailCount = 0;
