@@ -45,6 +45,13 @@ const cards = [
 		stats: [],
 	},
 	{
+		name: 'deepmath-2026',
+		tag: 'Accepted poster · DeepMath 2026',
+		title: 'Self-Repair as a Bounded Disturbance.',
+		sub: 'Input-to-State Stability of Neural Network Training Dynamics. Rokib Al Dhin Raadh, Oxiedo.',
+		stats: [['29–30 Oct', '2026'], ['Columbus', 'Ohio, USA'], ['DeepMath', 'Mathematical Theory of Deep Neural Networks']],
+	},
+	{
 		name: 'invest',
 		tag: 'Pre-seed',
 		title: 'The round, the arithmetic, and the risks.',
