@@ -226,6 +226,13 @@ const deepmathLd = {
 	isPartOf: {
 		'@type': 'Event',
 		name: 'DeepMath 2026: Conference on the Mathematical Theory of Deep Neural Networks',
+		// description, organizer and image were flagged missing by Search Console on 2026-09-30.
+		// The organizer is the conference itself; the image is our own card for the poster.
+		description:
+			'DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks, in Columbus, Ohio. Rokib Al Dhin Raadh of Oxiedo presents an accepted poster on the input-to-state stability of self-repairing neural network training.',
+		organizer: { '@type': 'Organization', name: 'DeepMath', url: 'https://deepmath-conference.com/' },
+		performer: { '@id': FOUNDER_ID },
+		image: `${SITE}/og/deepmath-2026-v2.png`,
 		startDate: '2026-10-29',
 		endDate: '2026-10-30',
 		eventStatus: 'https://schema.org/EventScheduled',
