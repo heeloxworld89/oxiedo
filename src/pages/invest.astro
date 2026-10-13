@@ -96,7 +96,7 @@ const alternatives = [
 
 // The skills the plan needs, and who covers each (deck slide 10).
 const skills = [
-	{ k: 'Research', state: 'Covered', who: 'ORMAS; 383 runs; DeepMath 2026 poster' },
+	{ k: 'Research', state: 'Covered', who: 'ORMAS; 383 runs; DeepMath 2026 poster; NeurIPS 2026 workshop reviewer' },
 	{ k: 'Engineering', state: 'Covered', who: 'V1 code; the replay demo, shipped' },
 	{ k: 'Product', state: 'Partly', who: 'Demo and site today; a product engineer joins in month 7' },
 	{ k: 'Sales', state: 'Gap', who: 'Commercial lead, month 7' },
@@ -172,7 +172,8 @@ const provenance = [
 	{ figure: '10.0% vs 80.3% ± 1.5%', source: 'Archived lesion runs, three seeds each', status: 'Measured; rerun 4 October 2026' },
 	{ figure: 'Plain reset 83.3%, ReDo 77.5%, ORMAS 78.5%', source: 'Rerun on one seed, RTX 3080', status: 'Measured, one seed; M1 repeats it', weak: true },
 	{ figure: '383 controlled experiments', source: 'Run records across the founder’s result folders', status: 'Counted' },
-	{ figure: 'Accepted poster, DeepMath 2026', source: 'Programme committee decision; poster session 29–30 October 2026', status: 'External review' },
+	{ figure: 'NeurIPS 2026 reviewer', source: 'NeurIPS 2026 reviewer recognition letter, 3 October 2026; Trustworthy AI for Good workshop, Paris, 12 December', status: 'External' },
+	{ figure: 'Accepted poster, DeepMath 2026', source: 'Programme committee decision, 30 September 2026; presented 30 October 2026', status: 'External review' },
 	{ figure: '$5.9B (2025) → $19.1B (2035)', source: 'SNS Insider, AI model-risk management, 25 August 2026', status: 'Analyst report' },
 	{ figure: '1,400+ orgs; 176 banks; $149M', source: 'W&B customer base; Fed large banks; ECB list; our planned prices', status: 'Counts sourced; prices untested', weak: true },
 		{ figure: '$75K and $250K a year', source: 'Our pricing hypothesis', status: 'No price put to a buyer yet', weak: true },
@@ -319,7 +320,7 @@ const notSpending = [
 
 const derisked = [
 	{ k: 'Can a dead part be named and reset during training', v: 'Shown. Standard training stays at 10.0% on every seed; ORMAS names the dead blocks, resets them and recovers to 80.3% ± 1.5%, with every intervention on the record. Replayable at oxiedo.com/black-box.', done: true },
-	{ k: 'Does it follow its own kill rules', v: 'Shown. Three pre-set tests went against us, and each one changed what we build: the April 2026 suite killed the first design, a negative V2 pilot moved V2 to parallel parts, and an AISTATS submission was withheld when ORMAS finished below a plain reset.', done: true },
+	{ k: 'Does it follow its own kill rules', v: 'Shown. Three pre-set tests went against us, and each one changed what we build: the April 2026 suite killed the first design, a negative V2 pilot moved V2 to parallel parts, and a paper was held when ORMAS finished below a plain reset.', done: true },
 	{ k: 'Is the repair better than the simplest fix', v: 'Live. On one seed a plain reset beat ORMAS’s controller by 4.8 points. M1 reruns it on five seeds against three published fixes and a dropout control.', done: false },
 	{ k: 'How well does it detect faults', v: 'Live. Precision, recall and delay against known faults are unmeasured. M2 sets the pass line at 90% and one epoch.', done: false },
 	{ k: 'Does it hold beyond CIFAR', v: 'Live. M3 runs M2’s test on credit-risk and medical-image data.', done: false },
@@ -335,7 +336,7 @@ const risks = [
 	{ q: 'It costs more to train.', a: 'About 2.6× wall-clock on the lesion run (799 s against 312 s) and +15,867 parameters (+2.56%), measured on one seed.' },
 	{ q: 'Detection has not been measured, and one pilot was negative.', a: 'Precision, recall and delay against known faults are M2. A pilot using disagreement between parts to flag mislabelled samples was negative (AUROC ≈ 0.51 against ≈ 0.97 for plain per-sample loss), and V2 changed course because of it.' },
 	{ q: 'The paper and the code disagree on one point.', a: 'The paper states a 30% cap on resets; the code does not enforce it. A correction is pending. The April 2026 suite that killed the predecessor has not yet been re-run on the current code.' },
-	{ q: 'The venue record is mixed.', a: 'One accepted poster (DeepMath 2026), two rejections (AAAI-27 main track, the NeurIPS 2026 AI4GOOD workshop), and one paper withheld from AISTATS 2027 under our own kill rule. Every reviewer request maps to a milestone.' },
+	{ q: 'The external record is early.', a: 'Accepted at DeepMath 2026 (decision 30 September; presented 30 October 2026), and a reviewer for NeurIPS 2026 (3 October), for the Trustworthy AI for Good workshop in Paris on 12 December. The experiments are not yet independently replicated. Every reviewer request maps to a milestone.' },
 ];
 
 const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
@@ -594,8 +595,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 		<p class="iv-lede">
 			Rokib Al Dhin Raadh built V1 alone. Dated and checkable: in April 2026 the founder’s own test suite
 			killed the first design, and it was rebuilt; 383 controlled experiments across four model
-			families; the replay demo shipped in September; the DeepMath 2026 poster accepted; every
-			baseline reviewers asked for run in October.
+			families; the replay demo shipped in September; the DeepMath 2026 poster accepted in September; a NeurIPS 2026 workshop reviewer in October; every baseline reviewers asked for run in October.
 		</p>
 		<div class="iv-table-wrap" tabindex="0" role="region" aria-labelledby="iv-skills-h">
 			<table class="iv-table">
@@ -900,9 +900,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 				AUROC, published either way.
 			</p>
 			<p class="iv-wait-body">
-				Also October 2026: the rule for AISTATS was not to submit if ORMAS finished two or more
-				points below a plain reset. It finished 4.8 points below on one seed, so the paper was not
-				submitted, and V2 keeps only detect and reset. The product is the detector and the record.
+				Also October 2026: the paper rule was not to submit if ORMAS finished two or more points below a plain reset. It finished 4.8 points below on one seed, so the paper was held, and V2 keeps only detect and reset. The product is the detector and the record.
 			</p>
 		</div>
 		<div class="iv-assets">

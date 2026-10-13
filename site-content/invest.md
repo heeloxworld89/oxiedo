@@ -174,9 +174,9 @@ The real rival is the substitute: rewind and retry is free and habitual, and the
 
 ### Ships fast, and tries to break the work first.
 
-Rokib Al Dhin Raadh built V1 alone. Dated and checkable: in April 2026 the founder’s own test suite killed the first design, and it was rebuilt; 383 controlled experiments across four model families; the replay demo shipped in September; the DeepMath 2026 poster accepted; every baseline reviewers asked for run in October.
+Rokib Al Dhin Raadh built V1 alone. Dated and checkable: in April 2026 the founder’s own test suite killed the first design, and it was rebuilt; 383 controlled experiments across four model families; the replay demo shipped in September; the DeepMath 2026 poster accepted in September; a NeurIPS 2026 workshop reviewer in October; every baseline reviewers asked for run in October.
 
-Skill the plan needs Today Evidence, or who covers it Research Covered ORMAS; 383 runs; DeepMath 2026 poster Engineering Covered V1 code; the replay demo, shipped Product Partly Demo and site today; a product engineer joins in month 7 Sales Gap Commercial lead, month 7 Model risk Gap A bank model-risk advisor, being recruited
+Skill the plan needs Today Evidence, or who covers it Research Covered ORMAS; 383 runs; DeepMath 2026 poster; NeurIPS 2026 workshop reviewer Engineering Covered V1 code; the replay demo, shipped Product Partly Demo and site today; a product engineer joins in month 7 Sales Gap Commercial lead, month 7 Model risk Gap A bank model-risk advisor, being recruited
 
 **GO-TO-MARKET**
 
@@ -440,7 +440,7 @@ The monitor runs on the customer’s machines. Nothing is hosted, so training da
 
   #### Does it follow its own kill rules
 
-  Shown. Three pre-set tests went against us, and each one changed what we build: the April 2026 suite killed the first design, a negative V2 pilot moved V2 to parallel parts, and an AISTATS submission was withheld when ORMAS finished below a plain reset.
+  Shown. Three pre-set tests went against us, and each one changed what we build: the April 2026 suite killed the first design, a negative V2 pilot moved V2 to parallel parts, and a paper was held when ORMAS finished below a plain reset.
 
 - LIVE
 
@@ -504,9 +504,9 @@ Precision, recall and delay against known faults are M2. A pilot using disagreem
 
 The paper states a 30% cap on resets; the code does not enforce it. A correction is pending. The April 2026 suite that killed the predecessor has not yet been re-run on the current code.
 
-#### The venue record is mixed.
+#### The external record is early.
 
-One accepted poster (DeepMath 2026), two rejections (AAAI-27 main track, the NeurIPS 2026 AI4GOOD workshop), and one paper withheld from AISTATS 2027 under our own kill rule. Every reviewer request maps to a milestone.
+Accepted at DeepMath 2026 (decision 30 September; presented 30 October 2026), and a reviewer for NeurIPS 2026 (3 October), for the Trustworthy AI for Good workshop in Paris on 12 December. The experiments are not yet independently replicated. Every reviewer request maps to a milestone.
 
 **DILIGENCE**
 
@@ -518,7 +518,7 @@ Three pre-set tests have gone against us. Each one changed what we build.
 
 April 2026: the predecessor architecture lost to a plain CNN at all four noise levels of a purpose-built suite, and zero corrections fired in 42 runs. We rewrote the system. October 2026: a pilot testing whether disagreement between parts flags mislabelled samples came back negative, so V2 moved to parallel parts, and the next pilot must beat plain loss by 0.03 AUROC, published either way.
 
-Also October 2026: the rule for AISTATS was not to submit if ORMAS finished two or more points below a plain reset. It finished 4.8 points below on one seed, so the paper was not submitted, and V2 keeps only detect and reset. The product is the detector and the record.
+Also October 2026: the paper rule was not to submit if ORMAS finished two or more points below a plain reset. It finished 4.8 points below on one seed, so the paper was held, and V2 keeps only detect and reset. The product is the detector and the record.
 
 What goes in front of an investor
 
@@ -548,7 +548,7 @@ Oxiedo is not yet incorporated, has no cap table and no prior investor. The Dela
 
 Measured figures come from the run archive; market and price figures are labelled as hypotheses. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
 
-Figure Source Status 10.0% vs 80.3% ± 1.5%Archived lesion runs, three seeds each Measured; rerun 4 October 2026 Plain reset 83.3%, ReDo 77.5%, ORMAS 78.5%Rerun on one seed, RTX 3080 Measured, one seed; M1 repeats it 383 controlled experiments Run records across the founder’s result folders Counted Accepted poster, DeepMath 2026 Programme committee decision; poster session 29–30 October 2026 External review$5.9B (2025) → $19.1B (2035)SNS Insider, AI model-risk management, 25 August 2026 Analyst report 1,400+ orgs; 176 banks; $149M W&B customer base; Fed large banks; ECB list; our planned prices Counts sourced; prices untested$75K and $250K a year Our pricing hypothesis No price put to a buyer yet$4.75M SOM; funnel; CAC $70K; LTV/CAC ≈ 5.4×Our acquisition plan and unit-economics model Hypotheses until the first three contracts$750K, $7.5M cap Carta pre-seed data 2025–26; our plan Proposal
+Figure Source Status 10.0% vs 80.3% ± 1.5%Archived lesion runs, three seeds each Measured; rerun 4 October 2026 Plain reset 83.3%, ReDo 77.5%, ORMAS 78.5%Rerun on one seed, RTX 3080 Measured, one seed; M1 repeats it 383 controlled experiments Run records across the founder’s result folders Counted NeurIPS 2026 reviewer NeurIPS 2026 reviewer recognition letter, 3 October 2026; Trustworthy AI for Good workshop, Paris, 12 December External Accepted poster, DeepMath 2026 Programme committee decision, 30 September 2026; presented 30 October 2026 External review$5.9B (2025) → $19.1B (2035)SNS Insider, AI model-risk management, 25 August 2026 Analyst report 1,400+ orgs; 176 banks; $149M W&B customer base; Fed large banks; ECB list; our planned prices Counts sourced; prices untested$75K and $250K a year Our pricing hypothesis No price put to a buyer yet$4.75M SOM; funnel; CAC $70K; LTV/CAC ≈ 5.4×Our acquisition plan and unit-economics model Hypotheses until the first three contracts$750K, $7.5M cap Carta pre-seed data 2025–26; our plan Proposal
 
 **THE ASK**
 
