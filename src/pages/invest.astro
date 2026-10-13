@@ -1,5 +1,6 @@
 ---
-// INVEST — rebuilt 2026-10-13 from the founder's October 2026 pre-seed deck (28 slides).
+// INVEST — rebuilt 2026-10-13 from the founder's final October 2026 pre-seed deck (14 slides
+// plus a 29-page appendix, A1–A25).
 //
 // THE DECK IS THE SOURCE OF TRUTH FOR THIS PAGE. Every round figure, milestone, budget line and
 // model row below is copied from it, so an investor who reads the deck and then this page reads
@@ -50,9 +51,14 @@ const brief = [
 
 // The serviceable market, counted bottom-up (deck slide 8). The prices are planned and untested;
 // the counts are sourced.
+const tamSamSom = [
+	{ k: 'TAM · AI model-risk management', v: '$5.9B', note: '2025, growing to $19.1B by 2035 (SNS Insider).' },
+	{ k: 'SAM · buyers we can serve now', v: '$149M', note: 'Counted bottom-up from the two buyer groups below.' },
+	{ k: 'SOM · ARR by year five', v: '$4.75M', note: '3.2% of SAM: 30 ML teams and 10 banks.' },
+];
 const segments = [
-	{ k: 'ML platform leads at organisations training their own models', v: '1,400+', note: '× $75K a year = $105M. Count: the Weights & Biases customer base. Next: M4, the first 20 conversations.' },
-	{ k: 'Heads of model risk at large banks', v: '176', note: '66 US + 110 ECB-supervised banks × $250K a year = $44M. Next: M4, three design partners.' },
+	{ k: 'ML platform leads at organisations training their own models', v: '1,400+', note: '× $75K a year = $105M SAM. Year-five target: 30 teams (2.1%), $2.25M. Count: the Weights & Biases customer base.' },
+	{ k: 'Heads of model risk at large banks', v: '176', note: '66 US + 110 ECB-supervised banks × $250K a year = $44M SAM. Year-five target: 10 banks (5.7%), $2.50M.' },
 ];
 
 // Who signs. The wedge is the ML platform team; the model-risk validator is the expansion.
@@ -75,16 +81,64 @@ const roles = [
 	},
 ];
 
-/* THE BUYER'S ALTERNATIVES, as the deck lays them out (slide 9). "partly" marks partial coverage.
+/* THE BUYER'S ALTERNATIVES, as the deck lays them out (slide 9). "partly" marks partial coverage;
+   the threat rating is ours.
    Read from vendor documentation on 13 October 2026. */
-const altCols = ['Layer state in training', 'Names the part', 'Resets it', 'Record of each fix', 'Validator workflow'];
+const altCols = ['Type · threat', 'Layer state in training', 'Names the part', 'Resets it', 'Record of each fix', 'Validator workflow'];
 const alternatives = [
-	{ name: 'Rewind to checkpoint and retry', marks: ['—', '—', '—', '—', '—'], incumbent: true },
-	{ name: 'Trackers: W&B, MLflow', marks: ['yes', 'partly', '—', '—', 'partly'] },
-	{ name: 'Research resets: ReDo, Continual Backprop', marks: ['yes', 'yes', 'yes', '—', '—'] },
-	{ name: 'Data quality: cleanlab', marks: ['—', '—', '—', '—', '—'] },
-	{ name: 'Model-risk tools: ValidMind, ModelOp, Credo, Fiddler, Arthur', marks: ['—', '—', '—', '—', 'yes'] },
-	{ name: 'Oxiedo (ORMAS)', marks: ['yes', 'yes', 'yes', 'yes', 'partly'], ours: true },
+	{ name: 'Rewind to checkpoint and retry', marks: ['Substitute · high', '—', '—', '—', '—', '—'], incumbent: true },
+	{ name: 'Trackers: W&B, MLflow', marks: ['Indirect · medium', 'yes', 'partly', '—', '—', 'partly'] },
+	{ name: 'Research resets: ReDo, Continual Backprop (open code)', marks: ['Substitute · medium', 'yes', 'yes', 'yes', '—', '—'] },
+	{ name: 'Data quality: cleanlab', marks: ['Indirect · low', '—', '—', '—', '—', '—'] },
+	{ name: 'Model-risk tools: ValidMind, ModelOp, Credo, Fiddler, Arthur', marks: ['Adjacent · medium', '—', '—', '—', '—', 'yes'] },
+	{ name: 'Oxiedo (ORMAS)', marks: ['—', 'yes', 'yes', 'yes', 'yes', 'partly'], ours: true },
+];
+
+// The skills the plan needs, and who covers each (deck slide 10).
+const skills = [
+	{ k: 'Research', state: 'Covered', who: 'ORMAS; 383 runs; DeepMath 2026 poster' },
+	{ k: 'Engineering', state: 'Covered', who: 'V1 code; the replay demo, shipped' },
+	{ k: 'Product', state: 'Partly', who: 'Demo and site today; a product engineer joins in month 7' },
+	{ k: 'Sales', state: 'Gap', who: 'Commercial lead, month 7' },
+	{ k: 'Model risk', state: 'Gap', who: 'A bank model-risk advisor, being recruited' },
+];
+
+// The funnel (deck slide 11 and A22). Every stage number is a hypothesis set before any contract.
+const funnel = [
+	{ k: 'Target accounts worked', y1: '200', y2: '400', y3: '800', owner: 'Founder; commercial lead from month 7' },
+	{ k: 'First conversations', y1: '60 (20 by month 4)', y2: '120', y3: '250', owner: 'Founder; commercial lead from month 7' },
+	{ k: 'Technical evaluation, on their own run, under 30 days', y1: '1 per pilot', y2: '1 per pilot', y3: '1 per pilot', owner: 'Research engineer' },
+	{ k: 'Design partners and pilots, 3 months, read-only', y1: '3 unpaid', y2: '12 pilots', y3: '30 pilots', owner: 'Product engineer' },
+	{ k: 'New paid annual licences', y1: '0', y2: '4 (33% of pilots)', y3: '8', owner: 'Commercial lead' },
+	{ k: 'Channel mix: founder outbound · research circuit · validator and Big-4 partners', y1: '70% · 30% · 0%', y2: '50% · 25% · 25%', y3: '40% · 25% · 35%', owner: '' },
+	{ k: 'Sales and marketing spend, fully loaded', y1: '$120K', y2: '$220K', y3: '$500K', owner: '$840K over three years' },
+];
+
+// Unit economics (deck A23). Hypotheses until the first three contracts replace them.
+const unitEcon = [
+	{ k: 'Annual contract value', m: '$75K', r: '$250K', b: '≈ $119K' },
+	{ k: 'Gross margin', m: '80%', r: '80%', b: '80%' },
+	{ k: 'Customer life', m: '4 years', r: '5 years', b: '4 years' },
+	{ k: 'Lifetime value', m: '$240K', r: '$1.0M', b: '≈ $381K' },
+	{ k: 'Acquisition cost (CAC)', m: '$55K', r: '$120K', b: '$70K' },
+	{ k: 'LTV / CAC', m: '4.4×', r: '8.3×', b: '≈ 5.4×', lead: true },
+	{ k: 'Payback', m: '~14 months', r: '~10 months', b: '~12 months' },
+];
+
+// How we get paid (deck A25).
+const payment = [
+	{ k: 'Training Health Monitor', v: 'Bought by the ML platform lead. $75K a year per team, paid annually upfront. Year one: design partners get three months free. From year two: a paid pilot at $15K, credited to the first year. The contract trigger is agreed first: the pilot finds an injected fault in their own run, inside the agreed delay. $10K one-off implementation; support included.' },
+	{ k: 'Model Change Record', v: 'Bought by the head of model risk; the validator must accept it. $250K a year per bank, paid annually upfront. Starts from a monitor customer, or a six-month validation pilot at $40K, credited. The contract trigger is the validator accepting the record in one validation cycle. $25K implementation; assurance work priced per engagement.' },
+];
+
+// What is hard to copy, ranked honestly (deck A19).
+const moat = [
+	{ k: 'The failure archive', v: '383 experiments and a labelled taxonomy: what dies, how it shows, what fixes it. A competitor would have to run and label the same controlled experiments from scratch.', status: 'Built; grows with each design partner, with consent' },
+	{ k: 'Inside the training loop', v: 'It reads component state while training runs. Post-hoc tools cannot recover that later; a competitor needs a hook in the loop.', status: 'Built for PyTorch; the packaged monitor is M4' },
+	{ k: 'A validator-accepted format', v: 'Once a validator accepts the method, replacing it means re-validating, bank by bank.', status: 'Not yet: no validator has reviewed it' },
+	{ k: 'Regulatory evidence', v: 'Maps to EU AI Act Annex IV 2(d), SR 26-2 ongoing monitoring, and the FDA’s change-control plans.', status: 'Mapping stated; untested with a regulator' },
+	{ k: 'Speed and discipline', v: 'Pre-registered tests, and the record of following them. A track record cannot be bought.', status: 'Kill rules written before runs' },
+	{ k: 'Not a moat: the reset itself', v: 'Resetting a dead part is prior art (ReDo, ICML 2023; Continual Backprop, Nature 2024), and the code is open. A plain reset matches ORMAS.', status: 'Stated, not hidden' },
 ];
 
 // Three years, year one at $0 revenue (deck A5). Every figure is a planning assumption.
@@ -121,7 +175,8 @@ const provenance = [
 	{ figure: 'Accepted poster, DeepMath 2026', source: 'Programme committee decision; poster session 29–30 October 2026', status: 'External review' },
 	{ figure: '$5.9B (2025) → $19.1B (2035)', source: 'SNS Insider, AI model-risk management, 25 August 2026', status: 'Analyst report' },
 	{ figure: '1,400+ orgs; 176 banks; $149M', source: 'W&B customer base; Fed large banks; ECB list; our planned prices', status: 'Counts sourced; prices untested', weak: true },
-	{ figure: '$75K and $250K a year', source: 'Our pricing hypothesis', status: 'No price put to a buyer yet', weak: true },
+		{ figure: '$75K and $250K a year', source: 'Our pricing hypothesis', status: 'No price put to a buyer yet', weak: true },
+	{ figure: '$4.75M SOM; funnel; CAC $70K; LTV/CAC ≈ 5.4×', source: 'Our acquisition plan and unit-economics model', status: 'Hypotheses until the first three contracts', weak: true },
 	{ figure: '$750K, $7.5M cap', source: 'Carta pre-seed data 2025–26; our plan', status: 'Proposal' },
 ];
 
@@ -272,10 +327,11 @@ const derisked = [
 ];
 
 const risks = [
-	{ q: 'One founder, and no regulated-buyer sales yet.', a: 'Rokib Al Dhin Raadh built V1 alone. The round’s first hire is a research engineer in month one; a product engineer and a commercial lead follow in month seven. No price has been put to a buyer; M4 tests it.' },
+		{ q: 'One founder, and no regulated-buyer sales yet.', a: 'Rokib Al Dhin Raadh built V1 alone. Research and engineering are covered; sales and model risk are gaps. The round’s first hire is a research engineer in month one; a product engineer and a commercial lead follow in month seven, and a bank model-risk advisor is being recruited. No price has been put to a buyer; M4 tests it.' },
 	{ q: 'A plain reset beat the controller on one seed.', a: 'On a one-seed rerun of the headline lesion, a plain reset reached 83.3%, ORMAS 78.5% and ReDo 77.5%. ORMAS carries dropout and the plain reset does not, so the comparison is confounded. What is sold is the detector and the record; M1 settles the repair question on five seeds with matched dropout.' },
 	{ q: 'Three published runs where it loses.', a: 'Random-direction weight injection (83.1% vs 84.1%), a 100× weight explosion (85.1% vs 86.0%), and ResNet-18, where the skip connection keeps signal flowing and standard training finishes ahead (92.3% vs 91.6%). Three seeds each.' },
 	{ q: 'Every result is CIFAR-10 and CIFAR-100 on small models.', a: 'No transformer, tabular or customer data yet. M3 is the move to credit-risk and medical-image data, with a pass line written first.' },
+		{ q: 'What it does not cover.', a: 'Today it handles dead layers and units on small vision models. Loss spikes, divergence and label noise are planned; tabular, credit and medical images are M3; transformers come after the seed. Inference-time drift, deliberate attacks on a model and frontier-scale LLM pre-training are not supported. Where nothing is broken, ORMAS ties or trails, which is why the product is the monitor and the record, not a training replacement.' },
 	{ q: 'It costs more to train.', a: 'About 2.6× wall-clock on the lesion run (799 s against 312 s) and +15,867 parameters (+2.56%), measured on one seed.' },
 	{ q: 'Detection has not been measured, and one pilot was negative.', a: 'Precision, recall and delay against known faults are M2. A pilot using disagreement between parts to flag mislabelled samples was negative (AUROC ≈ 0.51 against ≈ 0.97 for plain per-sample loss), and V2 changed course because of it.' },
 	{ q: 'The paper and the code disagree on one point.', a: 'The paper states a 30% cap on resets; the code does not enforce it. A correction is pending. The April 2026 suite that killed the predecessor has not yet been re-run on the current code.' },
@@ -419,6 +475,15 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 			from training.
 		</p>
 		<div class="iv-bench">
+			{tamSamSom.map((t, i) => (
+				<div class={i === tamSamSom.length - 1 ? 'iv-bench-row iv-bench-row--ours' : 'iv-bench-row'}>
+					<p class="iv-bench-k">{t.k}</p>
+					<p class="iv-bench-v tabular">{t.v}</p>
+					<p class="iv-bench-note">{t.note}</p>
+				</div>
+			))}
+		</div>
+		<div class="iv-bench">
 			{segments.map((seg) => (
 				<div class="iv-bench-row">
 					<p class="iv-bench-k">{seg.k}</p>
@@ -428,13 +493,13 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 			))}
 		</div>
 		<p class="iv-note">
-			Together that is $149M serviceable now, counted bottom-up. Adjacent markets are larger: AI
-			governance software reaches $15.8B by 2030 (Forrester) and MLOps $16.6B by 2030. Expansion
-			into healthcare AI and pharma R&amp;D follows the same record.
+			Together that is $149M serviceable now, and the year-five target is 3.2% of it: $4.75M ARR.
+			Adjacent markets are larger: AI governance software reaches $15.8B by 2030 (Forrester) and
+			MLOps $16.6B by 2030, all inside $2.7T of AI spend in 2026.
 		</p>
 		<p class="iv-caveat">
-			The counts are sourced. The prices are our plan and are untested: no price has been put to a
-			buyer yet, and M4 is where that changes.
+			The counts are sourced. The prices and the year-five target are our hypotheses: no price has
+			been put to a buyer yet, and M4 is where that changes.
 		</p>
 	</section>
 
@@ -465,59 +530,21 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 
 	<section class="section container reveal">
 		<Eyebrow>DEFENSIBILITY</Eyebrow>
-		<h2 class="iv-h2">The moat is time nobody can buy.</h2>
+		<h2 class="iv-h2">Why this is hard to copy, ranked honestly.</h2>
 		<p class="iv-lede">
-			The mechanism is published on release, so defensibility does not rest on secrecy and this
-			page will not pretend it does. It rests on the things capital cannot compress.
+			Five advantages, each with what a competitor would need and where it stands today. The first
+			two exist now. The third is what locks in, and it is earned in a first validation cycle, not
+			claimed. A tracker could copy the second quickly; the first and third take runs and a
+			validator’s review.
 		</p>
 		<div class="iv-moat">
-			<article class="iv-moat-item">
-				<h3 class="iv-moat-title">The dead ends are the barrier to entry</h3>
-				<p class="iv-moat-body">
-					A competitor does not start where this is now. They start where this was in 2023, and
-					the route runs through the same failures: an architecture that lost to a plain CNN at
-					every noise level tested, a correction mechanism that never triggered once across 42
-					runs, and ablation arms indistinguishable from the full system. Those runs are logged
-					and kept. The question came in 2023, two years of research followed, and the first version
-					that worked arrived on 11 July 2026;
-					the reason the rest of the field does not have this is that the path to it is not
-					visible from the outside.
-				</p>
-			</article>
-			<article class="iv-moat-item">
-				<h3 class="iv-moat-title">Regulatory acceptance is not compressible</h3>
-				<p class="iv-moat-body">
-					A competitor can reimplement a published architecture in weeks. They cannot compress
-					the time it takes a validator, an examiner or a notified body to accept a counterparty
-					and a method. That clock runs at the speed of institutions, and it does not run faster
-					for a better-funded entrant.
-				</p>
-			</article>
-			<article class="iv-moat-item">
-				<h3 class="iv-moat-title">Calibration is empirical, not architectural</h3>
-				<p class="iv-moat-body">
-					What is licensed is a calibrated bound and somebody accountable for it. Calibration is
-					accumulated runs, adversarial testing and failure history. A reimplementation arrives
-					with the architecture and none of the record behind it, which is the part an institution
-					is actually buying.
-				</p>
-			</article>
-			<article class="iv-moat-item">
-				<h3 class="iv-moat-title">Publishing is the distribution strategy</h3>
-				<p class="iv-moat-body">
-					In fields where the buyer is obliged to show their working, the released implementation
-					becomes the one validators check against. Being the reference is a stronger position
-					than being the secret, and it is only available to whoever publishes first.
-				</p>
-			</article>
-			<article class="iv-moat-item">
-				<h3 class="iv-moat-title">The incumbents are structurally committed</h3>
-				<p class="iv-moat-body">
-					Every interpretability and observability vendor is built on the premise that attribution
-					is recovered after training. Adopting this architecture means conceding that premise was
-					wrong. That is not a product decision they can take quickly.
-				</p>
-			</article>
+			{moat.map((m) => (
+				<article class="iv-moat-item">
+					<h3 class="iv-moat-title">{m.k}</h3>
+					<p class="iv-moat-body">{m.v}</p>
+					<p class="iv-moat-body"><strong>Today:</strong> {m.status}</p>
+				</article>
+			))}
 		</div>
 	</section>
 
@@ -552,6 +579,92 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 				The category is being bought: Weights &amp; Biases by CoreWeave (about $1.7B, 2025), Arize
 				by Dynatrace ($915M, 2026), Neptune by OpenAI (2025). And funded: Arize $70M, Fiddler $30M,
 				Credo AI $21M, ValidMind $8.1M.
+			</p>
+			<p class="iv-note">
+				The real rival is the substitute: rewind and retry is free and habitual, and the reset itself
+				is open code. Our edge is a 383-experiment failure archive, data read inside the training
+				loop, and a record that, once a validator accepts it, costs a re-validation to replace.
+			</p>
+		</div>
+	</section>
+
+	<section class="section container reveal">
+		<Eyebrow>THE TEAM</Eyebrow>
+		<h2 class="iv-h2" id="iv-skills-h">Ships fast, and tries to break the work first.</h2>
+		<p class="iv-lede">
+			Rokib Al Dhin Raadh built V1 alone. Dated and checkable: in April 2026 the founder’s own test suite
+			killed the first design, and it was rebuilt; 383 controlled experiments across four model
+			families; the replay demo shipped in September; the DeepMath 2026 poster accepted; every
+			baseline reviewers asked for run in October.
+		</p>
+		<div class="iv-table-wrap" tabindex="0" role="region" aria-labelledby="iv-skills-h">
+			<table class="iv-table">
+				<thead>
+					<tr>
+						<th scope="col">Skill the plan needs</th>
+						<th scope="col">Today</th>
+						<th scope="col">Evidence, or who covers it</th>
+					</tr>
+				</thead>
+				<tbody>
+					{skills.map((k) => (
+						<tr>
+							<th scope="row">{k.k}</th>
+							<td class={k.state === 'Gap' ? 'iv-table-weak' : 'iv-table-note'}>{k.state}</td>
+							<td>{k.who}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	</section>
+
+	<section class="band band--surface section reveal">
+		<div class="container">
+			<Eyebrow>GO-TO-MARKET</Eyebrow>
+			<h2 class="iv-h2" id="iv-funnel-h">20 buyer calls by month 4; 4 paid teams in year 2.</h2>
+			<p class="iv-lede">
+				Every stage has a number, an owner and a channel. Each is a hypothesis until contract three,
+				when observed conversion rates replace it.
+			</p>
+			<div class="iv-table-wrap" tabindex="0" role="region" aria-labelledby="iv-funnel-h">
+				<table class="iv-table">
+					<thead>
+						<tr>
+							<th scope="col">Stage</th>
+							<th scope="col">Year 1</th>
+							<th scope="col">Year 2</th>
+							<th scope="col">Year 3</th>
+							<th scope="col">Owner</th>
+						</tr>
+					</thead>
+					<tbody>
+						{funnel.map((f) => (
+							<tr>
+								<th scope="row">{f.k}</th>
+								<td class="tabular">{f.y1}</td>
+								<td class="tabular">{f.y2}</td>
+								<td class="tabular">{f.y3}</td>
+								<td class="iv-table-note">{f.owner}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+			<p class="iv-note">
+				Of the $750K, $223.5K is go-to-market. Year one is expected to buy 60 conversations and three
+				design partners at $0 revenue: about $2K per conversation and $40K per design partner.
+			</p>
+			<div class="iv-moat">
+				{payment.map((p) => (
+					<article class="iv-moat-item">
+						<h3 class="iv-moat-title">{p.k}</h3>
+						<p class="iv-moat-body">{p.v}</p>
+					</article>
+				))}
+			</div>
+			<p class="iv-caveat">
+				All stage numbers, prices and pilot terms are hypotheses, set before any contract.
 			</p>
 		</div>
 	</section>
@@ -678,10 +791,36 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 				</table>
 			</div>
 			<p class="iv-note">
-				No unit-economics ratio is shown. Without a paid contract, acquisition cost and lifetime
-				value are unknown; the first three paid contracts set them. Gross margin is high because
-				nothing is hosted: cost of revenue is deployment engineering and support, modelled at 70% in
-				year two and 80% in year three, to be replaced by pilot data.
+				Gross margin is high because nothing is hosted: cost of revenue is deployment engineering
+				and support. Unit economics below are hypotheses until the first three paid contracts
+				replace them; after contracts one to three, CAC and payback are recomputed from actual cost,
+				and any channel above $120K CAC is dropped.
+			</p>
+			<div class="iv-table-wrap" tabindex="0" role="region" aria-label="Unit economics, hypotheses">
+				<table class="iv-table">
+					<thead>
+						<tr>
+							<th scope="col">Unit economics (hypothesis)</th>
+							<th scope="col">Monitor</th>
+							<th scope="col">Model-risk record</th>
+							<th scope="col">Blended, year 3</th>
+						</tr>
+					</thead>
+					<tbody>
+						{unitEcon.map((u) => (
+							<tr class={u.lead ? 'iv-table-row--lead' : undefined}>
+								<th scope="row">{u.k}</th>
+								<td class="tabular">{u.m}</td>
+								<td class="tabular">{u.r}</td>
+								<td class="tabular">{u.b}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+			<p class="iv-note">
+				Blended CAC is $840K of sales and marketing over three years divided by 12 paid customers.
+				The monitor at the blended $70K CAC is 3.4×, against a 3× benchmark for healthy.
 			</p>
 			<p class="iv-caveat">
 				The seed is raised from month 12 on M1–M5 results; the model assumes month 15. The buffer
@@ -769,11 +908,12 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'Invest' }];
 		<div class="iv-assets">
 			<p class="iv-assets-label">What goes in front of an investor</p>
 			<ul class="iv-assets-list">
-				<li>The 28-slide deck, with an appendix that puts the limits first.</li>
+				<li>The deck: 14 slides and a 29-page appendix, grouped by the question an investor asks.</li>
 				<li>Every number and its source, including the ones that are plans rather than measurements.</li>
 				<li>The full results table, every run and baseline, weak runs included.</li>
 				<li>The kill-rule record and the venue record.</li>
-				<li>The three-year model with every row’s assumption, and the entity and IP plan.</li>
+				<li>The three-year model, the acquisition plan, unit economics and the go-to-market budget, every row with its assumption.</li>
+				<li>Personas, the competitor map by threat, five forces, and the entity and IP plan.</li>
 			</ul>
 		</div>
 	</section>
