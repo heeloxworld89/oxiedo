@@ -197,7 +197,7 @@ A page arguing that half of a decade-old problem is closed has to say exactly wh
 
 - **Transformers are a stated target, not a demonstrated result.**Demonstrated on fully-connected, convolutional and residual families.
 
-- **Where it loses.** Under adversarial weight injection the architecture finishes 1.0 percentage point behind a parameter-matched baseline, with no current mitigation; that run is in the scenario selector above, and it plays, and it loses. It also finishes 0.9 pp behind under a 100× weight explosion, and on ResNet-18 an uninstrumented network recovers slightly better (92.6% vs 91.7%).
+- **Where it loses.** Under adversarial weight injection the architecture finishes 1.0 percentage point behind a parameter-matched baseline, with no current mitigation; that run is in the scenario selector above, and it plays, and it loses. It also finishes 0.9 pp behind under a 100× weight explosion, and on ResNet-18 an uninstrumented network recovers slightly better (92.3% vs 91.6%).
 
 - **The claim stops where the evidence stops.** Frontier scale, regulated data and production over time are outside it — no deployment exists, and nothing here is asserted about behaviour under any of the three.
 

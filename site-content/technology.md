@@ -423,7 +423,7 @@ Weight explosion (100×)
 
 ResNet-18, stages killed
 
-An uninstrumented ResNet-18 recovers slightly better, blind: 92.6% against ORMAS at 91.7%. ORMAS names the damage through 264 attributed corrections; the standard network says nothing about it.
+An uninstrumented ResNet-18 recovers slightly better, blind: 92.3% against ORMAS at 91.6% (three seeds). ORMAS names the damage through 264 attributed corrections; the standard network says nothing about it.
 
 **WHAT IS NOT ESTABLISHED**
 

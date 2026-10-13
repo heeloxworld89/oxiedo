@@ -212,7 +212,7 @@ const programme = [
 const losses = [
 	{ k: 'Adversarial weight injection', v: '83.1% against the baseline\'s 84.1%: 1.0 pp behind. Crafted weights keep activation statistics looking normal while moving decision boundaries, which evades exactly what ORMAS monitors. No current mitigation.' },
 	{ k: 'Weight explosion (100×)', v: '85.1% against 86.0%: 0.9 pp behind. Both networks recover almost at once; the paper reads it as ORMAS not over-correcting when the damage is mild.' },
-	{ k: 'ResNet-18, stages killed', v: 'An uninstrumented ResNet-18 recovers slightly better, blind: 92.6% against ORMAS at 91.7%. ORMAS names the damage through 264 attributed corrections; the standard network says nothing about it.' },
+	{ k: 'ResNet-18, stages killed', v: 'An uninstrumented ResNet-18 recovers slightly better, blind: 92.3% against ORMAS at 91.6% (three seeds). ORMAS names the damage through 264 attributed corrections; the standard network says nothing about it.' },
 ];
 
 const open = [
@@ -239,7 +239,7 @@ const techLd = {
 	mainEntityOfPage: { '@id': 'https://oxiedo.com/technology#webpage' },
 	citation: [{ '@id': 'https://oxiedo.com/#ormas-preprint' }, { '@id': 'https://oxiedo.com/#deepmath-2026' }],
 	proficiencyLevel: 'Expert',
-	image: 'https://oxiedo.com/og/technology-v2.png',
+	image: 'https://oxiedo.com/og/technology-v3.png',
 	inLanguage: 'en',
 };
 
@@ -248,7 +248,7 @@ const techLd = {
 <Page
 	title="The ORMAS architecture, and 383 experiments"
 	description="How a bounded gradient chain makes a network account for what it took from each source of data. 383 controlled experiments, and what is not yet established."
-	ogImagePath="/og/technology-v2.png"
+	ogImagePath="/og/technology-v3.png"
 	schema={techLd}
 	trail={trail}
 >

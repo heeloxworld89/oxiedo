@@ -54,7 +54,7 @@ const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', SITE).hr
 // Per-page cards are rendered by scripts/build-og-cards.mjs into public/og/. The version
 // suffix is in the filename because X and LinkedIn cache a card by URL for weeks: a
 // redesigned card at the same URL keeps previewing as the old one.
-const ogImage = new URL(ogImagePath ?? '/og/home-v2.png', SITE).href;
+const ogImage = new URL(ogImagePath ?? '/og/home-v3.png', SITE).href;
 const ogAlt = pageTitle;
 
 // ─── JSON-LD ────────────────────────────────────────────────────────────────
@@ -206,7 +206,7 @@ const paperLd = {
 	publisher: { '@type': 'Organization', name: 'Zenodo', url: 'https://zenodo.org' },
 	isAccessibleForFree: true,
 	inLanguage: 'en',
-	image: `${SITE}/og/technology-v2.png`,
+	image: `${SITE}/og/technology-v3.png`,
 	about: { '@id': ORMAS_ID },
 };
 
@@ -225,7 +225,7 @@ const deepmathLd = {
 	about: { '@id': ORMAS_ID },
 	description:
 		'Accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks (Columbus, Ohio, 29–30 October 2026). Decision: 30 September 2026.',
-	image: `${SITE}/og/deepmath-2026-v2.png`,
+	image: `${SITE}/og/deepmath-2026-v3.png`,
 	// NO Event NODE. Until 2026-10-01 the conference was an Event under isPartOf, and because
 	// this graph is on all 26 pages, Google read it as 26 event listings, /licensing included,
 	// and raised Events warnings for each. Event markup belongs on the event's own page, which

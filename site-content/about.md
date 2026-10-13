@@ -35,7 +35,7 @@ Rokib Al Dhin Raadh founded Oxiedo and leads it as CEO. He is the inventor of OR
 
 He started on the question in 2023: can a neural network give a truthful account of what it does to itself, while it does it? He spent 2024 and 2025 on research, the first attempt failing against its own destruction suite, and reached the first working version on 11 July 2026. He designed the architecture, wrote the code, ran every experiment and wrote the paper, which has been public since 1 August 2026. On 30 September 2026 his paper on the stability theory behind it was accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks.
 
-Before Oxiedo he built and sold a company. He is relocating Oxiedo to San Francisco, and he is the person who signs the licence and answers for every claim on this site.
+Before ORMAS he ran a twelve-month AI-run e-commerce experiment. He is based in Dhaka, and he is the person who signs the licence and answers for every claim on this site.
 
 Rokib Al Dhin Raadh
 
@@ -44,7 +44,7 @@ Founder & CEO · Oxiedo
 - **Built** — ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments
 - **Paper** — Sole author, [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363) (preprint, 1 August 2026)
 - **Accepted** — [Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics](/technology#deepmath), poster at DeepMath 2026
-- **Before** — Built and sold a company
+- **Before** — A twelve-month AI-run e-commerce experiment
 - **On X** — [@Raad_X_](https://x.com/Raad_X_)
 
 **ORIGIN**
@@ -91,9 +91,9 @@ Nothing here was planned from the beginning. The work began as a research questi
 
 7. Now
 
-  #### Licensing is open, and the headquarters moves to San Francisco
+  #### Licensing is open, and the pre-seed is raising
 
-  The architecture, the results and the reasoning are released in full on publication, and what is sold is not the research but a licence to the accountability it produces. Commercial licensing is open, pre-bookings are being taken, and we are open to early investment conversations. The first dataset partnership is the priority ahead of everything else, because a custodian releasing regulated data to this architecture is the proof the whole thesis rests on. The company is incorporating as a Delaware C-corporation and the headquarters is relocating to San Francisco, nearer the labs, the capital and the operators this was built for.
+  The architecture, the results and the reasoning are released in full on publication, and what is sold is not the research but a licence to the accountability it produces. Commercial licensing is open, pre-bookings are being taken, and we are open to early investment conversations. The first dataset partnership is the priority ahead of everything else, because a custodian releasing regulated data to this architecture is the proof the whole thesis rests on. The Delaware C-corporation is formed when the pre-seed closes. The founder is based in Dhaka, and the company relocates when the first design partner gives it a reason to.
 
 **ACCOUNTABILITY**
 
@@ -104,8 +104,8 @@ Rokib Al Dhin Raadh
 Founder & CEO
 
 - **Accountable for** — The calibrated bound, the record behind it, and every claim published against either.
-- **Background** — Technical founder. Built and sold a company before this one.
-- **Based** — Relocating to San Francisco.
+- **Background** — Technical founder. Before ORMAS, ran a twelve-month AI-run e-commerce experiment.
+- **Based** — Dhaka. Relocation follows the first design partner.
 
 A custodian deciding whether to release regulated data asks for three things before anything else: a calibrated bound, a record that survives an audit, and a named counterparty who will stand behind both.
 
@@ -149,7 +149,7 @@ Each of these costs something. They are listed because a company is what it does
 
   #### State the limit before it is found
 
-  Every run where it loses is published on the technology page: adversarial weight injection (−1.0 pp), a 100× weight explosion (−0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.6% vs 91.7%). In fields whose central complaint is that vendors overstate their approximations, being exact about their own limit is the position rather than a caveat on it.
+  Every run where it loses is published on the technology page: adversarial weight injection (−1.0 pp), a 100× weight explosion (−0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.3% vs 91.6%). In fields whose central complaint is that vendors overstate their approximations, being exact about their own limit is the position rather than a caveat on it.
 
 6. 06
 
@@ -203,7 +203,7 @@ A dataset partner above all, then a commercial lead, a research engineer, and tw
 
 Entity
 
-Oxiedo · A licensing company · Incorporating in Delaware, headquarters relocating to San Francisco · Until that completes, contracting and payments run through an existing UK-registered company, which is named in full in any agreement
+Oxiedo · A licensing company · Delaware C-corporation formed at close · Founder based in Dhaka · Until then, contracting and payments run through an existing UK-registered company, which is named in full in any agreement
 
 Contact
 
