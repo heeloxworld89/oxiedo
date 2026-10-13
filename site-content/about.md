@@ -44,6 +44,7 @@ Founder & CEO · Oxiedo
 - **Built** — ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments
 - **Paper** — Sole author, [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363) (preprint, 1 August 2026)
 - **Accepted** — [Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics](/technology#deepmath), poster at DeepMath 2026
+- **Reviewer** — NeurIPS 2026, Trustworthy AI for Good workshop
 - **Before** — A twelve-month AI-run e-commerce experiment
 - **On X** — [@Raad_X_](https://x.com/Raad_X_)
 
@@ -87,7 +88,7 @@ Nothing here was planned from the beginning. The work began as a research questi
 
   #### Accepted at DeepMath 2026
 
-  The stability analysis behind ORMAS, “Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics”, is accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks, held in Columbus, Ohio on 29–30 October. It is the first time the work has been reviewed and accepted outside the company.
+  The stability analysis behind ORMAS, “Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics”, is accepted for a poster at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks, held in Columbus, Ohio on 29–30 October; it is presented on 30 October. It is the first time the work has been reviewed and accepted outside the company.
 
 7. Now
 

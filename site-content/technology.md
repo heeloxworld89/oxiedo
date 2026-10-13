@@ -19,7 +19,7 @@ Controlled experiments across four architecture families, every run reproducible
 
 DeepMath
 
-The stability analysis is accepted for a poster at DeepMath 2026, 29–30 October
+The stability analysis is accepted for a poster at DeepMath 2026, presented 30 October
 
 3
 
@@ -33,7 +33,7 @@ Accepted · DeepMath 2026 · Poster
 
 ### Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics
 
-[Rokib Al Dhin Raadh](/about#founder) · Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · 29–30 October 2026 · Public after the conference
+[Rokib Al Dhin Raadh](/about#founder) · Conference on the Mathematical Theory of Deep Neural Networks · Columbus, Ohio · Presented 30 October 2026 · Public after the conference
 
 [About DeepMath 2026](https://deepmath-conference.com/)
 
