@@ -58,21 +58,39 @@ Two of these have already happened. In the UK the PRA’s SS1/23 deliberately co
 
 The reference market is AI model-risk management: $5.9B (2025) → $19.1B by 2035, growing 12.5% a year, with 35% in finance. Model-risk spend is already a budget line. We sell into it from training.
 
+TAM · AI model-risk management
+
+$5.9B
+
+2025, growing to $19.1B by 2035 (SNS Insider).
+
+SAM · buyers we can serve now
+
+$149M
+
+Counted bottom-up from the two buyer groups below.
+
+SOM · ARR by year five
+
+$4.75M
+
+3.2% of SAM: 30 ML teams and 10 banks.
+
 ML platform leads at organisations training their own models
 
 1,400+
 
-× $75K a year = $105M. Count: the Weights & Biases customer base. Next: M4, the first 20 conversations.
+× $75K a year = $105M SAM. Year-five target: 30 teams (2.1%), $2.25M. Count: the Weights & Biases customer base.
 
 Heads of model risk at large banks
 
 176
 
-66 US + 110 ECB-supervised banks × $250K a year = $44M. Next: M4, three design partners.
+66 US + 110 ECB-supervised banks × $250K a year = $44M SAM. Year-five target: 10 banks (5.7%), $2.50M.
 
-Together that is $149M serviceable now, counted bottom-up. Adjacent markets are larger: AI governance software reaches $15.8B by 2030 (Forrester) and MLOps $16.6B by 2030. Expansion into healthcare AI and pharma R&D follows the same record.
+Together that is $149M serviceable now, and the year-five target is 3.2% of it: $4.75M ARR. Adjacent markets are larger: AI governance software reaches $15.8B by 2030 (Forrester) and MLOps $16.6B by 2030, all inside $2.7T of AI spend in 2026.
 
-The counts are sourced. The prices are our plan and are untested: no price has been put to a buyer yet, and M4 is where that changes.
+The counts are sourced. The prices and the year-five target are our hypotheses: no price has been put to a buyer yet, and M4 is where that changes.
 
 **WHO SIGNS**
 
@@ -100,29 +118,45 @@ Records belong to the customer and export in a documented format, during the ter
 
 **DEFENSIBILITY**
 
-### The moat is time nobody can buy.
+### Why this is hard to copy, ranked honestly.
 
-The mechanism is published on release, so defensibility does not rest on secrecy and this page will not pretend it does. It rests on the things capital cannot compress.
+Five advantages, each with what a competitor would need and where it stands today. The first two exist now. The third is what locks in, and it is earned in a first validation cycle, not claimed. A tracker could copy the second quickly; the first and third take runs and a validator’s review.
 
-#### The dead ends are the barrier to entry
+#### The failure archive
 
-A competitor does not start where this is now. They start where this was in 2023, and the route runs through the same failures: an architecture that lost to a plain CNN at every noise level tested, a correction mechanism that never triggered once across 42 runs, and ablation arms indistinguishable from the full system. Those runs are logged and kept. The question came in 2023, two years of research followed, and the first version that worked arrived on 11 July 2026; the reason the rest of the field does not have this is that the path to it is not visible from the outside.
+383 experiments and a labelled taxonomy: what dies, how it shows, what fixes it. A competitor would have to run and label the same controlled experiments from scratch.
 
-#### Regulatory acceptance is not compressible
+**Today:** Built; grows with each design partner, with consent
 
-A competitor can reimplement a published architecture in weeks. They cannot compress the time it takes a validator, an examiner or a notified body to accept a counterparty and a method. That clock runs at the speed of institutions, and it does not run faster for a better-funded entrant.
+#### Inside the training loop
 
-#### Calibration is empirical, not architectural
+It reads component state while training runs. Post-hoc tools cannot recover that later; a competitor needs a hook in the loop.
 
-What is licensed is a calibrated bound and somebody accountable for it. Calibration is accumulated runs, adversarial testing and failure history. A reimplementation arrives with the architecture and none of the record behind it, which is the part an institution is actually buying.
+**Today:** Built for PyTorch; the packaged monitor is M4
 
-#### Publishing is the distribution strategy
+#### A validator-accepted format
 
-In fields where the buyer is obliged to show their working, the released implementation becomes the one validators check against. Being the reference is a stronger position than being the secret, and it is only available to whoever publishes first.
+Once a validator accepts the method, replacing it means re-validating, bank by bank.
 
-#### The incumbents are structurally committed
+**Today:** Not yet: no validator has reviewed it
 
-Every interpretability and observability vendor is built on the premise that attribution is recovered after training. Adopting this architecture means conceding that premise was wrong. That is not a product decision they can take quickly.
+#### Regulatory evidence
+
+Maps to EU AI Act Annex IV 2(d), SR 26-2 ongoing monitoring, and the FDA’s change-control plans.
+
+**Today:** Mapping stated; untested with a regulator
+
+#### Speed and discipline
+
+Pre-registered tests, and the record of following them. A track record cannot be bought.
+
+**Today:** Kill rules written before runs
+
+#### Not a moat: the reset itself
+
+Resetting a dead part is prior art (ReDo, ICML 2023; Continual Backprop, Nature 2024), and the code is open. A plain reset matches ORMAS.
+
+**Today:** Stated, not hidden
 
 **THE ALTERNATIVES**
 
@@ -130,9 +164,39 @@ Every interpretability and observability vendor is built on the premise that att
 
 Our axis is a per-component record of each fix, made during training, on the customer’s machines. The tools a buyer already owns either watch the run or inspect the finished model; none of them names, resets and records the part that broke.
 
-The buyer’s alternative Layer state in training Names the part Resets it Record of each fix Validator workflow Rewind to checkpoint and retry—————Trackers: W&B, MLflow yes partly——partly Research resets: ReDo, Continual Backprop yes yes yes——Data quality: cleanlab—————Model-risk tools: ValidMind, ModelOp, Credo, Fiddler, Arthur————yes Oxiedo (ORMAS)yes yes yes yes partly
+The buyer’s alternative Type · threat Layer state in training Names the part Resets it Record of each fix Validator workflow Rewind to checkpoint and retry Substitute · high—————Trackers: W&B, MLflow Indirect · medium yes partly——partly Research resets: ReDo, Continual Backprop (open code)Substitute · medium yes yes yes——Data quality: cleanlab Indirect · low—————Model-risk tools: ValidMind, ModelOp, Credo, Fiddler, Arthur Adjacent · medium————yes Oxiedo (ORMAS)—yes yes yes yes partly
 
 The category is being bought: Weights & Biases by CoreWeave (about $1.7B, 2025), Arize by Dynatrace ($915M, 2026), Neptune by OpenAI (2025). And funded: Arize $70M, Fiddler $30M, Credo AI $21M, ValidMind $8.1M.
+
+The real rival is the substitute: rewind and retry is free and habitual, and the reset itself is open code. Our edge is a 383-experiment failure archive, data read inside the training loop, and a record that, once a validator accepts it, costs a re-validation to replace.
+
+**THE TEAM**
+
+### Ships fast, and tries to break the work first.
+
+Rokib Al Dhin Raadh built V1 alone. Dated and checkable: in April 2026 the founder’s own test suite killed the first design, and it was rebuilt; 383 controlled experiments across four model families; the replay demo shipped in September; the DeepMath 2026 poster accepted; every baseline reviewers asked for run in October.
+
+Skill the plan needs Today Evidence, or who covers it Research Covered ORMAS; 383 runs; DeepMath 2026 poster Engineering Covered V1 code; the replay demo, shipped Product Partly Demo and site today; a product engineer joins in month 7 Sales Gap Commercial lead, month 7 Model risk Gap A bank model-risk advisor, being recruited
+
+**GO-TO-MARKET**
+
+### 20 buyer calls by month 4; 4 paid teams in year 2.
+
+Every stage has a number, an owner and a channel. Each is a hypothesis until contract three, when observed conversion rates replace it.
+
+Stage Year 1 Year 2 Year 3 Owner Target accounts worked 200 400 800 Founder; commercial lead from month 7 First conversations 60 (20 by month 4)120 250 Founder; commercial lead from month 7 Technical evaluation, on their own run, under 30 days 1 per pilot 1 per pilot 1 per pilot Research engineer Design partners and pilots, 3 months, read-only 3 unpaid 12 pilots 30 pilots Product engineer New paid annual licences 0 4 (33% of pilots)8 Commercial lead Channel mix: founder outbound · research circuit · validator and Big-4 partners 70% · 30% · 0%50% · 25% · 25%40% · 25% · 35%Sales and marketing spend, fully loaded$120K$220K$500K$840K over three years
+
+Of the $750K, $223.5K is go-to-market. Year one is expected to buy 60 conversations and three design partners at $0 revenue: about $2K per conversation and $40K per design partner.
+
+#### Training Health Monitor
+
+Bought by the ML platform lead. $75K a year per team, paid annually upfront. Year one: design partners get three months free. From year two: a paid pilot at $15K, credited to the first year. The contract trigger is agreed first: the pilot finds an injected fault in their own run, inside the agreed delay. $10K one-off implementation; support included.
+
+#### Model Change Record
+
+Bought by the head of model risk; the validator must accept it. $250K a year per bank, paid annually upfront. Starts from a monitor customer, or a six-month validation pilot at $40K, credited. The contract trigger is the validator accepting the record in one validation cycle. $25K implementation; assurance work priced per engagement.
+
+All stage numbers, prices and pilot terms are hypotheses, set before any contract.
 
 **THE NUMBER**
 
@@ -328,7 +392,11 @@ Year one is months 1–12 after close. Every figure is a planning assumption, no
 
 Year 1 Year 2 Year 3 Assumption Design partners (unpaid)3 3—M4: three teams on the read-only monitor by month 12 Paying monitor teams 0 4 9$75K a year each; the first converts by month 15 Paying model-risk teams 0 0 3$250K a year each; validator expansion from year 3 ARR$0$0.30M$1.43M Teams × licence Revenue in year$0$0.15M$0.86M Contracts land mid-year on average Gross margin—70%80%Nothing hosted; cost is deployment and support Headcount 4 9 16 Founder plus three hires from this round Operating spend$0.40M$1.40M$2.60M Year 1 is this round’s plan; then ~$150K per loaded hire Net burn$0.40M$1.30M$1.91M Operating spend less gross profit Money in$0.75M$3.0M—This round; a seed at month 15 on M1–M5 (assumed)Cash, year-end$0.35M$2.06M$0.14M Series A in year 3, not modelled
 
-No unit-economics ratio is shown. Without a paid contract, acquisition cost and lifetime value are unknown; the first three paid contracts set them. Gross margin is high because nothing is hosted: cost of revenue is deployment engineering and support, modelled at 70% in year two and 80% in year three, to be replaced by pilot data.
+Gross margin is high because nothing is hosted: cost of revenue is deployment engineering and support. Unit economics below are hypotheses until the first three paid contracts replace them; after contracts one to three, CAC and payback are recomputed from actual cost, and any channel above $120K CAC is dropped.
+
+Unit economics (hypothesis)Monitor Model-risk record Blended, year 3 Annual contract value$75K$250K≈ $119K Gross margin 80%80%80%Customer life 4 years 5 years 4 years Lifetime value$240K$1.0M≈ $381K Acquisition cost (CAC)$55K$120K$70K LTV / CAC 4.4×8.3×≈ 5.4×Payback~14 months~10 months~12 months
+
+Blended CAC is $840K of sales and marketing over three years divided by 12 paid customers. The monitor at the blended $70K CAC is 3.4×, against a 3× benchmark for healthy.
 
 The seed is raised from month 12 on M1–M5 results; the model assumes month 15. The buffer covers three more months if it slips.
 
@@ -406,7 +474,7 @@ None of this is disclosed reluctantly. An investor who finds these in week three
 
 #### One founder, and no regulated-buyer sales yet.
 
-Rokib Al Dhin Raadh built V1 alone. The round’s first hire is a research engineer in month one; a product engineer and a commercial lead follow in month seven. No price has been put to a buyer; M4 tests it.
+Rokib Al Dhin Raadh built V1 alone. Research and engineering are covered; sales and model risk are gaps. The round’s first hire is a research engineer in month one; a product engineer and a commercial lead follow in month seven, and a bank model-risk advisor is being recruited. No price has been put to a buyer; M4 tests it.
 
 #### A plain reset beat the controller on one seed.
 
@@ -419,6 +487,10 @@ Random-direction weight injection (83.1% vs 84.1%), a 100× weight explosion (85
 #### Every result is CIFAR-10 and CIFAR-100 on small models.
 
 No transformer, tabular or customer data yet. M3 is the move to credit-risk and medical-image data, with a pass line written first.
+
+#### What it does not cover.
+
+Today it handles dead layers and units on small vision models. Loss spikes, divergence and label noise are planned; tabular, credit and medical images are M3; transformers come after the seed. Inference-time drift, deliberate attacks on a model and frontier-scale LLM pre-training are not supported. Where nothing is broken, ORMAS ties or trails, which is why the product is the monitor and the record, not a training replacement.
 
 #### It costs more to train.
 
@@ -450,7 +522,7 @@ Also October 2026: the rule for AISTATS was not to submit if ORMAS finished two 
 
 What goes in front of an investor
 
-- The 28-slide deck, with an appendix that puts the limits first.
+- The deck: 14 slides and a 29-page appendix, grouped by the question an investor asks.
 
 - Every number and its source, including the ones that are plans rather than measurements.
 
@@ -458,7 +530,9 @@ What goes in front of an investor
 
 - The kill-rule record and the venue record.
 
-- The three-year model with every row’s assumption, and the entity and IP plan.
+- The three-year model, the acquisition plan, unit economics and the go-to-market budget, every row with its assumption.
+
+- Personas, the competitor map by threat, five forces, and the entity and IP plan.
 
 **TERMS**
 
@@ -474,7 +548,7 @@ Oxiedo is not yet incorporated, has no cap table and no prior investor. The Dela
 
 Measured figures come from the run archive; market and price figures are labelled as hypotheses. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
 
-Figure Source Status 10.0% vs 80.3% ± 1.5%Archived lesion runs, three seeds each Measured; rerun 4 October 2026 Plain reset 83.3%, ReDo 77.5%, ORMAS 78.5%Rerun on one seed, RTX 3080 Measured, one seed; M1 repeats it 383 controlled experiments Run records across the founder’s result folders Counted Accepted poster, DeepMath 2026 Programme committee decision; poster session 29–30 October 2026 External review$5.9B (2025) → $19.1B (2035)SNS Insider, AI model-risk management, 25 August 2026 Analyst report 1,400+ orgs; 176 banks; $149M W&B customer base; Fed large banks; ECB list; our planned prices Counts sourced; prices untested$75K and $250K a year Our pricing hypothesis No price put to a buyer yet$750K, $7.5M cap Carta pre-seed data 2025–26; our plan Proposal
+Figure Source Status 10.0% vs 80.3% ± 1.5%Archived lesion runs, three seeds each Measured; rerun 4 October 2026 Plain reset 83.3%, ReDo 77.5%, ORMAS 78.5%Rerun on one seed, RTX 3080 Measured, one seed; M1 repeats it 383 controlled experiments Run records across the founder’s result folders Counted Accepted poster, DeepMath 2026 Programme committee decision; poster session 29–30 October 2026 External review$5.9B (2025) → $19.1B (2035)SNS Insider, AI model-risk management, 25 August 2026 Analyst report 1,400+ orgs; 176 banks; $149M W&B customer base; Fed large banks; ECB list; our planned prices Counts sourced; prices untested$75K and $250K a year Our pricing hypothesis No price put to a buyer yet$4.75M SOM; funnel; CAC $70K; LTV/CAC ≈ 5.4×Our acquisition plan and unit-economics model Hypotheses until the first three contracts$750K, $7.5M cap Carta pre-seed data 2025–26; our plan Proposal
 
 **THE ASK**
 
