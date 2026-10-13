@@ -35,7 +35,7 @@ experiments, and is the sole author of the ORMAS preprint, "ORMAS: Neural Archit
 Transparency Enables Autonomous Self-Correction" (Zenodo, 1 August 2026,
 https://doi.org/10.5281/zenodo.21730363). Before ORMAS he ran a twelve-month AI-run e-commerce experiment. He is based in Dhaka. His paper "Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics" was accepted for a poster
 at DeepMath 2026, the Conference on the Mathematical Theory of Deep Neural Networks (Columbus, Ohio,
-29–30 October 2026).
+29–30 October 2026), decided 30 September 2026 and presented on 30 October 2026. He is a reviewer for NeurIPS 2026 (Trustworthy AI for Good workshop, Paris, 12 December 2026).
 Founder profile: ${SITE}/about#founder · X: https://x.com/Raad_X_
 
 ## What ORMAS is
