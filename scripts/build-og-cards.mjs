@@ -11,7 +11,7 @@ import { chromium } from 'playwright';
 import { readFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-export const OG_VERSION = '2';
+export const OG_VERSION = '3';
 const root = resolve(new URL('..', import.meta.url).pathname);
 const font = (f) => `data:font/woff2;base64,${readFileSync(resolve(root, 'public/fonts', f)).toString('base64')}`;
 
@@ -54,9 +54,9 @@ const cards = [
 	{
 		name: 'invest',
 		tag: 'Pre-seed',
-		title: 'The round, the arithmetic, and the risks.',
-		sub: 'A new kind of neural network, with every number sourced and every risk stated on one page.',
-		stats: [['$1.5M', 'pre-seed'], ['18', 'months of runway'], ['6', 'milestones with acceptance criteria']],
+		title: 'The round, and its limits.',
+		sub: 'Neural networks that report what broke while they train, and fix it. Every number sourced, every limit stated.',
+		stats: [['$750K', 'post-money SAFE'], ['$7.5M', 'cap, 10.0% dilution'], ['5', 'milestones, pass lines written first']],
 	},
 ];
 

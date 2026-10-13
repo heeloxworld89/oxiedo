@@ -15,7 +15,7 @@ Each one states what it owns and what it requires. The commitment shape is on ev
 
 - **Stage** — Pre-seed, commercially open
 - **How we work** — Direct. No recruiters, no screening layer, no take-home
-- **Location** — Remote, with the headquarters relocating to San Francisco
+- **Location** — Remote. The founder is based in Dhaka
 - **Reply time** — A few days, usually less. Every message read by a person
 
 1. 01

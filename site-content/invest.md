@@ -2,45 +2,45 @@
 
 - **URL:** `/invest`
 - **Page title:** Pre-seed: the round and the risks — Oxiedo
-- **Meta description:** Pre-seed, $1.5M, 18 months, six named milestones. Every regulated training run will soon have to account for itself, and almost none of them can.
+- **Meta description:** Pre-seed, $750K on a post-money SAFE at a $7.5M cap, 18 months, five milestones with pass lines written first. Neural networks that report what broke while they train, and fix it.
 
 ---
 INVEST
 
-## Every model in a regulated sector will soon have to account for itself. Almost none of them can.
+## The system of record for what training did.
 
 The whole thing, in one screen
 
-- **The insight** — Every interpretability and monitoring tool estimates a model from outside it, and an estimate is an opinion. ORMAS bounds each node’s gradient chain to four operations, so attribution stops being an estimate and becomes a measurement taken during training. If that is right, every regulated training run eventually has to be built this way, and the layer the market is currently funding is the wrong layer.
-- **What exists** — The question in 2023; two years of research in 2024–25, the first of them a failure against its own destruction suite; a first working version on 11 July 2026, and the complete system on 1 August 2026. 383 controlled experiments across four architecture families, 67 archived runs reproducible from seed, 16,316 lines of instrumentation. +70.3 pp recovery from catastrophic structural collapse. Three runs where it loses, disclosed. The stability analysis is accepted for a poster at DeepMath 2026; the experiments are not yet independently replicated.
-- **Why now** — The obligations arrive on legislated dates, not forecast ones: SR 26-2 already in force, EU AI Act Annex III from 2 December 2027, Annex I from 2 August 2028. An architecture cannot be retrofitted into a model that has already been trained.
-- **The moat** — The mechanism publishes on release, so defensibility never rested on secrecy. It rests on what capital cannot compress: regulatory acceptance, calibration history, and an adversarial record.
-- **The ask** — $1.5M pre-seed, 18 months, six milestones with acceptance criteria. Team $650K · compute $250K · one dataset partnership $150K · structure and filings $100K · operating $200K · buffer $150K. Sized to the next result rather than to the whole plan, and deliberately below the deep tech band.
-- **The risk** — No revenue, no customers, zero customer conversations. One person. Every result on CIFAR-10 and CIFAR-100. The whole remaining programme comes down to four specified measurements, which is the fastest way to find out if we are wrong.
+- **The problem** — Training runs fail silently, and nobody can say which part broke. Builders pay for failed runs in compute; validators inherit a finished black box. Meta logged 35+ manual restarts of OPT-175B in two months, and PaLM saw about 20 loss spikes in one run. The fix each time was rewind, skip data, retry. The cause was never named.
+- **What ORMAS does** — It watches every component while the model trains, names the part that died, resets only that part, and writes the change down. Two of three blocks of a trained image model zeroed at epoch 100: standard training stays at 10.0% on every seed, ORMAS recovers to 80.3% ± 1.5%. Every step is on the record, 85 logged interventions per run.
+- **First product** — A training health monitor plus a change record. It runs beside the customer’s training job, read-only, on their machines, and produces one file per run for the validator. Both already run inside V1; next is cleaning up the record and packaging it.
+- **Why now** — Four regulators now want evidence from training itself, not only from the finished model: the EU AI Act (credit scoring is high-risk from December 2027), the Fed’s SR 26-2 (April 2026), the PRA’s SS1/23 in the UK, and the FDA’s change-control plans for AI devices.
+- **The ask** — $750K on a post-money SAFE at a $7.5M cap, 10.0% dilution, 18 months on a Dhaka cost base. It buys five milestones, each with a pass line written before the work, and three hires: a research engineer in month one, then a product engineer and a commercial lead in month seven.
+- **The risk** — One founder. No regulated-buyer sales yet and no price put to a buyer. Every result is on CIFAR-10 and CIFAR-100 with small models. On a one-seed rerun a plain reset beat ORMAS’s controller (83.3% vs 78.5%), so what is sold is the detector and the record. All of it is listed below.
 
-The entire field treats attribution as something reconstructed after training. It is not. It is something a network either computes about itself, or does not.
+Every model should arrive with a record of what its training did, part by part. Today none does.
 
-Interpretability, monitoring and governance tooling all share one assumption: that a simpler model of a trained network can be built and its approximation reported. That assumption is why two of those tools disagree on the same input, and why none of their output can be entered as evidence by an institution that is legally obliged to produce some.
+When a training run breaks, the standard response is to rewind to a checkpoint, skip some data and try again. Trackers chart the loss; model-risk tools inspect the finished model. Nothing in between names the part that broke while it is breaking, so the cause is never written down and a validator inherits a black box.
 
-ORMAS bounds each node’s local gradient chain to four operations through a shared 4,416-parameter bottleneck. Because the chain is bounded, per-node attribution stops being an estimate and becomes a measurement taken from the backward pass. A model trained this way arrives with the account already made.
+ORMAS watches every component while the model trains. When a part dies, its learning signal is exactly zero, and standard training cannot leave that trap. ORMAS names the part, resets only that part, and writes the change to a ledger: component, epoch, reason, size.
 
-If that is right, every regulated training run eventually has to be built this way, and the layer everyone is currently investing in is the wrong layer.
+Don’t trust us: replay the run yourself at oxiedo.com/black-box. Every figure there is read from the archived run files; nothing is simulated in the browser.
 
-+70.3 pp
+80.3%
 
-Recovery from catastrophic structural collapse, where a parameter-matched baseline is permanently dead
+Recovery after two of three blocks were zeroed mid-training, where standard training stays at 10.0% on every seed
 
 383
 
-Controlled experiments across four architecture families, every run reproducible from seed
+Controlled experiments across four model families
 
 3 losses
 
-Published runs where ORMAS finishes behind the baseline, named next to the wins
+Published runs where ORMAS finishes behind standard training, named next to the wins
 
-1 person
+5 milestones
 
-Founder Rokib Al Dhin Raadh built all of it. The second person is the most consequential thing this round buys
+Each with a pass line written before the work. A failed milestone gets reported
 
 **WHY NOW**
 
@@ -48,69 +48,55 @@ Founder Rokib Al Dhin Raadh built all of it. The second person is the most conse
 
 The usual answer to “why has nobody built this” is that the incentive did not exist. Here it is arriving on a legislated calendar, and an architecture cannot be retrofitted into a model that has already been trained, so it has to exist before the date, not after it.
 
-> Dates in law as at September 2026. Filled marks have already taken effect.
+> Dates in law as at October 2026. Filled marks have already taken effect.
 
-Two of these have already happened. An institution that begins the architecture question in 2027 is not late by a quarter; it is late by a training cycle, and a training cycle in a regulated environment is measured in years.
+Two of these have already happened. In the UK the PRA’s SS1/23 deliberately covers AI models, and in the US the FDA lets AI devices change only under a documented change plan. Banks are not ready: large EMEA banks run around 365 models, 67% use AI or machine learning, only 29% say their framework fits, and 75% put under 5% of staff on AI validation (Deloitte, 2025).
 
 **THE MARKET**
 
-### Counted upward, from the institutions that qualify.
+### A $19B market by 2035, and we know who signs.
 
-The reference market is AI model-risk management: $5.9B (2025) → $19.1B by 2035. That budget line already exists inside every institution below. Today it buys tools that estimate a finished model from the outside.
+The reference market is AI model-risk management: $5.9B (2025) → $19.1B by 2035, growing 12.5% a year, with 35% in finance. Model-risk spend is already a budget line. We sell into it from training.
 
-An institution qualifies for this architecture on three tests at once. It holds data that cannot legally leave its infrastructure. It has an active plan to train on that data. And it answers to somebody who will ask what the model learned. Roughly a thousand clear all three.
+ML platform leads at organisations training their own models
 
-Academic medical centres
+1,400+
 
-~180
+× $75K a year = $105M. Count: the Weights & Biases customer base. Next: M4, the first 20 conversations.
 
-With an internal AI group and a regulated pathway.
+Heads of model risk at large banks
 
-Funds and asset managers
+176
 
-~400
+66 US + 110 ECB-supervised banks × $250K a year = $44M. Next: M4, three design partners.
 
-With in-house machine learning.
+Together that is $149M serviceable now, counted bottom-up. Adjacent markets are larger: AI governance software reaches $15.8B by 2030 (Forrester) and MLOps $16.6B by 2030. Expansion into healthcare AI and pharma R&D follows the same record.
 
-Insurers and credit-risk teams
-
-~270
-
-Under supervisory reporting.
-
-Labs running training at cost
-
-~150
-
-Where a failed run is a budget line, not an inconvenience.
-
-At a $250,000 annual contract value, that serviceable market is $250M. The beachhead is regulated finance: the shortest cycle, the clearest mandate, a named validator on the other side of the table, and no ethics board in the path. The obtainable target is twenty institutions by the end of year three — $5M ARR, two per cent of the serviceable market. The constraint on that number is delivery capacity, not demand.
-
-The institution counts are our own estimates. No buyer interviews have been conducted. It is the number on this page most likely to be wrong, and the first line of work this round funds is correcting it.
+The counts are sourced. The prices are our plan and are untested: no price has been put to a buyer yet, and M4 is where that changes.
 
 **WHO SIGNS**
 
-### Four people stand around one workflow.
+### One wedge, one expansion.
 
-The workflow is a bank whose model cannot clear independent validation. A sale requires all four of them, and each one refuses for a different reason.
+The wedge is the monitor and change record for an ML platform team. The expansion is the same record, read by a model-risk validator. An annual licence per team, run on the customer’s own machines: no seats, no usage meter, no hosted tier.
 
-#### The economic buyer — Head of Model Risk
+#### The first buyer — machine-learning platform lead
 
-Owns the budget and the remediation timetable. Wants to clear validation first time. Fears being the name on a model an examiner later reopens.
+Runs the training and pays for the failed runs. Wants to know which part broke, and when, instead of rewinding and retrying. Buys the monitor: an annual licence per team, around $75K a year (band $75–250K).
 
-#### The technical user — machine-learning platform lead
+#### The expansion buyer — head of model risk
 
-Runs the training and owns the serving path. Wants to stop losing six-figure runs to failures found thousands of steps late. Fears anything that changes inference cost.
+Owns validation and the budget for it. Wants evidence from training itself, in one file, that their validators can review. Buys the model-risk record: around $250K a year per validation team (band $200–500K).
 
-#### The risk owner — Chief Risk Officer
+#### The validator
 
-Signs, and carries it to the board. Wants a defensible position rather than a better number. Fears the sentence “the model changed and we cannot say how” appearing in a supervisory letter.
+Wants something verifiable rather than asserted. Kills deals by rejecting a method it cannot reproduce, which is why every record is exportable in a documented format and belongs to the customer.
 
-#### The gatekeeper — independent validation, then the examiner
+#### The examiner
 
-Wants something verifiable rather than asserted. Kills deals by rejecting a method it cannot reproduce.
+Stands behind the validator: the Fed under SR 26-2, the PRA under SS1/23, an EU notified body under the AI Act. The record exists so the bank can answer the question the examiner will ask.
 
-The trigger is an event, not a budget cycle. A model fails validation, or an examiner finding lands, and a programme that is already funded cannot reach production. That is the moment this gets bought: the money exists, the deadline is external, and the alternative is rebuilding the model from the beginning.
+Records belong to the customer and export in a documented format, during the term and after it. Renewal is earned on new runs: monitoring, updates, support, and a version their validator has reviewed. The switching cost is re-validation, not lost history.
 
 **DEFENSIBILITY**
 
@@ -140,175 +126,237 @@ Every interpretability and observability vendor is built on the premise that att
 
 **THE ALTERNATIVES**
 
-### What a buyer already owns.
+### Trackers chart training. Oxiedo records each fix.
 
-Every tool in this category inspects a finished model from the outside. They are complements rather than casualties: all five examine a model that has already made up its mind, which means they share our buyer and our budget line — enterprise quotes in this category start around $50,000 a year — and none of them can answer what training did.
+Our axis is a per-component record of each fix, made during training, on the customer’s machines. The tools a buyer already owns either watch the run or inspect the finished model; none of them names, resets and records the part that broke.
 
-Alternative What it sells Train-time record Per-node attribution Autonomous repair ModelOp Governance control tower———Credo AI Policy and compliance documentation———Fiddler AI Post-hoc explainability—partial—Arthur AI Production drift monitoring———Robust Intelligence (Cisco)Pre-deployment stress testing———Retraining from scratch The status quo remedy———ORMAS The account, produced as it trains yes yes yes
+The buyer’s alternative Layer state in training Names the part Resets it Record of each fix Validator workflow Rewind to checkpoint and retry—————Trackers: W&B, MLflow yes partly——partly Research resets: ReDo, Continual Backprop yes yes yes——Data quality: cleanlab—————Model-risk tools: ValidMind, ModelOp, Credo, Fiddler, Arthur————yes Oxiedo (ORMAS)yes yes yes yes partly
 
-The real incumbent is the second-to-last row. Retraining from scratch costs $100,000 to $500,000 per request, and it is the only method that genuinely removes a data source from a model. It is what this displaces.
+The category is being bought: Weights & Biases by CoreWeave (about $1.7B, 2025), Arize by Dynatrace ($915M, 2026), Neptune by OpenAI (2025). And funded: Arize $70M, Fiddler $30M, Credo AI $21M, ValidMind $8.1M.
 
 **THE NUMBER**
 
-### $1.5M, and here is the arithmetic behind it.
+### $750K buys five tested milestones in 18 months.
 
-Priced against the market rather than picked, and priced below it on purpose. The published H1 2026 benchmarks are below, and every line of the round is costed underneath them at rates anyone can check.
+Priced against the market rather than picked, and priced below it on purpose. The Carta benchmarks are below, and every line of the round is costed underneath them.
 
-Broad pre-seed median
+Median cap, $250K–$1M SAFEs
 
-$1.2M
+~$10M
 
-All sectors, H1 2026. Range $500K–$2.5M.
+Carta, State of Pre-Seed 2025.
 
-Deep tech and AI infrastructure
+Median cap, $1M–$2.5M SAFEs
 
-$2M–$5M
+~$15M
 
-Raised above the median, specifically to cover compute.
+Carta, State of Pre-Seed 2025.
 
-AI seed median
+Median US pre-seed deal
 
-$4.6M
+~$0.9M
 
-A 1.3x premium on the broader seed market.
+PitchBook–NVCA, Q2 2025.
 
 This round
 
-$1.5M
+$750K
 
-Deliberately below the deep tech band. The reason is the paragraph under this table.
+At a $7.5M cap, below the median for its size on purpose. Post-money SAFE, 10.0% dilution.
 
-The deep tech band would support a larger number and an earlier version of this page asked for one. It was the wrong ask. A round is sized to the next result, not to the whole plan, and the next result here is a scaling study and one dataset partnership rather than frontier-scale validation. Asking for the frontier figure on a pre-seed track record prices this company against companies that already have customers, which is a comparison it loses.
+The round is sized to the next results, not to the whole plan. Research runs only where the product needs an answer, and the Dhaka cost base is what lets $750K carry three hires for 18 months. If an accelerator or programme (Entrepreneur First, Antler and similar) leads, its terms replace the instrument; the milestones stay the same.
 
-What comes after, meaning frontier scale, several sectors and the first commercial hires, is a seed round. It should be priced against evidence that exists by then rather than against this page. The consequence is that every milestone below has a cheque size attached to it, so a fellowship, a first institutional cheque and a lead all have somewhere to sit.
+**THE MILESTONES**
+
+### Five milestones, each with a pass line written first.
+
+A failed milestone gets reported. Months are counted from close, assumed December 2026; M5 is pinned to the NeurIPS 2027 deadline in mid-May.
+
+Milestone Passes if Month M1 Repair benchmark Five seeds against three published fixes and a dropout control; ours within one point of the best.2 M2 Detection study Injected faults found at ≥90% precision and recall, flagged within one epoch.4 M3 Beyond CIFAR M2’s pass line holds on credit-risk and medical-image data.7 M4 Design partners 20 buyer conversations; three teams run the read-only monitor in-house.4 → 12 M5 Open record Preprint and code public; NeurIPS 2027 submitted.5
 
 **USE OF FUNDS**
 
-### Six line items. Each one buys down a named risk.
+### The $750K, line by line.
 
-Deep tech is funded against de-risking rather than revenue, so this is set out as risks removed rather than categories of spend. Every item carries an acceptance criterion, because a milestone without acceptance criteria is an intention. Runway is 18 months.
+Every line names the milestone it pays for. Runway is 18 months, on a Dhaka cost base, with the Delaware C-corp formed at close.
 
 1. 01
 
-  #### The second and third person
+  #### Research engineer, remote, month 1
 
-  A co-founder and one research engineer, 18 months, fully loaded
+  $9.2K a month, loaded
 
-  ~$650K
+  $165K
 
   Key-person risk
 
-  The company is one person. That is the largest single risk on this page and it is the first thing the round removes. A co-founder to carry the commercial and institutional side, which is the half this founder has not done, and one research engineer able to extend the architecture independently rather than execute instructions. Two hires rather than five, because three people who can each work unsupervised is a company, and five people managed by a first-time manager during a scaling study is a different and worse problem.
+  The first hire, because the first three milestones are research: the repair benchmark, the detection study, and the move beyond CIFAR. Remote, so the budget buys a strong engineer rather than a postcode.
 
-  Done when — Two people, beyond the founder, each able to extend the architecture or close an institutional conversation without supervision.
+  Pays for — M1, M2, M3 and M5
 
 2. 02
 
-  #### Bounded compute
+  #### Commercial lead, month 7
 
-  32–64 accelerators, a 3–4 week campaign, run twice
+  $10K a month
 
-  ~$250K
+  $120K
 
-  Scale risk
+  Go-to-market risk
 
-  Every result to date runs on CIFAR, because that is what one person could afford. This does not buy frontier scale and the page will not pretend otherwise. It buys the answer to whether bounded attribution survives well beyond the regime it was demonstrated in, on real model sizes and a transformer backbone, with the adversarial suite the current architecture was hardened against. Two campaigns rather than one: the first returns a result, the second answers what the first raises. Reserved and released, never standing, because idle accelerators are the most common way a round this size disappears with nothing attached to it.
+  The half of the company the founder has not done. Joins once there is a measured detector and a record format to sell, and carries the design-partner conversations to signatures.
 
-  Done when — Bounded attribution demonstrated on a transformer backbone at a model size well beyond CIFAR, every run reproducible from seed, and the overhead figure measured rather than estimated.
+  Pays for — M4
 
 3. 03
 
-  #### One dataset partnership
+  #### Product engineer, remote, month 7
 
-  A single non-exclusive regulated corpus, plus the legal work around it
+  $8.75K a month, loaded
 
-  ~$150K
+  $105K
 
-  Domain risk
+  Product risk
 
-  No clinical, biological, financial or defence data has ever touched this system, and that is the binding constraint on the entire thesis. One partnership, not three. A property demonstrated on one regulated corpus is not yet proof it generalises across sectors, and claiming otherwise would be the same overreach this page exists to avoid. What it does establish is that a custodian released data to this architecture, which is the single fact no amount of further CIFAR work can produce.
+  Packages the monitor and the change record so a team can install it beside their own training job, read-only, on their own machines.
 
-  Done when — One signed partnership with a custodian holding data under a real obligation, and the property demonstrated on that data.
+  Pays for — M4
 
 4. 04
 
-  #### Structure and filings
+  #### Compute, rented GPUs
 
-  Delaware conversion, EU Article 27 representation, priority patent filings
+  Non-CIFAR data, larger models, partner pilots
 
-  ~$100K
+  $75K
 
-  Structural risk
+  Scale risk
 
-  Gates rather than ornaments. The Delaware conversion has to complete before a US institutional round can close into the company at all. An EU Article 27 representative is a legal requirement for a UK entity offering services to EU data subjects. And the programme extending the architecture cannot be published until it is protected. SOC 2 and ISO 27001 are deliberately not in this round: they are procurement gates for a company with customers, and this one does not have customers yet.
+  Current experiments cost about $200–600 of rented GPU time. This line pays for the work beyond that: credit-risk and medical-image data, larger models, and pilots with design partners. Rented and released, never standing.
 
-  Done when — Delaware C-corporation incorporated and able to receive institutional capital, EU representation appointed, priority filings made.
+  Pays for — M1 to M4
 
 5. 05
 
-  #### Operating
+  #### Delaware C-corp, IP, legal, accounts
 
-  18 months of everything else, including the relocation
+  Formed at close
 
-  ~$200K
+  $45K
 
-  Runway risk
+  Structural risk
 
-  Insurance, tooling, accounting, legal outside the filings above, and the San Francisco relocation. Listed rather than folded into another line, because a use-of-funds with no operating line has simply hidden it somewhere else.
+  The Delaware C-corporation is formed before the SAFE is executed, and the code, run archive, paper, brand and domain are assigned to it at incorporation.
 
-  Done when — 18 months of runway with every milestone above met inside it.
+  Pays for — Close, then M4 contracts
 
 6. 06
 
-  #### Buffer
+  #### Founder, living in Dhaka
 
-  Ten percent, unallocated and named as such
+  $2.5K a month
 
-  ~$150K
+  $45K
+
+  Runway risk
+
+  The Dhaka cost base is why $750K covers 18 months and three hires. Relocation follows the first design partner, not the round.
+
+  Pays for — All five
+
+7. 07
+
+  #### Partner travel and conferences
+
+  Partner visits, NeurIPS
+
+  $37.5K
+
+  Distribution risk
+
+  Design partners are won in rooms, not inboxes. This pays for the visits and for presenting the open record.
+
+  Pays for — M4 and M5
+
+8. 08
+
+  #### Regulatory and data-protection review
+
+  One engagement each
+
+  $22.5K
+
+  Compliance risk
+
+  A design partner in a regulated sector will ask for both before any data or code touches their systems.
+
+  Pays for — M4
+
+9. 09
+
+  #### Tools, software, insurance
+
+  18 months
+
+  $22.5K
+
+  Operating risk
+
+  Listed rather than folded into another line, because a budget with no operating line has hidden it somewhere else.
+
+  Pays for — Operating costs, no single milestone
+
+10. 10
+
+  #### Buffer, unallocated
+
+  Slippage, or a three-month bridge
+
+  $112.5K
 
   Estimation risk
 
-  Held against the thing that has not been thought of. A scaling study that returns an unexpected result costs a third campaign; a dataset partner whose legal process runs six months longer than planned costs runway. Naming the buffer is the alternative to padding every line above it by ten percent and calling the total a budget.
+  The seed is raised from month 12 on M1–M5 results; the model assumes month 15. The buffer covers three more months if it slips.
 
-  Done when — Unspent, or spent against a decision written down at the time.
+  Pays for — Unspent, or spent against a decision written down at the time
 
 **THREE YEARS**
 
-### Pre-revenue by design.
+### Three years, with year one at $0 revenue.
 
-Nothing could be sold until the architecture cleared its own destruction suite. What follows is what the money is expected to produce, and every cell in it is an assumption.
+Year one is months 1–12 after close. Every figure is a planning assumption, not a forecast from data.
 
-Year 1 Year 2 Year 3 Assumption Paying institutions 0 4 20 Land at one model, then expand ARR$0$1.0M$5.0M$250K ACV, held flat Gross margin—~92%~92%On-premise; no hosting cost CAC, fully loaded—~$85K~$85K Founder and commercial time, pilot engineering LTV, four-year, margin-adjusted—$920K$920K Four-year life, no expansion assumed LTV:CAC—~10.8:1~10.8:1 Benchmark: 3:1 healthy, 5:1 strong Net burn$820K$680K Near breakeven Compute front-loaded to year one
+Year 1 Year 2 Year 3 Assumption Design partners (unpaid)3 3—M4: three teams on the read-only monitor by month 12 Paying monitor teams 0 4 9$75K a year each; the first converts by month 15 Paying model-risk teams 0 0 3$250K a year each; validator expansion from year 3 ARR$0$0.30M$1.43M Teams × licence Revenue in year$0$0.15M$0.86M Contracts land mid-year on average Gross margin—70%80%Nothing hosted; cost is deployment and support Headcount 4 9 16 Founder plus three hires from this round Operating spend$0.40M$1.40M$2.60M Year 1 is this round’s plan; then ~$150K per loaded hire Net burn$0.40M$1.30M$1.91M Operating spend less gross profit Money in$0.75M$3.0M—This round; a seed at month 15 on M1–M5 (assumed)Cash, year-end$0.35M$2.06M$0.14M Series A in year 3, not modelled
 
-The ratio flatters because the inputs are unproven. The $250,000 contract value is benchmarked against model-risk tooling and validated by nobody — no pricing conversation has taken place. Year two assumes two things land: the transformer result, and one validator accepting the method. If either fails, year two is one or two design partners and a seed raised on research rather than on revenue.
+No unit-economics ratio is shown. Without a paid contract, acquisition cost and lifetime value are unknown; the first three paid contracts set them. Gross margin is high because nothing is hosted: cost of revenue is deployment engineering and support, modelled at 70% in year two and 80% in year three, to be replaced by pilot data.
 
-A seed is assumed at month fifteen against milestones, not against ARR. This round does not reach default-alive, and is not presented as though it does.
+The seed is raised from month 12 on M1–M5 results; the model assumes month 15. The buffer covers three more months if it slips.
 
 **CAPITAL DISCIPLINE**
 
 ### What this round is deliberately not spent on.
 
-A use-of-funds is only as credible as the things it refuses. These four are the most common ways a round this size disappears with no result attached to it.
+A use-of-funds is only as credible as the things it refuses.
+
+#### Relocation before a design partner
+
+The company moves when the first design partner gives it a reason to, not because a round closed.
 
 #### Standing GPU capacity
 
-The compute is a bounded campaign with a release date. Idle accelerators are the most common way a deep tech round disappears without a result attached.
-
-#### Sales headcount
-
-There is nothing to scale yet. The first conversations are had by the person who built the architecture, because at this stage they are technical conversations.
+Compute is rented for the work in front of it and released. Idle accelerators are the most common way a deep tech round disappears without a result attached.
 
 #### Marketing spend
 
-The buyers are a few hundred institutions worldwide and they are reachable by name. Demand generation is not the constraint; evidence is.
-
-#### Exclusive data deals
-
-Exclusive refreshed regulated data runs $500K–$5M a year and would consume the round several times over. One non-exclusive corpus proves the property that matters.
+The buyers are ML platform teams and heads of model risk, reachable by name. Demand generation is not the constraint; evidence is.
 
 #### Certification before customers
 
-SOC 2 Type II and ISO 27001 are procurement gates for a company with a pipeline. Buying them now would be spending a fifth of the round to pass an exam nobody has set yet.
+SOC 2 Type II and ISO 27001 are procurement gates for a company with a pipeline. Buying them now would be passing an exam nobody has set yet.
+
+#### A hosted tier
+
+The monitor runs on the customer’s machines. Nothing is hosted, so training data never leaves them and serving cost sits with them.
 
 **THE LADDER**
 
@@ -316,125 +364,125 @@ SOC 2 Type II and ISO 27001 are procurement gates for a company with a pipeline.
 
 - REMOVED
 
-  #### Does the mechanism work
+  #### Can a dead part be named and reset during training
 
-  Removed. 383 controlled experiments, 67 archived runs reproducible from seed, +70.3 pp recovery under structural collapse, published and checkable.
-
-- REMOVED
-
-  #### Is it a real architecture or a wrapper
-
-  Removed. 16,316 lines across 85 files, four architecture families, an adversarial suite the first version failed and the second had to clear.
+  Shown. Standard training stays at 10.0% on every seed; ORMAS names the dead blocks, resets them and recovers to 80.3% ± 1.5%, with every intervention on the record. Replayable at oxiedo.com/black-box.
 
 - REMOVED
 
-  #### Is the demand real
+  #### Does it follow its own kill rules
 
-  Removed by legislation rather than by us. The obligations arrive on dates already in law.
+  Shown. Three pre-set tests went against us, and each one changed what we build: the April 2026 suite killed the first design, a negative V2 pilot moved V2 to parallel parts, and an AISTATS submission was withheld when ORMAS finished below a plain reset.
+
+- LIVE
+
+  #### Is the repair better than the simplest fix
+
+  Live. On one seed a plain reset beat ORMAS’s controller by 4.8 points. M1 reruns it on five seeds against three published fixes and a dropout control.
+
+- LIVE
+
+  #### How well does it detect faults
+
+  Live. Precision, recall and delay against known faults are unmeasured. M2 sets the pass line at 90% and one epoch.
 
 - LIVE
 
   #### Does it hold beyond CIFAR
 
-  Live. This is what the compute in this round buys, on a transformer backbone, and the weak form of it is specified as one of four measurements.
+  Live. M3 runs M2’s test on credit-risk and medical-image data.
 
 - LIVE
 
-  #### Does it hold at frontier scale
+  #### Will teams install it and pay
 
-  Open, and not what this round claims to answer. That is the result the round after this one is priced against.
-
-- LIVE
-
-  #### Does it hold on regulated data
-
-  Live. Requires one dataset partner, which is the third line item in this round.
-
-- LIVE
-
-  #### Will institutions buy it
-
-  Live. Zero customer conversations have taken place.
+  Live. No price has been put to a buyer. M4 is 20 conversations and three teams running the monitor in-house.
 
 **THE RISK REGISTER**
 
-### Everything a diligence process would find, listed first.
+### What is not established, and where ORMAS loses.
 
 None of this is disclosed reluctantly. An investor who finds these in week three discounts everything else on the page; an investor who reads them here is evaluating the same company with better information.
 
-#### No revenue, no customers, no pilot.
+#### One founder, and no regulated-buyer sales yet.
 
-Zero customer conversations have taken place. Nothing on this site claims otherwise, and any diligence process will confirm it quickly. The reason is a date rather than a reluctance: the architecture reached maturity on 1 August 2026, and before that there was no product an institution could have been sold. Starting those conversations earlier would have meant selling a system that had not yet cleared its own destruction suite.
+Rokib Al Dhin Raadh built V1 alone. The round’s first hire is a research engineer in month one; a product engineer and a commercial lead follow in month seven. No price has been put to a buyer; M4 tests it.
+
+#### A plain reset beat the controller on one seed.
+
+On a one-seed rerun of the headline lesion, a plain reset reached 83.3%, ORMAS 78.5% and ReDo 77.5%. ORMAS carries dropout and the plain reset does not, so the comparison is confounded. What is sold is the detector and the record; M1 settles the repair question on five seeds with matched dropout.
 
 #### Three published runs where it loses.
 
-Adversarial weight injection (−1.0 pp), a 100× weight explosion (−0.9 pp), and ResNet-18, where an uninstrumented network recovers slightly better (92.6% vs 91.7%). All three are on the technology page.
+Random-direction weight injection (83.1% vs 84.1%), a 100× weight explosion (85.1% vs 86.0%), and ResNet-18, where the skip connection keeps signal flowing and standard training finishes ahead (92.3% vs 91.6%). Three seeds each.
 
-#### Key-person risk is total.
+#### Every result is CIFAR-10 and CIFAR-100 on small models.
 
-One person wrote all of it. It is the first line item in the round and the largest, at roughly 43 percent, and it buys two people rather than five because three who can each work unsupervised is a company.
+No transformer, tabular or customer data yet. M3 is the move to credit-risk and medical-image data, with a pass line written first.
 
-#### The mechanism is being given away.
+#### It costs more to train.
 
-Deliberately, and on release rather than now. A result nobody can check is worth nothing to a regulator, and the defensibility was never intended to rest on secrecy. What is not published is the programme extending it, which stays unpublished until it is protected.
+About 2.6× wall-clock on the lesion run (799 s against 312 s) and +15,867 parameters (+2.56%), measured on one seed.
 
-#### The evidence base is CIFAR-10 and CIFAR-100.
+#### Detection has not been measured, and one pilot was negative.
 
-Stated on every page where a result appears. The architecture is domain-independent by construction; that is an argument, and this round converts it into a result.
+Precision, recall and delay against known faults are M2. A pilot using disagreement between parts to flag mislabelled samples was negative (AUROC ≈ 0.51 against ≈ 0.97 for plain per-sample loss), and V2 changed course because of it.
 
-#### Regulatory timelines can move.
+#### The paper and the code disagree on one point.
 
-They can, and they have moved before: the Omnibus shifted Annex III to December 2027. They move later, not away. Every reset extends the window rather than closing it.
+The paper states a 30% cap on resets; the code does not enforce it. A correction is pending. The April 2026 suite that killed the predecessor has not yet been re-run on the current code.
+
+#### The venue record is mixed.
+
+One accepted poster (DeepMath 2026), two rejections (AAAI-27 main track, the NeurIPS 2026 AI4GOOD workshop), and one paper withheld from AISTATS 2027 under our own kill rule. Every reviewer request maps to a milestone.
 
 **DILIGENCE**
 
-### Waiting buys no information here.
+### We write the kill rule first, and follow it.
 
-The rational default on any pre-seed is to wait. More data arrives, the founder becomes better known, and the option costs nothing. That default is usually correct, and on this company it is not, for one specific reason.
+A single-author result is easy to tune until it flatters. So each test gets its rule before the run, and the rule stays on the record when it goes against us.
 
-The entire remaining research programme comes down to four measurements, each with a prediction written down in advance, using a specification we supply.
+Three pre-set tests have gone against us. Each one changed what we build.
 
-That is not a claim about how confident we are. It is a statement about how directly the claims can be tested. What a quarter of waiting would establish can be checked now, and it can be run by their own technical partner on their own hardware without us in the room.
+April 2026: the predecessor architecture lost to a plain CNN at all four noise levels of a purpose-built suite, and zero corrections fired in 42 runs. We rewrote the system. October 2026: a pilot testing whether disagreement between parts flags mislabelled samples came back negative, so V2 moved to parallel parts, and the next pilot must beat plain loss by 0.03 AUROC, published either way.
 
-Everything else is checkable now, under a short agreement: the mechanism, all 383 seeded runs including the ones that failed, the adversarial suite, and the full technical account. Every run where it loses is already on the technology page. The data room does not contain a better story than this page does. It contains the same story with the workings attached.
+Also October 2026: the rule for AISTATS was not to submit if ORMAS finished two or more points below a plain reset. It finished 4.8 points below on one seed, so the paper was not submitted, and V2 keeps only detect and reset. The product is the detector and the record.
 
 What goes in front of an investor
 
-- The falsification specification, and the runs that would execute it.
+- The 28-slide deck, with an appendix that puts the limits first.
 
-- The full archive of 67 seeded runs, including the four the first architecture failed.
+- Every number and its source, including the ones that are plans rather than measurements.
 
-- The adversarial suite, written before the results, with its pass/fail list intact.
+- The full results table, every run and baseline, weak runs included.
 
-- The full technical account of the architecture.
+- The kill-rule record and the venue record.
 
-- A demonstration on their own workload, run in the customer environment.
+- The three-year model with every row’s assumption, and the entity and IP plan.
 
 **TERMS**
 
-### $1.5M on a post-money SAFE. $15M cap, no discount, no debt component.
+### $750K on a post-money SAFE. $7.5M cap, 10.0% dilution.
 
-Dilution at conversion is 10.0%, fixed on signature.
+The cap sits below Carta’s median of about $10M for SAFEs of $250K–$1M, on purpose: a company with one founder, no paying customer and an evidence base confined to CIFAR should not price at the top of its category.
 
-The cap sits inside the 2026 band for AI and machine-learning pre-seed rounds, which runs $12M to $25M, with the largest premium going to AI applied in regulated sectors. At a raise of this size, $15M is the documented norm. It is set at the conservative end of that band deliberately: a company with no customers and an evidence base confined to CIFAR-10 and CIFAR-100 should not price at the top of its category.
-
-Cap-only is how roughly 72% of SAFEs were written in 2025. A discount layered on top of a cap is the minority structure and is not used here. The company is founder-owned with no prior institutional capital, and a priced round is deferred to the seed, on the year-two milestones above.
+Oxiedo is not yet incorporated, has no cap table and no prior investor. The Delaware C-corporation is formed before the SAFE is executed, and the code, run archive, paper, brand and domain are assigned to it at incorporation. Until then the founder holds them personally, and contracting runs through an existing UK-registered company, named in full in any agreement, which takes no equity. Founder stock vests. Bangladesh foreign-exchange rules on US shares go to counsel before close.
 
 **PROVENANCE**
 
 ### Where every number on this page comes from.
 
-Three of these eight rows are unvalidated, and they are the three this round exists to validate. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
+Measured figures come from the run archive; market and price figures are labelled as hypotheses. An investor who takes the measured rows and discounts the rest is reading this page exactly as intended.
 
-Figure Source Status Accepted, DeepMath 2026 (poster)Programme committee decision on the stability analysis, 30 September 2026 External review 80.3% against 10.0%, +70.3 pp 383 controlled experiments, reproducible from seed Measured, replayable$5.9B (2025) → $19.1B by 2035 Third-party analyst, AI model-risk management Third-party~1,000 institutions Our own bottom-up count across four segments Estimate, unvalidated$250K ACV, $150K–$500K band Benchmarked against model-risk tooling No pricing conversations CAC $85K, LTV:CAC 10.8:1 Modelled on a six-to-eighteen-month enterprise cycle Assumption, no data$15M cap, 10% dilution 2026 AI pre-seed band; $15M is the norm at this raise size Market benchmark Competitor pricing ~$50K Published enterprise quote floors Third-party
+Figure Source Status 10.0% vs 80.3% ± 1.5%Archived lesion runs, three seeds each Measured; rerun 4 October 2026 Plain reset 83.3%, ReDo 77.5%, ORMAS 78.5%Rerun on one seed, RTX 3080 Measured, one seed; M1 repeats it 383 controlled experiments Run records across the founder’s result folders Counted Accepted poster, DeepMath 2026 Programme committee decision; poster session 29–30 October 2026 External review$5.9B (2025) → $19.1B (2035)SNS Insider, AI model-risk management, 25 August 2026 Analyst report 1,400+ orgs; 176 banks; $149M W&B customer base; Fed large banks; ECB list; our planned prices Counts sourced; prices untested$75K and $250K a year Our pricing hypothesis No price put to a buyer yet$750K, $7.5M cap Carta pre-seed data 2025–26; our plan Proposal
 
 **THE ASK**
 
-### $1.5M pre-seed, 18 months of runway, six named milestones.
+### $750K pre-seed, 18 months of runway, five tested milestones.
 
-Oxiedo is founder-owned and incorporating as a Delaware C-corporation alongside the move to San Francisco, so the round closes into the structure US institutional investors require rather than one they would ask us to change first. The conversion is the first thing the structure and filings line above pays for, for exactly that reason. We are open to conversations ahead of a priced round and are looking for a lead rather than a party round, because the milestones above need someone still in the room at the next one.
+Oxiedo is founder-owned and forms its Delaware C-corporation at close, so the round lands in the structure US investors expect. The founder is based in Dhaka, and the company relocates when the first design partner gives it a reason to.
 
-The investor this suits backs technical risk that has already been measured rather than technical risk that is still a hypothesis, and is unbothered by a regulated go-to-market where the timetable is legislated and the sales cycle is long. The window is not closing because we say so. It closes on 2 December 2027, when the first obligations apply, and an architecture cannot be retrofitted into a model that has already been trained.
+The investor this suits backs technical risk that is already measured and published, losses included, and wants each next step tied to a test written down before the work. The regulatory dates are already in law: the EU AI Act’s high-risk obligations apply from 2 December 2027.
 
 [Open a conversation](/contact)
 

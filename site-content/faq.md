@@ -157,7 +157,7 @@ What an evaluating institution or an investor can have now, under a short agreem
 
 #### Where does ORMAS lose?
 
-In three published runs. Under adversarial weight injection it finishes 1.0 percentage point behind a parameter-matched baseline. Under a 100× weight explosion it finishes 0.9 pp behind. And on ResNet-18, a standard network with no instrumentation recovers slightly better from the same damage: 92.6% against 91.7%.
+In three published runs. Under adversarial weight injection it finishes 1.0 percentage point behind a parameter-matched baseline. Under a 100× weight explosion it finishes 0.9 pp behind. And on ResNet-18, a standard network with no instrumentation recovers slightly better from the same damage: 92.3% against 91.6%.
 
 Each is a real deficit and each is small. The adversarial one has a known cause: crafted weights keep activation statistics looking normal, which evades exactly what ORMAS monitors, and there is no current mitigation. All three are on the technology page, next to a +70.3 pp recovery advantage under structural collapse, and any evaluator should weigh them against the failure modes their own systems actually meet.
 
@@ -329,7 +329,7 @@ Under a deployment licence, neither, in respect of the data. The customer remain
 
 For an evaluation sent to us, we are the customer's processor and a DPA is executed before any transfer. For this website, we are the controller of what is submitted through it.
 
-The contracting entity is stated precisely, because a controller has to be identifiable before anything is submitted. Oxiedo contracts through a UK-registered company, and that company is the controller for anything submitted through this site: UK GDPR and the Data Protection Act 2018 apply to it as home law, and EU GDPR applies under Article 3(2) for data subjects in the Union. A Delaware C-corporation is being established alongside the move to San Francisco, and until contracting moves to it the UK-registered company remains the controller. The entity is named in full in any agreement and before any data is transferred to us.
+The contracting entity is stated precisely, because a controller has to be identifiable before anything is submitted. Oxiedo contracts through a UK-registered company, and that company is the controller for anything submitted through this site: UK GDPR and the Data Protection Act 2018 apply to it as home law, and EU GDPR applies under Article 3(2) for data subjects in the Union. A Delaware C-corporation is formed when the pre-seed closes, and until contracting moves to it the UK-registered company remains the controller. The entity is named in full in any agreement and before any data is transferred to us.
 
 [Positions under GDPR and HIPAA →](/data)
 
@@ -427,9 +427,9 @@ Who is behind it, how it is funded, and what happens if it fails.
 
 #### Who founded Oxiedo?
 
-Oxiedo was founded by Rokib Al Dhin Raadh, its Founder & CEO and the inventor of ORMAS. He designed the architecture, wrote the code, ran all 383 controlled experiments, and is the sole author of the ORMAS preprint (Zenodo, 1 August 2026). Before Oxiedo he built and sold a company.
+Oxiedo was founded by Rokib Al Dhin Raadh, its Founder & CEO and the inventor of ORMAS. He designed the architecture, wrote the code, ran all 383 controlled experiments, and is the sole author of the ORMAS preprint (Zenodo, 1 August 2026). Before ORMAS he ran a twelve-month AI-run e-commerce experiment.
 
-Oxiedo is a licensing company. What it licenses is train-time accountability: ORMAS, the training architecture, licensed to institutions that hold regulated data and carry the obligation to account for what a model did with it. The company is incorporating as a Delaware C-corporation alongside a move to San Francisco, and until that completes it contracts through an existing registered company, named in full in any agreement.
+Oxiedo is a licensing company. What it licenses is train-time accountability: ORMAS, the training architecture, licensed to institutions that hold regulated data and carry the obligation to account for what a model did with it. A Delaware C-corporation is formed when the pre-seed closes, and until then the company contracts through an existing registered company, named in full in any agreement.
 
 Rokib Al Dhin Raadh, founder and CEO, is accountable for the architecture: it was designed, built and adversarially tested under that name, and the counterparty an institution contracts with is the party that wrote it. That accountability is the substance of the licence. Institutions under obligation are not buying a repository; they are buying somebody who will stand behind a number in a filing.
 

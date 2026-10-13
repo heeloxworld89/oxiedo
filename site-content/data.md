@@ -204,7 +204,7 @@ Listed so nobody has to ask, and so a security review does not discover an absen
 
 - ○EU Article 27 representative — Not yet appointed. Required of a UK-established controller offering services into the Union, and in place before any Mode B engagement there. No UK representative is required, because we are established here
 
-- ○CCPA and CPRA, California — Not yet engaged. Follows the Delaware entity and the San Francisco headquarters, once the statutory thresholds are met
+- ○CCPA and CPRA, California — Not yet engaged. Follows the Delaware entity and a US presence, once the statutory thresholds are met
 
 - ○SOC 2 Type II — Not held, and planned. In Mode A we hold no customer data for a report to attest to, so the review question is software supply chain rather than data custody
 
