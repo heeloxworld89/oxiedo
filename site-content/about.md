@@ -44,9 +44,12 @@ Founder & CEO · Oxiedo
 - **Built** — ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments
 - **Paper** — Sole author, [ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction](https://doi.org/10.5281/zenodo.21730363) (preprint, 1 August 2026)
 - **Accepted** — [Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics](/technology#deepmath), poster at DeepMath 2026
+- **Talk** — [When the Update Is Not a Gradient](https://www.youtube.com/watch?v=R75wEi3Ti-M), Cohere Labs Open Science Community
 - **Reviewer** — NeurIPS 2026, Trustworthy AI for Good workshop
 - **Before** — A twelve-month AI-run e-commerce experiment
 - **On X** — [@Raad_X_](https://x.com/Raad_X_)
+
+> Cohere Labs Open Science Community · ML Math — When the Update Is Not a Gradient: Input-to-State Stability of Self-Repairing Neural Network Training — Rokib Al Dhin Raadh · [Watch on YouTube](https://www.youtube.com/watch?v=R75wEi3Ti-M)
 
 **ORIGIN**
 

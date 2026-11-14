@@ -47,6 +47,8 @@ Preprint · Zenodo · 1 August 2026
 
 [Download PDF](https://zenodo.org/records/21730363/files/ORMAS_preprint.pdf?download=1)
 
+> Cohere Labs Open Science Community · ML Math — When the Update Is Not a Gradient: Input-to-State Stability of Self-Repairing Neural Network Training — Rokib Al Dhin Raadh · [Watch on YouTube](https://www.youtube.com/watch?v=R75wEi3Ti-M)
+
 One line covers what this technology is for. Data that would be worth training on is locked away, and it is locked away because a model cannot account for what it took from it. Everything below is the work of building a network that can.
 
 Neural networks fail opaquely, and not because anybody built them carelessly. Global backpropagation diffuses every error signal across every parameter simultaneously, so precise fault localisation is not difficult; it is mathematically unavailable. When a layer dies mid-training, what a practitioner observes is a collapsed loss curve and no mechanism whatsoever for identifying which component failed, when, or why. The same property is why no model can say which of its parts came from which source of data.

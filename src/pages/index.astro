@@ -35,6 +35,7 @@
 // place for it: it was answering an objection no visitor had formed yet.
 import Page from '../layouts/Page.astro';
 import Eyebrow from '../components/Eyebrow.astro';
+import TalkVideo from '../components/TalkVideo.astro';
 import HeroVisual from '../components/HeroVisual.astro';
 import SectorGraphic from '../components/SectorGraphic.astro';
 import { sectors } from '../data/sectors';
@@ -352,6 +353,31 @@ const whyNow = [
 					))}
 				</ul>
 			</div>
+		</div>
+	</section>
+
+	<!-- 1b. THE TALK. Added 2026-11-14. The founder's Cohere Labs Open Science Community talk (ML
+	     Math series) on the stability theory behind ORMAS. Straight after the hero because it is
+	     the first outside voice a visitor meets: the work, explained by the person who built it,
+	     on a channel that is not ours. Click-to-play, so the page loads no YouTube code until
+	     someone presses play (components/TalkVideo.astro). -->
+	<section class="section container reveal">
+		<div class="home-talk">
+			<div class="home-talk-copy">
+				<Eyebrow>THE TALK · COHERE LABS</Eyebrow>
+				<h2 class="section-title">Why a network that repairs itself still trains stably.</h2>
+				<p class="section-lede">
+					Rokib Al Dhin Raadh, presenting to the Cohere Labs Open Science Community. When a
+					repair is not a gradient step, it can be treated as a bounded disturbance, and
+					input-to-state stability says how much of it training can absorb and still settle.
+				</p>
+				<ul class="home-talk-points">
+					<li>Cohere Labs Open Science Community, ML Math series.</li>
+					<li>The same analysis is accepted for a poster at DeepMath 2026.</li>
+					<li>The run it explains is replayable: <a href="/black-box">watch it heal itself</a>.</li>
+				</ul>
+			</div>
+			<TalkVideo variant="feature" />
 		</div>
 	</section>
 

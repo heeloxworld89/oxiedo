@@ -54,6 +54,7 @@ import PageBanner from '../components/PageBanner.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import TelemetryBlock from '../components/TelemetryBlock.astro';
 import Button from '../components/Button.astro';
+import TalkVideo from '../components/TalkVideo.astro';
 
 // THE ACCOUNTABILITY SECTION. Four paragraphs, institutional voice, and the argument runs in one
 // direction: a custodian's third requirement is the one architecture cannot satisfy, so a person
@@ -125,6 +126,7 @@ const founderFacts = [
 	{ k: 'Built', v: 'ORMAS: the architecture, 16,316 lines of code, and all 383 controlled experiments' },
 	{ k: 'Paper', v: 'Sole author, <a href="https://doi.org/10.5281/zenodo.21730363" rel="noopener noreferrer" target="_blank">ORMAS: Neural Architectural Transparency Enables Autonomous Self-Correction</a> (preprint, 1 August 2026)' },
 	{ k: 'Accepted', v: '<a href="/technology#deepmath">Self-Repair as a Bounded Disturbance: Input-to-State Stability of Neural Network Training Dynamics</a>, poster at DeepMath 2026' },
+	{ k: 'Talk', v: '<a href="https://www.youtube.com/watch?v=R75wEi3Ti-M" rel="noopener noreferrer" target="_blank">When the Update Is Not a Gradient</a>, Cohere Labs Open Science Community' },
 	{ k: 'Reviewer', v: 'NeurIPS 2026, Trustworthy AI for Good workshop' },
 	{ k: 'Before', v: 'A twelve-month AI-run e-commerce experiment' },
 	{ k: 'On X', v: '<a href="https://x.com/Raad_X_" rel="me noopener" target="_blank">@Raad_X_</a>' },
@@ -245,6 +247,7 @@ const trail = [{ label: 'Home', href: '/' }, { label: 'About' }];
 					</dl>
 				</aside>
 			</div>
+			<TalkVideo />
 		</div>
 	</section>
 

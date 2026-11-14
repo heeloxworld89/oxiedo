@@ -1,0 +1,80 @@
+---
+// THE COHERE LABS TALK, as a click-to-play facade. Added 2026-11-14.
+//
+// WHY A FACADE AND NOT A BARE <iframe>: an embedded YouTube player loads roughly a megabyte of
+// script and sets tracking cookies the moment the page opens, on every visit, whether or not
+// anyone presses play. Here the page ships one self-hosted thumbnail and a link. Pressing play
+// swaps in the youtube-nocookie player with autoplay, so the video starts on that same click.
+// Without JavaScript the link simply opens the talk on YouTube.
+//
+// CSP: vercel.json allows exactly one frame source, https://www.youtube-nocookie.com, for this.
+//
+// NO VideoObject JSON-LD: Google requires uploadDate for it and flags the item without one, and
+// the date is not confirmed. Add it here, with the date, once it is.
+import { TALK } from '../data/talk';
+
+interface Props {
+	/** 'feature' for the homepage block; 'inline' for a smaller embed inside another section. */
+	variant?: 'feature' | 'inline';
+}
+const { variant = 'inline' } = Astro.props;
+
+---
+
+<figure class={`talk-video talk-video--${variant}`}>
+	<a
+		class="talk-video-frame"
+		href={TALK.url}
+		data-yt={TALK.id}
+		rel="noopener noreferrer"
+		target="_blank"
+		aria-label={`Play the talk: ${TALK.title}, Rokib Al Dhin Raadh, ${TALK.host}`}
+	>
+		<img
+			class="talk-video-thumb"
+			src={TALK.thumb}
+			alt=""
+			width="1280"
+			height="720"
+			loading="lazy"
+			decoding="async"
+		/>
+		<span class="talk-video-play" aria-hidden="true">
+			<svg viewBox="0 0 24 24" width="28" height="28" focusable="false"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+		</span>
+	</a>
+	<figcaption class="talk-video-cap">
+		<span class="talk-video-host">{TALK.host} · {TALK.series}</span>
+		<span class="talk-video-title">{TALK.title}</span>
+		<span class="talk-video-by">Rokib Al Dhin Raadh · <a href={TALK.url} rel="noopener noreferrer" target="_blank">Watch on YouTube</a></span>
+	</figcaption>
+</figure>
+
+<script>
+	function mountTalkVideos() {
+		document.querySelectorAll<HTMLAnchorElement>('a.talk-video-frame[data-yt]').forEach((a) => {
+			if (a.dataset.bound) return;
+			a.dataset.bound = '1';
+			a.addEventListener('click', (e) => {
+				// Let a modified click (new tab, new window) behave like the plain link it is.
+				if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+				e.preventDefault();
+				const id = a.dataset.yt;
+				const iframe = document.createElement('iframe');
+				iframe.className = 'talk-video-iframe';
+				iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+				iframe.title = a.getAttribute('aria-label') ?? 'Talk';
+				iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+				iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+				iframe.allowFullscreen = true;
+				const frame = document.createElement('div');
+				frame.className = 'talk-video-frame talk-video-frame--playing';
+				frame.appendChild(iframe);
+				a.replaceWith(frame);
+				iframe.focus();
+			});
+		});
+	}
+	mountTalkVideos();
+	document.addEventListener('astro:page-load', mountTalkVideos);
+</script>
