@@ -255,20 +255,6 @@ Five sectors where the data is locked and worth the most
 
 - [Defense & Safety-Critical](/sectors/defense-safety-critical)
 
-**THE TALK · COHERE LABS**
-
-### Why a network that repairs itself still trains stably.
-
-Rokib Al Dhin Raadh, presenting to the Cohere Labs Open Science Community. When a repair is not a gradient step, it can be treated as a bounded disturbance, and input-to-state stability says how much of it training can absorb and still settle.
-
-- Cohere Labs Open Science Community, ML Math series.
-
-- The same analysis is accepted for a poster at DeepMath 2026.
-
-- The run it explains is replayable: [watch it heal itself](/black-box).
-
-> Cohere Labs Open Science Community · ML Math — When the Update Is Not a Gradient: Input-to-State Stability of Self-Repairing Neural Network Training — Rokib Al Dhin Raadh · [Watch on YouTube](https://www.youtube.com/watch?v=R75wEi3Ti-M)
-
 **THE PRODUCT**
 
 ### ORMAS is one product, and its job is to make data usable that cannot be used today.
@@ -564,6 +550,20 @@ A fifty-node network at 30% label noise across 200 epochs. Standard training ret
 After the same task shift, the network answered combinations it had never been shown at 58.8%, against 25% chance. No modularity was built in. It organised its own internal structure out of the conflict between the two tasks.
 
 Its stability analysis is accepted for a poster at [DeepMath 2026](/technology#deepmath). 383 controlled experiments across four architecture families, designed, built and run by founder [Rokib Al Dhin Raadh](/about#founder). All results on CIFAR-10 and CIFAR-100. [The technology page](/technology) carries the full conditions, the error bars, and every run where it loses.
+
+**THE EVIDENCE · OUTSIDE REVIEW**
+
+### The theory behind those results, presented at Cohere Labs.
+
+Rokib Al Dhin Raadh on why a network that repairs itself still trains stably. When a repair is not a gradient step, it can be treated as a bounded disturbance, and input-to-state stability says how much of it training can absorb and still settle.
+
+- Cohere Labs Open Science Community, ML Math series.
+
+- The same analysis is accepted for a poster at [DeepMath 2026](/technology#deepmath).
+
+- The run it explains is replayable: [watch it heal itself](/black-box).
+
+> Cohere Labs Open Science Community · ML Math — When the Update Is Not a Gradient: Input-to-State Stability of Self-Repairing Neural Network Training — Rokib Al Dhin Raadh · [Watch on YouTube](https://www.youtube.com/watch?v=R75wEi3Ti-M)
 
 A frontier run fails at 60 percent · current practice
 
