@@ -255,6 +255,20 @@ Five sectors where the data is locked and worth the most
 
 - [Defense & Safety-Critical](/sectors/defense-safety-critical)
 
+**THE TALK · COHERE LABS**
+
+### Why a network that repairs itself still trains stably.
+
+Rokib Al Dhin Raadh, presenting to the Cohere Labs Open Science Community. When a repair is not a gradient step, it can be treated as a bounded disturbance, and input-to-state stability says how much of it training can absorb and still settle.
+
+- Cohere Labs Open Science Community, ML Math series.
+
+- The same analysis is accepted for a poster at DeepMath 2026.
+
+- The run it explains is replayable: [watch it heal itself](/black-box).
+
+> Cohere Labs Open Science Community · ML Math — When the Update Is Not a Gradient: Input-to-State Stability of Self-Repairing Neural Network Training — Rokib Al Dhin Raadh · [Watch on YouTube](https://www.youtube.com/watch?v=R75wEi3Ti-M)
+
 **THE PRODUCT**
 
 ### ORMAS is one product, and its job is to make data usable that cannot be used today.
