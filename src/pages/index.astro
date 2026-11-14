@@ -356,31 +356,6 @@ const whyNow = [
 		</div>
 	</section>
 
-	<!-- 1b. THE TALK. Added 2026-11-14. The founder's Cohere Labs Open Science Community talk (ML
-	     Math series) on the stability theory behind ORMAS. Straight after the hero because it is
-	     the first outside voice a visitor meets: the work, explained by the person who built it,
-	     on a channel that is not ours. Click-to-play, so the page loads no YouTube code until
-	     someone presses play (components/TalkVideo.astro). -->
-	<section class="section container reveal">
-		<div class="home-talk">
-			<div class="home-talk-copy">
-				<Eyebrow>THE TALK · COHERE LABS</Eyebrow>
-				<h2 class="section-title">Why a network that repairs itself still trains stably.</h2>
-				<p class="section-lede">
-					Rokib Al Dhin Raadh, presenting to the Cohere Labs Open Science Community. When a
-					repair is not a gradient step, it can be treated as a bounded disturbance, and
-					input-to-state stability says how much of it training can absorb and still settle.
-				</p>
-				<ul class="home-talk-points">
-					<li>Cohere Labs Open Science Community, ML Math series.</li>
-					<li>The same analysis is accepted for a poster at DeepMath 2026.</li>
-					<li>The run it explains is replayable: <a href="/black-box">watch it heal itself</a>.</li>
-				</ul>
-			</div>
-			<TalkVideo variant="feature" />
-		</div>
-	</section>
-
 	<!-- 2. THE PROBLEM. New section. The page previously went from the headline straight into a
 	     mechanism explanation, which asks a visitor to care about an answer before a question has
 	     been put to them. Three failures, each with the cost already being paid for it. -->
@@ -641,6 +616,31 @@ const whyNow = [
 			CIFAR-100. <a href="/technology">The technology page</a> carries the full conditions, the error
 			bars, and every run where it loses.
 		</p>
+	</section>
+
+	<!-- 5a. THE TALK. Added 2026-11-14, moved here the same day at the founder's request: next to
+	     the evidence, as the outside half of it. The results above are ours; this is the theory
+	     behind them, presented to the Cohere Labs Open Science Community (ML Math series) and
+	     accepted at DeepMath 2026. Click-to-play, so the page loads no YouTube code until someone
+	     presses play (components/TalkVideo.astro). -->
+	<section class="section container reveal">
+		<div class="home-talk">
+			<div class="home-talk-copy">
+				<Eyebrow>THE EVIDENCE · OUTSIDE REVIEW</Eyebrow>
+				<h2 class="section-title">The theory behind those results, presented at Cohere Labs.</h2>
+				<p class="section-lede">
+					Rokib Al Dhin Raadh on why a network that repairs itself still trains stably. When a
+					repair is not a gradient step, it can be treated as a bounded disturbance, and
+					input-to-state stability says how much of it training can absorb and still settle.
+				</p>
+				<ul class="home-talk-points">
+					<li>Cohere Labs Open Science Community, ML Math series.</li>
+					<li>The same analysis is accepted for a poster at <a href="/technology#deepmath">DeepMath 2026</a>.</li>
+					<li>The run it explains is replayable: <a href="/black-box">watch it heal itself</a>.</li>
+				</ul>
+			</div>
+			<TalkVideo variant="feature" />
+		</div>
 	</section>
 
 	<!-- 5. THE EVIDENCE. It was three prose cards that RE-ARGUED the comparison two sections above
